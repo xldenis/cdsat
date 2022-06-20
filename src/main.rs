@@ -23,15 +23,18 @@ enum Asgn {
     // H ⊢_k A
     // The set of integers represents the set of assignment indices in the trail which justify this assignment
     // TODO: Should this be a set of assignments instead?
-    Justified(Set<Int>, ThIdx, (Term, Term)),
+    Justified(Justified),
 }
+
+struct Justified(Set<Int>, ThIx, (Term, Term));
+
 
 impl Asgn {
     #[predicate]
     fn is_decision(self) -> bool {
         match self {
             Asgn::Decision(_, _,) => true,
-            Asgn::Justified(_, _, _,) => false,
+            Asgn::Justified(_) => false,
         }
     }
 
@@ -39,15 +42,30 @@ impl Asgn {
     fn th_idx(self) -> ThIdx {
         match self {
             Asgn::Decision(i, _) => i,
-            Asgn::Justified(_, i, _) => i,
+            Asgn::Justified(Justified(_, i, _)) => i,
         }
     }
 }
 
+trait Theory {
+    // Probably not the right approach
+    const IDX : ThIdx;
+
+    #[law]
+    #[requires(inf.1 == Self::IDX)]
+    #[requires(forall< c : _ > inf.0.contains(c) ==> trail.endorses(trail.0[c]))]
+    #[ensures(trail.endorses(inf.2))]
+    fn sound(inf: Justified, trail: Trail )
+}
+
+struct BoolTh;
+
+struct LiaTh;
+
 // A struct containing all the theories
 struct Theories {
-    bool_th: (),
-    lia_th: (),
+    bool_th: BoolTh,
+    lia_th: LiaTh,
 }
 
 // The index `k` for `T_k` in the paper
@@ -64,7 +82,7 @@ impl Trail {
     fn level(self, a: Asgn) -> Int {
         match a {
             Asgn::Decision(_, _) => { 0 }
-            Asgn::Justified(_, _, _) => { 0 }
+            Asgn::Justified(_) => { 0 }
         }
     }
 
@@ -78,8 +96,14 @@ impl Trail {
     fn contains(self, dec: (Term, Term)) -> bool {
         false
     }
+
+    #[predicate]
+    fn endorses(self, dec: (Term, Term)) -> bool {
+        false
+    }
  }
 
+// Explore: A machine with two states which allows us to always only do one step: either progress or conflict
 impl Theories {
     #[predicate]
     fn acceptable(self, choice: Asgn) -> bool {
@@ -99,32 +123,32 @@ impl Theories {
 
     // Γ ⟶ Γ, J⊢L, if  ¬ L ∉ Γ and L is l ← 𝔟 for l ∈ ℬ
     #[predicate]
-    fn deduce(self, init: Trail, tgt: Trail, just: Set<Int>, th: ThIdx, a: (Term, Term)) -> bool {
+    fn deduce(self, init: Trail, tgt: Trail, just: Justified) -> bool {
         pearlite! {
-            tgt == Trail(init.0.push(Asgn::Justified(just, th, a))) &&
-            init.valid_justification(just) &&
-            !init.contains(a) &&
-            a.1.is_boolean() && !init.contains((a.0, a.1.negate()))
+            tgt == Trail(init.0.push(Asgn::Justified(just))) &&
+            init.valid_justification(just.0) &&
+            !init.contains(just.2) &&
+            just.2.1.is_boolean() && !init.contains((just.2.0, just.2.1.negate()))
         }
     }
 
     // Γ ⟶ unsafe if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) - 0
     #[predicate]
-    fn fail(self, init: Trail, just: Set<Int>, th: ThIdx, a: (Term, Term)) -> bool {
+    fn fail(self, init: Trail, just: Justified) -> bool {
         pearlite! {
-             a.1.is_boolean() &&
-            (forall<i : _> just.contains(i) ==> (init.level(init.0[i]) == 0) ) &&
-            (exists< i : _ > init.contains((a.0, a.1.negate())) && init.level(init.0[i]) == 0)
+             just.2.1.is_boolean() &&
+            (forall<i : _> just.0.contains(i) ==> (init.level(init.0[i]) == 0) ) &&
+            (exists< i : _ > init.contains((just.2.0, just.2.1.negate())) && init.level(init.0[i]) == 0)
         }
     }
 
     // Γ ⟶ Γ' if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0, ⟨ Γ; J ∪ {¬ L} ⟩ ⟹^* Γ'
     #[predicate]
-    fn conflict_solve(self, init: Trail, tgt: Trail, just: Set<Int>, th: ThIdx, a: (Term, Term)) -> bool {
+    fn conflict_solve(self, init: Trail, tgt: Trail, just: Justified) -> bool {
         pearlite! {
-            (exists<i : _> just.contains(i) && init.level(init.0[i]) > 0) ||
-            (exists< i : _ > init.contains((a.0, a.1.negate())) && init.level(init.0[i]) == 0 &&
-                self.resolve(init, just.insert(i), tgt)
+            (exists<i : _> just.0.contains(i) && init.level(init.0[i]) > 0) ||
+            (exists< i : _ > init.contains((just.2.0, just.2.1.negate())) && init.level(init.0[i]) == 0 &&
+                self.resolve(init, just.0.insert(i), tgt)
             )
         }
     }
@@ -135,3 +159,9 @@ impl Theories {
         false
     }
 }
+
+
+#[predicate]
+#[requires(forall<c : _> a.0.contains(c) ==> t.endorses(t.0[c]]))]
+#[ensures(t.endorses(a.2))]
+fn lemma_1(a: Justified, t: Trail) {}
