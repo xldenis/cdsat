@@ -1,167 +1,230 @@
 use creusot_contracts::*;
 
-fn main() {}
+enum Term {
+  Variable(Var),
+  Value(Value),
+  Plus(Box<Term>, Box<Term>, ),
+  Eq(Box<Term>, Box<Term>, ),
+  // TODO: complete others
+}
 
-struct Trail(Seq<Asgn>);
-struct Term;
+struct Var(Int);
 
-impl Term {
-    #[logic]
-    fn is_boolean(self) -> bool {
-        false
+enum Value { Bool(bool), Rat(Int, Int) }
+
+impl Value {
+  #[predicate]
+  fn is_bool(self) -> bool {
+    pearlite! { matches!(self, Bool(_))}
+  }
+
+  #[logic]
+  #[requires(self.is_bool())]
+  fn negate(self) -> Self {
+    match self {
+      Bool(b) => Value::Bool(!b),
+      _ => self,
     }
+  }
+}
 
-    #[logic]
-    fn negate(self) -> Self {
-        self
+enum Assign {
+  Decision(Var, Value),
+  // Should the justification be a set of assigns?
+  Justified(Set<(Var, Value)>, Var, Value)
+}
+
+impl Assign {
+  #[predicate]
+  fn same(self, (var, val): (Var, Value)) -> bool {
+    pearlite! {
+      match self {
+        Assign::Decision(var2, val2) => var == var2 && val2 == val2,
+        Assign::Justified(_, var2, val2) => var == var2 && val2 == val2,
+      }
     }
+  }
 }
 
-enum Asgn {
-    // ⊢?_k A
-    Decision(ThIdx, (Term, Term)),
-    // H ⊢_k A
-    // The set of integers represents the set of assignment indices in the trail which justify this assignment
-    // TODO: Should this be a set of assignments instead?
-    Justified(Justified),
+struct Model(Mapping<Var, Value>);
+
+impl Model {
+  #[predicate]
+  fn satisfies(self, v : (Var,Value)) -> bool {
+    self.0.get(v.0) == v.1
+  }
+
+  #[predicate]
+  fn satisfy_set(self, v : Set<(Var,Value)>) -> bool {
+    pearlite! { forall<a : _> v.contains(a) ==> self.satisfies(a) }
+  }
 }
 
-struct Justified(Set<Int>, ThIx, (Term, Term));
-
-
-impl Asgn {
-    #[predicate]
-    fn is_decision(self) -> bool {
-        match self {
-            Asgn::Decision(_, _,) => true,
-            Asgn::Justified(_) => false,
-        }
-    }
-
-    #[logic]
-    fn th_idx(self) -> ThIdx {
-        match self {
-            Asgn::Decision(i, _) => i,
-            Asgn::Justified(Justified(_, i, _)) => i,
-        }
-    }
-}
-
-trait Theory {
-    // Probably not the right approach
-    const IDX : ThIdx;
-
-    #[law]
-    #[requires(inf.1 == Self::IDX)]
-    #[requires(forall< c : _ > inf.0.contains(c) ==> trail.endorses(trail.0[c]))]
-    #[ensures(trail.endorses(inf.2))]
-    fn sound(inf: Justified, trail: Trail )
-}
-
-struct BoolTh;
-
-struct LiaTh;
-
-// A struct containing all the theories
-struct Theories {
-    bool_th: BoolTh,
-    lia_th: LiaTh,
-}
-
-// The index `k` for `T_k` in the paper
-enum ThIdx {
-    Bool,
-    Lia,
-}
+struct Trail(Seq<(Assign, Int)>);
 
 impl Trail {
-    // The level of an assignment is:
-    // 1. 1 + the number of previous decisions for decisions
-    // 2: The maximum of the levels of the justification for justified asignments
-    #[logic]
-    fn level(self, a: Asgn) -> Int {
-        match a {
-            Asgn::Decision(_, _) => { 0 }
-            Asgn::Justified(_) => { 0 }
+  #[predicate]
+  fn sound(self) -> bool {
+    pearlite! {
+      forall<i : _> exists<just: _, var : _, val : _>
+        self.0[i] == Assign::Justified(just, var, val) ==>
+          forall<m : Model> m.satisfies(just) ==> m.satisfies((var, val))
+    }
+  }
+
+  #[predicate]
+  fn invariant(self) -> bool {
+    pearlite! {
+      forall<i : _> {
+        match self.0[i] {
+          (Assign::Decision(_, _), l) => {
+            count_decisions(self.0.subsequence(0, i)) == l
+          },
+          (Assign::Justified(j, _, _), l) => {
+            // Justifiant is in the trail
+            (forall<k :_> 0 <= k && k < j.len() ==>
+              exists<m : _> 0 <= m && m < i && self.0[m].same(j[k])
+            ) &&
+            // Level is the maximum is of the justifiant's levels
+            (j.is_empty() && l == 0) ||
+            (exists<k : _> j.contains(k) && self.level(k) == l) &&
+            (forall<m : _> j.contains(m) ==> self.level(m) <= l)
+          }
         }
+      }
     }
+  }
 
-    // A justification is valid if all the clauses are in the trail. 
-    #[predicate]
-    fn valid_justification(self, just: Set<Int>) -> bool {
-        false
-    }
+  #[predicate]
+  fn acceptable(self, var: Var, val: Value) -> bool {
+    false
+  }
 
-    #[predicate]
-    fn contains(self, dec: (Term, Term)) -> bool {
-        false
-    }
+  // TODO: Add map and filter over `Seq` and `Set`
+  #[logic]
+  fn level(self, d: (Var, Value)) -> Int {
+    pearlite! { absurd }
+  }
 
-    #[predicate]
-    fn endorses(self, dec: (Term, Term)) -> bool {
-        false
-    }
- }
+  #[logic]
+  fn level_set(self, d: Set<(Var, Value)>) -> Int {
+    pearlite! { absurd }
+  }
 
-// Explore: A machine with two states which allows us to always only do one step: either progress or conflict
-impl Theories {
-    #[predicate]
-    fn acceptable(self, choice: Asgn) -> bool {
-        match choice.th_idx() {
-            ThIdx::Bool => false,
-            ThIdx::Lia => false,
-        }
-    }
+  #[predicate]
+  fn contains(self, d: (Var, Value)) -> bool {
+    pearlite! { exists<i : _ > 0 <= i && i < self.0.len() && self.0[i].same(d) }
+  }
 
-    // Γ ⟶ Γ,?A if A is an acceptable 𝒯ₖ-assignment for ℐₖ in Γ_𝒯ₖ for 1 ≤ k ≤ n
-    #[predicate]
-    fn decide(self, init: Trail, tgt: Trail, choice: Asgn) -> bool {
-        pearlite! {
-            choice.is_decision() && tgt == Trail(init.0.push(choice)) && self.acceptable(choice)
-        }
-    }
+  fn find(self, d: (Var, Value)) -> Option<Int> {
+    pearlite! { absurd }
+  }
 
-    // Γ ⟶ Γ, J⊢L, if  ¬ L ∉ Γ and L is l ← 𝔟 for l ∈ ℬ
-    #[predicate]
-    fn deduce(self, init: Trail, tgt: Trail, just: Justified) -> bool {
-        pearlite! {
-            tgt == Trail(init.0.push(Asgn::Justified(just))) &&
-            init.valid_justification(just.0) &&
-            !init.contains(just.2) &&
-            just.2.1.is_boolean() && !init.contains((just.2.0, just.2.1.negate()))
-        }
-    }
-
-    // Γ ⟶ unsafe if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) - 0
-    #[predicate]
-    fn fail(self, init: Trail, just: Justified) -> bool {
-        pearlite! {
-             just.2.1.is_boolean() &&
-            (forall<i : _> just.0.contains(i) ==> (init.level(init.0[i]) == 0) ) &&
-            (exists< i : _ > init.contains((just.2.0, just.2.1.negate())) && init.level(init.0[i]) == 0)
-        }
-    }
-
-    // Γ ⟶ Γ' if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0, ⟨ Γ; J ∪ {¬ L} ⟩ ⟹^* Γ'
-    #[predicate]
-    fn conflict_solve(self, init: Trail, tgt: Trail, just: Justified) -> bool {
-        pearlite! {
-            (exists<i : _> just.0.contains(i) && init.level(init.0[i]) > 0) ||
-            (exists< i : _ > init.contains((just.2.0, just.2.1.negate())) && init.level(init.0[i]) == 0 &&
-                self.resolve(init, just.0.insert(i), tgt)
-            )
-        }
-    }
-
-    // TODO
-    #[predicate]
-    fn resolve(self, init: Trail, conflict: Set<Int>, tgt: Trail) -> bool {
-        false
-    }
+  fn justification(self, d: (Var, Value)) -> Option<Set<(Var, Value)>> {
+    pearlite! { absurd }
+  }
 }
 
+#[logic]
+fn count_decision(s: Seq<Assign>) -> Int {
+  if s.len() == 0 {
+    0
+  } else {
+    match s[0] {
+      Assign::Decision(_, _) => 1 + count_decision(s.subsequence(1, s.len())),
+      Assign::Justified(_, _, _) => count_decision(s.subsequence(1, s.len())),
+    }
+  }
+}
 
-#[predicate]
-#[requires(forall<c : _> a.0.contains(c) ==> t.endorses(t.0[c]]))]
-#[ensures(t.endorses(a.2))]
-fn lemma_1(a: Justified, t: Trail) {}
+struct Normal(Trail);
+
+
+
+impl Normal {
+  #[predicate]
+  fn sound(self) -> bool {
+    self.0.sound()
+  }
+
+  // Γ ⟶ Γ,?A if A is an acceptable 𝒯ₖ-assignment for ℐₖ in Γ_𝒯ₖ for 1 ≤ k ≤ n
+  #[predicate]
+  fn decide(self, var: Var, val: Value, tgt: Self) -> bool {
+      self.0.acceptable(var, val) &&
+      tgt.0 == self.0.push(Assign::Decision(var, val))
+  }
+
+  #[predicate]
+  fn deduce(self) -> bool {}
+
+  #[predicate]
+  fn fail(self) -> bool {}
+
+  // just : J |- L
+  // Γ ⟶ ⟨ Γ; J ∪ {¬ L} ⟩ if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0
+  #[predicate]
+  fn conflict_solve(self, just: (Set<(Var, Value)>, Var, Value), tgt: Conflict) -> bool {
+    pearlite! {
+      let not_l = (just.1, just.2.negate());
+      self.0.contains(not_l) &&
+      (self.0.level(not_l) > 0 || exists<i : _> just.0.contains(i) && self.0.level(i) > 0) &&
+      tgt == Conflict(self.0, just.0.add(not_l))
+    }
+  }
+}
+
+struct Conflict(Trail, Set<(Var, Value)>);
+
+impl Conflict {
+  #[predicate]
+  fn sound(self) -> bool {
+    pearlite! { self.0.sound() && (forall<m : Model> m.satisfies(self.1) ==> false) }
+  }
+
+  // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
+  #[predicate]
+  fn resolve(self, a: (Var, Value), tgt: Self) -> bool {
+    pearlite! {
+      let just = self.0.justification(a);
+      let conf_level = self.0.level_set(self.1);
+      (forall<a : _> just.contains(a) && !a.is_bool() ==> self.0.level(a) < conf_level ) &&
+      self.1.contains(a) && tgt == Conflict(self.0, self.1.remove(a).union(just))
+    }
+  }
+
+  // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m, E⊢¬L, if level_\Gamma(L) > m, where m = level_\Gamma(E)
+  #[predicate]
+  fn backjump(self, l : (Var, Value), tgt: Normal) -> bool {
+    pearlite! {
+      let e = self.1.remove(l);
+      let m = self.0.level_set(e);
+      self.1.contains(l) && l.1.is_bool() &&
+      tgt.0 == self.0.restrict(m).push(Assign::Justified(e, l.0, l.1.negate()))
+    }
+  }
+
+  // ⟨ Γ; { A } ⊔ E ⟩  ⇒ Γ≤m-1, if A is a first-order decision of level m > level_\Gamma(E)
+  #[predicate]
+  fn undo_clear(self, a : (Var, Value), tgt: Normal) -> bool {
+    pearlite! {
+      let e = self.1.remove(a);
+      let m = self.0.level(a);
+      self.1.contains(a) && !a.1.is_bool() && m > self.0.level_set(e) &&
+      tgt.0 == self.0.restrict(m - 1)
+    }
+  }
+
+  // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m-1,?¬L
+  #[predicate]
+  fn undo_decide(self, l : (Var, Value), tgt: Normal) -> bool {
+    pearlite! {
+      let just = self.0.justification(l);
+      let e = self.1.remove(l);
+      let m = self.0.level_set(e);
+      (exists<a : _> just.contains(a) && !a.is_bool() && self.0.level(a) == m ) &&
+
+      m == self.0.level(l) &&  tgt.0.restrict(m - 1).push(Assign::Decide((l.0, l.1.negate())))
+    }
+  }
+
+}
