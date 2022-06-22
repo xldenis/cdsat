@@ -41,14 +41,15 @@ enum Assign {
 
 impl Assign {
   #[predicate]
-  fn same(self, (t, val): (Term, Value)) -> bool {
-    pearlite! {
+  fn same(self, a: (Term, Value)) -> bool {
+    pearlite! {{
+      let (t, val) = a;
       match self {
         Assign::Decision(t2, val2) => t == t2 && val2 == val2,
         Assign::Input(t2, val2) => t == t2 && val2 == val2,
         Assign::Justified(_, t2, val2) => t == t2 && val2 == val2,
       }
-    }
+    }}
   }
 }
 
@@ -86,7 +87,7 @@ impl Trail {
   fn sound(self) -> bool {
     pearlite! {
       forall<i : Int> exists<just: _, t : _, val : _>
-        (self.0)[i].0 == Assign::Justified(just, t, val) ==>
+        (self.0)[i].0 == Assign::Justified(just, t, val) &&
           forall<m : Model> m.satisfy_set(just) ==> m.satisfies((t, val))
     }
   }
@@ -141,6 +142,7 @@ impl Trail {
   }
 
   #[logic]
+  #[variant(self.0.len())]
   fn find(self, d: (Term, Value)) -> Option<Int> {
     if self.0.len() == 0 {
       None
@@ -177,8 +179,19 @@ impl Trail {
   }
 
   #[logic]
+  #[variant(self.0.len())]
   fn restrict(self, level: Int) -> Self {
-    pearlite! { absurd }
+    if self.0 == Seq::EMPTY {
+      Trail(Seq::EMPTY)
+    } else {
+      let assign = (self.0)[self.0.len() - 1];
+      let restricted = Trail(self.0.subsequence(0, self.0.len() - 1)).restrict(level);
+      if assign.1 <= level {
+        Trail(restricted.0.push(assign))
+      } else {
+        restricted
+      }
+    }
   }
 
   #[logic]
@@ -198,6 +211,7 @@ impl Trail {
 }
 
 #[logic]
+#[variant(s.len())]
 fn count_decision(s: Seq<(Assign, Int)>) -> Int {
   if s.len() == 0 {
     0
