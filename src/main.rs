@@ -51,6 +51,15 @@ impl Assign {
       }
     }}
   }
+
+  #[predicate]
+  fn justified_sound(self) -> bool {
+    pearlite! {
+      exists<just: _, t : _, val : _>
+        self == Assign::Justified(just, t, val) &&
+          forall<m : Model> m.satisfy_set(just) ==> m.satisfies((t, val))
+    }
+  }
 }
 
 struct Model(Mapping<Var, Value>);
@@ -84,11 +93,13 @@ struct Trail(Seq<(Assign, Int)>);
 
 impl Trail {
   #[predicate]
+  #[why3::attr="inline:trivial"]
   fn sound(self) -> bool {
     pearlite! {
-      forall<i : Int> exists<just: _, t : _, val : _>
-        (self.0)[i].0 == Assign::Justified(just, t, val) &&
-          forall<m : Model> m.satisfy_set(just) ==> m.satisfies((t, val))
+      forall<i : Int>
+        0 <= i && i < self.0.len() ==>
+        (exists<just: _, t : _, val : _, l : _> (self.0)[i] == (Assign::Justified(just, t, val), l)) ==>
+          (self.0)[i].0.justified_sound()
     }
   }
 
@@ -157,6 +168,10 @@ impl Trail {
   }
 
   #[logic]
+  #[requires(self.is_justified(d))]
+  #[ensures(exists<i : _, l : _> (self.0)[i] == (Assign::Justified(result, d.0, d.1), l) &&
+    (self.sound() ==> (self.0)[i].0.justified_sound())
+    )]
   fn justification(self, d: (Term, Value)) -> Set<(Term, Value)> {
     match self.find(d) {
       Some(i) => match (self.0)[i].0 {
@@ -180,6 +195,10 @@ impl Trail {
 
   #[logic]
   #[variant(self.0.len())]
+  #[requires(self.invariant())]
+  #[ensures(result.invariant())]
+  #[ensures(forall<a : _> self.level(a) <= level ==> result.contains(a))]
+  #[ensures(forall<a : _> result.contains(a) ==> self.contains(a))]
   fn restrict(self, level: Int) -> Self {
     if self.0 == Seq::EMPTY {
       Trail(Seq::EMPTY)
@@ -195,7 +214,15 @@ impl Trail {
   }
 
   #[logic]
-  #[maintains(self.invariant())]
+  #[requires(self.sound())]
+  #[ensures(self.restrict(level).sound())]
+  fn restrict_sound(self, level: Int) {}
+
+  #[logic]
+  #[requires(self.invariant())]
+  #[ensures(result.invariant())]
+  #[requires(self.sound())]
+  #[ensures(result.sound())]
   #[ensures(exists<i : _> result.0 == self.0.push((Assign::Decision(a.0, a.1), i)))]
   fn push_decision(self, a : (Term, Value)) -> Self {
     Trail(self.0.push((Assign::Decision(a.0, a.1), 1 + count_decision(self.0))))
@@ -230,12 +257,15 @@ struct Normal(Trail);
 
 impl Normal {
   #[predicate]
+  #[why3::attr="inline:trivial"]
   fn sound(self) -> bool {
     self.0.sound()
   }
 
   // Γ ⟶ Γ,?A if A is an acceptable 𝒯ₖ-assignment for ℐₖ in Γ_𝒯ₖ for 1 ≤ k ≤ n
   #[predicate]
+  #[requires((self.0).invariant())]
+  #[requires((tgt.0).invariant())]
   #[requires(self.sound())]
   #[ensures(result ==> tgt.sound())]
   fn decide(self, t: Term, val: Value, tgt: Self) -> bool {
@@ -245,6 +275,8 @@ impl Normal {
 
   // Γ ⟶ Γ, J⊢L, if ¬L ∉ Γ and L is l ← 𝔟 for some l ∈ ℬ
   #[predicate]
+  #[requires((self.0).invariant())]
+  #[requires((tgt.0).invariant())]
   #[requires(self.sound())]
   #[ensures(result ==> tgt.sound())]
   fn deduce(self, just: (Set<(Term, Value)>, Term, Value), tgt: Self) -> bool {
@@ -257,13 +289,18 @@ impl Normal {
     } }
   }
 
-  // Γ ⟶ unsafe, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0
+  // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0
   #[predicate]
+  #[requires((self.0).invariant())]
+  #[requires((tgt.0).invariant())]
   #[requires(self.sound())]
   #[ensures(result ==> tgt.sound())]
   fn fail(self, just: (Set<(Term, Value)>, Term, Value), tgt: Self) -> bool {
     pearlite! { {
       let not_l = (just.1, just.2.negate());
+      (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
+      !self.0.contains((just.1, just.2)) &&
+      (forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
       self.0.contains(not_l) &&
       self.0.level(not_l) == 0 && self.0.is_set_level(just.0, 0)
     } }
@@ -272,6 +309,8 @@ impl Normal {
   // just : J |- L
   // Γ ⟶ ⟨ Γ; J ∪ {¬ L} ⟩ if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0
   #[predicate]
+  #[requires((self.0).invariant())]
+  #[requires((tgt.0).invariant())]
   #[requires(self.sound())]
   #[ensures(result ==> tgt.sound())]
   fn conflict_solve(self, just: (Set<(Term, Value)>, Term, Value), tgt: Conflict) -> bool {
@@ -279,6 +318,10 @@ impl Normal {
       let not_l = (just.1, just.2.negate());
       let conflict = just.0.insert(not_l);
       self.0.contains(not_l) &&
+      (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
+      !self.0.contains((just.1, just.2)) &&
+      (forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
+
       exists<l : Int> l > 0 && self.0.is_set_level(conflict, l) &&
       tgt == Conflict(self.0, conflict, l)
     } }
@@ -290,17 +333,19 @@ struct Conflict(Trail, Set<(Term, Value)>, Int);
 impl Conflict {
   #[predicate]
   fn invariant(self) -> bool {
-    pearlite! { self.0.is_set_level(self.1, self.2) }
+    pearlite! { self.0.is_set_level(self.1, self.2) && self.0.invariant() }
   }
 
   #[predicate]
+  #[why3::attr="inline:trivial"]
   fn sound(self) -> bool {
     pearlite! { self.0.sound() && (forall<m : Model> m.satisfy_set(self.1) ==> false) }
   }
 
   // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
   #[predicate]
-  #[maintains(self.invariant())]
+  #[requires(self.invariant())]
+  #[requires(tgt.invariant())]
   #[requires(self.sound())]
   #[ensures(result ==> tgt.sound())]
   fn resolve(self, a: (Term, Value), tgt: Self) -> bool {
@@ -314,7 +359,8 @@ impl Conflict {
 
   // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m, E⊢¬L, if level_\Gamma(L) > m, where m = level_\Gamma(E)
   #[predicate]
-  #[maintains(self.invariant())]
+  #[requires(self.invariant())]
+  #[requires(tgt.0.invariant())]
   #[requires(self.sound())]
   #[ensures(result ==> tgt.sound())]
   fn backjump(self, l : (Term, Value), tgt: Normal) -> bool {
@@ -328,11 +374,13 @@ impl Conflict {
 
   // ⟨ Γ; { A } ⊔ E ⟩  ⇒ Γ≤m-1, if A is a first-order decision of level m > level_\Gamma(E)
   #[predicate]
-  #[maintains(self.invariant())]
+  #[requires(self.invariant())]
+  #[requires(tgt.0.invariant())]
   #[requires(self.sound())]
   #[ensures(result ==> tgt.sound())]
   fn undo_clear(self, a : (Term, Value), tgt: Normal) -> bool {
     pearlite! { {
+      let _ = self.0.restrict_sound(self.2 - 1);
       let e = self.1.remove(a);
       self.1.contains(a) && !a.1.is_bool() && (exists<l : _> self.2 > l && self.0.is_set_level(e, l)) &&
       tgt.0 == self.0.restrict(self.2 - 1)
@@ -341,13 +389,17 @@ impl Conflict {
 
   // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m-1,?¬L
   #[predicate]
-  #[maintains(self.invariant())]
+  #[requires(self.invariant())]
+  #[requires(tgt.0.invariant())]
   #[requires(self.sound())]
   #[ensures(result ==> tgt.sound())]
   fn undo_decide(self, l : (Term, Value), tgt: Normal) -> bool {
     pearlite! { {
+      let _ = self.0.restrict_sound(self.2 - 1);
+
       let just = self.0.justification(l);
       let e = self.1.remove(l);
+      self.0.is_justified(l) &&
       (exists<a : _> just.contains(a) && !a.1.is_bool() && self.0.level(a) == self.2 ) &&
       self.2 == self.0.level(l) &&  tgt.0 == self.0.restrict(self.2 - 1).push_decision((l.0, l.1.negate()))
     } }

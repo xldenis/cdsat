@@ -1,0 +1,1265 @@
+module Type
+  use Ref
+  use mach.int.Int
+  use prelude.Int8
+  use prelude.Int16
+  use mach.int.Int32
+  use mach.int.Int64
+  use prelude.UInt8
+  use prelude.UInt16
+  use mach.int.UInt32
+  use mach.int.UInt64
+  use string.Char
+  use floating_point.Single
+  use floating_point.Double
+  use seq.Seq
+  use set.Set
+  use prelude.Prelude
+  type cdsat_value  =
+    | Cdsat_Value_Bool bool
+    | Cdsat_Value_Rat int
+    
+  type cdsat_var  =
+    | Cdsat_Var int
+    
+  type cdsat_term  =
+    | Cdsat_Term_Variable (cdsat_var)
+    | Cdsat_Term_Value (cdsat_value)
+    | Cdsat_Term_Plus (cdsat_term) (cdsat_term)
+    | Cdsat_Term_Eq (cdsat_term) (cdsat_term)
+    
+  type cdsat_assign  =
+    | Cdsat_Assign_Decision (cdsat_term) (cdsat_value)
+    | Cdsat_Assign_Justified (Set.set (cdsat_term, cdsat_value)) (cdsat_term) (cdsat_value)
+    | Cdsat_Assign_Input (cdsat_term) (cdsat_value)
+    
+  type cdsat_model  =
+    | Cdsat_Model (Map.map (cdsat_var) (cdsat_value))
+    
+  let function cdsat_model_Model_0 (self : cdsat_model) : Map.map (cdsat_var) (cdsat_value) =
+    match (self) with
+      | Cdsat_Model a -> a
+      end
+  type cdsat_trail  =
+    | Cdsat_Trail (Seq.seq (cdsat_assign, int))
+    
+  let function cdsat_trail_Trail_0 (self : cdsat_trail) : Seq.seq (cdsat_assign, int) =
+    match (self) with
+      | Cdsat_Trail a -> a
+      end
+  type core_option_option 't =
+    | Core_Option_Option_None
+    | Core_Option_Option_Some 't
+    
+  type cdsat_normal  =
+    | Cdsat_Normal (cdsat_trail)
+    
+  let function cdsat_normal_Normal_0 (self : cdsat_normal) : cdsat_trail =
+    match (self) with
+      | Cdsat_Normal a -> a
+      end
+  type cdsat_conflict  =
+    | Cdsat_Conflict (cdsat_trail) (Set.set (cdsat_term, cdsat_value)) int
+    
+  let function cdsat_conflict_Conflict_0 (self : cdsat_conflict) : cdsat_trail =
+    match (self) with
+      | Cdsat_Conflict a _ _ -> a
+      end
+  let function cdsat_conflict_Conflict_1 (self : cdsat_conflict) : Set.set (cdsat_term, cdsat_value) =
+    match (self) with
+      | Cdsat_Conflict _ a _ -> a
+      end
+  let function cdsat_conflict_Conflict_2 (self : cdsat_conflict) : int =
+    match (self) with
+      | Cdsat_Conflict _ _ a -> a
+      end
+end
+module Cdsat_Main_Interface
+  val main [@cfg:stackify] (_ : ()) : ()
+end
+module Cdsat_Main
+  let rec cfg main [@cfg:stackify] [#"/Users/xavier/Code/cdsat/src/main.rs" 408 0 10] (_ : ()) : () =
+  var _0 : ();
+  {
+    goto BB0
+  }
+  BB0 {
+    _0 <- ();
+    return _0
+  }
+  
+end
+module Cdsat_Impl0_IsBool_Interface
+  use Type
+  predicate is_bool (self : Type.cdsat_value)
+end
+module Cdsat_Impl0_IsBool
+  use Type
+  predicate is_bool [#"/Users/xavier/Code/cdsat/src/main.rs" 19 2 26] (self : Type.cdsat_value) =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 20 4 5] match (self) with
+      | Type.Cdsat_Value_Bool _ -> true
+      | _ -> false
+      end
+end
+module Cdsat_Impl0_Negate_Interface
+  use Type
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  function negate (self : Type.cdsat_value) : Type.cdsat_value
+end
+module Cdsat_Impl0_Negate
+  use Type
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  function negate [#"/Users/xavier/Code/cdsat/src/main.rs" 28 2 25] (self : Type.cdsat_value) : Type.cdsat_value =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 29 4 5] match (self) with
+      | Type.Cdsat_Value_Bool b -> Type.Cdsat_Value_Bool (not b)
+      | _ -> self
+      end
+  axiom negate_spec : forall self : Type.cdsat_value . ([#"/Users/xavier/Code/cdsat/src/main.rs" 27 13 27] IsBool0.is_bool self) -> true
+end
+module Cdsat_Impl0_Negate_Impl
+  use Type
+  clone Cdsat_Impl0_IsBool as IsBool0
+  let rec ghost function negate (self : Type.cdsat_value) : Type.cdsat_value
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 27 13 27] IsBool0.is_bool self}
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 29 4 5] match (self) with
+      | Type.Cdsat_Value_Bool b -> Type.Cdsat_Value_Bool (not b)
+      | _ -> self
+      end
+end
+module Cdsat_Impl1_Same_Interface
+  use Type
+  predicate same (self : Type.cdsat_assign) (a : (Type.cdsat_term, Type.cdsat_value))
+end
+module Cdsat_Impl1_Same
+  use Type
+  predicate same [#"/Users/xavier/Code/cdsat/src/main.rs" 44 2 41] (self : Type.cdsat_assign) (a : (Type.cdsat_term, Type.cdsat_value))
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 45 4 6] let (t, val') = a in match (self) with
+      | Type.Cdsat_Assign_Decision t2 val2 -> t = t2 && val2 = val2
+      | Type.Cdsat_Assign_Input t2 val2 -> t = t2 && val2 = val2
+      | Type.Cdsat_Assign_Justified _ t2 val2 -> t = t2 && val2 = val2
+      end
+end
+module CreusotContracts_Logic_Set_Impl0_Contains_Interface
+  type t
+  use set.Set
+  predicate contains [@inline:trivial] (self : Set.set t) (e : t)
+end
+module CreusotContracts_Logic_Set_Impl0_Contains
+  type t
+  use set.Set
+  predicate contains [@inline:trivial] (self : Set.set t) (e : t) =
+    Set.mem e self
+end
+module Cdsat_Impl2_Interp_Interface
+  use Type
+  function interp (self : Type.cdsat_model) (t : Type.cdsat_term) : Type.cdsat_value
+end
+module Cdsat_Impl2_Interp
+  use Type
+  use map.Map
+  use mach.int.Int
+  use mach.int.Int32
+  function interp [#"/Users/xavier/Code/cdsat/src/main.rs" 69 2 35] (self : Type.cdsat_model) (t : Type.cdsat_term) : Type.cdsat_value
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 70 4 5] match (t) with
+      | Type.Cdsat_Term_Variable v -> Map.get (Type.cdsat_model_Model_0 self) v
+      | Type.Cdsat_Term_Value v -> v
+      | Type.Cdsat_Term_Plus l r -> match ((interp self l, interp self r)) with
+        | (Type.Cdsat_Value_Rat r1, Type.Cdsat_Value_Rat r2) -> Type.Cdsat_Value_Rat (r1 + r2)
+        | _ -> Type.Cdsat_Value_Rat (- 1)
+        end
+      | Type.Cdsat_Term_Eq l r -> Type.Cdsat_Value_Bool (interp self l = interp self r)
+      end
+end
+module Cdsat_Impl2_Satisfies_Interface
+  use Type
+  predicate satisfies (self : Type.cdsat_model) (v : (Type.cdsat_term, Type.cdsat_value))
+end
+module Cdsat_Impl2_Satisfies
+  use Type
+  clone Cdsat_Impl2_Interp_Interface as Interp0
+  predicate satisfies [#"/Users/xavier/Code/cdsat/src/main.rs" 82 2 46] (self : Type.cdsat_model) (v : (Type.cdsat_term, Type.cdsat_value))
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 83 4 27] Interp0.interp self (let (a, _) = v in a) = (let (_, a) = v in a)
+end
+module Cdsat_Impl2_SatisfySet_Interface
+  use Type
+  use set.Set
+  predicate satisfy_set (self : Type.cdsat_model) (v : Set.set (Type.cdsat_term, Type.cdsat_value))
+end
+module Cdsat_Impl2_SatisfySet
+  use Type
+  use set.Set
+  clone Cdsat_Impl2_Satisfies_Interface as Satisfies0
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  predicate satisfy_set [#"/Users/xavier/Code/cdsat/src/main.rs" 87 2 53] (self : Type.cdsat_model) (v : Set.set (Type.cdsat_term, Type.cdsat_value))
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 88 4 67] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains v a -> Satisfies0.satisfies self a
+end
+module Cdsat_Impl1_JustifiedSound_Interface
+  use Type
+  predicate justified_sound (self : Type.cdsat_assign)
+end
+module Cdsat_Impl1_JustifiedSound
+  use Type
+  use set.Set
+  clone Cdsat_Impl2_Satisfies_Interface as Satisfies0
+  clone Cdsat_Impl2_SatisfySet_Interface as SatisfySet0
+  predicate justified_sound [#"/Users/xavier/Code/cdsat/src/main.rs" 56 2 34] (self : Type.cdsat_assign) =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 57 4 5] exists val' : (Type.cdsat_value) . exists t : (Type.cdsat_term) . exists just : (Set.set (Type.cdsat_term, Type.cdsat_value)) . self = Type.Cdsat_Assign_Justified just t val' && (forall m : (Type.cdsat_model) . SatisfySet0.satisfy_set m just -> Satisfies0.satisfies m (t, val'))
+end
+module Cdsat_Impl3_Sound_Interface
+  use Type
+  predicate sound [@inline:trivial] (self : Type.cdsat_trail)
+end
+module Cdsat_Impl3_Sound
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  use seq.Seq
+  use set.Set
+  clone Cdsat_Impl1_JustifiedSound_Interface as JustifiedSound0
+  predicate sound [@inline:trivial] [#"/Users/xavier/Code/cdsat/src/main.rs" 97 2 24] (self : Type.cdsat_trail) =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 98 4 5] forall i : (int) . 0 <= i && i < Seq.length (Type.cdsat_trail_Trail_0 self) -> (exists l : (int) . exists val' : (Type.cdsat_value) . exists t : (Type.cdsat_term) . exists just : (Set.set (Type.cdsat_term, Type.cdsat_value)) . Seq.get (Type.cdsat_trail_Trail_0 self) i = (Type.Cdsat_Assign_Justified just t val', l)) -> JustifiedSound0.justified_sound (let (a, _) = Seq.get (Type.cdsat_trail_Trail_0 self) i in a)
+end
+module Cdsat_Impl3_Find_Interface
+  use seq.Seq
+  use Type
+  use mach.int.Int
+  function find (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Type.core_option_option int
+end
+module Cdsat_Impl3_Find
+  use seq.Seq
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  use seq_ext.SeqExt
+  clone Cdsat_Impl1_Same_Interface as Same0
+  function find [#"/Users/xavier/Code/cdsat/src/main.rs" 157 2 48] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Type.core_option_option int
+    
+  axiom def : forall self : Type.cdsat_trail, d : (Type.cdsat_term, Type.cdsat_value) . find self d = ([#"/Users/xavier/Code/cdsat/src/main.rs" 155 2 10] if Seq.length (Type.cdsat_trail_Trail_0 self) = 0 then
+    Type.Core_Option_Option_None
+  else
+    if Same0.same (let (a, _) = Seq.get (Type.cdsat_trail_Trail_0 self) 0 in a) d then
+      Type.Core_Option_Option_Some 0
+    else
+      match (find (Type.Cdsat_Trail (SeqExt.subsequence (Type.cdsat_trail_Trail_0 self) 1 (Seq.length (Type.cdsat_trail_Trail_0 self)))) d) with
+        | Type.Core_Option_Option_Some i -> Type.Core_Option_Option_Some (i + 1)
+        | Type.Core_Option_Option_None -> Type.Core_Option_Option_None
+        end
+    
+  )
+  axiom find_spec : forall self : Type.cdsat_trail, d : (Type.cdsat_term, Type.cdsat_value) . true
+end
+module Cdsat_Impl3_Find_Impl
+  use seq.Seq
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  use seq_ext.SeqExt
+  clone Cdsat_Impl1_Same as Same0
+  let rec ghost function find (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Type.core_option_option int
+    variant {[#"/Users/xavier/Code/cdsat/src/main.rs" 156 2 26] Seq.length (Type.cdsat_trail_Trail_0 self)}
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 155 2 10] if let a = let a' = Type.cdsat_trail_Trail_0 self in Seq.length a' in pure {a = 0} then
+      Type.Core_Option_Option_None
+    else
+      if let a' = let (a, _) = let a' = Type.cdsat_trail_Trail_0 self in Seq.get a' 0 in a in Same0.same a' d then
+        Type.Core_Option_Option_Some 0
+      else
+        match (let a' = Type.Cdsat_Trail (let a' = Type.cdsat_trail_Trail_0 self in let c' = let a' = Type.cdsat_trail_Trail_0 self in Seq.length a' in SeqExt.subsequence a' 1 c') in find a' d) with
+          | Type.Core_Option_Option_Some i -> Type.Core_Option_Option_Some (i + 1)
+          | Type.Core_Option_Option_None -> Type.Core_Option_Option_None
+          end
+      
+    
+end
+module Cdsat_Impl3_Level_Interface
+  use Type
+  use mach.int.Int
+  function level (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : int
+end
+module Cdsat_Impl3_Level
+  use Type
+  use mach.int.Int
+  use seq.Seq
+  use mach.int.Int32
+  clone Cdsat_Impl3_Find_Interface as Find0 with axiom .
+  function level [#"/Users/xavier/Code/cdsat/src/main.rs" 143 2 41] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : int
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 144 4 5] match (Find0.find self d) with
+      | Type.Core_Option_Option_Some i -> let (_, a) = Seq.get (Type.cdsat_trail_Trail_0 self) i in a
+      | Type.Core_Option_Option_None -> 0
+      end
+end
+module Cdsat_Impl3_IsSetLevel_Interface
+  use Type
+  use set.Set
+  use mach.int.Int
+  predicate is_set_level (self : Type.cdsat_trail) (s : Set.set (Type.cdsat_term, Type.cdsat_value)) (m : int)
+end
+module Cdsat_Impl3_IsSetLevel
+  use Type
+  use set.Set
+  use mach.int.Int
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  predicate is_set_level [#"/Users/xavier/Code/cdsat/src/main.rs" 107 2 62] (self : Type.cdsat_trail) (s : Set.set (Type.cdsat_term, Type.cdsat_value)) (m : int)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 109 6 58] (exists i : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains s i && Level0.level self i = m) && (forall i : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains s i -> Level0.level self i <= m)
+end
+module Cdsat_CountDecision_Interface
+  use seq.Seq
+  use Type
+  use mach.int.Int
+  function count_decision (s : Seq.seq (Type.cdsat_assign, int)) : int
+end
+module Cdsat_CountDecision
+  use seq.Seq
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  use seq_ext.SeqExt
+  function count_decision [#"/Users/xavier/Code/cdsat/src/main.rs" 242 0 47] (s : Seq.seq (Type.cdsat_assign, int)) : int
+    
+  axiom def : forall s : Seq.seq (Type.cdsat_assign, int) . count_decision s = ([#"/Users/xavier/Code/cdsat/src/main.rs" 240 0 8] if Seq.length s = 0 then
+    0
+  else
+    match (let (a, _) = Seq.get s 0 in a) with
+      | Type.Cdsat_Assign_Decision _ _ -> 1 + count_decision (SeqExt.subsequence s 1 (Seq.length s))
+      | Type.Cdsat_Assign_Justified _ _ _ -> count_decision (SeqExt.subsequence s 1 (Seq.length s))
+      | _ -> 0
+      end
+  )
+  axiom count_decision_spec : forall s : Seq.seq (Type.cdsat_assign, int) . true
+end
+module Cdsat_CountDecision_Impl
+  use seq.Seq
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  use seq_ext.SeqExt
+  let rec ghost function count_decision (s : Seq.seq (Type.cdsat_assign, int)) : int
+    variant {[#"/Users/xavier/Code/cdsat/src/main.rs" 241 10 17] Seq.length s}
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 240 0 8] if pure {Seq.length s = 0} then
+      0
+    else
+      match (let (a, _) = Seq.get s 0 in a) with
+        | Type.Cdsat_Assign_Decision _ _ -> 1 + count_decision (SeqExt.subsequence s 1 (Seq.length s))
+        | Type.Cdsat_Assign_Justified _ _ _ -> count_decision (SeqExt.subsequence s 1 (Seq.length s))
+        | _ -> 0
+        end
+    
+end
+module Cdsat_Impl3_Invariant_Interface
+  use Type
+  predicate invariant' (self : Type.cdsat_trail)
+end
+module Cdsat_Impl3_Invariant
+  use Type
+  use mach.int.Int
+  use prelude.Prelude
+  use mach.int.Int32
+  use seq_ext.SeqExt
+  use seq.Seq
+  use set.Set
+  clone Cdsat_Impl3_IsSetLevel_Interface as IsSetLevel0
+  clone Cdsat_Impl1_Same_Interface as Same0
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_CountDecision_Interface as CountDecision0 with axiom .
+  predicate invariant' [#"/Users/xavier/Code/cdsat/src/main.rs" 115 2 28] (self : Type.cdsat_trail) =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 116 4 5] forall i : (int) . match (Seq.get (Type.cdsat_trail_Trail_0 self) i) with
+      | (Type.Cdsat_Assign_Decision _ _, l) -> CountDecision0.count_decision (SeqExt.subsequence (Type.cdsat_trail_Trail_0 self) 0 i) = l
+      | (Type.Cdsat_Assign_Input _ _, l) -> l = 0
+      | (Type.Cdsat_Assign_Justified j _ _, l) -> (forall k : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains j k -> (exists m : (int) . 0 <= m && m < i && Same0.same (let (a, _) = Seq.get (Type.cdsat_trail_Trail_0 self) m in a) k)) && not Set.is_empty j && IsSetLevel0.is_set_level self j l
+      end
+end
+module Cdsat_Impl3_Contains_Interface
+  use Type
+  predicate contains (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value))
+end
+module Cdsat_Impl3_Contains
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  use seq.Seq
+  clone Cdsat_Impl1_Same_Interface as Same0
+  predicate contains [#"/Users/xavier/Code/cdsat/src/main.rs" 151 2 45] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value))
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 152 4 84] exists i : (int) . 0 <= i && i < Seq.length (Type.cdsat_trail_Trail_0 self) && Same0.same (let (a, _) = Seq.get (Type.cdsat_trail_Trail_0 self) i in a) d
+end
+module Cdsat_Impl3_IsJustified_Interface
+  use Type
+  function is_justified (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : bool
+end
+module Cdsat_Impl3_IsJustified
+  use Type
+  use mach.int.Int
+  use seq.Seq
+  clone Cdsat_Impl3_Find_Interface as Find0 with axiom .
+  function is_justified [#"/Users/xavier/Code/cdsat/src/main.rs" 186 2 49] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : bool
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 187 4 5] match (Find0.find self d) with
+      | Type.Core_Option_Option_Some i -> match (let (a, _) = Seq.get (Type.cdsat_trail_Trail_0 self) i in a) with
+        | Type.Cdsat_Assign_Justified _ _ _ -> true
+        | _ -> false
+        end
+      | _ -> false
+      end
+end
+module Cdsat_Impl3_Justification_Interface
+  use mach.int.Int
+  use seq.Seq
+  use Type
+  use set.Set
+  clone Cdsat_Impl1_JustifiedSound_Interface as JustifiedSound0
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  clone Cdsat_Impl3_IsJustified_Interface as IsJustified0
+  function justification (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Set.set (Type.cdsat_term, Type.cdsat_value)
+    
+end
+module Cdsat_Impl3_Justification
+  use mach.int.Int
+  use seq.Seq
+  use Type
+  use set.Set
+  clone Cdsat_Impl1_JustifiedSound_Interface as JustifiedSound0
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  clone Cdsat_Impl3_IsJustified_Interface as IsJustified0
+  clone Cdsat_Impl3_Find_Interface as Find0 with axiom .
+  function justification [#"/Users/xavier/Code/cdsat/src/main.rs" 175 2 64] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Set.set (Type.cdsat_term, Type.cdsat_value)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 176 4 5] match (Find0.find self d) with
+      | Type.Core_Option_Option_Some i -> match (let (a, _) = Seq.get (Type.cdsat_trail_Trail_0 self) i in a) with
+        | Type.Cdsat_Assign_Justified j _ _ -> j
+        | _ -> Set.empty 
+        end
+      | Type.Core_Option_Option_None -> Set.empty 
+      end
+  axiom justification_spec : forall self : Type.cdsat_trail, d : (Type.cdsat_term, Type.cdsat_value) . ([#"/Users/xavier/Code/cdsat/src/main.rs" 171 13 33] IsJustified0.is_justified self d) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 172 2 6] exists l : (int) . exists i : (int) . Seq.get (Type.cdsat_trail_Trail_0 self) i = (Type.Cdsat_Assign_Justified (justification self d) (let (a, _) = d in a) (let (_, a) = d in a), l) && (Sound0.sound self -> JustifiedSound0.justified_sound (let (a, _) = Seq.get (Type.cdsat_trail_Trail_0 self) i in a)))
+end
+module Cdsat_Impl3_Justification_Impl
+  use mach.int.Int
+  use seq.Seq
+  use Type
+  use set.Set
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains0.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound0 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_IsJustified as IsJustified0 with function Find0.find = Find0.find
+  let rec ghost function justification (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Set.set (Type.cdsat_term, Type.cdsat_value)
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 171 13 33] IsJustified0.is_justified self d}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 172 2 6] exists l : (int) . exists i : (int) . Seq.get (Type.cdsat_trail_Trail_0 self) i = (Type.Cdsat_Assign_Justified result (let (a, _) = d in a) (let (_, a) = d in a), l) && (Sound0.sound self -> JustifiedSound0.justified_sound (let (a, _) = Seq.get (Type.cdsat_trail_Trail_0 self) i in a)) }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 176 4 5] match (Find0.find self d) with
+      | Type.Core_Option_Option_Some i -> match (let (a, _) = let a' = Type.cdsat_trail_Trail_0 self in Seq.get a' i in a) with
+        | Type.Cdsat_Assign_Justified j _ _ -> j
+        | _ -> Set.empty 
+        end
+      | Type.Core_Option_Option_None -> Set.empty 
+      end
+end
+module Cdsat_Impl3_Restrict_Interface
+  use Type
+  use mach.int.Int
+  use seq.Seq
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  function restrict (self : Type.cdsat_trail) (level : int) : Type.cdsat_trail
+end
+module Cdsat_Impl3_Restrict
+  use Type
+  use mach.int.Int
+  use seq.Seq
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  use mach.int.Int32
+  use seq_ext.SeqExt
+  function restrict [#"/Users/xavier/Code/cdsat/src/main.rs" 202 2 39] (self : Type.cdsat_trail) (level : int) : Type.cdsat_trail
+    
+  axiom def : forall self : Type.cdsat_trail, level : int . restrict self level = ([#"/Users/xavier/Code/cdsat/src/main.rs" 196 2 10] if Type.cdsat_trail_Trail_0 self = Seq.empty  then
+    Type.Cdsat_Trail (Seq.empty )
+  else
+    let assign = Seq.get (Type.cdsat_trail_Trail_0 self) (Seq.length (Type.cdsat_trail_Trail_0 self) - 1) in let restricted = restrict (Type.Cdsat_Trail (SeqExt.subsequence (Type.cdsat_trail_Trail_0 self) 0 (Seq.length (Type.cdsat_trail_Trail_0 self) - 1))) level in if (let (_, a) = assign in a) <= level then
+      Type.Cdsat_Trail (Seq.snoc (Type.cdsat_trail_Trail_0 restricted) assign)
+    else
+      restricted
+    
+  )
+  axiom restrict_spec : forall self : Type.cdsat_trail, level : int . ([#"/Users/xavier/Code/cdsat/src/main.rs" 198 13 29] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 199 12 30] Invariant0.invariant' (restrict self level)) && ([#"/Users/xavier/Code/cdsat/src/main.rs" 200 2 73] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Level0.level self a <= level -> Contains0.contains (restrict self level) a) && ([#"/Users/xavier/Code/cdsat/src/main.rs" 201 2 67] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains (restrict self level) a -> Contains0.contains self a)
+end
+module Cdsat_Impl3_Restrict_Impl
+  use Type
+  use mach.int.Int
+  use seq.Seq
+  use mach.int.Int32
+  use seq_ext.SeqExt
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains0 with predicate Same0.same = Same0.same
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains1 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains1.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains1.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  let rec ghost function restrict (self : Type.cdsat_trail) (level : int) : Type.cdsat_trail
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 198 13 29] Invariant0.invariant' self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 201 2 67] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains result a -> Contains0.contains self a }
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 200 2 73] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Level0.level self a <= level -> Contains0.contains result a }
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 199 12 30] Invariant0.invariant' result }
+    variant {[#"/Users/xavier/Code/cdsat/src/main.rs" 197 2 26] Seq.length (Type.cdsat_trail_Trail_0 self)}
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 196 2 10] if let a = Type.cdsat_trail_Trail_0 self in pure {a = Seq.empty } then
+      Type.Cdsat_Trail (Seq.empty )
+    else
+      let assign = let a' = Type.cdsat_trail_Trail_0 self in let b' = (let a' = Type.cdsat_trail_Trail_0 self in Seq.length a') - 1 in Seq.get a' b' in let restricted = let a' = Type.Cdsat_Trail (let a' = Type.cdsat_trail_Trail_0 self in let c' = (let a' = Type.cdsat_trail_Trail_0 self in Seq.length a') - 1 in SeqExt.subsequence a' 0 c') in restrict a' level in if (let (_, a) = assign in a) <= level then
+        Type.Cdsat_Trail (let a' = Type.cdsat_trail_Trail_0 restricted in Seq.snoc a' assign)
+      else
+        restricted
+      
+    
+end
+module Cdsat_Impl3_RestrictSound_Interface
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_Restrict_Interface as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains0.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  function restrict_sound (self : Type.cdsat_trail) (level : int) : ()
+end
+module Cdsat_Impl3_RestrictSound
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_Restrict_Interface as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains0.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  function restrict_sound [#"/Users/xavier/Code/cdsat/src/main.rs" 219 2 37] (self : Type.cdsat_trail) (level : int) : ()
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 216 2 10] ()
+  axiom restrict_sound_spec : forall self : Type.cdsat_trail, level : int . ([#"/Users/xavier/Code/cdsat/src/main.rs" 217 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 218 12 40] Sound0.sound (Restrict0.restrict self level))
+end
+module Cdsat_Impl3_RestrictSound_Impl
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains0 with predicate Same0.same = Same0.same
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains1 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains1.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains1.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound0 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains1.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  clone Cdsat_Impl3_Restrict as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains0.contains, function Level0.level = Level0.level, axiom .
+  let rec ghost function restrict_sound (self : Type.cdsat_trail) (level : int) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 217 13 25] Sound0.sound self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 218 12 40] Sound0.sound (Restrict0.restrict self level) }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 216 2 10] ()
+end
+module Cdsat_Impl3_PushDecision_Interface
+  use mach.int.Int
+  use Type
+  use seq.Seq
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  function push_decision (self : Type.cdsat_trail) (a : (Type.cdsat_term, Type.cdsat_value)) : Type.cdsat_trail
+end
+module Cdsat_Impl3_PushDecision
+  use mach.int.Int
+  use Type
+  use seq.Seq
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  use mach.int.Int32
+  clone Cdsat_CountDecision_Interface as CountDecision0 with axiom .
+  function push_decision [#"/Users/xavier/Code/cdsat/src/main.rs" 227 2 51] (self : Type.cdsat_trail) (a : (Type.cdsat_term, Type.cdsat_value)) : Type.cdsat_trail
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 228 4 80] Type.Cdsat_Trail (Seq.snoc (Type.cdsat_trail_Trail_0 self) (Type.Cdsat_Assign_Decision (let (a, _) = a in a) (let (_, a) = a in a), 1 + CountDecision0.count_decision (Type.cdsat_trail_Trail_0 self)))
+  axiom push_decision_spec : forall self : Type.cdsat_trail, a : (Type.cdsat_term, Type.cdsat_value) . ([#"/Users/xavier/Code/cdsat/src/main.rs" 224 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 222 13 29] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 223 12 30] Invariant0.invariant' (push_decision self a)) && ([#"/Users/xavier/Code/cdsat/src/main.rs" 225 12 26] Sound0.sound (push_decision self a)) && ([#"/Users/xavier/Code/cdsat/src/main.rs" 226 2 84] exists i : (int) . Type.cdsat_trail_Trail_0 (push_decision self a) = Seq.snoc (Type.cdsat_trail_Trail_0 self) (Type.Cdsat_Assign_Decision (let (a, _) = a in a) (let (_, a) = a in a), i))
+end
+module Cdsat_Impl3_PushDecision_Impl
+  use mach.int.Int
+  use Type
+  use seq.Seq
+  use mach.int.Int32
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains0.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound0 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains0.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  let rec ghost function push_decision (self : Type.cdsat_trail) (a : (Type.cdsat_term, Type.cdsat_value)) : Type.cdsat_trail
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 224 13 25] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 222 13 29] Invariant0.invariant' self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 226 2 84] exists i : (int) . Type.cdsat_trail_Trail_0 result = Seq.snoc (Type.cdsat_trail_Trail_0 self) (Type.Cdsat_Assign_Decision (let (a, _) = a in a) (let (_, a) = a in a), i) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 225 12 26] Sound0.sound result }
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 223 12 30] Invariant0.invariant' result }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 228 4 80] Type.Cdsat_Trail (let a' = Type.cdsat_trail_Trail_0 self in let b' = (Type.Cdsat_Assign_Decision (let (a, _) = a in a) (let (_, a) = a in a), 1 + (let a' = Type.cdsat_trail_Trail_0 self in CountDecision0.count_decision a')) in Seq.snoc a' b')
+end
+module Cdsat_Impl4_Sound_Interface
+  use Type
+  predicate sound [@inline:trivial] (self : Type.cdsat_normal)
+end
+module Cdsat_Impl4_Sound
+  use Type
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  predicate sound [@inline:trivial] [#"/Users/xavier/Code/cdsat/src/main.rs" 261 2 24] (self : Type.cdsat_normal) =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 259 2 14] Sound0.sound (Type.cdsat_normal_Normal_0 self)
+end
+module Cdsat_Impl4_Decide_Interface
+  use Type
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl4_Sound_Interface as Sound0
+  predicate decide (self : Type.cdsat_normal) (t : Type.cdsat_term) (val' : Type.cdsat_value) (tgt : Type.cdsat_normal)
+end
+module Cdsat_Impl4_Decide
+  use Type
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl4_Sound_Interface as Sound0
+  use seq.Seq
+  clone Cdsat_CountDecision_Interface as CountDecision0 with axiom .
+  predicate decide [#"/Users/xavier/Code/cdsat/src/main.rs" 271 2 57] (self : Type.cdsat_normal) (t : Type.cdsat_term) (val' : Type.cdsat_value) (tgt : Type.cdsat_normal)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 273 6 84] Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 tgt) = Seq.snoc (Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 self)) (Type.Cdsat_Assign_Decision t val', CountDecision0.count_decision (Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 self)))
+  axiom decide_spec : forall self : Type.cdsat_normal, t : Type.cdsat_term, val' : Type.cdsat_value, tgt : Type.cdsat_normal . ([#"/Users/xavier/Code/cdsat/src/main.rs" 269 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 268 13 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 267 13 33] Invariant0.invariant' (Type.cdsat_normal_Normal_0 self)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 270 2 36] decide self t val' tgt -> Sound0.sound tgt)
+end
+module Cdsat_Impl4_Decide_Impl
+  use Type
+  use seq.Seq
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains0.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound1 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl4_Sound as Sound0 with predicate Sound0.sound = Sound1.sound
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains0.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  let rec ghost function decide (self : Type.cdsat_normal) (t : Type.cdsat_term) (val' : Type.cdsat_value) (tgt : Type.cdsat_normal) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 269 13 25] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 268 13 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 267 13 33] Invariant0.invariant' (Type.cdsat_normal_Normal_0 self)}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 270 2 36] result -> Sound0.sound tgt }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 273 6 84] let b = let a' = Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 self) in let b' = (Type.Cdsat_Assign_Decision t val', let a' = Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 self) in CountDecision0.count_decision a') in Seq.snoc a' b' in let a = Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 tgt) in pure {a = b}
+end
+module Cdsat_Impl4_Deduce_Interface
+  use Type
+  use set.Set
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl4_Sound_Interface as Sound0
+  predicate deduce (self : Type.cdsat_normal) (just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+    
+end
+module Cdsat_Impl4_Deduce
+  use Type
+  use set.Set
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl4_Sound_Interface as Sound0
+  use mach.int.Int
+  use seq.Seq
+  clone Cdsat_Impl2_Satisfies_Interface as Satisfies0
+  clone Cdsat_Impl2_SatisfySet_Interface as SatisfySet0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  clone Cdsat_Impl0_Negate_Interface as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  predicate deduce [#"/Users/xavier/Code/cdsat/src/main.rs" 282 2 77] (self : Type.cdsat_normal) (just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 283 4 7] let not_l = (let (_, a, _) = just in a, Negate0.negate (let (_, _, a) = just in a)) in not Contains0.contains (Type.cdsat_normal_Normal_0 self) not_l && IsBool0.is_bool (let (_, _, a) = just in a) && (forall m : (Type.cdsat_model) . SatisfySet0.satisfy_set m (let (a, _, _) = just in a) -> Satisfies0.satisfies m (let (_, a, _) = just in a, let (_, _, a) = just in a)) && (exists i : (int) . Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 tgt) = Seq.snoc (Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 self)) (Type.Cdsat_Assign_Justified (let (a, _, _) = just in a) (let (_, a, _) = just in a) (let (_, _, a) = just in a), i))
+  axiom deduce_spec : forall self : Type.cdsat_normal, just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value), tgt : Type.cdsat_normal . ([#"/Users/xavier/Code/cdsat/src/main.rs" 280 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 279 13 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 278 13 33] Invariant0.invariant' (Type.cdsat_normal_Normal_0 self)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 281 2 36] deduce self just tgt -> Sound0.sound tgt)
+end
+module Cdsat_Impl4_Deduce_Impl
+  use Type
+  use set.Set
+  use mach.int.Int
+  use seq.Seq
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone Cdsat_Impl0_IsBool as IsBool0
+  clone Cdsat_Impl0_Negate as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains0 with predicate Same0.same = Same0.same
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains1 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains1.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains1.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound1 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl4_Sound as Sound0 with predicate Sound0.sound = Sound1.sound
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains1.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  let rec ghost function deduce (self : Type.cdsat_normal) (just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 280 13 25] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 279 13 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 278 13 33] Invariant0.invariant' (Type.cdsat_normal_Normal_0 self)}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 281 2 36] result -> Sound0.sound tgt }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 283 4 7] let not_l = (let (_, a, _) = just in a, Negate0.negate (let (_, _, a) = just in a)) in not (let a' = Type.cdsat_normal_Normal_0 self in Contains0.contains a' not_l) && IsBool0.is_bool (let (_, _, a) = just in a) && pure {forall m : (Type.cdsat_model) . SatisfySet0.satisfy_set m (let (a, _, _) = just in a) -> Satisfies0.satisfies m (let (_, a, _) = just in a, let (_, _, a) = just in a)} && pure {exists i : (int) . Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 tgt) = Seq.snoc (Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 self)) (Type.Cdsat_Assign_Justified (let (a, _, _) = just in a) (let (_, a, _) = just in a) (let (_, _, a) = just in a), i)}
+end
+module Cdsat_Impl4_Fail_Interface
+  use Type
+  use set.Set
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl4_Sound_Interface as Sound0
+  predicate fail (self : Type.cdsat_normal) (just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+    
+end
+module Cdsat_Impl4_Fail
+  use Type
+  use set.Set
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl4_Sound_Interface as Sound0
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl3_IsSetLevel_Interface as IsSetLevel0
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl2_Satisfies_Interface as Satisfies0
+  clone Cdsat_Impl2_SatisfySet_Interface as SatisfySet0
+  clone Cdsat_Impl3_Contains_Interface as Contains1
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  clone Cdsat_Impl0_Negate_Interface as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  predicate fail [#"/Users/xavier/Code/cdsat/src/main.rs" 298 2 75] (self : Type.cdsat_normal) (just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 299 4 7] let not_l = (let (_, a, _) = just in a, Negate0.negate (let (_, _, a) = just in a)) in (forall j : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains (let (a, _, _) = just in a) j -> Contains1.contains (Type.cdsat_normal_Normal_0 self) j) && not Contains1.contains (Type.cdsat_normal_Normal_0 self) (let (_, a, _) = just in a, let (_, _, a) = just in a) && (forall m : (Type.cdsat_model) . SatisfySet0.satisfy_set m (let (a, _, _) = just in a) -> Satisfies0.satisfies m (let (_, a, _) = just in a, let (_, _, a) = just in a)) && Contains1.contains (Type.cdsat_normal_Normal_0 self) not_l && Level0.level (Type.cdsat_normal_Normal_0 self) not_l = 0 && IsSetLevel0.is_set_level (Type.cdsat_normal_Normal_0 self) (let (a, _, _) = just in a) 0
+  axiom fail_spec : forall self : Type.cdsat_normal, just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value), tgt : Type.cdsat_normal . ([#"/Users/xavier/Code/cdsat/src/main.rs" 296 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 295 13 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 294 13 33] Invariant0.invariant' (Type.cdsat_normal_Normal_0 self)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 297 2 36] fail self just tgt -> Sound0.sound tgt)
+end
+module Cdsat_Impl4_Fail_Impl
+  use Type
+  use set.Set
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone Cdsat_Impl0_IsBool as IsBool0
+  clone Cdsat_Impl0_Negate as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains1 with predicate Same0.same = Same0.same
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains0.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains0.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound1 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl4_Sound as Sound0 with predicate Sound0.sound = Sound1.sound
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  let rec ghost function fail (self : Type.cdsat_normal) (just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 296 13 25] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 295 13 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 294 13 33] Invariant0.invariant' (Type.cdsat_normal_Normal_0 self)}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 297 2 36] result -> Sound0.sound tgt }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 299 4 7] let not_l = (let (_, a, _) = just in a, Negate0.negate (let (_, _, a) = just in a)) in pure {forall j : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains (let (a, _, _) = just in a) j -> Contains1.contains (Type.cdsat_normal_Normal_0 self) j} && not (let a' = Type.cdsat_normal_Normal_0 self in Contains1.contains a' (let (_, a, _) = just in a, let (_, _, a) = just in a)) && pure {forall m : (Type.cdsat_model) . SatisfySet0.satisfy_set m (let (a, _, _) = just in a) -> Satisfies0.satisfies m (let (_, a, _) = just in a, let (_, _, a) = just in a)} && (let a' = Type.cdsat_normal_Normal_0 self in Contains1.contains a' not_l) && (let a = let a' = Type.cdsat_normal_Normal_0 self in Level0.level a' not_l in pure {a = 0}) && (let a' = Type.cdsat_normal_Normal_0 self in IsSetLevel0.is_set_level a' (let (a, _, _) = just in a) 0)
+end
+module Cdsat_Impl5_Sound_Interface
+  use Type
+  predicate sound [@inline:trivial] (self : Type.cdsat_conflict)
+end
+module Cdsat_Impl5_Sound
+  use Type
+  clone Cdsat_Impl2_SatisfySet_Interface as SatisfySet0
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  predicate sound [@inline:trivial] [#"/Users/xavier/Code/cdsat/src/main.rs" 341 2 24] (self : Type.cdsat_conflict) =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 342 4 87] Sound0.sound (Type.cdsat_conflict_Conflict_0 self) && (forall m : (Type.cdsat_model) . SatisfySet0.satisfy_set m (Type.cdsat_conflict_Conflict_1 self) -> false)
+end
+module CreusotContracts_Logic_Set_Impl0_Insert_Interface
+  type t
+  use set.Set
+  function insert [@inline:trivial] (self : Set.set t) (e : t) : Set.set t
+end
+module CreusotContracts_Logic_Set_Impl0_Insert
+  type t
+  use set.Set
+  function insert [@inline:trivial] (self : Set.set t) (e : t) : Set.set t =
+    Set.add e self
+end
+module Cdsat_Impl4_ConflictSolve_Interface
+  use Type
+  use set.Set
+  clone Cdsat_Impl5_Sound_Interface as Sound1
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl4_Sound_Interface as Sound0
+  predicate conflict_solve (self : Type.cdsat_normal) (just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_conflict)
+    
+end
+module Cdsat_Impl4_ConflictSolve
+  use Type
+  use set.Set
+  clone Cdsat_Impl5_Sound_Interface as Sound1
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl4_Sound_Interface as Sound0
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl3_IsSetLevel_Interface as IsSetLevel0
+  clone Cdsat_Impl2_Satisfies_Interface as Satisfies0
+  clone Cdsat_Impl2_SatisfySet_Interface as SatisfySet0
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains1 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone CreusotContracts_Logic_Set_Impl0_Insert_Interface as Insert0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  clone Cdsat_Impl0_Negate_Interface as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  predicate conflict_solve [#"/Users/xavier/Code/cdsat/src/main.rs" 316 2 89] (self : Type.cdsat_normal) (just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_conflict)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 317 4 7] let not_l = (let (_, a, _) = just in a, Negate0.negate (let (_, _, a) = just in a)) in let conflict = Insert0.insert (let (a, _, _) = just in a) not_l in Contains0.contains (Type.cdsat_normal_Normal_0 self) not_l && (forall j : ((Type.cdsat_term, Type.cdsat_value)) . Contains1.contains (let (a, _, _) = just in a) j -> Contains0.contains (Type.cdsat_normal_Normal_0 self) j) && not Contains0.contains (Type.cdsat_normal_Normal_0 self) (let (_, a, _) = just in a, let (_, _, a) = just in a) && (forall m : (Type.cdsat_model) . SatisfySet0.satisfy_set m (let (a, _, _) = just in a) -> Satisfies0.satisfies m (let (_, a, _) = just in a, let (_, _, a) = just in a)) && (exists l : (int) . l > 0 && IsSetLevel0.is_set_level (Type.cdsat_normal_Normal_0 self) conflict l && tgt = Type.Cdsat_Conflict (Type.cdsat_normal_Normal_0 self) conflict l)
+  axiom conflict_solve_spec : forall self : Type.cdsat_normal, just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value), tgt : Type.cdsat_conflict . ([#"/Users/xavier/Code/cdsat/src/main.rs" 314 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 313 13 32] Invariant0.invariant' (Type.cdsat_conflict_Conflict_0 tgt)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 312 13 33] Invariant0.invariant' (Type.cdsat_normal_Normal_0 self)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 315 2 36] conflict_solve self just tgt -> Sound1.sound tgt)
+end
+module Cdsat_Impl4_ConflictSolve_Impl
+  use Type
+  use set.Set
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone CreusotContracts_Logic_Set_Impl0_Insert as Insert0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl0_IsBool as IsBool0
+  clone Cdsat_Impl0_Negate as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains0 with predicate Same0.same = Same0.same
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains1 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains1.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains1.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound2 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl5_Sound as Sound1 with predicate Sound0.sound = Sound2.sound,
+  predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set
+  clone Cdsat_Impl4_Sound as Sound0 with predicate Sound0.sound = Sound2.sound
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains1.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  let rec ghost function conflict_solve (self : Type.cdsat_normal) (just : (Set.set (Type.cdsat_term, Type.cdsat_value), Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_conflict) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 314 13 25] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 313 13 32] Invariant0.invariant' (Type.cdsat_conflict_Conflict_0 tgt)}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 312 13 33] Invariant0.invariant' (Type.cdsat_normal_Normal_0 self)}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 315 2 36] result -> Sound1.sound tgt }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 317 4 7] let not_l = (let (_, a, _) = just in a, Negate0.negate (let (_, _, a) = just in a)) in let conflict = Insert0.insert (let (a, _, _) = just in a) not_l in (let a' = Type.cdsat_normal_Normal_0 self in Contains0.contains a' not_l) && pure {forall j : ((Type.cdsat_term, Type.cdsat_value)) . Contains1.contains (let (a, _, _) = just in a) j -> Contains0.contains (Type.cdsat_normal_Normal_0 self) j} && not (let a' = Type.cdsat_normal_Normal_0 self in Contains0.contains a' (let (_, a, _) = just in a, let (_, _, a) = just in a)) && pure {forall m : (Type.cdsat_model) . SatisfySet0.satisfy_set m (let (a, _, _) = just in a) -> Satisfies0.satisfies m (let (_, a, _) = just in a, let (_, _, a) = just in a)} && pure {exists l : (int) . l > 0 && IsSetLevel0.is_set_level (Type.cdsat_normal_Normal_0 self) conflict l && tgt = Type.Cdsat_Conflict (Type.cdsat_normal_Normal_0 self) conflict l}
+end
+module Cdsat_Impl5_Invariant_Interface
+  use Type
+  predicate invariant' (self : Type.cdsat_conflict)
+end
+module Cdsat_Impl5_Invariant
+  use Type
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_IsSetLevel_Interface as IsSetLevel0
+  predicate invariant' [#"/Users/xavier/Code/cdsat/src/main.rs" 335 2 28] (self : Type.cdsat_conflict) =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 336 4 75] IsSetLevel0.is_set_level (Type.cdsat_conflict_Conflict_0 self) (Type.cdsat_conflict_Conflict_1 self) (Type.cdsat_conflict_Conflict_2 self) && Invariant0.invariant' (Type.cdsat_conflict_Conflict_0 self)
+end
+module CreusotContracts_Logic_Set_Impl0_Remove_Interface
+  type t
+  use set.Set
+  function remove [@inline:trivial] (self : Set.set t) (a : t) : Set.set t
+end
+module CreusotContracts_Logic_Set_Impl0_Remove
+  type t
+  use set.Set
+  function remove [@inline:trivial] (self : Set.set t) (a : t) : Set.set t =
+    Set.remove a self
+end
+module Cdsat_Impl5_Resolve_Interface
+  use Type
+  clone Cdsat_Impl5_Invariant_Interface as Invariant0
+  clone Cdsat_Impl5_Sound_Interface as Sound0
+  predicate resolve (self : Type.cdsat_conflict) (a : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_conflict)
+end
+module Cdsat_Impl5_Resolve
+  use Type
+  clone Cdsat_Impl5_Invariant_Interface as Invariant0
+  clone Cdsat_Impl5_Sound_Interface as Sound0
+  use mach.int.Int
+  use set.Set
+  clone CreusotContracts_Logic_Set_Impl0_Remove_Interface as Remove0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl1_JustifiedSound_Interface as JustifiedSound0
+  clone Cdsat_Impl3_Sound_Interface as Sound1
+  clone Cdsat_Impl3_IsJustified_Interface as IsJustified0
+  clone Cdsat_Impl3_Justification_Interface as Justification0 with function IsJustified0.is_justified = IsJustified0.is_justified,
+  predicate Sound0.sound = Sound1.sound, predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound,
+  axiom .
+  predicate resolve [#"/Users/xavier/Code/cdsat/src/main.rs" 351 2 55] (self : Type.cdsat_conflict) (a : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_conflict)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 352 4 7] let just = Justification0.justification (Type.cdsat_conflict_Conflict_0 self) a in IsJustified0.is_justified (Type.cdsat_conflict_Conflict_0 self) a && (forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains just a && not IsBool0.is_bool (let (_, a) = a in a) -> Level0.level (Type.cdsat_conflict_Conflict_0 self) a < Type.cdsat_conflict_Conflict_2 self) && Contains0.contains (Type.cdsat_conflict_Conflict_1 self) a && tgt = Type.Cdsat_Conflict (Type.cdsat_conflict_Conflict_0 self) (Set.union (Remove0.remove (Type.cdsat_conflict_Conflict_1 self) a) just) (Type.cdsat_conflict_Conflict_2 self)
+  axiom resolve_spec : forall self : Type.cdsat_conflict, a : (Type.cdsat_term, Type.cdsat_value), tgt : Type.cdsat_conflict . ([#"/Users/xavier/Code/cdsat/src/main.rs" 349 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 348 13 28] Invariant0.invariant' tgt) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 347 13 29] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 350 2 36] resolve self a tgt -> Sound0.sound tgt)
+end
+module Cdsat_Impl5_Resolve_Impl
+  use Type
+  use mach.int.Int
+  use set.Set
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_IsJustified as IsJustified0 with function Find0.find = Find0.find
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone CreusotContracts_Logic_Set_Impl0_Remove as Remove0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl0_IsBool as IsBool0
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains0.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl3_Invariant as Invariant1 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  clone Cdsat_Impl5_Invariant as Invariant0 with predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level,
+  predicate Invariant0.invariant' = Invariant1.invariant'
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains0.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound1 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl3_Justification as Justification0 with function IsJustified0.is_justified = IsJustified0.is_justified,
+  predicate Sound0.sound = Sound1.sound, predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound,
+  function Find0.find = Find0.find, axiom .
+  clone Cdsat_Impl5_Sound as Sound0 with predicate Sound0.sound = Sound1.sound,
+  predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set
+  let rec ghost function resolve (self : Type.cdsat_conflict) (a : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_conflict) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 349 13 25] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 348 13 28] Invariant0.invariant' tgt}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 347 13 29] Invariant0.invariant' self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 350 2 36] result -> Sound0.sound tgt }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 352 4 7] let just = let a' = Type.cdsat_conflict_Conflict_0 self in Justification0.justification a' a in (let a' = Type.cdsat_conflict_Conflict_0 self in IsJustified0.is_justified a' a) && pure {forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains just a && not IsBool0.is_bool (let (_, a) = a in a) -> Level0.level (Type.cdsat_conflict_Conflict_0 self) a < Type.cdsat_conflict_Conflict_2 self} && (let a' = Type.cdsat_conflict_Conflict_1 self in Contains0.contains a' a) && (let b = Type.Cdsat_Conflict (Type.cdsat_conflict_Conflict_0 self) (let a' = let a' = Type.cdsat_conflict_Conflict_1 self in Remove0.remove a' a in Set.union a' just) (Type.cdsat_conflict_Conflict_2 self) in pure {tgt = b})
+end
+module Cdsat_Impl5_Backjump_Interface
+  use Type
+  clone Cdsat_Impl4_Sound_Interface as Sound1
+  clone Cdsat_Impl5_Invariant_Interface as Invariant1
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl5_Sound_Interface as Sound0
+  predicate backjump (self : Type.cdsat_conflict) (l : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+end
+module Cdsat_Impl5_Backjump
+  use Type
+  clone Cdsat_Impl4_Sound_Interface as Sound1
+  clone Cdsat_Impl5_Invariant_Interface as Invariant1
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl5_Sound_Interface as Sound0
+  use mach.int.Int
+  use seq.Seq
+  clone Cdsat_Impl3_Contains_Interface as Contains1
+  clone Cdsat_Impl3_IsSetLevel_Interface as IsSetLevel0
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  clone Cdsat_Impl0_Negate_Interface as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone CreusotContracts_Logic_Set_Impl0_Remove_Interface as Remove0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_Restrict_Interface as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  predicate backjump [#"/Users/xavier/Code/cdsat/src/main.rs" 366 2 59] (self : Type.cdsat_conflict) (l : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 367 4 7] let e = Remove0.remove (Type.cdsat_conflict_Conflict_1 self) l in Contains0.contains (Type.cdsat_conflict_Conflict_1 self) l && IsBool0.is_bool (let (_, a) = l in a) && Level0.level (Type.cdsat_conflict_Conflict_0 self) l > Type.cdsat_conflict_Conflict_2 self && (exists i : (int) . IsSetLevel0.is_set_level (Type.cdsat_conflict_Conflict_0 self) e i && Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 tgt) = Seq.snoc (Type.cdsat_trail_Trail_0 (Restrict0.restrict (Type.cdsat_conflict_Conflict_0 self) (Type.cdsat_conflict_Conflict_2 self))) (Type.Cdsat_Assign_Justified e (let (a, _) = l in a) (Negate0.negate (let (_, a) = l in a)), i))
+  axiom backjump_spec : forall self : Type.cdsat_conflict, l : (Type.cdsat_term, Type.cdsat_value), tgt : Type.cdsat_normal . ([#"/Users/xavier/Code/cdsat/src/main.rs" 364 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 363 2 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 362 13 29] Invariant1.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 365 2 36] backjump self l tgt -> Sound1.sound tgt)
+end
+module Cdsat_Impl5_Backjump_Impl
+  use Type
+  use mach.int.Int
+  use seq.Seq
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone Cdsat_Impl0_IsBool as IsBool0
+  clone Cdsat_Impl0_Negate as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  clone CreusotContracts_Logic_Set_Impl0_Remove as Remove0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Contains as Contains1 with predicate Same0.same = Same0.same
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains0.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound2 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl4_Sound as Sound1 with predicate Sound0.sound = Sound2.sound
+  clone Cdsat_Impl5_Sound as Sound0 with predicate Sound0.sound = Sound2.sound,
+  predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains0.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  clone Cdsat_Impl3_Restrict as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl5_Invariant as Invariant1 with predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level,
+  predicate Invariant0.invariant' = Invariant0.invariant'
+  let rec ghost function backjump (self : Type.cdsat_conflict) (l : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 364 13 25] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 363 2 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 362 13 29] Invariant1.invariant' self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 365 2 36] result -> Sound1.sound tgt }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 367 4 7] let e = let a' = Type.cdsat_conflict_Conflict_1 self in Remove0.remove a' l in (let a' = Type.cdsat_conflict_Conflict_1 self in Contains0.contains a' l) && IsBool0.is_bool (let (_, a) = l in a) && (let a' = Type.cdsat_conflict_Conflict_0 self in Level0.level a' l) > Type.cdsat_conflict_Conflict_2 self && pure {exists i : (int) . IsSetLevel0.is_set_level (Type.cdsat_conflict_Conflict_0 self) e i && Type.cdsat_trail_Trail_0 (Type.cdsat_normal_Normal_0 tgt) = Seq.snoc (Type.cdsat_trail_Trail_0 (Restrict0.restrict (Type.cdsat_conflict_Conflict_0 self) (Type.cdsat_conflict_Conflict_2 self))) (Type.Cdsat_Assign_Justified e (let (a, _) = l in a) (Negate0.negate (let (_, a) = l in a)), i)}
+end
+module Cdsat_Impl5_UndoClear_Interface
+  use Type
+  clone Cdsat_Impl4_Sound_Interface as Sound1
+  clone Cdsat_Impl5_Invariant_Interface as Invariant1
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl5_Sound_Interface as Sound0
+  predicate undo_clear (self : Type.cdsat_conflict) (a : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+end
+module Cdsat_Impl5_UndoClear
+  use Type
+  clone Cdsat_Impl4_Sound_Interface as Sound1
+  clone Cdsat_Impl5_Invariant_Interface as Invariant1
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl5_Sound_Interface as Sound0
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl3_IsSetLevel_Interface as IsSetLevel0
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone CreusotContracts_Logic_Set_Impl0_Remove_Interface as Remove0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains1
+  clone Cdsat_Impl3_Sound_Interface as Sound2
+  clone Cdsat_Impl3_Restrict_Interface as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl3_RestrictSound_Interface as RestrictSound0 with predicate Sound0.sound = Sound2.sound,
+  function Restrict0.restrict = Restrict0.restrict, predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  predicate undo_clear [#"/Users/xavier/Code/cdsat/src/main.rs" 381 2 61] (self : Type.cdsat_conflict) (a : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 382 4 7] let _ = RestrictSound0.restrict_sound (Type.cdsat_conflict_Conflict_0 self) (Type.cdsat_conflict_Conflict_2 self - 1) in let e = Remove0.remove (Type.cdsat_conflict_Conflict_1 self) a in Contains0.contains (Type.cdsat_conflict_Conflict_1 self) a && not IsBool0.is_bool (let (_, a) = a in a) && (exists l : (int) . Type.cdsat_conflict_Conflict_2 self > l && IsSetLevel0.is_set_level (Type.cdsat_conflict_Conflict_0 self) e l) && Type.cdsat_normal_Normal_0 tgt = Restrict0.restrict (Type.cdsat_conflict_Conflict_0 self) (Type.cdsat_conflict_Conflict_2 self - 1)
+  axiom undo_clear_spec : forall self : Type.cdsat_conflict, a : (Type.cdsat_term, Type.cdsat_value), tgt : Type.cdsat_normal . ([#"/Users/xavier/Code/cdsat/src/main.rs" 379 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 378 2 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 377 13 29] Invariant1.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 380 2 36] undo_clear self a tgt -> Sound1.sound tgt)
+end
+module Cdsat_Impl5_UndoClear_Impl
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone Cdsat_Impl0_IsBool as IsBool0
+  clone CreusotContracts_Logic_Set_Impl0_Remove as Remove0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains1 with predicate Same0.same = Same0.same
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains0.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound2 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl4_Sound as Sound1 with predicate Sound0.sound = Sound2.sound
+  clone Cdsat_Impl5_Sound as Sound0 with predicate Sound0.sound = Sound2.sound,
+  predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains0.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  clone Cdsat_Impl3_Restrict as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl3_RestrictSound as RestrictSound0 with predicate Sound0.sound = Sound2.sound,
+  function Restrict0.restrict = Restrict0.restrict, predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl5_Invariant as Invariant1 with predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level,
+  predicate Invariant0.invariant' = Invariant0.invariant'
+  let rec ghost function undo_clear (self : Type.cdsat_conflict) (a : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 379 13 25] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 378 2 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 377 13 29] Invariant1.invariant' self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 380 2 36] result -> Sound1.sound tgt }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 382 4 7] let _ = let a' = Type.cdsat_conflict_Conflict_0 self in let b' = Type.cdsat_conflict_Conflict_2 self - 1 in RestrictSound0.restrict_sound a' b' in let e = let a' = Type.cdsat_conflict_Conflict_1 self in Remove0.remove a' a in (let a' = Type.cdsat_conflict_Conflict_1 self in Contains0.contains a' a) && not IsBool0.is_bool (let (_, a) = a in a) && pure {exists l : (int) . Type.cdsat_conflict_Conflict_2 self > l && IsSetLevel0.is_set_level (Type.cdsat_conflict_Conflict_0 self) e l} && (let b = let a' = Type.cdsat_conflict_Conflict_0 self in let b' = Type.cdsat_conflict_Conflict_2 self - 1 in Restrict0.restrict a' b' in let a = Type.cdsat_normal_Normal_0 tgt in pure {a = b})
+end
+module Cdsat_Impl5_UndoDecide_Interface
+  use Type
+  clone Cdsat_Impl4_Sound_Interface as Sound1
+  clone Cdsat_Impl5_Invariant_Interface as Invariant1
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl5_Sound_Interface as Sound0
+  predicate undo_decide (self : Type.cdsat_conflict) (l : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+end
+module Cdsat_Impl5_UndoDecide
+  use Type
+  clone Cdsat_Impl4_Sound_Interface as Sound1
+  clone Cdsat_Impl5_Invariant_Interface as Invariant1
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl5_Sound_Interface as Sound0
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  clone Cdsat_Impl0_Negate_Interface as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone CreusotContracts_Logic_Set_Impl0_Remove_Interface as Remove0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl1_JustifiedSound_Interface as JustifiedSound0
+  clone Cdsat_Impl3_IsJustified_Interface as IsJustified0
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains1
+  clone Cdsat_Impl3_Sound_Interface as Sound2
+  clone Cdsat_Impl3_Justification_Interface as Justification0 with function IsJustified0.is_justified = IsJustified0.is_justified,
+  predicate Sound0.sound = Sound2.sound, predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound,
+  axiom .
+  clone Cdsat_Impl3_PushDecision_Interface as PushDecision0 with predicate Sound0.sound = Sound2.sound,
+  predicate Invariant0.invariant' = Invariant0.invariant', axiom .
+  clone Cdsat_Impl3_Restrict_Interface as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl3_RestrictSound_Interface as RestrictSound0 with predicate Sound0.sound = Sound2.sound,
+  function Restrict0.restrict = Restrict0.restrict, predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  predicate undo_decide [#"/Users/xavier/Code/cdsat/src/main.rs" 396 2 62] (self : Type.cdsat_conflict) (l : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal)
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 397 4 7] let _ = RestrictSound0.restrict_sound (Type.cdsat_conflict_Conflict_0 self) (Type.cdsat_conflict_Conflict_2 self - 1) in let just = Justification0.justification (Type.cdsat_conflict_Conflict_0 self) l in let e = Remove0.remove (Type.cdsat_conflict_Conflict_1 self) l in IsJustified0.is_justified (Type.cdsat_conflict_Conflict_0 self) l && (exists a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains just a && not IsBool0.is_bool (let (_, a) = a in a) && Level0.level (Type.cdsat_conflict_Conflict_0 self) a = Type.cdsat_conflict_Conflict_2 self) && Type.cdsat_conflict_Conflict_2 self = Level0.level (Type.cdsat_conflict_Conflict_0 self) l && Type.cdsat_normal_Normal_0 tgt = PushDecision0.push_decision (Restrict0.restrict (Type.cdsat_conflict_Conflict_0 self) (Type.cdsat_conflict_Conflict_2 self - 1)) (let (a, _) = l in a, Negate0.negate (let (_, a) = l in a))
+  axiom undo_decide_spec : forall self : Type.cdsat_conflict, l : (Type.cdsat_term, Type.cdsat_value), tgt : Type.cdsat_normal . ([#"/Users/xavier/Code/cdsat/src/main.rs" 394 13 25] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 393 2 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 392 13 29] Invariant1.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/main.rs" 395 2 36] undo_decide self l tgt -> Sound1.sound tgt)
+end
+module Cdsat_Impl5_UndoDecide_Impl
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone Cdsat_Impl0_IsBool as IsBool0
+  clone Cdsat_Impl0_Negate as Negate0 with predicate IsBool0.is_bool = IsBool0.is_bool, axiom .
+  clone CreusotContracts_Logic_Set_Impl0_Remove as Remove0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same, axiom .
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_IsJustified as IsJustified0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains1 with predicate Same0.same = Same0.same
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains0.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains0.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound2 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl3_Justification as Justification0 with function IsJustified0.is_justified = IsJustified0.is_justified,
+  predicate Sound0.sound = Sound2.sound, predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound,
+  function Find0.find = Find0.find, axiom .
+  clone Cdsat_Impl4_Sound as Sound1 with predicate Sound0.sound = Sound2.sound
+  clone Cdsat_Impl5_Sound as Sound0 with predicate Sound0.sound = Sound2.sound,
+  predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set
+  clone Cdsat_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant as Invariant0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, predicate Same0.same = Same0.same,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  clone Cdsat_Impl3_PushDecision as PushDecision0 with predicate Sound0.sound = Sound2.sound,
+  predicate Invariant0.invariant' = Invariant0.invariant',
+  function CountDecision0.count_decision = CountDecision0.count_decision, axiom .
+  clone Cdsat_Impl3_Restrict as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl3_RestrictSound as RestrictSound0 with predicate Sound0.sound = Sound2.sound,
+  function Restrict0.restrict = Restrict0.restrict, predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains1.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl5_Invariant as Invariant1 with predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level,
+  predicate Invariant0.invariant' = Invariant0.invariant'
+  let rec ghost function undo_decide (self : Type.cdsat_conflict) (l : (Type.cdsat_term, Type.cdsat_value)) (tgt : Type.cdsat_normal) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 394 13 25] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 393 2 32] Invariant0.invariant' (Type.cdsat_normal_Normal_0 tgt)}
+    requires {[#"/Users/xavier/Code/cdsat/src/main.rs" 392 13 29] Invariant1.invariant' self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/main.rs" 395 2 36] result -> Sound1.sound tgt }
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/main.rs" 397 4 7] let _ = let a' = Type.cdsat_conflict_Conflict_0 self in let b' = Type.cdsat_conflict_Conflict_2 self - 1 in RestrictSound0.restrict_sound a' b' in let just = let a' = Type.cdsat_conflict_Conflict_0 self in Justification0.justification a' l in let e = let a' = Type.cdsat_conflict_Conflict_1 self in Remove0.remove a' l in (let a' = Type.cdsat_conflict_Conflict_0 self in IsJustified0.is_justified a' l) && pure {exists a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains just a && not IsBool0.is_bool (let (_, a) = a in a) && Level0.level (Type.cdsat_conflict_Conflict_0 self) a = Type.cdsat_conflict_Conflict_2 self} && (let b = let a' = Type.cdsat_conflict_Conflict_0 self in Level0.level a' l in let a = Type.cdsat_conflict_Conflict_2 self in pure {a = b}) && (let b = let a' = let a' = Type.cdsat_conflict_Conflict_0 self in let b' = Type.cdsat_conflict_Conflict_2 self - 1 in Restrict0.restrict a' b' in let b' = (let (a, _) = l in a, Negate0.negate (let (_, a) = l in a)) in PushDecision0.push_decision a' b' in let a = Type.cdsat_normal_Normal_0 tgt in pure {a = b})
+end
