@@ -8,6 +8,23 @@ enum Term {
   // TODO: complete others
 }
 
+// TODO move these into stdlib
+#[predicate]
+fn filtered<T>(s: Seq<T>, t: Seq<T>) -> bool {
+  pearlite! {
+    forall<i : _> 0 <= i && i < t.len() ==>
+      exists< j : _> i <= j && j < s.len() && t[i] == s[j]
+  }
+}
+
+#[predicate]
+fn unique<T>(s: Seq<T>) -> bool {
+  pearlite! {
+    forall<i : _, j : _> 0 <= i && i < s.len() ==> 0 <= j && j < s.len() ==>
+      s[i] == s[j] ==> i == j
+  }
+}
+
 struct Var(Int);
 
 type Rational = Int;
@@ -45,11 +62,21 @@ impl Assign {
     pearlite! {{
       let (t, val) = a;
       match self {
-        Assign::Decision(t2, val2) => t == t2 && val2 == val2,
-        Assign::Input(t2, val2) => t == t2 && val2 == val2,
-        Assign::Justified(_, t2, val2) => t == t2 && val2 == val2,
+        Assign::Decision(t2, val2) => t == t2 && val == val2,
+        Assign::Input(t2, val2) => t == t2 && val == val2,
+        Assign::Justified(_, t2, val2) => t == t2 && val == val2,
       }
     }}
+  }
+
+  #[logic]
+  #[ensures(self.same(result))]
+  fn to_pair(self) -> (Term, Value) {
+    match self {
+        Assign::Decision(t, val) => (t, val),
+        Assign::Input(t, val) => (t, val),
+        Assign::Justified(_, t, val) => (t, val),
+    }
   }
 
   #[predicate]
@@ -114,7 +141,9 @@ impl Trail {
   #[predicate]
   fn invariant(self) -> bool {
     pearlite! {
+      self.trail_unique() &&
       forall<i : _> {
+        0 <= i && i < self.0.len() ==>
         match self.0[i] {
           (Assign::Decision(_, _), l) => {
             count_decision(self.0.subsequence(0, i)) == l
@@ -130,6 +159,20 @@ impl Trail {
           }
         }
       }
+    }
+  }
+
+  #[logic]
+  #[requires(self.invariant())]
+  #[requires(self.0.len() > 0)]
+  #[ensures(Trail(self.0.subsequence(0, self.0.len() - 1)).invariant())]
+  fn invariant_mono(self) {}
+
+  #[predicate]
+  fn trail_unique(self) -> bool {
+    pearlite! {
+      forall<i : _, j :_> 0 <= i && i < j && j < self.0.len() ==>
+        (self.0)[i].0.same((self.0)[j].0.to_pair()) ==> i == j
     }
   }
 
@@ -154,6 +197,11 @@ impl Trail {
 
   #[logic]
   #[variant(self.0.len())]
+  #[requires(d == d)]
+  #[ensures(forall<i : _> result == Some(i) ==>
+    0 <= i && i < self.0.len() &&
+    exists<a : Assign, l : _> a.same(d) && (self.0)[i] == (a, l)
+  )]
   fn find(self, d: (Term, Value)) -> Option<Int> {
     if self.0.len() == 0 {
       None
@@ -169,7 +217,7 @@ impl Trail {
 
   #[logic]
   #[requires(self.is_justified(d))]
-  #[ensures(exists<i : _, l : _> (self.0)[i] == (Assign::Justified(result, d.0, d.1), l) &&
+  #[ensures(exists<i : _> (self.0)[i].0 == Assign::Justified(result, d.0, d.1) &&
     (self.sound() ==> (self.0)[i].0.justified_sound())
     )]
   fn justification(self, d: (Term, Value)) -> Set<(Term, Value)> {
@@ -182,11 +230,11 @@ impl Trail {
     }
   }
 
-  #[logic]
+  #[predicate]
   fn is_justified(self, d: (Term, Value)) -> bool {
     match self.find(d) {
-      Some(i) => match (self.0)[i].0 {
-        Assign::Justified(_, _, _) => true,
+      Some(i) => match (self.0)[i] {
+        (Assign::Justified(_, _, _), _) => true,
         _ => false
       }
       _ => false,
@@ -194,13 +242,23 @@ impl Trail {
   }
 
   #[logic]
+  #[requires(self.trail_unique())]
+  #[ensures(unique(self.0))]
+  fn trail_unique_unique(self) {}
+
+
+  #[logic]
   #[variant(self.0.len())]
   #[requires(self.invariant())]
   #[ensures(result.invariant())]
-  #[ensures(forall<a : _> self.level(a) <= level ==> result.contains(a))]
-  #[ensures(forall<a : _> result.contains(a) ==> self.contains(a))]
+  #[ensures(filtered(self.0, result.0))]
+  #[ensures(result.0.len() <= self.0.len())]
+  // #[ensures(forall<i : _> 0 <= i && i < self.0.len() ==> (self.0)[i].1 <= level ==> exists<j : Int> 0 <= j && j <= i && j < result.0.len() && (result.0)[j] == (self.0)[i])]
+  // #[ensures(forall<a : _> self.contains(a) ==> self.level(a) <= level ==> result.contains(a) && result.level(a) == self.level(a))]
+  // #[ensures(forall<a : _> result.contains(a) ==> self.contains(a))]
   fn restrict(self, level: Int) -> Self {
-    if self.0 == Seq::EMPTY {
+    self.trail_unique_unique();
+    if self.0.len() == 0 {
       Trail(Seq::EMPTY)
     } else {
       let assign = (self.0)[self.0.len() - 1];
@@ -253,8 +311,6 @@ fn count_decision(s: Seq<(Assign, Int)>) -> Int {
 
 struct Normal(Trail);
 
-
-
 impl Normal {
   #[predicate]
   #[why3::attr="inline:trivial"]
@@ -265,8 +321,8 @@ impl Normal {
   // Γ ⟶ Γ,?A if A is an acceptable 𝒯ₖ-assignment for ℐₖ in Γ_𝒯ₖ for 1 ≤ k ≤ n
   #[predicate]
   #[requires((self.0).invariant())]
-  #[requires((tgt.0).invariant())]
   #[requires(self.sound())]
+  #[ensures(result ==> (tgt.0).invariant())]
   #[ensures(result ==> tgt.sound())]
   fn decide(self, t: Term, val: Value, tgt: Self) -> bool {
       // self.0.acceptable(t, val) &&
@@ -276,8 +332,8 @@ impl Normal {
   // Γ ⟶ Γ, J⊢L, if ¬L ∉ Γ and L is l ← 𝔟 for some l ∈ ℬ
   #[predicate]
   #[requires((self.0).invariant())]
-  #[requires((tgt.0).invariant())]
   #[requires(self.sound())]
+  #[ensures(result ==> (tgt.0).invariant())]
   #[ensures(result ==> tgt.sound())]
   fn deduce(self, just: (Set<(Term, Value)>, Term, Value), tgt: Self) -> bool {
     pearlite!{ {
@@ -292,8 +348,8 @@ impl Normal {
   // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0
   #[predicate]
   #[requires((self.0).invariant())]
-  #[requires((tgt.0).invariant())]
   #[requires(self.sound())]
+  #[ensures(result ==> (tgt.0).invariant())]
   #[ensures(result ==> tgt.sound())]
   fn fail(self, just: (Set<(Term, Value)>, Term, Value), tgt: Self) -> bool {
     pearlite! { {
@@ -310,8 +366,8 @@ impl Normal {
   // Γ ⟶ ⟨ Γ; J ∪ {¬ L} ⟩ if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0
   #[predicate]
   #[requires((self.0).invariant())]
-  #[requires((tgt.0).invariant())]
   #[requires(self.sound())]
+  #[ensures(result ==> (tgt.0).invariant())]
   #[ensures(result ==> tgt.sound())]
   fn conflict_solve(self, just: (Set<(Term, Value)>, Term, Value), tgt: Conflict) -> bool {
     pearlite! { {
@@ -347,6 +403,7 @@ impl Conflict {
   #[requires(self.invariant())]
   #[requires(tgt.invariant())]
   #[requires(self.sound())]
+  #[ensures(result ==> tgt.0.invariant())]
   #[ensures(result ==> tgt.sound())]
   fn resolve(self, a: (Term, Value), tgt: Self) -> bool {
     pearlite! { {
@@ -360,8 +417,8 @@ impl Conflict {
   // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m, E⊢¬L, if level_\Gamma(L) > m, where m = level_\Gamma(E)
   #[predicate]
   #[requires(self.invariant())]
-  #[requires(tgt.0.invariant())]
   #[requires(self.sound())]
+  #[ensures(result ==> tgt.0.invariant())]
   #[ensures(result ==> tgt.sound())]
   fn backjump(self, l : (Term, Value), tgt: Normal) -> bool {
     pearlite! { {
@@ -375,8 +432,8 @@ impl Conflict {
   // ⟨ Γ; { A } ⊔ E ⟩  ⇒ Γ≤m-1, if A is a first-order decision of level m > level_\Gamma(E)
   #[predicate]
   #[requires(self.invariant())]
-  #[requires(tgt.0.invariant())]
   #[requires(self.sound())]
+  #[ensures(result ==> tgt.0.invariant())]
   #[ensures(result ==> tgt.sound())]
   fn undo_clear(self, a : (Term, Value), tgt: Normal) -> bool {
     pearlite! { {
@@ -390,8 +447,8 @@ impl Conflict {
   // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m-1,?¬L
   #[predicate]
   #[requires(self.invariant())]
-  #[requires(tgt.0.invariant())]
   #[requires(self.sound())]
+  #[ensures(result ==> tgt.0.invariant())]
   #[ensures(result ==> tgt.sound())]
   fn undo_decide(self, l : (Term, Value), tgt: Normal) -> bool {
     pearlite! { {

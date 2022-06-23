@@ -19,6 +19,26 @@
 </theory>
 <theory name="Cdsat_Impl3_Justification_Impl">
  <goal name="justification&#39;vc" expl="VC for justification">
+ <proof prover="0"><result status="timeout" time="1.00" steps="353674"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00"/></proof>
+ <transf name="split_vc" >
+  <goal name="justification&#39;vc.0" expl="postcondition">
+  <proof prover="0"><result status="timeout" time="1.00" steps="597468"/></proof>
+  <proof prover="1"><result status="timeout" time="1.00"/></proof>
+  <proof prover="2"><result status="timeout" time="1.00"/></proof>
+  <transf name="split_vc" >
+   <goal name="justification&#39;vc.0.0" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="1.00" steps="536656"/></proof>
+   <proof prover="1"><result status="timeout" time="1.00"/></proof>
+   <proof prover="2"><result status="timeout" time="1.00"/></proof>
+   </goal>
+   <goal name="justification&#39;vc.0.1" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.02" steps="73"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
  </goal>
 </theory>
 <theory name="Cdsat_Impl3_Restrict_Impl">
@@ -28,9 +48,19 @@
  <proof prover="2"><result status="timeout" time="1.00"/></proof>
  <transf name="split_vc" >
   <goal name="restrict&#39;vc.0" expl="variant decrease">
-  <proof prover="0"><result status="timeout" time="1.00" steps="353245"/></proof>
+  <proof prover="0"><result status="timeout" time="1.00" steps="366498"/></proof>
   <proof prover="1"><result status="timeout" time="1.00"/></proof>
   <proof prover="2"><result status="timeout" time="1.00"/></proof>
+  <transf name="split_vc" >
+   <goal name="restrict&#39;vc.0.0" expl="variant decrease" proved="true">
+   <proof prover="2"><result status="valid" time="0.02" steps="32"/></proof>
+   </goal>
+   <goal name="restrict&#39;vc.0.1" expl="variant decrease">
+   <proof prover="0"><result status="timeout" time="1.00" steps="366468"/></proof>
+   <proof prover="1"><result status="timeout" time="1.00"/></proof>
+   <proof prover="2"><result status="timeout" time="1.00"/></proof>
+   </goal>
+  </transf>
   </goal>
   <goal name="restrict&#39;vc.1" expl="precondition">
   <proof prover="0"><result status="timeout" time="1.00" steps="475013"/></proof>
@@ -57,13 +87,24 @@
 </theory>
 <theory name="Cdsat_Impl3_RestrictSound_Impl">
  <goal name="restrict_sound&#39;vc" expl="VC for restrict_sound">
+ <proof prover="0"><result status="timeout" time="1.00" steps="266785"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Impl3_PushDecision_Impl">
  <goal name="push_decision&#39;vc" expl="VC for push_decision">
- <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="374770"/></proof>
- <proof prover="1" obsolete="true"><result status="failure" time="0.00"/></proof>
- <proof prover="2" obsolete="true"><result status="timeout" time="1.00"/></proof>
+ <proof prover="0"><result status="timeout" time="1.00" steps="336062"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00"/></proof>
+ <transf name="split_vc" >
+  <goal name="push_decision&#39;vc.0" expl="postcondition">
+  </goal>
+  <goal name="push_decision&#39;vc.1" expl="postcondition">
+  </goal>
+  <goal name="push_decision&#39;vc.2" expl="postcondition">
+  </goal>
+ </transf>
  </goal>
 </theory>
 <theory name="Cdsat_Impl4_Decide_Impl" proved="true">
