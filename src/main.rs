@@ -21,7 +21,7 @@ fn filtered<T>(s: Seq<T>, t: Seq<T>) -> bool {
 fn unique<T>(s: Seq<T>) -> bool {
   pearlite! {
     forall<i : _, j : _> 0 <= i && i < s.len() ==> 0 <= j && j < s.len() ==>
-      s[i] == s[j] ==> i == j
+      i != j ==> s[i] != s[j]
   }
 }
 
@@ -155,13 +155,20 @@ impl Trail {
               exists<m : _> 0 <= m && m < i && (self.0)[m].0.same(k)
             ) &&
             // Level is the maximum is of the justifiant's levels
-            !j.is_empty() && self.is_set_level(j, l)
+            !j.is_empty() && Trail(self.0.subsequence(0, i)).is_set_level(j, l)
           }
         }
       }
     }
   }
 
+  #[logic]
+  #[requires(self.invariant())]
+  #[requires(!(self.0)[i].0.same((self.0)[j].0.to_pair()))]
+  #[ensures((self.0)[i] != (self.0)[j])]
+  fn omg(self, i: Int, j: Int) {}
+
+  // Need seq.FreeMonoid
   #[logic]
   #[requires(self.invariant())]
   #[requires(self.0.len() > 0)]
@@ -171,10 +178,20 @@ impl Trail {
   #[predicate]
   fn trail_unique(self) -> bool {
     pearlite! {
-      forall<i : _, j :_> 0 <= i && i < j && j < self.0.len() ==>
-        (self.0)[i].0.same((self.0)[j].0.to_pair()) ==> i == j
+      forall<i : _, j :_>
+        0 <= i && i < self.0.len() ==>
+        0 <= j && j < self.0.len() ==>
+        i != j ==>
+        !(self.0)[i].0.same((self.0)[j].0.to_pair())
+        // (self.0)[i].0.same((self.0)[j].0.to_pair()) ==> i == j
+        //
     }
   }
+
+  // #[logic]
+  // #[requires(self.trail_unique())]
+  // #[requires(self.is_set_level(j, l))]
+  // #[ensures()]
 
   // #[predicate]
   // fn acceptable(self, t: Term, val: Value) -> bool {
@@ -244,8 +261,17 @@ impl Trail {
   #[logic]
   #[requires(self.trail_unique())]
   #[ensures(unique(self.0))]
-  fn trail_unique_unique(self) {}
+  fn trail_unique_unique(self) {
+    pearlite! { self.omg(0, 0) }
+  }
 
+  // #[logic]
+  // #[requires(!self.contains(a.to_pair()))]
+  // #[requires(self.invariant())]
+  // #[ensures(self.invariant())]
+  // fn push(self, a : Assign) -> Self {
+  //   self
+  // }
 
   #[logic]
   #[variant(self.0.len())]
@@ -262,6 +288,7 @@ impl Trail {
       Trail(Seq::EMPTY)
     } else {
       let assign = (self.0)[self.0.len() - 1];
+      self.invariant_mono();
       let restricted = Trail(self.0.subsequence(0, self.0.len() - 1)).restrict(level);
       if assign.1 <= level {
         Trail(restricted.0.push(assign))
