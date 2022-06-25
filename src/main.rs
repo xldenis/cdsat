@@ -57,6 +57,7 @@ enum Assign {
 }
 
 impl Assign {
+    // Use to_pair
   #[predicate]
   fn same(self, a: (Term, Value)) -> bool {
     pearlite! {{
@@ -116,17 +117,22 @@ impl Model {
   }
 }
 
-struct Trail(Seq<(Assign, Int)>);
+enum Trail{
+    Empty,
+    Assign(Assign, Int, Box<Trail>),
+}
 
 impl Trail {
   #[predicate]
   #[why3::attr="inline:trivial"]
   fn sound(self) -> bool {
-    pearlite! {
-      forall<i : Int>
-        0 <= i && i < self.0.len() ==>
-        (exists<just: _, t : _, val : _, l : _> (self.0)[i] == (Assign::Justified(just, t, val), l)) ==>
-          (self.0)[i].0.justified_sound()
+    match self {
+        Empty => true,
+        Assign(a, l, tl) => 
+            match a {
+                Assign::Justified(just, t, val) => a.justified_sound(),
+                _ => true
+            } && tl.sound()
     }
   }
 
@@ -139,54 +145,71 @@ impl Trail {
   }
 
   #[predicate]
-  fn invariant(self) -> bool {
-    pearlite! {
-      self.trail_unique() &&
-      forall<i : _> {
-        0 <= i && i < self.0.len() ==>
-        match self.0[i] {
-          (Assign::Decision(_, _), l) => {
-            count_decision(self.0.subsequence(0, i)) == l
-          },
-          (Assign::Input(_, _), l) => l == 0,
-          (Assign::Justified(j, _, _), l) => {
-            // Justifiant is in the trail
-            (forall<k :_> j.contains(k) ==>
-              exists<m : _> 0 <= m && m < i && (self.0)[m].0.same(k)
-            ) &&
-            // Level is the maximum is of the justifiant's levels
-            !j.is_empty() && Trail(self.0.subsequence(0, i)).is_set_level(j, l)
-          }
+  fn invariant_level(self) -> bool {
+    match self {
+        Empty => true,
+        Assign(a, l, tl) => {
+            match a {
+                Assign::Input(_, _) => l == 0,
+                Assign::Decision(_, _) => count_decision(tl) == l,
+                Assign::Justified(j, _, _) => {
+                    tl.is_set_level(j, l)
+                }
+            } && tl.invariant_level()
         }
-      }
     }
   }
-
-  #[logic]
-  #[requires(self.invariant())]
-  #[requires(!(self.0)[i].0.same((self.0)[j].0.to_pair()))]
-  #[ensures((self.0)[i] != (self.0)[j])]
-  fn omg(self, i: Int, j: Int) {}
-
-  // Need seq.FreeMonoid
-  #[logic]
-  #[requires(self.invariant())]
-  #[requires(self.0.len() > 0)]
-  #[ensures(Trail(self.0.subsequence(0, self.0.len() - 1)).invariant())]
-  fn invariant_mono(self) {}
 
   #[predicate]
-  fn trail_unique(self) -> bool {
-    pearlite! {
-      forall<i : _, j :_>
-        0 <= i && i < self.0.len() ==>
-        0 <= j && j < self.0.len() ==>
-        i != j ==>
-        !(self.0)[i].0.same((self.0)[j].0.to_pair())
-        // (self.0)[i].0.same((self.0)[j].0.to_pair()) ==> i == j
-        //
+  fn invariant_contains(self) -> bool {
+    match self {
+        Empty => true,
+        Assign(a, l, tl) => {
+            match a {
+                Assign::Justified(j, _, _) => {
+                    pearlite! {
+                      (forall<a : (Term, Value)> j.contains(a) ==>  tl.contains(a)) 
+                    }
+                }
+                _ => true
+            } && tl.invariant_contains()
+        }
     }
   }
+  
+  #[predicate]
+  fn trail_unique(self) -> bool {
+    true
+    // pearlite! {
+    //   forall<i : _, j :_>
+    //     0 <= i && i < self.0.len() ==>
+    //     0 <= j && j < self.0.len() ==>
+    //     i != j ==>
+    //     !(self.0)[i].0.same((self.0)[j].0.to_pair())
+    //     // (self.0)[i].0.same((self.0)[j].0.to_pair()) ==> i == j
+    //     //
+    // }
+  }
+
+  #[predicate]
+  fn invariant(self) -> bool {
+    self.invariant_level() && self.invariant_contains() && self.trail_unique()
+  }
+
+  // #[logic]
+  // #[requires(self.invariant())]
+  // #[requires(!(self.0)[i].0.same((self.0)[j].0.to_pair()))]
+  // #[ensures((self.0)[i] != (self.0)[j])]
+  // fn omg(self, i: Int, j: Int) {}
+
+  // // Need seq.FreeMonoid
+  // #[logic]
+  // #[requires(self.invariant())]
+  // #[requires(self.0.len() > 0)]
+  // #[ensures(Trail(self.0.subsequence(0, self.0.len() - 1)).invariant())]
+  // fn invariant_mono(self) {}
+
+
 
   // #[logic]
   // #[requires(self.trail_unique())]
@@ -202,59 +225,52 @@ impl Trail {
   #[logic]
   fn level(self, d: (Term, Value)) -> Int {
     match self.find(d) {
-      Some(i) => (self.0)[i].1,
+      Some((_, l)) => l,
       None => 0,
     }
   }
 
   #[predicate]
   fn contains(self, d: (Term, Value)) -> bool {
-    pearlite! { exists<i : _ > 0 <= i && i < self.0.len() && (self.0)[i].0.same(d) }
+    match self.find(d) {
+        Some(ix) =>  true,
+        None => false
+    }
   }
 
   #[logic]
   #[variant(self.0.len())]
-  #[requires(d == d)]
-  #[ensures(forall<i : _> result == Some(i) ==>
-    0 <= i && i < self.0.len() &&
-    exists<a : Assign, l : _> a.same(d) && (self.0)[i] == (a, l)
-  )]
-  fn find(self, d: (Term, Value)) -> Option<Int> {
-    if self.0.len() == 0 {
-      None
-    } else if (self.0)[0].0.same(d) {
-      Some(0)
-    } else {
-      match Trail(self.0.subsequence(1, self.0.len())).find(d) {
-        Some(i) => Some(i + 1),
-        None => None,
-      }
+  // #[requires(d == d)]
+  // #[ensures(forall<i : _> result == Some(i) ==>
+  //   0 <= i && i < self.0.len() &&
+  //   exists<a : Assign, l : _> a.same(d) && (self.0)[i] == (a, l)
+  // )]
+  fn find(self, d: (Term, Value)) -> Option<(Assign, Int)> {
+    match self {
+      Empty => None,
+      Assign(a, _, tl) => if a.same(d) {
+        Some((a, l))
+      } else { tl.find(d) }
     }
   }
 
   #[logic]
   #[requires(self.is_justified(d))]
-  #[ensures(exists<i : _> (self.0)[i].0 == Assign::Justified(result, d.0, d.1) &&
-    (self.sound() ==> (self.0)[i].0.justified_sound())
-    )]
+  // #[ensures(exists<i : _> (self.0)[i].0 == Assign::Justified(result, d.0, d.1) &&
+  //   (self.sound() ==> (self.0)[i].0.justified_sound())
+  //   )]
   fn justification(self, d: (Term, Value)) -> Set<(Term, Value)> {
     match self.find(d) {
-      Some(i) => match (self.0)[i].0 {
-        Assign::Justified(j, _, _) => j,
-        _ => Set::EMPTY,
-      }
-      None => Set::EMPTY
+      Some((Assign::Justified(j, _ _), _)) => j,
+      _ => Set::EMPTY
     }
   }
 
   #[predicate]
   fn is_justified(self, d: (Term, Value)) -> bool {
     match self.find(d) {
-      Some(i) => match (self.0)[i] {
-        (Assign::Justified(_, _, _), _) => true,
-        _ => false
-      }
-      _ => false,
+      Some((Assign::Justified(_, _, _), _)) => true,
+      _ => false
     }
   }
 
@@ -262,7 +278,7 @@ impl Trail {
   #[requires(self.trail_unique())]
   #[ensures(unique(self.0))]
   fn trail_unique_unique(self) {
-    pearlite! { self.omg(0, 0) }
+    // pearlite! { self.omg(0, 0) }
   }
 
   // #[logic]
@@ -280,7 +296,7 @@ impl Trail {
   #[ensures(filtered(self.0, result.0))]
   #[ensures(result.0.len() <= self.0.len())]
   // #[ensures(forall<i : _> 0 <= i && i < self.0.len() ==> (self.0)[i].1 <= level ==> exists<j : Int> 0 <= j && j <= i && j < result.0.len() && (result.0)[j] == (self.0)[i])]
-  // #[ensures(forall<a : _> self.contains(a) ==> self.level(a) <= level ==> result.contains(a) && result.level(a) == self.level(a))]
+  #[ensures(forall<a : _> self.contains(a) ==> self.level(a) <= level ==> result.contains(a) && result.level(a) == self.level(a))]
   // #[ensures(forall<a : _> result.contains(a) ==> self.contains(a))]
   fn restrict(self, level: Int) -> Self {
     self.trail_unique_unique();
