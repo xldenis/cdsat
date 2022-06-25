@@ -1,0 +1,745 @@
+module Type
+  use Ref
+  use mach.int.Int
+  use prelude.Int8
+  use prelude.Int16
+  use mach.int.Int32
+  use mach.int.Int64
+  use prelude.UInt8
+  use prelude.UInt16
+  use mach.int.UInt32
+  use mach.int.UInt64
+  use string.Char
+  use floating_point.Single
+  use floating_point.Double
+  use seq.Seq
+  use set.Set
+  use prelude.Prelude
+  type cdsat_value  =
+    | Cdsat_Value_Bool bool
+    | Cdsat_Value_Rat int
+    
+  type cdsat_var  =
+    | Cdsat_Var int
+    
+  type cdsat_term  =
+    | Cdsat_Term_Variable (cdsat_var)
+    | Cdsat_Term_Value (cdsat_value)
+    | Cdsat_Term_Plus (cdsat_term) (cdsat_term)
+    | Cdsat_Term_Eq (cdsat_term) (cdsat_term)
+    
+  type cdsat_assign  =
+    | Cdsat_Assign_Decision (cdsat_term) (cdsat_value)
+    | Cdsat_Assign_Justified (Set.set (cdsat_term, cdsat_value)) (cdsat_term) (cdsat_value)
+    | Cdsat_Assign_Input (cdsat_term) (cdsat_value)
+    
+  type cdsat_model  =
+    | Cdsat_Model (Map.map (cdsat_var) (cdsat_value))
+    
+  let function cdsat_model_Model_0 (self : cdsat_model) : Map.map (cdsat_var) (cdsat_value) =
+    match (self) with
+      | Cdsat_Model a -> a
+      end
+  type cdsat_trail  =
+    | Cdsat_Trail_Empty
+    | Cdsat_Trail_Assign (cdsat_assign) int (cdsat_trail)
+    
+  type core_option_option 't =
+    | Core_Option_Option_None
+    | Core_Option_Option_Some 't
+    
+end
+module Cdsat_Main_Interface
+  val main [@cfg:stackify] (_ : ()) : ()
+end
+module Cdsat_Main
+  let rec cfg main [@cfg:stackify] [#"/Users/e34402/Code/cdsat/src/main.rs" 550 0 9] (_ : ()) : () =
+  var _0 : ();
+  {
+    goto BB0
+  }
+  BB0 {
+    _0 <- ();
+    return _0
+  }
+  
+end
+module Cdsat_Filtered_Interface
+  type t
+  use seq.Seq
+  predicate filtered (s : Seq.seq t) (t : Seq.seq t)
+end
+module Cdsat_Filtered
+  type t
+  use seq.Seq
+  use mach.int.Int
+  use mach.int.Int32
+  predicate filtered [#"/Users/e34402/Code/cdsat/src/main.rs" 13 0 44] (s : Seq.seq t) (t : Seq.seq t) =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 14 4 5] forall i : (int) . 0 <= i && i < Seq.length t -> (exists j : (int) . i <= j && j < Seq.length s && Seq.get t i = Seq.get s j)
+end
+module Cdsat_Unique_Interface
+  type t
+  use seq.Seq
+  predicate unique (s : Seq.seq t)
+end
+module Cdsat_Unique
+  type t
+  use seq.Seq
+  use mach.int.Int
+  use mach.int.Int32
+  predicate unique [#"/Users/e34402/Code/cdsat/src/main.rs" 21 0 31] (s : Seq.seq t) =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 22 4 5] forall j : (int) . forall i : (int) . 0 <= i && i < Seq.length s -> 0 <= j && j < Seq.length s -> i <> j -> Seq.get s i <> Seq.get s j
+end
+module Cdsat_Impl0_IsBool_Interface
+  use Type
+  predicate is_bool (self : Type.cdsat_value)
+end
+module Cdsat_Impl0_IsBool
+  use Type
+  predicate is_bool [#"/Users/e34402/Code/cdsat/src/main.rs" 39 4 28] (self : Type.cdsat_value) =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 40 8 9] match (self) with
+      | Type.Cdsat_Value_Bool _ -> true
+      | _ -> false
+      end
+end
+module Cdsat_Impl0_Negate_Interface
+  use Type
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  function negate (self : Type.cdsat_value) : Type.cdsat_value
+end
+module Cdsat_Impl0_Negate
+  use Type
+  clone Cdsat_Impl0_IsBool_Interface as IsBool0
+  function negate [#"/Users/e34402/Code/cdsat/src/main.rs" 48 4 27] (self : Type.cdsat_value) : Type.cdsat_value =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 49 8 9] match (self) with
+      | Type.Cdsat_Value_Bool b -> Type.Cdsat_Value_Bool (not b)
+      | _ -> self
+      end
+  axiom negate_spec : forall self : Type.cdsat_value . ([#"/Users/e34402/Code/cdsat/src/main.rs" 47 15 29] IsBool0.is_bool self) -> true
+end
+module Cdsat_Impl0_Negate_Impl
+  use Type
+  clone Cdsat_Impl0_IsBool as IsBool0
+  let rec ghost function negate (self : Type.cdsat_value) : Type.cdsat_value
+    requires {[#"/Users/e34402/Code/cdsat/src/main.rs" 47 15 29] IsBool0.is_bool self}
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 49 8 9] match (self) with
+      | Type.Cdsat_Value_Bool b -> Type.Cdsat_Value_Bool (not b)
+      | _ -> self
+      end
+end
+module Cdsat_Impl1_Same_Interface
+  use Type
+  predicate same (self : Type.cdsat_assign) (a : (Type.cdsat_term, Type.cdsat_value))
+end
+module Cdsat_Impl1_Same
+  use Type
+  predicate same [#"/Users/e34402/Code/cdsat/src/main.rs" 65 4 43] (self : Type.cdsat_assign) (a : (Type.cdsat_term, Type.cdsat_value))
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 66 8 10] let (t, val') = a in match (self) with
+      | Type.Cdsat_Assign_Decision t2 val2 -> t = t2 && val' = val2
+      | Type.Cdsat_Assign_Input t2 val2 -> t = t2 && val' = val2
+      | Type.Cdsat_Assign_Justified _ t2 val2 -> t = t2 && val' = val2
+      end
+end
+module Cdsat_Impl1_ToPair_Interface
+  use Type
+  clone Cdsat_Impl1_Same_Interface as Same0
+  function to_pair (self : Type.cdsat_assign) : (Type.cdsat_term, Type.cdsat_value)
+end
+module Cdsat_Impl1_ToPair
+  use Type
+  clone Cdsat_Impl1_Same_Interface as Same0
+  function to_pair [#"/Users/e34402/Code/cdsat/src/main.rs" 78 4 37] (self : Type.cdsat_assign) : (Type.cdsat_term, Type.cdsat_value)
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 79 8 9] match (self) with
+      | Type.Cdsat_Assign_Decision t val' -> (t, val')
+      | Type.Cdsat_Assign_Input t val' -> (t, val')
+      | Type.Cdsat_Assign_Justified _ t val' -> (t, val')
+      end
+  axiom to_pair_spec : forall self : Type.cdsat_assign . [#"/Users/e34402/Code/cdsat/src/main.rs" 77 14 31] Same0.same self (to_pair self)
+end
+module Cdsat_Impl1_ToPair_Impl
+  use Type
+  clone Cdsat_Impl1_Same as Same0
+  let rec ghost function to_pair (self : Type.cdsat_assign) : (Type.cdsat_term, Type.cdsat_value)
+    ensures { [#"/Users/e34402/Code/cdsat/src/main.rs" 77 14 31] Same0.same self result }
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 79 8 9] match (self) with
+      | Type.Cdsat_Assign_Decision t val' -> (t, val')
+      | Type.Cdsat_Assign_Input t val' -> (t, val')
+      | Type.Cdsat_Assign_Justified _ t val' -> (t, val')
+      end
+end
+module CreusotContracts_Logic_Set_Impl0_Contains_Interface
+  type t
+  use set.Set
+  predicate contains [@inline:trivial] (self : Set.set t) (e : t)
+end
+module CreusotContracts_Logic_Set_Impl0_Contains
+  type t
+  use set.Set
+  predicate contains [@inline:trivial] (self : Set.set t) (e : t) =
+    Set.mem e self
+end
+module Cdsat_Impl2_Interp_Interface
+  use Type
+  function interp (self : Type.cdsat_model) (t : Type.cdsat_term) : Type.cdsat_value
+end
+module Cdsat_Impl2_Interp
+  use Type
+  use map.Map
+  use mach.int.Int
+  use mach.int.Int32
+  function interp [#"/Users/e34402/Code/cdsat/src/main.rs" 100 4 37] (self : Type.cdsat_model) (t : Type.cdsat_term) : Type.cdsat_value
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 101 8 9] match (t) with
+      | Type.Cdsat_Term_Variable v -> Map.get (Type.cdsat_model_Model_0 self) v
+      | Type.Cdsat_Term_Value v -> v
+      | Type.Cdsat_Term_Plus l r -> match ((interp self l, interp self r)) with
+        | (Type.Cdsat_Value_Rat r1, Type.Cdsat_Value_Rat r2) -> Type.Cdsat_Value_Rat (r1 + r2)
+        | _ -> Type.Cdsat_Value_Rat (- 1)
+        end
+      | Type.Cdsat_Term_Eq l r -> Type.Cdsat_Value_Bool (interp self l = interp self r)
+      end
+end
+module Cdsat_Impl2_Satisfies_Interface
+  use Type
+  predicate satisfies (self : Type.cdsat_model) (v : (Type.cdsat_term, Type.cdsat_value))
+end
+module Cdsat_Impl2_Satisfies
+  use Type
+  clone Cdsat_Impl2_Interp_Interface as Interp0
+  predicate satisfies [#"/Users/e34402/Code/cdsat/src/main.rs" 113 4 48] (self : Type.cdsat_model) (v : (Type.cdsat_term, Type.cdsat_value))
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 114 8 31] Interp0.interp self (let (a, _) = v in a) = (let (_, a) = v in a)
+end
+module Cdsat_Impl2_SatisfySet_Interface
+  use Type
+  use set.Set
+  predicate satisfy_set (self : Type.cdsat_model) (v : Set.set (Type.cdsat_term, Type.cdsat_value))
+end
+module Cdsat_Impl2_SatisfySet
+  use Type
+  use set.Set
+  clone Cdsat_Impl2_Satisfies_Interface as Satisfies0
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  predicate satisfy_set [#"/Users/e34402/Code/cdsat/src/main.rs" 118 4 55] (self : Type.cdsat_model) (v : Set.set (Type.cdsat_term, Type.cdsat_value))
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 119 8 71] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains v a -> Satisfies0.satisfies self a
+end
+module Cdsat_Impl1_JustifiedSound_Interface
+  use Type
+  predicate justified_sound (self : Type.cdsat_assign)
+end
+module Cdsat_Impl1_JustifiedSound
+  use Type
+  use set.Set
+  clone Cdsat_Impl2_Satisfies_Interface as Satisfies0
+  clone Cdsat_Impl2_SatisfySet_Interface as SatisfySet0
+  predicate justified_sound [#"/Users/e34402/Code/cdsat/src/main.rs" 87 4 36] (self : Type.cdsat_assign) =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 88 8 9] exists val' : (Type.cdsat_value) . exists t : (Type.cdsat_term) . exists just : (Set.set (Type.cdsat_term, Type.cdsat_value)) . self = Type.Cdsat_Assign_Justified just t val' && (forall m : (Type.cdsat_model) . SatisfySet0.satisfy_set m just -> Satisfies0.satisfies m (t, val'))
+end
+module Cdsat_Impl3_Sound_Interface
+  use Type
+  predicate sound [@inline:trivial] (self : Type.cdsat_trail)
+end
+module Cdsat_Impl3_Sound
+  use Type
+  clone Cdsat_Impl1_JustifiedSound_Interface as JustifiedSound0
+  predicate sound [@inline:trivial] [#"/Users/e34402/Code/cdsat/src/main.rs" 131 4 26] (self : Type.cdsat_trail) =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 132 8 9] match (self) with
+      | Type.Cdsat_Trail_Empty -> true
+      | Type.Cdsat_Trail_Assign a l tl -> sound tl && match (a) with
+        | Type.Cdsat_Assign_Justified just t val' -> JustifiedSound0.justified_sound a
+        | _ -> true
+        end
+      end
+end
+module Cdsat_Impl3_Find_Interface
+  use Type
+  use mach.int.Int
+  function find (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Type.core_option_option (Type.cdsat_assign, int)
+    
+end
+module Cdsat_Impl3_Find
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl1_Same_Interface as Same0
+  function find [#"/Users/e34402/Code/cdsat/src/main.rs" 250 4 60] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Type.core_option_option (Type.cdsat_assign, int)
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 251 8 9] match (self) with
+      | Type.Cdsat_Trail_Empty -> Type.Core_Option_Option_None
+      | Type.Cdsat_Trail_Assign a l tl -> if Same0.same a d then Type.Core_Option_Option_Some (a, l) else find tl d
+      end
+end
+module Cdsat_Impl3_Level_Interface
+  use Type
+  use mach.int.Int
+  function level (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : int
+end
+module Cdsat_Impl3_Level
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl3_Find_Interface as Find0
+  function level [#"/Users/e34402/Code/cdsat/src/main.rs" 229 4 43] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : int
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 230 8 9] match (Find0.find self d) with
+      | Type.Core_Option_Option_Some (_, l) -> l
+      | Type.Core_Option_Option_None -> 0
+      end
+end
+module Cdsat_Impl3_IsSetLevel_Interface
+  use Type
+  use set.Set
+  use mach.int.Int
+  predicate is_set_level (self : Type.cdsat_trail) (s : Set.set (Type.cdsat_term, Type.cdsat_value)) (m : int)
+end
+module Cdsat_Impl3_IsSetLevel
+  use Type
+  use set.Set
+  use mach.int.Int
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  predicate is_set_level [#"/Users/e34402/Code/cdsat/src/main.rs" 145 4 64] (self : Type.cdsat_trail) (s : Set.set (Type.cdsat_term, Type.cdsat_value)) (m : int)
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 147 10 62] (exists i : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains s i && Level0.level self i = m) && (forall i : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains s i -> Level0.level self i <= m)
+end
+module Cdsat_Impl3_CountDecision_Interface
+  use mach.int.Int
+  use mach.int.Int32
+  use Type
+  function count_decision (self : Type.cdsat_trail) : int
+end
+module Cdsat_Impl3_CountDecision
+  use mach.int.Int
+  use mach.int.Int32
+  use Type
+  function count_decision [#"/Users/e34402/Code/cdsat/src/main.rs" 374 4 34] (self : Type.cdsat_trail) : int =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 375 8 9] match (self) with
+      | Type.Cdsat_Trail_Empty -> 0
+      | Type.Cdsat_Trail_Assign (Type.Cdsat_Assign_Decision _ _) _ tl -> 1 + count_decision tl
+      | Type.Cdsat_Trail_Assign _ _ tl -> count_decision tl
+      end
+  axiom count_decision_spec : forall self : Type.cdsat_trail . [#"/Users/e34402/Code/cdsat/src/main.rs" 373 14 25] count_decision self >= 0
+end
+module Cdsat_Impl3_CountDecision_Impl
+  use mach.int.Int
+  use mach.int.Int32
+  use Type
+  let rec ghost function count_decision (self : Type.cdsat_trail) : int
+    ensures { [#"/Users/e34402/Code/cdsat/src/main.rs" 373 14 25] result >= 0 }
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 375 8 9] match (self) with
+      | Type.Cdsat_Trail_Empty -> 0
+      | Type.Cdsat_Trail_Assign (Type.Cdsat_Assign_Decision _ _) _ tl -> 1 + count_decision tl
+      | Type.Cdsat_Trail_Assign _ _ tl -> count_decision tl
+      end
+end
+module Cdsat_Impl3_InvariantLevel_Interface
+  use Type
+  predicate invariant_level (self : Type.cdsat_trail)
+end
+module Cdsat_Impl3_InvariantLevel
+  use Type
+  use mach.int.Int
+  use mach.int.Int32
+  clone Cdsat_Impl3_IsSetLevel_Interface as IsSetLevel0
+  clone Cdsat_Impl3_CountDecision_Interface as CountDecision0 with axiom .
+  predicate invariant_level [#"/Users/e34402/Code/cdsat/src/main.rs" 153 4 36] (self : Type.cdsat_trail) =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 154 8 9] match (self) with
+      | Type.Cdsat_Trail_Empty -> true
+      | Type.Cdsat_Trail_Assign a l tl -> invariant_level tl && match (a) with
+        | Type.Cdsat_Assign_Input _ _ -> l = 0
+        | Type.Cdsat_Assign_Decision _ _ -> CountDecision0.count_decision tl = l
+        | Type.Cdsat_Assign_Justified j _ _ -> IsSetLevel0.is_set_level tl j l
+        end
+      end
+end
+module Cdsat_Impl3_Contains_Interface
+  use Type
+  predicate contains (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value))
+end
+module Cdsat_Impl3_Contains
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl3_Find_Interface as Find0
+  predicate contains [#"/Users/e34402/Code/cdsat/src/main.rs" 237 4 47] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value))
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 238 8 9] match (Find0.find self d) with
+      | Type.Core_Option_Option_Some ix -> true
+      | Type.Core_Option_Option_None -> false
+      end
+end
+module Cdsat_Impl3_InvariantContains_Interface
+  use Type
+  predicate invariant_contains (self : Type.cdsat_trail)
+end
+module Cdsat_Impl3_InvariantContains
+  use Type
+  clone Cdsat_Impl3_Contains_Interface as Contains1
+  clone CreusotContracts_Logic_Set_Impl0_Contains_Interface as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  predicate invariant_contains [#"/Users/e34402/Code/cdsat/src/main.rs" 168 4 39] (self : Type.cdsat_trail) =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 169 8 9] match (self) with
+      | Type.Cdsat_Trail_Empty -> true
+      | Type.Cdsat_Trail_Assign a l tl -> invariant_contains tl && match (a) with
+        | Type.Cdsat_Assign_Justified j _ _ -> forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains j a -> Contains1.contains tl a
+        | _ -> true
+        end
+      end
+end
+module Cdsat_Impl3_TrailUnique_Interface
+  use Type
+  predicate trail_unique (self : Type.cdsat_trail)
+end
+module Cdsat_Impl3_TrailUnique
+  use Type
+  predicate trail_unique [#"/Users/e34402/Code/cdsat/src/main.rs" 186 4 33] (self : Type.cdsat_trail) =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 187 8 12] true
+end
+module Cdsat_Impl3_Invariant_Interface
+  use Type
+  predicate invariant' (self : Type.cdsat_trail)
+end
+module Cdsat_Impl3_Invariant
+  use Type
+  clone Cdsat_Impl3_TrailUnique_Interface as TrailUnique0
+  clone Cdsat_Impl3_InvariantContains_Interface as InvariantContains0
+  clone Cdsat_Impl3_InvariantLevel_Interface as InvariantLevel0
+  predicate invariant' [#"/Users/e34402/Code/cdsat/src/main.rs" 200 4 30] (self : Type.cdsat_trail) =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 201 8 82] InvariantLevel0.invariant_level self && InvariantContains0.invariant_contains self && TrailUnique0.trail_unique self
+end
+module Cdsat_Impl3_IsJustified_Interface
+  use Type
+  predicate is_justified (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value))
+end
+module Cdsat_Impl3_IsJustified
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl3_Find_Interface as Find0
+  predicate is_justified [#"/Users/e34402/Code/cdsat/src/main.rs" 276 4 51] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value))
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 277 8 9] match (Find0.find self d) with
+      | Type.Core_Option_Option_Some (Type.Cdsat_Assign_Justified _ _ _, _) -> true
+      | _ -> false
+      end
+end
+module Cdsat_Impl3_Justification_Interface
+  use Type
+  use set.Set
+  clone Cdsat_Impl3_IsJustified_Interface as IsJustified0
+  function justification (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Set.set (Type.cdsat_term, Type.cdsat_value)
+    
+end
+module Cdsat_Impl3_Justification
+  use Type
+  use set.Set
+  clone Cdsat_Impl3_IsJustified_Interface as IsJustified0
+  use mach.int.Int
+  clone Cdsat_Impl3_Find_Interface as Find0
+  function justification [#"/Users/e34402/Code/cdsat/src/main.rs" 268 4 66] (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Set.set (Type.cdsat_term, Type.cdsat_value)
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 269 8 9] match (Find0.find self d) with
+      | Type.Core_Option_Option_Some (Type.Cdsat_Assign_Justified j _ _, _) -> j
+      | _ -> Set.empty 
+      end
+  axiom justification_spec : forall self : Type.cdsat_trail, d : (Type.cdsat_term, Type.cdsat_value) . ([#"/Users/e34402/Code/cdsat/src/main.rs" 264 15 35] IsJustified0.is_justified self d) -> true
+end
+module Cdsat_Impl3_Justification_Impl
+  use Type
+  use set.Set
+  use mach.int.Int
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same
+  clone Cdsat_Impl3_IsJustified as IsJustified0 with function Find0.find = Find0.find
+  let rec ghost function justification (self : Type.cdsat_trail) (d : (Type.cdsat_term, Type.cdsat_value)) : Set.set (Type.cdsat_term, Type.cdsat_value)
+    requires {[#"/Users/e34402/Code/cdsat/src/main.rs" 264 15 35] IsJustified0.is_justified self d}
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 269 8 9] match (Find0.find self d) with
+      | Type.Core_Option_Option_Some (Type.Cdsat_Assign_Justified j _ _, _) -> j
+      | _ -> Set.empty 
+      end
+end
+module Cdsat_Impl3_TrailUniqueUnique_Interface
+  use Type
+  clone Cdsat_Impl3_TrailUnique_Interface as TrailUnique0
+  function trail_unique_unique (self : Type.cdsat_trail) : ()
+end
+module Cdsat_Impl3_TrailUniqueUnique
+  use Type
+  clone Cdsat_Impl3_TrailUnique_Interface as TrailUnique0
+  function trail_unique_unique [#"/Users/e34402/Code/cdsat/src/main.rs" 286 4 32] (self : Type.cdsat_trail) : () =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 283 4 12] ()
+  axiom trail_unique_unique_spec : forall self : Type.cdsat_trail . ([#"/Users/e34402/Code/cdsat/src/main.rs" 284 15 34] TrailUnique0.trail_unique self) -> true
+end
+module Cdsat_Impl3_TrailUniqueUnique_Impl
+  use Type
+  clone Cdsat_Impl3_TrailUnique as TrailUnique0
+  let rec ghost function trail_unique_unique (self : Type.cdsat_trail) : ()
+    requires {[#"/Users/e34402/Code/cdsat/src/main.rs" 284 15 34] TrailUnique0.trail_unique self}
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 283 4 12] ()
+end
+module Cdsat_Impl3_CountBounds_Interface
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl3_CountDecision_Interface as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  function count_bounds (self : Type.cdsat_trail) : ()
+end
+module Cdsat_Impl3_CountBounds
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl3_CountDecision_Interface as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  function count_bounds [#"/Users/e34402/Code/cdsat/src/main.rs" 363 4 31] (self : Type.cdsat_trail) : () =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 364 6 7] match (self) with
+      | Type.Cdsat_Trail_Empty -> ()
+      | Type.Cdsat_Trail_Assign (Type.Cdsat_Assign_Input _ _) _ tl -> count_bounds tl
+      | Type.Cdsat_Trail_Assign (Type.Cdsat_Assign_Decision _ _) _ tl -> count_bounds tl
+      | Type.Cdsat_Trail_Assign (Type.Cdsat_Assign_Justified _ _ _) _ tl -> count_bounds tl
+      end
+  axiom count_bounds_spec : forall self : Type.cdsat_trail . ([#"/Users/e34402/Code/cdsat/src/main.rs" 361 15 31] Invariant0.invariant' self) -> ([#"/Users/e34402/Code/cdsat/src/main.rs" 362 4 89] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains self a -> Level0.level self a <= CountDecision0.count_decision self)
+end
+module Cdsat_Impl3_CountBounds_Impl
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains0 with function Find0.find = Find0.find
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains1 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains1.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl3_InvariantContains as InvariantContains0 with predicate Contains0.contains = Contains1.contains,
+  predicate Contains1.contains = Contains0.contains
+  clone Cdsat_Impl3_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_InvariantLevel as InvariantLevel0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  clone Cdsat_Impl3_TrailUnique as TrailUnique0
+  clone Cdsat_Impl3_Invariant as Invariant0 with predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
+  predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
+  predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique
+  let rec ghost function count_bounds (self : Type.cdsat_trail) : ()
+    requires {[#"/Users/e34402/Code/cdsat/src/main.rs" 361 15 31] Invariant0.invariant' self}
+    ensures { [#"/Users/e34402/Code/cdsat/src/main.rs" 362 4 89] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains self a -> Level0.level self a <= CountDecision0.count_decision self }
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 364 6 7] match (self) with
+      | Type.Cdsat_Trail_Empty -> ()
+      | Type.Cdsat_Trail_Assign (Type.Cdsat_Assign_Input _ _) _ tl -> count_bounds tl
+      | Type.Cdsat_Trail_Assign (Type.Cdsat_Assign_Decision _ _) _ tl -> count_bounds tl
+      | Type.Cdsat_Trail_Assign (Type.Cdsat_Assign_Justified _ _ _) _ tl -> count_bounds tl
+      end
+end
+module Cdsat_Impl3_Restrict_Interface
+  use mach.int.Int
+  use Type
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_CountDecision_Interface as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  function restrict (self : Type.cdsat_trail) (level : int) : Type.cdsat_trail
+end
+module Cdsat_Impl3_Restrict
+  use mach.int.Int
+  use Type
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_CountDecision_Interface as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_CountBounds_Interface as CountBounds0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains0.contains, function Level0.level = Level0.level,
+  function CountDecision0.count_decision = CountDecision0.count_decision, axiom .
+  function restrict [#"/Users/e34402/Code/cdsat/src/main.rs" 308 4 41] (self : Type.cdsat_trail) (level : int) : Type.cdsat_trail
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 309 8 9] match (self) with
+      | Type.Cdsat_Trail_Empty -> Type.Cdsat_Trail_Empty
+      | Type.Cdsat_Trail_Assign a l tl -> let tl = restrict tl level in let _ = CountBounds0.count_bounds tl in if l <= level then
+        Type.Cdsat_Trail_Assign a l tl
+      else
+        tl
+      
+      end
+  axiom restrict_spec : forall self : Type.cdsat_trail, level : int . ([#"/Users/e34402/Code/cdsat/src/main.rs" 300 15 31] Invariant0.invariant' self) -> ([#"/Users/e34402/Code/cdsat/src/main.rs" 301 14 32] Invariant0.invariant' (restrict self level)) && ([#"/Users/e34402/Code/cdsat/src/main.rs" 305 4 132] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains self a -> Level0.level self a <= level -> Contains0.contains (restrict self level) a && Level0.level (restrict self level) a = Level0.level self a) && ([#"/Users/e34402/Code/cdsat/src/main.rs" 306 4 65] level >= CountDecision0.count_decision self -> restrict self level = self)
+end
+module Cdsat_Impl3_Restrict_Impl
+  use mach.int.Int
+  use Type
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains0 with function Find0.find = Find0.find
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains1 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains1.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl3_InvariantContains as InvariantContains0 with predicate Contains0.contains = Contains1.contains,
+  predicate Contains1.contains = Contains0.contains
+  clone Cdsat_Impl3_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_InvariantLevel as InvariantLevel0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  clone Cdsat_Impl3_TrailUnique as TrailUnique0
+  clone Cdsat_Impl3_Invariant as Invariant0 with predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
+  predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
+  predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique
+  clone Cdsat_Impl3_CountBounds as CountBounds0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains0.contains, function Level0.level = Level0.level,
+  function CountDecision0.count_decision = CountDecision0.count_decision, axiom .
+  let rec ghost function restrict (self : Type.cdsat_trail) (level : int) : Type.cdsat_trail
+    requires {[#"/Users/e34402/Code/cdsat/src/main.rs" 300 15 31] Invariant0.invariant' self}
+    ensures { [#"/Users/e34402/Code/cdsat/src/main.rs" 306 4 65] level >= CountDecision0.count_decision self -> result = self }
+    ensures { [#"/Users/e34402/Code/cdsat/src/main.rs" 305 4 132] forall a : ((Type.cdsat_term, Type.cdsat_value)) . Contains0.contains self a -> Level0.level self a <= level -> Contains0.contains result a && Level0.level result a = Level0.level self a }
+    ensures { [#"/Users/e34402/Code/cdsat/src/main.rs" 301 14 32] Invariant0.invariant' result }
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 309 8 9] match (self) with
+      | Type.Cdsat_Trail_Empty -> Type.Cdsat_Trail_Empty
+      | Type.Cdsat_Trail_Assign a l tl -> let tl = restrict tl level in let _ = CountBounds0.count_bounds tl in if l <= level then
+        Type.Cdsat_Trail_Assign a l tl
+      else
+        tl
+      
+      end
+end
+module Cdsat_Impl3_RestrictSound_Interface
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_CountDecision_Interface as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_Restrict_Interface as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  function restrict_sound (self : Type.cdsat_trail) (level : int) : ()
+end
+module Cdsat_Impl3_RestrictSound
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl3_Level_Interface as Level0
+  clone Cdsat_Impl3_Contains_Interface as Contains0
+  clone Cdsat_Impl3_CountDecision_Interface as CountDecision0 with axiom .
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_Restrict_Interface as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, function Level0.level = Level0.level, axiom .
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  function restrict_sound [#"/Users/e34402/Code/cdsat/src/main.rs" 339 4 39] (self : Type.cdsat_trail) (level : int) : ()
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 336 4 12] ()
+  axiom restrict_sound_spec : forall self : Type.cdsat_trail, level : int . ([#"/Users/e34402/Code/cdsat/src/main.rs" 337 15 27] Sound0.sound self) -> ([#"/Users/e34402/Code/cdsat/src/main.rs" 338 14 42] Sound0.sound (Restrict0.restrict self level))
+end
+module Cdsat_Impl3_RestrictSound_Impl
+  use Type
+  use mach.int.Int
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains0 with function Find0.find = Find0.find
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains1 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains1.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl3_InvariantContains as InvariantContains0 with predicate Contains0.contains = Contains1.contains,
+  predicate Contains1.contains = Contains0.contains
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains1.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound0 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl3_TrailUnique as TrailUnique0
+  clone Cdsat_Impl3_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_InvariantLevel as InvariantLevel0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  clone Cdsat_Impl3_Invariant as Invariant0 with predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
+  predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
+  predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique
+  clone Cdsat_Impl3_CountBounds as CountBounds0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  predicate Contains0.contains = Contains0.contains, function Level0.level = Level0.level,
+  function CountDecision0.count_decision = CountDecision0.count_decision, axiom .
+  clone Cdsat_Impl3_Restrict as Restrict0 with predicate Invariant0.invariant' = Invariant0.invariant',
+  function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate Contains0.contains = Contains0.contains, function Level0.level = Level0.level,
+  function CountBounds0.count_bounds = CountBounds0.count_bounds, axiom .
+  let rec ghost function restrict_sound (self : Type.cdsat_trail) (level : int) : ()
+    requires {[#"/Users/e34402/Code/cdsat/src/main.rs" 337 15 27] Sound0.sound self}
+    ensures { [#"/Users/e34402/Code/cdsat/src/main.rs" 338 14 42] Sound0.sound (Restrict0.restrict self level) }
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 336 4 12] ()
+end
+module Cdsat_Impl3_PushDecision_Interface
+  use Type
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  function push_decision (self : Type.cdsat_trail) (a : (Type.cdsat_term, Type.cdsat_value)) : Type.cdsat_trail
+end
+module Cdsat_Impl3_PushDecision
+  use Type
+  clone Cdsat_Impl3_Invariant_Interface as Invariant0
+  clone Cdsat_Impl3_Sound_Interface as Sound0
+  function push_decision [#"/Users/e34402/Code/cdsat/src/main.rs" 347 4 52] (self : Type.cdsat_trail) (a : (Type.cdsat_term, Type.cdsat_value)) : Type.cdsat_trail
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 348 8 12] self
+  axiom push_decision_spec : forall self : Type.cdsat_trail, a : (Type.cdsat_term, Type.cdsat_value) . ([#"/Users/e34402/Code/cdsat/src/main.rs" 344 15 27] Sound0.sound self) -> ([#"/Users/e34402/Code/cdsat/src/main.rs" 342 15 31] Invariant0.invariant' self) -> ([#"/Users/e34402/Code/cdsat/src/main.rs" 343 14 32] Invariant0.invariant' (push_decision self a)) && ([#"/Users/e34402/Code/cdsat/src/main.rs" 345 14 28] Sound0.sound (push_decision self a))
+end
+module Cdsat_Impl3_PushDecision_Impl
+  use Type
+  clone Cdsat_Impl1_Same as Same0
+  clone Cdsat_Impl3_Find as Find0 with predicate Same0.same = Same0.same
+  clone Cdsat_Impl3_Level as Level0 with function Find0.find = Find0.find
+  clone Cdsat_Impl3_Contains as Contains1 with function Find0.find = Find0.find
+  clone Cdsat_Impl2_Interp as Interp0
+  clone Cdsat_Impl2_Satisfies as Satisfies0 with function Interp0.interp = Interp0.interp
+  clone CreusotContracts_Logic_Set_Impl0_Contains as Contains0 with type t = (Type.cdsat_term, Type.cdsat_value)
+  clone Cdsat_Impl3_IsSetLevel as IsSetLevel0 with predicate Contains0.contains = Contains0.contains,
+  function Level0.level = Level0.level
+  clone Cdsat_Impl2_SatisfySet as SatisfySet0 with predicate Contains0.contains = Contains0.contains,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl1_JustifiedSound as JustifiedSound0 with predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+  predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Impl3_Sound as Sound0 with predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  clone Cdsat_Impl3_InvariantContains as InvariantContains0 with predicate Contains0.contains = Contains0.contains,
+  predicate Contains1.contains = Contains1.contains
+  clone Cdsat_Impl3_CountDecision as CountDecision0 with axiom .
+  clone Cdsat_Impl3_InvariantLevel as InvariantLevel0 with function CountDecision0.count_decision = CountDecision0.count_decision,
+  predicate IsSetLevel0.is_set_level = IsSetLevel0.is_set_level
+  clone Cdsat_Impl3_TrailUnique as TrailUnique0
+  clone Cdsat_Impl3_Invariant as Invariant0 with predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
+  predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
+  predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique
+  let rec ghost function push_decision (self : Type.cdsat_trail) (a : (Type.cdsat_term, Type.cdsat_value)) : Type.cdsat_trail
+    requires {[#"/Users/e34402/Code/cdsat/src/main.rs" 344 15 27] Sound0.sound self}
+    requires {[#"/Users/e34402/Code/cdsat/src/main.rs" 342 15 31] Invariant0.invariant' self}
+    ensures { [#"/Users/e34402/Code/cdsat/src/main.rs" 345 14 28] Sound0.sound result }
+    ensures { [#"/Users/e34402/Code/cdsat/src/main.rs" 343 14 32] Invariant0.invariant' result }
+    
+   =
+    [#"/Users/e34402/Code/cdsat/src/main.rs" 348 8 12] self
+end
