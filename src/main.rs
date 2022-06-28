@@ -265,13 +265,6 @@ impl Trail {
     }
 
     #[logic]
-    #[requires(self.trail_unique())]
-    // #[ensures(unique(self))]
-    fn trail_unique_unique(self) {
-        // pearlite! { self.omg(0, 0) }
-    }
-
-    #[logic]
     #[requires(self.invariant())]
     #[ensures(result.invariant())]
     #[ensures(forall<a : _> self.contains(a) ==> self.level(a) <= level ==> result.contains(a) && result.level(a) == self.level(a))]
@@ -379,6 +372,11 @@ impl Trail {
             }
         }
     }
+
+    #[predicate]
+    fn satisfied_by(self, m: Model) -> bool {
+      pearlite! { forall<a : _> self.contains(a) ==> m.satisfies(a) }
+    }
 }
 
 struct Normal(Trail);
@@ -428,6 +426,7 @@ impl Normal {
     #[predicate]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
+    #[ensures(result ==> forall<m : _> self.0.satisfied_by(m) ==> false)]
     // TODO: Figure out how to state that the result is unsat...
     fn fail(self, just: (Set<(Term, Value)>, Term, Value)) -> bool {
         pearlite! { {
@@ -479,7 +478,6 @@ impl Conflict {
     // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
     #[predicate]
     #[requires(self.invariant())]
-    #[requires(tgt.invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> tgt.0.invariant())]
     #[ensures(result ==> tgt.sound())]
