@@ -1,0 +1,8 @@
+CDSAT Notes
+-----------
+ ☐ How granular should the theory interface be?
+ ☐ What are the error states?
+ ☐ What kinds of strategies?
+ ☐ Concrete trail
+ ☐ Variable ordering heuristics
+ ☐ Term database: deciding equality rapidly will be *crucial*
