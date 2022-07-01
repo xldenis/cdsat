@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 creusot-contracts = { path = "../creusot/creusot-contracts", version = "*" }
 num-rational = "0.4.1"
+priority-queue = "1.2.2"
 
 [features]
 contracts = ["creusot-contracts/contracts"]
