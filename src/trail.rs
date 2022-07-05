@@ -13,8 +13,9 @@ pub struct Assignment {
 
 #[derive(PartialEq, Eq, Hash, Clone)]
 enum Reason {
-    Justified(Vec<usize>),
+    Justified(Vec<Assignment>),
     Decision,
+    Input,
 }
 
 #[derive(Clone, PartialEq, Eq, Hash)]
@@ -48,8 +49,11 @@ impl Value {
         }
     }
 
-    pub(crate) fn negate(&self) -> _ {
-        todo!()
+    pub(crate) fn negate(&self) -> Self {
+        match self {
+            Value::Bool(b) => Value::Bool(!b),
+            _ => unreachable!()
+        }
     }
 }
 
@@ -59,6 +63,15 @@ pub struct Trail {
 }
 
 impl Trail {
+    pub fn new(inputs: Vec<(Term, Value)>) -> Self {
+        let mut assignments = Vec::new();
+        for (term, val) in inputs {
+            assignments.push(Assignment { term, val, reason: Reason::Input, level: 0 })
+        }
+
+        Trail { assignments, level: 0 }
+    }
+
     pub fn len(&self) -> usize {
         self.assignments.len()
     }
@@ -95,16 +108,28 @@ impl Trail {
         return None
     }
 
-    pub(crate) fn justification(&self, a: Assignment) -> Option<Vec<Assignment>> {
-        todo!()
+    pub(crate) fn justification(&self, a: &Assignment) -> Option<Vec<Assignment>> {
+        match &a.reason {
+            Reason::Justified(v) => Some(v.clone()),
+            Reason::Decision => None,
+            Reason::Input => None,
+        }
     }
 
-    pub(crate) fn add_justified(&self, into_vec: Vec<Assignment>, term: _, negate: _) -> _ {
-        todo!()
+    pub(crate) fn add_justified(&mut self, into_vec: Vec<Assignment>, term: Term, val: Value) {
+        self.assignments.push(Assignment { term, val, reason: Reason::Justified(into_vec), level: self.level })
     }
 
-    pub(crate) fn restrict(&self, arg1: usize) -> _ {
-        todo!()
+    pub(crate) fn restrict(&mut self, level: usize) {
+        let mut i = 0;
+
+        while i < self.assignments.len() {
+            if self.assignments[self.assignments.len() - i].level > level {
+                self.assignments.remove(self.assignments.len() - i);
+            } else {
+                i += 1;
+            }
+        }
     }
 }
 

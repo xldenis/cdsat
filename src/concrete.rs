@@ -16,13 +16,16 @@ enum TheoryState {
 }
 
 impl Solver {
+    pub fn new() -> Self {
+        Solver { bool_th: BoolTheory }
+    }
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
         // Invariant:
         // Every theory is coherent up to last_index with the trail
         // Invariant: trail is sound & has type invariants
         loop {
             // Tracks if all theories are satisfied with the trail.
-            let mut states = TheoryState::Unknown;
+            let mut states;
             // Invariant:
             // TheoryState::Sat => Theory_k is Sat for trail
             // TheoryState::Decision => the decision is acceptable with the current trail
@@ -30,6 +33,7 @@ impl Solver {
             // Every theory is coherent up to last_index with the trail
             // Invariant: trail is sound & has type invariants
             loop {
+                println!("{:?}", trail.len());
                 let trail_len = trail.len();
                 let th_res = self.bool_th.extend(trail);
                 if trail_len != trail.len() {
@@ -81,20 +85,22 @@ impl Solver {
 
         // #[variant()]
         while let Some((a, l)) = heap.pop() {
+            println!("conflict");
+
             // back jump
             if a.is_bool() && l > *heap.peek().unwrap().1 {
                 trail.restrict(*heap.peek().unwrap().1);
-                trail.add_justified(heap.into_vec(), a.term(), a.value().negate());
+                trail.add_justified(heap.into_vec(), a.term().clone(), a.value().negate());
                 return;
             };
 
-            if let Some(just) = trail.justification(a) {
+            if let Some(just) = trail.justification(&a) {
                 for j in just.iter() {
                     if j.level() == level && j.first_order() && j.decision() {
                         // undo decide
                         if *heap.peek().unwrap().1 == l {
                             trail.restrict(level - 1);
-                            trail.add_decision(a.term(), a.value().negate());
+                            trail.add_decision(a.term().clone(), a.value().negate());
                             return;
                         }
                         // undo clear
@@ -106,7 +112,7 @@ impl Solver {
                 }
 
                 // resolve
-                for a in j.into_iter() {
+                for a in just.into_iter() {
                     let l = a.level();
                     heap.push(a, l);
                 }
@@ -115,6 +121,7 @@ impl Solver {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum Answer {
     Sat,
     Unsat,
@@ -155,7 +162,7 @@ impl BoolTheory {
     // Returns `Fail` if we encounter a conflict at level 0
     // Return Satisfied if the trail is satisfactory to us
     fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
-        let i = 0;
+        let mut i = 0;
 
         while i < tl.len() {
         	if tl[i].is_bool() {
@@ -172,6 +179,7 @@ impl BoolTheory {
                     }
                 }
         	}
+            i += 1;
         }
 
         return ExtendResult::Satisfied
@@ -180,7 +188,7 @@ impl BoolTheory {
     // Ensures:
     //  - Free Var list is non-empty, all not on trail
     //  - If ok: there is a justified entailment between the justification and tm <- value?
-    #[ensures(forall<just : _, val: _> result == Ok((just, val)) ==> forall<m : _> m.satisfy_set(@just) ==> m.satisfies((@tm, @val)))]
+    // #[ensures(forall<just : _, val: _> result == Ok((just, val)) ==> forall<m : _> m.satisfy_set(@just) ==> m.satisfies((@tm, @val)))]
     fn eval(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<Assignment>, Value), Vec<Term>> {
         match tm {
             Term::Conj(l, r) => {
