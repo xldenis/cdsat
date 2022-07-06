@@ -1,5 +1,6 @@
-use std::ops::Index;
-
+use ::std::ops::Index;
+use creusot_contracts::*;
+use creusot_contracts::derive::{PartialEq};
 use num_rational::BigRational;
 
 // Todo: Distinguish between boolean and fo assignments as an optim?
@@ -11,11 +12,31 @@ pub struct Assignment {
     level: usize,
 }
 
+#[cfg(feature = "contracts")]
+impl creusot_contracts::Model for Assignment {
+    type ModelTy = Self;
+
+    #[logic]
+    fn model(self) -> Self {
+        self
+    }
+}
+
 #[derive(PartialEq, Eq, Hash, Clone)]
 enum Reason {
     Justified(Vec<Assignment>),
     Decision,
     Input,
+}
+
+#[cfg(feature = "contracts")]
+impl creusot_contracts::Model for Reason {
+    type ModelTy = Self;
+
+    #[logic]
+    fn model(self) -> Self {
+        self
+    }
 }
 
 #[derive(Clone, PartialEq, Eq, Hash)]
@@ -28,10 +49,30 @@ pub enum Term {
     // TODO: complete others
 }
 
+#[cfg(feature = "contracts")]
+impl creusot_contracts::Model for Term {
+    type ModelTy = Self;
+
+    #[logic]
+    fn model(self) -> Self {
+        self
+    }
+}
+
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub enum Value {
     Bool(bool),
     Rat(BigRational),
+}
+
+#[cfg(feature = "contracts")]
+impl creusot_contracts::Model for Value {
+    type ModelTy = Self;
+
+    #[logic]
+    fn model(self) -> Self {
+        self
+    }
 }
 
 impl Value {
@@ -108,6 +149,7 @@ impl Trail {
         return None
     }
 
+    #[trusted]
     pub(crate) fn justification(&self, a: &Assignment) -> Option<Vec<Assignment>> {
         match &a.reason {
             Reason::Justified(v) => Some(v.clone()),

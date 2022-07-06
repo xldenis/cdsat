@@ -392,7 +392,7 @@ impl Trail {
 
     #[predicate]
     fn unsat(self) -> bool {
-        pearlite! { forall<m : _> self.0.satisfied_by(m) ==> false }
+        pearlite! { forall<m : _> self.satisfied_by(m) ==> false }
     }
 
     #[predicate]

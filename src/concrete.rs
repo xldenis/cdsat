@@ -1,6 +1,6 @@
-use std::collections::{BinaryHeap, HashSet};
+use ::std::collections::{BinaryHeap, HashSet};
 
-use creusot_contracts::proof_assert;
+use creusot_contracts::*;
 use priority_queue::PriorityQueue;
 
 use crate::trail::*;
@@ -33,7 +33,7 @@ impl Solver {
             // Every theory is coherent up to last_index with the trail
             // Invariant: trail is sound & has type invariants
             loop {
-                println!("{:?}", trail.len());
+                // println!("{:?}", trail.len());
                 let trail_len = trail.len();
                 let th_res = self.bool_th.extend(trail);
                 if trail_len != trail.len() {
@@ -71,6 +71,7 @@ impl Solver {
     // Requires `trail` and `conflict` to form a conflict state
     // Requires that `trail` level is > 0
     // Ensures that `trail` is non-conflicting
+    #[trusted]
     pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<Assignment>) {
         // Can store index in trail in as part of the priority using lexicographic order
         let mut heap : PriorityQueue<Assignment, usize> = PriorityQueue::new();
@@ -161,6 +162,7 @@ impl BoolTheory {
     // Extend the trail with 1 or more deductions, or backtrack to a non-conflicting state
     // Returns `Fail` if we encounter a conflict at level 0
     // Return Satisfied if the trail is satisfactory to us
+    #[trusted]
     fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let mut i = 0;
 
@@ -189,6 +191,7 @@ impl BoolTheory {
     //  - Free Var list is non-empty, all not on trail
     //  - If ok: there is a justified entailment between the justification and tm <- value?
     // #[ensures(forall<just : _, val: _> result == Ok((just, val)) ==> forall<m : _> m.satisfy_set(@just) ==> m.satisfies((@tm, @val)))]
+    #[trusted]
     fn eval(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<Assignment>, Value), Vec<Term>> {
         match tm {
             Term::Conj(l, r) => {
