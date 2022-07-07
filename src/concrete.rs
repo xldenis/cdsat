@@ -73,20 +73,20 @@ impl Solver {
     }
 
     #[cfg(feature = "contracts")]
-    pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<Assignment>) {}
+    pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {}
 
     // Requires `trail` and `conflict` to form a conflict state
     // Requires that `trail` level is > 0
     // Ensures that `trail` is non-conflicting
     #[trusted]
     #[cfg(not(feature = "contracts"))]
-    pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<Assignment>) {
+    pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {
         // Can store index in trail in as part of the priority using lexicographic order
-        let mut heap: PriorityQueue<Assignment, usize> = PriorityQueue::new();
+        let mut heap: PriorityQueue<usize, usize> = PriorityQueue::new();
 
         // calculate level of the conflict
         for a in conflict.into_iter() {
-            let l = a.level();
+            let l = trail[a].level();
             heap.push(a, l);
         }
 
@@ -94,8 +94,7 @@ impl Solver {
 
         // #[variant()]
         while let Some((a, l)) = heap.pop() {
-            println!("conflict");
-
+            let a = trail[a].clone();
             // back jump
             if a.is_bool() && l > *heap.peek().unwrap().1 {
                 trail.restrict(*heap.peek().unwrap().1);
@@ -105,6 +104,7 @@ impl Solver {
 
             if let Some(just) = trail.justification(&a) {
                 for j in just.iter() {
+                    let j = &trail[*j];
                     if j.level() == level && j.first_order() && j.decision() {
                         // undo decide
                         if *heap.peek().unwrap().1 == l {
@@ -122,7 +122,7 @@ impl Solver {
 
                 // resolve
                 for a in just.into_iter() {
-                    let l = a.level();
+                    let l = trail[a].level();
                     heap.push(a, l);
                 }
             }
@@ -138,7 +138,7 @@ pub enum Answer {
 }
 
 enum ExtendResult {
-    Conflict(Vec<Assignment>),
+    Conflict(Vec<usize>),
     Decision(Term, Value),
     Satisfied,
 }
@@ -183,7 +183,7 @@ impl BoolTheory {
                     }
                     Result::Ok((mut subterms, res)) => {
                         if res != tl[i].val {
-                            subterms.push(tl[i].clone());
+                            subterms.push(i);
                             return ExtendResult::Conflict(subterms);
                         }
                     }
@@ -200,7 +200,7 @@ impl BoolTheory {
     //  - If ok: there is a justified entailment between the justification and tm <- value?
     // #[ensures(forall<just : _, val: _> result == Ok((just, val)) ==> forall<m : _> m.satisfy_set(@just) ==> m.satisfies((@tm, @val)))]
     #[trusted]
-    fn eval(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<Assignment>, Value), Vec<Term>> {
+    fn eval(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<usize>, Value), Vec<Term>> {
         match tm {
             Term::Conj(l, r) => {
                 let l = self.eval(tl, l);
@@ -222,8 +222,8 @@ impl BoolTheory {
                     (_, Err(f)) | (Err(f), _) => return Err(f),
                 }
             }
-            a => match tl.get(a) {
-                Some(asn) => Ok((vec![asn.clone()], asn.value().clone())),
+            a => match tl.index_of(a) {
+                Some(i) => Ok((vec![i], tl[i].value().clone())),
                 None => Err(vec![a.clone()]),
             },
         }

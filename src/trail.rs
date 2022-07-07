@@ -26,7 +26,7 @@ impl creusot_contracts::Model for Assignment {
 #[cfg_attr(not(feature = "contracts"), derive(Hash))]
 #[derive(Clone, PartialEq, Eq)]
 enum Reason {
-    Justified(Vec<Assignment>),
+    Justified(Vec<usize>),
     Decision,
     Input,
 }
@@ -142,10 +142,17 @@ impl Trail {
     }
 
     pub(crate) fn get(&self, a: &Term) -> Option<&Assignment> {
+        match self.index_of(a) {
+            Some(i) => Some(&self[i]),
+            None => None,
+        }
+    }
+
+    pub(crate) fn index_of(&self, a: &Term) -> Option<usize> {
         let mut i = 0;
         while i < self.len() {
             if &self[i].term == a {
-                return Some(&self[i])
+                return Some(i)
             }
             i += 1
         }
@@ -154,15 +161,22 @@ impl Trail {
     }
 
     #[trusted]
-    pub(crate) fn justification(&self, a: &Assignment) -> Option<Vec<Assignment>> {
+    pub(crate) fn justification(&self, a: &Assignment) -> Option<Vec<usize>> {
         match &a.reason {
-            Reason::Justified(v) => Some(v.clone()),
+            Reason::Justified(v) => {
+                let mut j = Vec::new();
+                for i in v {
+                    j.push(*i);
+                }
+
+                Some(j)
+            }
             Reason::Decision => None,
             Reason::Input => None,
         }
     }
 
-    pub(crate) fn add_justified(&mut self, into_vec: Vec<Assignment>, term: Term, val: Value) {
+    pub(crate) fn add_justified(&mut self, into_vec: Vec<usize>, term: Term, val: Value) {
         self.assignments.push(Assignment { term, val, reason: Reason::Justified(into_vec), level: self.level })
     }
 
