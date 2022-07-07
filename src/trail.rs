@@ -1,10 +1,11 @@
 use ::std::ops::Index;
+use creusot_contracts::derive::PartialEq;
 use creusot_contracts::*;
-use creusot_contracts::derive::{PartialEq};
-use num_rational::BigRational;
+// use num_rational::BigRational;
 
-// Todo: Distinguish between boolean and fo assignments as an optim?
-#[derive(PartialEq, Eq, Hash, Clone)]
+// // Todo: Distinguish between boolean and fo assignments as an optim?
+#[cfg_attr(not(feature = "contracts"), derive(Hash))]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Assignment {
     pub term: Term,
     pub val: Value,
@@ -22,7 +23,8 @@ impl creusot_contracts::Model for Assignment {
     }
 }
 
-#[derive(PartialEq, Eq, Hash, Clone)]
+#[cfg_attr(not(feature = "contracts"), derive(Hash))]
+#[derive(Clone, PartialEq, Eq)]
 enum Reason {
     Justified(Vec<Assignment>),
     Decision,
@@ -39,9 +41,10 @@ impl creusot_contracts::Model for Reason {
     }
 }
 
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(not(feature = "contracts"), derive(Hash))]
+#[derive(Clone, PartialEq, Eq)]
 pub enum Term {
-    Variable(String),
+    Variable(usize),
     Value(Value),
     Plus(Box<Term>, Box<Term>),
     Eq(Box<Term>, Box<Term>),
@@ -59,10 +62,11 @@ impl creusot_contracts::Model for Term {
     }
 }
 
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[cfg_attr(not(feature = "contracts"), derive(Hash))]
+#[derive(Clone, PartialEq, Eq)]
 pub enum Value {
     Bool(bool),
-    Rat(BigRational),
+    Rat(bool),
 }
 
 #[cfg(feature = "contracts")]
@@ -93,7 +97,7 @@ impl Value {
     pub(crate) fn negate(&self) -> Self {
         match self {
             Value::Bool(b) => Value::Bool(!b),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }

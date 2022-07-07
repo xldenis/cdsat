@@ -1,4 +1,5 @@
 use ::std::collections::{BinaryHeap, HashSet};
+// use creusot_contracts::derive::{PartialEq};
 
 use creusot_contracts::*;
 use priority_queue::PriorityQueue;
@@ -17,8 +18,11 @@ enum TheoryState {
 
 impl Solver {
     pub fn new() -> Self {
-        Solver { bool_th: BoolTheory }
+        Solver {
+            bool_th: BoolTheory,
+        }
     }
+
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
         // Invariant:
         // Every theory is coherent up to last_index with the trail
@@ -68,13 +72,17 @@ impl Solver {
         }
     }
 
+    #[cfg(feature = "contracts")]
+    pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<Assignment>) {}
+
     // Requires `trail` and `conflict` to form a conflict state
     // Requires that `trail` level is > 0
     // Ensures that `trail` is non-conflicting
     #[trusted]
+    #[cfg(not(feature = "contracts"))]
     pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<Assignment>) {
         // Can store index in trail in as part of the priority using lexicographic order
-        let mut heap : PriorityQueue<Assignment, usize> = PriorityQueue::new();
+        let mut heap: PriorityQueue<Assignment, usize> = PriorityQueue::new();
 
         // calculate level of the conflict
         for a in conflict.into_iter() {
@@ -106,7 +114,7 @@ impl Solver {
                         }
                         // undo clear
                         else {
-                            trail.restrict(level-1);
+                            trail.restrict(level - 1);
                             return;
                         }
                     }
@@ -122,7 +130,7 @@ impl Solver {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+// #[derive(Debug, PartialEq, Eq)]
 pub enum Answer {
     Sat,
     Unsat,
@@ -167,24 +175,24 @@ impl BoolTheory {
         let mut i = 0;
 
         while i < tl.len() {
-        	if tl[i].is_bool() {
+            if tl[i].is_bool() {
                 match self.eval(tl, &tl[i].term) {
                     Result::Err(mut fvs) => {
                         let decision = fvs.pop().unwrap();
-                        return ExtendResult::Decision(decision, Value::Bool(true))
-                    },
+                        return ExtendResult::Decision(decision, Value::Bool(true));
+                    }
                     Result::Ok((mut subterms, res)) => {
                         if res != tl[i].val {
                             subterms.push(tl[i].clone());
-                            return ExtendResult::Conflict(subterms)
+                            return ExtendResult::Conflict(subterms);
                         }
                     }
                 }
-        	}
+            }
             i += 1;
         }
 
-        return ExtendResult::Satisfied
+        return ExtendResult::Satisfied;
     }
 
     // Ensures:
@@ -202,19 +210,22 @@ impl BoolTheory {
                     (Ok((mut j1, v1)), Ok((j2, v2))) => {
                         j1.extend(j2);
                         if v1.bool() && v2.bool() {
-                            return Ok((j1, Value::Bool(true)))
+                            return Ok((j1, Value::Bool(true)));
                         } else {
-                            return Ok((j1, Value::Bool(false)))
+                            return Ok((j1, Value::Bool(false)));
                         }
-                    },
-                    (Err(mut f1), Err(f2)) => { f1.extend(f2); return Err(f1)},
-                    (_, Err(f)) | (Err(f), _) => return Err(f)
+                    }
+                    (Err(mut f1), Err(f2)) => {
+                        f1.extend(f2);
+                        return Err(f1);
+                    }
+                    (_, Err(f)) | (Err(f), _) => return Err(f),
                 }
             }
             a => match tl.get(a) {
                 Some(asn) => Ok((vec![asn.clone()], asn.value().clone())),
                 None => Err(vec![a.clone()]),
-            }
+            },
         }
     }
 }
