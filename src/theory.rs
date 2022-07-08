@@ -1,35 +1,19 @@
 use creusot_contracts::*;
 
-enum Term {
+pub enum Term {
     Variable(Var),
     Value(Value),
     Plus(Box<Term>, Box<Term>),
     Eq(Box<Term>, Box<Term>),
+    Conj(Box<Term>, Box<Term>),
     // TODO: complete others
 }
 
-// TODO move these into stdlib
-#[predicate]
-fn filtered<T>(s: Seq<T>, t: Seq<T>) -> bool {
-    pearlite! {
-      forall<i : _> 0 <= i && i < t.len() ==>
-        exists< j : _> i <= j && j < s.len() && t[i] == s[j]
-    }
-}
-
-#[predicate]
-fn unique<T>(s: Seq<T>) -> bool {
-    pearlite! {
-      forall<i : _, j : _> 0 <= i && i < s.len() ==> 0 <= j && j < s.len() ==>
-        i != j ==> s[i] != s[j]
-    }
-}
-
-struct Var(Int);
+pub struct Var(pub Int);
 
 type Rational = Int;
 
-enum Value {
+pub enum Value {
     Bool(bool),
     Rat(Rational),
 }
@@ -59,7 +43,7 @@ impl Value {
     fn negate_involutive(self) {}
 }
 
-enum Assign {
+pub enum Assign {
     Decision(Term, Value),
     Justified(Set<(Term, Value)>, Term, Value),
     Input(Term, Value),
@@ -67,7 +51,7 @@ enum Assign {
 
 impl Assign {
     #[logic]
-    fn to_pair(self) -> (Term, Value) {
+    pub fn to_pair(self) -> (Term, Value) {
         match self {
             Assign::Decision(t, val) => (t, val),
             Assign::Input(t, val) => (t, val),
@@ -86,7 +70,7 @@ impl Assign {
     }
 }
 
-struct Model(Mapping<Var, Value>);
+pub struct Model(Mapping<Var, Value>);
 
 impl Model {
     #[logic]
@@ -97,6 +81,10 @@ impl Model {
             Term::Plus(l, r) => match (self.interp(*l), self.interp(*r)) {
                 (Value::Rat(r1), Value::Rat(r2)) => Value::Rat(r1 + r2), // TODO: Define Rationals
                 _ => Value::Rat(-1),
+            },
+            Term::Conj(l, r) => match (self.interp(*l), self.interp(*r)) {
+                (Value::Bool(b1), Value::Bool(b2)) => Value::Bool(b1 && b2), // TODO: Define Rationals
+                _ => Value::Bool(false),
             },
             Term::Eq(l, r) => Value::Bool(self.interp(*l) == self.interp(*r)),
         }
@@ -126,7 +114,7 @@ impl Model {
     }
 }
 
-enum Trail {
+pub enum Trail {
     Empty,
     Assign(Assign, Int, Box<Trail>),
 }
@@ -231,7 +219,7 @@ impl Trail {
       Some((a, l)) => a.to_pair() == d,
       _ => true,
     })]
-    fn find(self, d: (Term, Value)) -> Option<(Assign, Int)> {
+    pub fn find(self, d: (Term, Value)) -> Option<(Assign, Int)> {
         match self {
             Trail::Empty => None,
             Trail::Assign(a, l, tl) => {

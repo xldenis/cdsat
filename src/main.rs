@@ -4,7 +4,7 @@ pub mod concrete;
 pub mod trail;
 
 // #[cfg(feature = "contracts")]
-// pub mod theory;
+pub mod theory;
 
 // use concrete::Solver;
 // use trail::{Term, Value, Trail};

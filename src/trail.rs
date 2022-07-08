@@ -1,6 +1,7 @@
 use ::std::ops::Index;
 use creusot_contracts::derive::PartialEq;
 use creusot_contracts::*;
+use crate::theory::{self, Assign};
 // use num_rational::BigRational;
 
 // // Todo: Distinguish between boolean and fo assignments as an optim?
@@ -54,11 +55,17 @@ pub enum Term {
 
 #[cfg(feature = "contracts")]
 impl creusot_contracts::Model for Term {
-    type ModelTy = Self;
+    type ModelTy = theory::Term;
 
     #[logic]
-    fn model(self) -> Self {
-        self
+    fn model(self) -> Self::ModelTy {
+        match self {
+        	Term::Variable(v) => theory::Term::Variable(theory::Var(v.model())),
+        	Term::Value(v) => theory::Term::Value(v.model()),
+        	Term::Plus(l, r) => theory::Term::Plus(Box::new(l.model()), Box::new(r.model())),
+        	Term::Eq(l, r) => theory::Term::Eq(Box::new(l.model()), Box::new(r.model())),
+        	Term::Conj(l, r) => theory::Term::Conj(Box::new(l.model()), Box::new(r.model())),
+        }
     }
 }
 
@@ -71,11 +78,14 @@ pub enum Value {
 
 #[cfg(feature = "contracts")]
 impl creusot_contracts::Model for Value {
-    type ModelTy = Self;
+    type ModelTy = theory::Value;
 
     #[logic]
-    fn model(self) -> Self {
-        self
+    fn model(self) -> Self::ModelTy {
+        match self {
+        	Value::Bool(b) => theory::Value::Bool(b),
+        	Value::Rat(r) => theory::Value::Rat(0),
+        }
     }
 }
 
@@ -105,20 +115,44 @@ impl Value {
 pub struct Trail {
     assignments: Vec<Assignment>,
     level: usize,
+    ghost: Ghost<theory::Trail>,
 }
 
 impl Trail {
+	#[trusted]
     pub fn new(inputs: Vec<(Term, Value)>) -> Self {
         let mut assignments = Vec::new();
         for (term, val) in inputs {
             assignments.push(Assignment { term, val, reason: Reason::Input, level: 0 })
         }
 
-        Trail { assignments, level: 0 }
+        Trail { assignments, level: 0, ghost: Ghost::new(&theory::Trail::Empty) }
     }
 
     pub fn len(&self) -> usize {
         self.assignments.len()
+    }
+
+    #[predicate]
+    pub fn invariant(self) -> bool {
+    	pearlite! {
+    		forall<i: Int> 0 <= i && i < (@self.assignments).len() ==>
+    			{
+    				let ass = (@self.assignments)[i];
+    				let abs = self.abstract_assign(ass);
+
+    				self.ghost.find(abs.to_pair()) == Some((abs, @ass.level)) 
+    			}
+    	}
+    }
+
+    #[logic]
+    fn abstract_assign(self, a: Assignment) -> theory::Assign {
+    	match a.reason {
+    		Reason::Input => theory::Assign::Input(a.term.model(), a.val.model()),
+    		Reason::Decision =>  theory::Assign::Decision(a.term.model(), a.val.model()),
+    		Reason::Justified(_) =>  theory::Assign::Justified(Set::EMPTY, a.term.model(), a.val.model()),
+    	}
     }
 
     // Add a justified assignment to the trail
