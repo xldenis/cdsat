@@ -62,9 +62,9 @@ impl creusot_contracts::Model for Term {
         match self {
         	Term::Variable(v) => theory::Term::Variable(theory::Var(v.model())),
         	Term::Value(v) => theory::Term::Value(v.model()),
-        	Term::Plus(l, r) => theory::Term::Plus(Box::new(l.model()), Box::new(r.model())),
-        	Term::Eq(l, r) => theory::Term::Eq(Box::new(l.model()), Box::new(r.model())),
-        	Term::Conj(l, r) => theory::Term::Conj(Box::new(l.model()), Box::new(r.model())),
+        	Term::Plus(l, r) => theory::Term::Plus(Box::new((*l).model()), Box::new((*r).model())),
+        	Term::Eq(l, r) => theory::Term::Eq(Box::new((*l).model()), Box::new((*r).model())),
+        	Term::Conj(l, r) => theory::Term::Conj(Box::new((*l).model()), Box::new((*r).model())),
         }
     }
 }
@@ -154,15 +154,6 @@ impl Trail {
     		Reason::Justified(_) =>  theory::Assign::Justified(Set::EMPTY, a.term.model(), a.val.model()),
     	}
     }
-
-    // Add a justified assignment to the trail
-    // pub(crate) fn add_justified(&self, lit: &Term, polarity: Value) {
-    //     todo!()
-    // }
-
-    // pub(crate) fn restrict(&mut self, level: usize) {
-    //     todo!()
-    // }
 
     pub(crate) fn level(&self) -> usize {
         self.level

@@ -1,9 +1,9 @@
-use ::std::collections::{BinaryHeap, HashSet};
-// use creusot_contracts::derive::{PartialEq};
+// use ::std::collections::{BinaryHeap, HashSet};
+// // use creusot_contracts::derive::{PartialEq};
 
+// use creusot_contracts::*;
+// use priority_queue::PriorityQueue;
 use creusot_contracts::*;
-use priority_queue::PriorityQueue;
-
 use crate::trail::*;
 
 pub struct Solver {
@@ -17,12 +17,13 @@ enum TheoryState {
 }
 
 impl Solver {
-    pub fn new() -> Self {
-        Solver {
-            bool_th: BoolTheory,
-        }
-    }
-
+//     pub fn new() -> Self {
+//         Solver {
+//             bool_th: BoolTheory,
+//         }
+//     }
+    
+    #[requires(trail.invariant())]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
         // Invariant:
         // Every theory is coherent up to last_index with the trail
@@ -70,6 +71,7 @@ impl Solver {
                 _ => unreachable!(),
             }
         }
+        return Answer::Sat;
     }
 
     #[cfg(feature = "contracts")]
