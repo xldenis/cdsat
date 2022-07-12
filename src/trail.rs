@@ -145,6 +145,16 @@ impl Trail {
     }
 
     #[predicate]
+    pub fn unsat(self) -> bool {
+        self.ghost.unsat()
+    }
+
+    #[predicate]
+    pub fn sat(self) -> bool {
+        self.ghost.sat()
+    }
+
+    #[predicate]
     pub fn invariant(self) -> bool {
         pearlite! {
             forall<i: Int> 0 <= i && i < (@self.assignments).len() ==>

@@ -25,6 +25,11 @@ impl Solver {
 
     #[requires(trail.invariant())]
     #[ensures((^trail).invariant())]
+    #[ensures(match result {
+        Answer::Unsat => (^trail).unsat(),
+        Answer::Sat => (^trail).sat(),
+        Answer::Unknown => true, 
+    })]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
         let old_trail = ghost! { trail };
         // Invariant:
@@ -83,6 +88,8 @@ impl Solver {
     }
 
     #[cfg(feature = "contracts")]
+    #[trusted]
+    #[maintains((mut trail).invariant())]
     pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {}
 
     // Requires `trail` and `conflict` to form a conflict state
@@ -181,6 +188,7 @@ impl BoolTheory {
     // Returns `Fail` if we encounter a conflict at level 0
     // Return Satisfied if the trail is satisfactory to us
     #[trusted]
+    #[maintains((mut tl).invariant())]
     fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let mut i = 0;
 

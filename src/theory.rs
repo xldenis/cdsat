@@ -378,6 +378,11 @@ impl Trail {
     }
 
     #[predicate]
+    fn sat(self) -> bool {
+        pearlite! { exists<m : _> self.satisfied_by(m) }
+    }
+
+    #[predicate]
     fn impls(self, rhs: Self) -> bool {
         pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
     }
@@ -415,7 +420,7 @@ impl Normal {
     #[requires(self.sound())]
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
-    #[ensures(result ==> self.0.impls(tgt.0))]
+    #[ensures(result ==> self.0.impls(tgt.0))] // WRONG: GOES WRONG WAY
     fn deduce(self, just: (Set<(Term, Value)>, Term, Value), tgt: Self) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
@@ -432,7 +437,7 @@ impl Normal {
     #[predicate]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
-    #[ensures(result ==> forall<m : _> self.0.satisfied_by(m) ==> false)]
+    #[ensures(result ==> self.0.unsat())]
     fn fail(self, just: (Set<(Term, Value)>, Term, Value)) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
