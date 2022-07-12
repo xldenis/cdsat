@@ -162,9 +162,21 @@ impl Trail {
         match a.reason {
             Reason::Input => theory::Assign::Input(a.term.model(), a.val.model()),
             Reason::Decision => theory::Assign::Decision(a.term.model(), a.val.model()),
-            Reason::Justified(_) => {
-                theory::Assign::Justified(Set::EMPTY, a.term.model(), a.val.model())
+            Reason::Justified(just) => {
+                theory::Assign::Justified(self.abstract_justification(just.model()), a.term.model(), a.val.model())
             }
+        }
+    }
+
+    #[logic]
+    #[variant(just.len())]
+    fn abstract_justification(self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
+        if just.len() == 0 {
+            Set::EMPTY
+        } else {
+            let set = self.abstract_justification(just.subsequence(1, just.len()));
+            let a = (self.assignments.model())[just[0].model()];
+            set.insert((a.term.model(), a.val.model()))
         }
     }
 
@@ -173,6 +185,8 @@ impl Trail {
     }
 
     #[trusted]
+    #[requires(self.invariant())]
+    #[ensures((^self).invariant())]
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         self.level += 1;
         self.assignments.push(Assignment {

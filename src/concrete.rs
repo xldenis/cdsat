@@ -26,10 +26,12 @@ impl Solver {
     #[requires(trail.invariant())]
     #[ensures((^trail).invariant())]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
+        let old_trail = ghost! { trail };
         // Invariant:
         // Every theory is coherent up to last_index with the trail
         // Invariant: trail is sound & has type invariants
         #[invariant(tl_inv, trail.invariant())]
+        #[invariant(proph, ^trail == ^*old_trail)]
         loop {
             // Tracks if all theories are satisfied with the trail.
             let mut states;
@@ -40,6 +42,7 @@ impl Solver {
             // Every theory is coherent up to last_index with the trail
             // Invariant: trail is sound & has type invariants
             #[invariant(tl_inv, trail.invariant())]
+            #[invariant(proph, ^trail == ^*old_trail)]
             loop {
                 // println!("{:?}", trail.len());
                 let trail_len = trail.len();
@@ -64,6 +67,8 @@ impl Solver {
                     break;
                 }
             }
+
+            proof_assert! { trail.invariant() };
 
             // Assert: Every theory is fully coherent with the trail
             // Assert: Theory states are necessarily either decision or sat
