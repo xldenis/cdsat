@@ -105,13 +105,7 @@ impl Model {
     #[requires(!self.satisfy_set(cflct))]
     #[requires(cflct.contains(a))]
     #[ensures(!self.satisfy_set(cflct.remove(a).union(just)))]
-    fn resolve_sound(
-        self,
-        cflct: Set<(Term, Value)>,
-        just: Set<(Term, Value)>,
-        a: (Term, Value),
-    ) {
-    }
+    fn resolve_sound(self, cflct: Set<(Term, Value)>, just: Set<(Term, Value)>, a: (Term, Value)) {}
 }
 
 pub enum Trail {
@@ -375,7 +369,7 @@ impl Trail {
 
     #[predicate]
     fn satisfied_by(self, m: Model) -> bool {
-      pearlite! { forall<a : _> self.contains(a) ==> m.satisfies(a) }
+        pearlite! { forall<a : _> self.contains(a) ==> m.satisfies(a) }
     }
 
     #[predicate]
@@ -385,7 +379,7 @@ impl Trail {
 
     #[predicate]
     fn impls(self, rhs: Self) -> bool {
-        pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) } 
+        pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
     }
 }
 

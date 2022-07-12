@@ -1,7 +1,7 @@
-use ::std::ops::Index;
-use creusot_contracts::derive::PartialEq;
-use creusot_contracts::*;
 use crate::theory::{self, Assign};
+use ::std::ops::Index;
+use creusot_contracts::derive::{Clone, PartialEq};
+use creusot_contracts::*;
 // use num_rational::BigRational;
 
 // // Todo: Distinguish between boolean and fo assignments as an optim?
@@ -60,11 +60,11 @@ impl creusot_contracts::Model for Term {
     #[logic]
     fn model(self) -> Self::ModelTy {
         match self {
-        	Term::Variable(v) => theory::Term::Variable(theory::Var(v.model())),
-        	Term::Value(v) => theory::Term::Value(v.model()),
-        	Term::Plus(l, r) => theory::Term::Plus(Box::new((*l).model()), Box::new((*r).model())),
-        	Term::Eq(l, r) => theory::Term::Eq(Box::new((*l).model()), Box::new((*r).model())),
-        	Term::Conj(l, r) => theory::Term::Conj(Box::new((*l).model()), Box::new((*r).model())),
+            Term::Variable(v) => theory::Term::Variable(theory::Var(v.model())),
+            Term::Value(v) => theory::Term::Value(v.model()),
+            Term::Plus(l, r) => theory::Term::Plus(Box::new((*l).model()), Box::new((*r).model())),
+            Term::Eq(l, r) => theory::Term::Eq(Box::new((*l).model()), Box::new((*r).model())),
+            Term::Conj(l, r) => theory::Term::Conj(Box::new((*l).model()), Box::new((*r).model())),
         }
     }
 }
@@ -73,7 +73,7 @@ impl creusot_contracts::Model for Term {
 #[derive(Clone, PartialEq, Eq)]
 pub enum Value {
     Bool(bool),
-    Rat(bool),
+    Rat(u64),
 }
 
 #[cfg(feature = "contracts")]
@@ -83,13 +83,14 @@ impl creusot_contracts::Model for Value {
     #[logic]
     fn model(self) -> Self::ModelTy {
         match self {
-        	Value::Bool(b) => theory::Value::Bool(b),
-        	Value::Rat(r) => theory::Value::Rat(0),
+            Value::Bool(b) => theory::Value::Bool(b),
+            Value::Rat(r) => theory::Value::Rat(r.model()),
         }
     }
 }
 
 impl Value {
+    #[trusted]
     pub fn bool(&self) -> bool {
         match self {
             Value::Bool(b) => *b,
@@ -104,6 +105,7 @@ impl Value {
         }
     }
 
+    #[trusted]
     pub(crate) fn negate(&self) -> Self {
         match self {
             Value::Bool(b) => Value::Bool(!b),
@@ -119,14 +121,23 @@ pub struct Trail {
 }
 
 impl Trail {
-	#[trusted]
+    #[trusted]
     pub fn new(inputs: Vec<(Term, Value)>) -> Self {
         let mut assignments = Vec::new();
         for (term, val) in inputs {
-            assignments.push(Assignment { term, val, reason: Reason::Input, level: 0 })
+            assignments.push(Assignment {
+                term,
+                val,
+                reason: Reason::Input,
+                level: 0,
+            })
         }
 
-        Trail { assignments, level: 0, ghost: Ghost::new(&theory::Trail::Empty) }
+        Trail {
+            assignments,
+            level: 0,
+            ghost: Ghost::new(&theory::Trail::Empty),
+        }
     }
 
     pub fn len(&self) -> usize {
@@ -135,34 +146,40 @@ impl Trail {
 
     #[predicate]
     pub fn invariant(self) -> bool {
-    	pearlite! {
-    		forall<i: Int> 0 <= i && i < (@self.assignments).len() ==>
-    			{
-    				let ass = (@self.assignments)[i];
-    				let abs = self.abstract_assign(ass);
+        pearlite! {
+            forall<i: Int> 0 <= i && i < (@self.assignments).len() ==>
+                {
+                    let ass = (@self.assignments)[i];
+                    let abs = self.abstract_assign(ass);
 
-    				self.ghost.find(abs.to_pair()) == Some((abs, @ass.level)) 
-    			}
-    	}
+                    self.ghost.find(abs.to_pair()) == Some((abs, @ass.level))
+                }
+        }
     }
 
     #[logic]
     fn abstract_assign(self, a: Assignment) -> theory::Assign {
-    	match a.reason {
-    		Reason::Input => theory::Assign::Input(a.term.model(), a.val.model()),
-    		Reason::Decision =>  theory::Assign::Decision(a.term.model(), a.val.model()),
-    		Reason::Justified(_) =>  theory::Assign::Justified(Set::EMPTY, a.term.model(), a.val.model()),
-    	}
+        match a.reason {
+            Reason::Input => theory::Assign::Input(a.term.model(), a.val.model()),
+            Reason::Decision => theory::Assign::Decision(a.term.model(), a.val.model()),
+            Reason::Justified(_) => {
+                theory::Assign::Justified(Set::EMPTY, a.term.model(), a.val.model())
+            }
+        }
     }
 
     pub(crate) fn level(&self) -> usize {
         self.level
     }
 
+    #[trusted]
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         self.level += 1;
         self.assignments.push(Assignment {
-            term, val, reason: Reason::Decision, level: self.level,
+            term,
+            val,
+            reason: Reason::Decision,
+            level: self.level,
         });
     }
 
@@ -177,12 +194,12 @@ impl Trail {
         let mut i = 0;
         while i < self.len() {
             if &self[i].term == a {
-                return Some(i)
+                return Some(i);
             }
             i += 1
         }
 
-        return None
+        return None;
     }
 
     #[trusted]
@@ -202,9 +219,15 @@ impl Trail {
     }
 
     pub(crate) fn add_justified(&mut self, into_vec: Vec<usize>, term: Term, val: Value) {
-        self.assignments.push(Assignment { term, val, reason: Reason::Justified(into_vec), level: self.level })
+        self.assignments.push(Assignment {
+            term,
+            val,
+            reason: Reason::Justified(into_vec),
+            level: self.level,
+        })
     }
 
+    #[trusted]
     pub(crate) fn restrict(&mut self, level: usize) {
         let mut i = 0;
 
@@ -221,6 +244,7 @@ impl Trail {
 impl Index<usize> for Trail {
     type Output = Assignment;
 
+    #[trusted]
     fn index(&self, index: usize) -> &Self::Output {
         &self.assignments[index]
     }

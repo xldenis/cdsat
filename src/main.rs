@@ -12,11 +12,11 @@ pub mod theory;
 // use crate::concrete::Answer;
 
 fn main() {
-//     let mut trail = Trail::new(vec![(Term::Conj(box Term::Variable("A".into()), box Term::Variable("B".into())), Value::Bool(true))]);
+    //     let mut trail = Trail::new(vec![(Term::Conj(box Term::Variable("A".into()), box Term::Variable("B".into())), Value::Bool(true))]);
 
-//     let mut solver = Solver::new();
+    //     let mut solver = Solver::new();
 
-//     let res = solver.solver(&mut trail);
+    //     let res = solver.solver(&mut trail);
 
-//     assert!(matches!(res, Answer::Sat));
+    //     assert!(matches!(res, Answer::Sat));
 }

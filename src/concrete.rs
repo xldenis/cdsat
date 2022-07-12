@@ -3,8 +3,8 @@
 
 // use creusot_contracts::*;
 // use priority_queue::PriorityQueue;
-use creusot_contracts::*;
 use crate::trail::*;
+use creusot_contracts::*;
 
 pub struct Solver {
     bool_th: BoolTheory,
@@ -17,17 +17,19 @@ enum TheoryState {
 }
 
 impl Solver {
-//     pub fn new() -> Self {
-//         Solver {
-//             bool_th: BoolTheory,
-//         }
-//     }
-    
+    //     pub fn new() -> Self {
+    //         Solver {
+    //             bool_th: BoolTheory,
+    //         }
+    //     }
+
     #[requires(trail.invariant())]
+    #[ensures((^trail).invariant())]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
         // Invariant:
         // Every theory is coherent up to last_index with the trail
         // Invariant: trail is sound & has type invariants
+        #[invariant(tl_inv, trail.invariant())]
         loop {
             // Tracks if all theories are satisfied with the trail.
             let mut states;
@@ -37,6 +39,7 @@ impl Solver {
             // Invariant:
             // Every theory is coherent up to last_index with the trail
             // Invariant: trail is sound & has type invariants
+            #[invariant(tl_inv, trail.invariant())]
             loop {
                 // println!("{:?}", trail.len());
                 let trail_len = trail.len();
