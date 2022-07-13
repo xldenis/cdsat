@@ -27,7 +27,7 @@ impl Solver {
     #[ensures((^trail).invariant())]
     #[ensures(match result {
         Answer::Unsat => (^trail).unsat(),
-        Answer::Sat => (^trail).sat(),
+        Answer::Sat => true, // ignore completeness for now.
         Answer::Unknown => true, 
     })]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
@@ -59,9 +59,12 @@ impl Solver {
                 match th_res {
                     ExtendResult::Conflict(c) => {
                         if trail.level() == 0 {
+                            proof_assert!(Normal(trail.ghost).fail2(trail.abstract_justification(@c)));
                             return Answer::Unsat;
                         };
                         states = TheoryState::Unknown;
+                        // need to calculate level of a set
+                        proof_assert!(Normal(trail.ghost).conflict_solve2(trail.abstract_justification(@c), Conflict(trail.ghost, trail.abstract_justification(@c), 0)));
                         self.resolve_conflict(trail, c)
                     }
                     ExtendResult::Decision(t, v) => states = TheoryState::Decision(t, v),
@@ -189,6 +192,11 @@ impl BoolTheory {
     // Return Satisfied if the trail is satisfactory to us
     #[trusted]
     #[maintains((mut tl).invariant())]
+    #[ensures(match result {
+        ExtendResult::Satisfied => true,
+        ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(@t, @v),
+        ExtendResult::Conflict(c) => true // forms conflict
+    })]
     fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let mut i = 0;
 

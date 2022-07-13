@@ -117,7 +117,7 @@ impl Value {
 pub struct Trail {
     assignments: Vec<Assignment>,
     level: usize,
-    ghost: Ghost<theory::Trail>,
+    pub ghost: Ghost<theory::Trail>,
 }
 
 impl Trail {
@@ -180,7 +180,7 @@ impl Trail {
 
     #[logic]
     #[variant(just.len())]
-    fn abstract_justification(self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
+    pub fn abstract_justification(self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
         if just.len() == 0 {
             Set::EMPTY
         } else {
@@ -197,6 +197,7 @@ impl Trail {
     #[trusted]
     #[requires(self.invariant())]
     #[ensures((^self).invariant())]
+    #[requires(self.ghost.acceptable(@term, @val))]
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         self.level += 1;
         self.assignments.push(Assignment {

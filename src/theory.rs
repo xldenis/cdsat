@@ -449,6 +449,20 @@ impl Normal {
         } }
     }
 
+    // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0
+    #[predicate]
+    #[requires((self.0).invariant())]
+    #[requires(self.sound())]
+    #[ensures(result ==> self.0.unsat())]
+    fn fail2(self, just: Set<(Term, Value)>) -> bool {
+        pearlite! { {
+            (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
+            (forall<m : Model> m.satisfy_set(just.0) ==> false) &&
+            self.0.is_set_level(just.0, 0)
+        } }
+    }
+
+
     // just : J |- L
     // Γ ⟶ ⟨ Γ; J ∪ {¬ L} ⟩ if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0
     #[predicate]
@@ -466,6 +480,23 @@ impl Normal {
           !self.0.contains((just.1, just.2)) &&
           (forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
 
+          exists<l : Int> l > 0 && self.0.is_set_level(conflict, l) &&
+          tgt == Conflict(self.0, conflict, l)
+        } }
+    }
+
+    // just : J |- L
+    // Γ ⟶ ⟨ Γ; J ∪ {¬ L} ⟩ if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0
+    #[predicate]
+    #[requires((self.0).invariant())]
+    #[requires(self.sound())]
+    #[ensures(result ==> (tgt.0).invariant())]
+    #[ensures(result ==> tgt.sound())]
+    #[ensures(result ==> self.0.impls(tgt.0))]
+    fn conflict_solve2(self, conflict: Set<(Term, Value)>, tgt: Conflict) -> bool {
+        pearlite! { {
+          (forall<j : _> conlfict.0.contains(j) ==> self.0.contains(j) ) &&
+          (forall<m : Model> m.satisfy_set(just.0) ==> false) &&
           exists<l : Int> l > 0 && self.0.is_set_level(conflict, l) &&
           tgt == Conflict(self.0, conflict, l)
         } }
