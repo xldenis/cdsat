@@ -5,6 +5,7 @@
 // use priority_queue::PriorityQueue;
 use crate::trail::*;
 use creusot_contracts::*;
+use crate::theory;
 
 pub struct Solver {
     bool_th: BoolTheory,
@@ -59,12 +60,13 @@ impl Solver {
                 match th_res {
                     ExtendResult::Conflict(c) => {
                         if trail.level() == 0 {
-                            proof_assert!(Normal(trail.ghost).fail2(trail.abstract_justification(@c)));
+                            proof_assert!(theory::Normal(*trail.ghost).fail2(trail.abstract_justification(@c)));
+                            proof_assert!(trail.ghost.unsat());
                             return Answer::Unsat;
                         };
                         states = TheoryState::Unknown;
                         // need to calculate level of a set
-                        proof_assert!(Normal(trail.ghost).conflict_solve2(trail.abstract_justification(@c), Conflict(trail.ghost, trail.abstract_justification(@c), 0)));
+                        // proof_assert!(Normal(trail.ghost).conflict_solve2(trail.abstract_justification(@c), Conflict(trail.ghost, trail.abstract_justification(@c), 0)));
                         self.resolve_conflict(trail, c)
                     }
                     ExtendResult::Decision(t, v) => states = TheoryState::Decision(t, v),
@@ -87,7 +89,6 @@ impl Solver {
                 _ => unreachable!(),
             }
         }
-        return Answer::Sat;
     }
 
     #[cfg(feature = "contracts")]
@@ -195,7 +196,13 @@ impl BoolTheory {
     #[ensures(match result {
         ExtendResult::Satisfied => true,
         ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(@t, @v),
-        ExtendResult::Conflict(c) => true // forms conflict
+        ExtendResult::Conflict(c) => {
+            let conflict = (^tl).abstract_justification(@c);
+
+            // members of conflict area within the trail
+            (forall<i : _> 0 <= i && i < (@c).len() ==> @(@c)[i] < (@(^tl).assignments).len()) &&
+            (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
+        }
     })]
     fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let mut i = 0;

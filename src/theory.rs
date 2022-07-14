@@ -96,7 +96,7 @@ impl Model {
     }
 
     #[predicate]
-    fn satisfy_set(self, v: Set<(Term, Value)>) -> bool {
+    pub fn satisfy_set(self, v: Set<(Term, Value)>) -> bool {
         pearlite! { forall<a : _> v.contains(a) ==> self.satisfies(a) }
     }
 
@@ -116,7 +116,7 @@ pub enum Trail {
 impl Trail {
     #[predicate]
     #[why3::attr = "inline:trivial"]
-    fn sound(self) -> bool {
+    pub fn sound(self) -> bool {
         match self {
             Trail::Empty => true,
             Trail::Assign(a, l, tl) => tl.sound() && a.justified_sound(),
@@ -182,12 +182,12 @@ impl Trail {
     }
 
     #[predicate]
-    fn invariant(self) -> bool {
+    pub fn invariant(self) -> bool {
         self.invariant_level() && self.invariant_contains() && self.trail_unique()
     }
 
     #[predicate]
-    fn acceptable(self, t: Term, val: Value) -> bool {
+    pub fn acceptable(self, t: Term, val: Value) -> bool {
         !self.contains((t, val)) && pearlite! { val.is_bool() ==> !self.contains((t, val.negate()))}
     }
 
@@ -201,7 +201,7 @@ impl Trail {
     }
 
     #[predicate]
-    fn contains(self, d: (Term, Value)) -> bool {
+    pub fn contains(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some(ix) => true,
             None => false,
@@ -373,12 +373,12 @@ impl Trail {
     }
 
     #[predicate]
-    fn unsat(self) -> bool {
+    pub fn unsat(self) -> bool {
         pearlite! { forall<m : _> self.satisfied_by(m) ==> false }
     }
 
     #[predicate]
-    fn sat(self) -> bool {
+    pub fn sat(self) -> bool {
         pearlite! { exists<m : _> self.satisfied_by(m) }
     }
 
@@ -388,12 +388,12 @@ impl Trail {
     }
 }
 
-struct Normal(Trail);
+pub struct Normal(pub Trail);
 
 impl Normal {
     #[predicate]
     #[why3::attr = "inline:trivial"]
-    fn sound(self) -> bool {
+    pub fn sound(self) -> bool {
         self.0.sound()
     }
 
@@ -404,7 +404,7 @@ impl Normal {
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    fn decide(self, t: Term, val: Value, tgt: Self) -> bool {
+    pub fn decide(self, t: Term, val: Value, tgt: Self) -> bool {
         self.0.acceptable(t, val)
             && tgt.0
                 == Trail::Assign(
@@ -421,7 +421,7 @@ impl Normal {
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))] // WRONG: GOES WRONG WAY
-    fn deduce(self, just: (Set<(Term, Value)>, Term, Value), tgt: Self) -> bool {
+    pub fn deduce(self, just: (Set<(Term, Value)>, Term, Value), tgt: Self) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
           !self.0.contains(not_l) &&
@@ -438,7 +438,7 @@ impl Normal {
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> self.0.unsat())]
-    fn fail(self, just: (Set<(Term, Value)>, Term, Value)) -> bool {
+    pub fn fail(self, just: (Set<(Term, Value)>, Term, Value)) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
           (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
@@ -454,11 +454,11 @@ impl Normal {
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> self.0.unsat())]
-    fn fail2(self, just: Set<(Term, Value)>) -> bool {
+    pub fn fail2(self, just: Set<(Term, Value)>) -> bool {
         pearlite! { {
-            (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
-            (forall<m : Model> m.satisfy_set(just.0) ==> false) &&
-            self.0.is_set_level(just.0, 0)
+            (forall<j : _> just.contains(j) ==> self.0.contains(j) ) &&
+            (forall<m : Model> m.satisfy_set(just) ==> false) &&
+            self.0.is_set_level(just, 0)
         } }
     }
 
@@ -471,7 +471,7 @@ impl Normal {
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    fn conflict_solve(self, just: (Set<(Term, Value)>, Term, Value), tgt: Conflict) -> bool {
+    pub fn conflict_solve(self, just: (Set<(Term, Value)>, Term, Value), tgt: Conflict) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
           let conflict = just.0.insert(not_l);
@@ -493,27 +493,27 @@ impl Normal {
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    fn conflict_solve2(self, conflict: Set<(Term, Value)>, tgt: Conflict) -> bool {
+    pub fn conflict_solve2(self, conflict: Set<(Term, Value)>, tgt: Conflict) -> bool {
         pearlite! { {
-          (forall<j : _> conlfict.0.contains(j) ==> self.0.contains(j) ) &&
-          (forall<m : Model> m.satisfy_set(just.0) ==> false) &&
+          (forall<j : _> conflict.contains(j) ==> self.0.contains(j) ) &&
+          (forall<m : Model> m.satisfy_set(conflict) ==> false) &&
           exists<l : Int> l > 0 && self.0.is_set_level(conflict, l) &&
           tgt == Conflict(self.0, conflict, l)
         } }
     }
 }
 
-struct Conflict(Trail, Set<(Term, Value)>, Int);
+pub struct Conflict(pub Trail, pub Set<(Term, Value)>, pub Int);
 
 impl Conflict {
     #[predicate]
-    fn invariant(self) -> bool {
+    pub fn invariant(self) -> bool {
         pearlite! { self.0.is_set_level(self.1, self.2) && self.0.invariant() && forall<a : _> self.1.contains(a) ==> self.0.contains(a) }
     }
 
     #[predicate]
     #[why3::attr = "inline:trivial"]
-    fn sound(self) -> bool {
+    pub fn sound(self) -> bool {
         pearlite! { self.0.sound() && (forall<m : Model> m.satisfy_set(self.1) ==> false) }
     }
 
@@ -523,7 +523,7 @@ impl Conflict {
     #[requires(self.sound())]
     #[ensures(result ==> tgt.0.invariant())]
     #[ensures(result ==> tgt.sound())]
-    fn resolve(self, a: (Term, Value), tgt: Self) -> bool {
+    pub fn resolve(self, a: (Term, Value), tgt: Self) -> bool {
         pearlite! { {
           let just = self.0.justification(a);
           // Just need to load this
@@ -541,7 +541,7 @@ impl Conflict {
     #[ensures(result ==> tgt.0.invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    fn backjump(self, l: (Term, Value), tgt: Normal) -> bool {
+    pub fn backjump(self, l: (Term, Value), tgt: Normal) -> bool {
         pearlite! { {
           let e = self.1.remove(l);
           self.1.contains(l) && l.1.is_bool() &&
@@ -557,7 +557,7 @@ impl Conflict {
     #[ensures(result ==> tgt.0.invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    fn undo_clear(self, a: (Term, Value), tgt: Normal) -> bool {
+    pub fn undo_clear(self, a: (Term, Value), tgt: Normal) -> bool {
         pearlite! { {
           let _ = self.0.restrict_sound(self.2 - 1);
           let _ = self.0.restrict_idempotent(0, self.2 - 1);
@@ -574,7 +574,7 @@ impl Conflict {
     #[ensures(result ==> tgt.0.invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    fn undo_decide(self, l: (Term, Value), tgt: Normal) -> bool {
+    pub fn undo_decide(self, l: (Term, Value), tgt: Normal) -> bool {
         pearlite! { {
           let _ = self.0.restrict_sound(self.2 - 1);
           self.0.restrict_too_big(self.2 - 1, l);

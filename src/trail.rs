@@ -115,7 +115,8 @@ impl Value {
 }
 
 pub struct Trail {
-    assignments: Vec<Assignment>,
+    // todo make private
+    pub assignments: Vec<Assignment>,
     level: usize,
     pub ghost: Ghost<theory::Trail>,
 }
@@ -157,13 +158,26 @@ impl Trail {
     #[predicate]
     pub fn invariant(self) -> bool {
         pearlite! {
-            forall<i: Int> 0 <= i && i < (@self.assignments).len() ==>
-                {
-                    let ass = (@self.assignments)[i];
-                    let abs = self.abstract_assign(ass);
+            self.abstract_relation() && self.ghost.sound() && self.ghost.invariant()
+        }
+    }
 
-                    self.ghost.find(abs.to_pair()) == Some((abs, @ass.level))
-                }
+    // #[predicate]
+    // pub fn abstract_relation(self) -> bool {
+    //     pearlite! {
+    //         forall<i: Int> 0 <= i && i < (@self.assignments).len() ==>
+    //             {
+    //                 let ass = (@self.assignments)[i];
+    //                 self.ghost.find(ass.term_value()) == Some((self.abstract_assign(ass), @ass.level))
+    //             }
+    //     }
+    // }
+
+    // a weaker relation
+    #[predicate]
+    fn abstract_relation(self) -> bool {
+        pearlite! {
+            forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.contains((@self.assignments)[i].term_value())
         }
     }
 
@@ -180,6 +194,9 @@ impl Trail {
 
     #[logic]
     #[variant(just.len())]
+    #[requires(forall<i : _> 0 <= i && i < just.len() ==> @just[i] < (@self.assignments).len())]
+    #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < (@self.assignments).len() && a == (@self.assignments)[i].term_value())]
+    // #[ensures(forall<i : _ > 0 <= i && i < just.len() ==> result.contains()]
     pub fn abstract_justification(self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
         if just.len() == 0 {
             Set::EMPTY
@@ -276,6 +293,11 @@ impl Index<usize> for Trail {
 }
 
 impl Assignment {
+    #[logic]
+    fn term_value(self) -> (theory::Term, theory::Value) {
+        (self.term.model(), self.val.model())
+    }
+
     pub(crate) fn level(&self) -> usize {
         self.level
     }
