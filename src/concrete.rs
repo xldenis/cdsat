@@ -26,8 +26,9 @@ impl Solver {
 
     #[requires(trail.invariant())]
     #[ensures((^trail).invariant())]
+    #[ensures(trail.ghost.impls(*(^trail).ghost))]
     #[ensures(match result {
-        Answer::Unsat => (^trail).unsat(),
+        Answer::Unsat => trail.unsat(),
         Answer::Sat => true, // ignore completeness for now.
         Answer::Unknown => true, 
     })]
@@ -38,6 +39,7 @@ impl Solver {
         // Invariant: trail is sound & has type invariants
         #[invariant(tl_inv, trail.invariant())]
         #[invariant(proph, ^trail == ^*old_trail)]
+        #[invariant(sound, old_trail.ghost.impls(*trail.ghost))]
         loop {
             // Tracks if all theories are satisfied with the trail.
             let mut states;
@@ -49,6 +51,7 @@ impl Solver {
             // Invariant: trail is sound & has type invariants
             #[invariant(tl_inv, trail.invariant())]
             #[invariant(proph, ^trail == ^*old_trail)]
+            #[invariant(sound, old_trail.ghost.impls(*trail.ghost))]
             loop {
                 // println!("{:?}", trail.len());
                 let trail_len = trail.len();
@@ -59,9 +62,9 @@ impl Solver {
 
                 match th_res {
                     ExtendResult::Conflict(c) => {
-                        if trail.level() == 0 {
+                        if trail.max_level(&c) == 0 {
                             proof_assert!(theory::Normal(*trail.ghost).fail2(trail.abstract_justification(@c)));
-                            proof_assert!(trail.ghost.unsat());
+                            proof_assert!(trail.ghost.restrict(0).unsat());
                             return Answer::Unsat;
                         };
                         states = TheoryState::Unknown;
@@ -94,6 +97,7 @@ impl Solver {
     #[cfg(feature = "contracts")]
     #[trusted]
     #[maintains((mut trail).invariant())]
+    #[ensures(trail.ghost.impls(*(^trail).ghost))]
     pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {}
 
     // Requires `trail` and `conflict` to form a conflict state
@@ -204,6 +208,7 @@ impl BoolTheory {
             (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
         }
     })]
+    #[ensures(tl.ghost.impls(*(^tl).ghost))]
     fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let mut i = 0;
 

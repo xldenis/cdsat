@@ -124,7 +124,7 @@ impl Trail {
     }
 
     #[predicate]
-    fn is_set_level(self, s: Set<(Term, Value)>, m: Int) -> bool {
+    pub fn is_set_level(self, s: Set<(Term, Value)>, m: Int) -> bool {
         pearlite! {
           (exists<i : _> s.contains(i) && self.level(i) == m) &&
           (forall<i : _> s.contains(i) ==> self.level(i) <= m)
@@ -253,7 +253,7 @@ impl Trail {
     #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) && result.level(a) <= level)]
     #[ensures(level >= self.count_decision() ==> result == self)]
     #[ensures(forall<a : _> !self.contains(a) ==> !result.contains(a))]
-    fn restrict(self, level: Int) -> Self {
+    pub fn restrict(self, level: Int) -> Self {
         match self {
             Trail::Empty => Trail::Empty,
             Trail::Assign(a, l, tl) => {
@@ -373,6 +373,7 @@ impl Trail {
     }
 
     #[predicate]
+    #[ensures(self.restrict(0).unsat() ==> result)]
     pub fn unsat(self) -> bool {
         pearlite! { forall<m : _> self.satisfied_by(m) ==> false }
     }
@@ -383,9 +384,12 @@ impl Trail {
     }
 
     #[predicate]
-    fn impls(self, rhs: Self) -> bool {
+    #[ensures(result ==> (rhs.unsat() ==> self.unsat()))]
+    pub fn impls(self, rhs: Self) -> bool {
         pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
     }
+
+
 }
 
 pub struct Normal(pub Trail);
@@ -449,11 +453,12 @@ impl Normal {
         } }
     }
 
+
     // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0
     #[predicate]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
-    #[ensures(result ==> self.0.unsat())]
+    #[ensures(result ==> self.0.restrict(0).unsat())]
     pub fn fail2(self, just: Set<(Term, Value)>) -> bool {
         pearlite! { {
             (forall<j : _> just.contains(j) ==> self.0.contains(j) ) &&

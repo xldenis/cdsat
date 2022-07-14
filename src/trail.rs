@@ -215,6 +215,7 @@ impl Trail {
     #[requires(self.invariant())]
     #[ensures((^self).invariant())]
     #[requires(self.ghost.acceptable(@term, @val))]
+    #[ensures(self.ghost.impls(*(^self).ghost))]
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         self.level += 1;
         self.assignments.push(Assignment {
@@ -280,6 +281,13 @@ impl Trail {
                 i += 1;
             }
         }
+    }
+
+    #[trusted]
+    #[requires(forall<i : _> 0 <= i && i < (@assignments).len() ==> @(@assignments)[i] < (@self.assignments).len())]
+    #[ensures(self.ghost.is_set_level(self.abstract_justification(@assignments), @result))]
+    pub(crate) fn max_level(&self, assignments: &[usize]) -> usize {
+        0
     }
 }
 
