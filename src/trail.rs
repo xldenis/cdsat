@@ -167,6 +167,7 @@ impl Trail {
         }
     }
 
+    #[ensures(@result == (@self.assignments).len())]
     pub fn len(&self) -> usize {
         self.assignments.len()
     }
@@ -243,6 +244,7 @@ impl Trail {
     #[ensures((^self).invariant())]
     #[requires(self.ghost.acceptable(@term, @val))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
+    // unfold invariant
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         let assign = Assignment {
             term,
@@ -263,6 +265,7 @@ impl Trail {
         }
     }
 
+    #[ensures(forall<i : _> result == Some(i) ==> @i < (@self.assignments).len())]
     pub(crate) fn index_of(&self, a: &Term) -> Option<usize> {
         let mut i = 0;
         while i < self.len() {
@@ -325,6 +328,7 @@ impl Index<usize> for Trail {
     type Output = Assignment;
 
     #[trusted]
+    #[requires(@index < (@self.assignments).len())]
     fn index(&self, index: usize) -> &Self::Output {
         &self.assignments[index]
     }
