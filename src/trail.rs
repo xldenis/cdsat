@@ -16,12 +16,20 @@ pub struct Assignment {
 
 #[cfg(feature = "contracts")]
 impl creusot_contracts::Model for Assignment {
-    type ModelTy = Self;
+    type ModelTy = AssignmentModel;
 
     #[logic]
-    fn model(self) -> Self {
-        self
+    fn model(self) -> Self::ModelTy {
+        pearlite! { AssignmentModel { term: @self.term, val: @self.val, reason: @self.reason, level: @self.level}}
     }
+}
+
+#[cfg(feature = "contracts")]
+pub struct AssignmentModel {
+    pub term: theory::Term,
+    pub val: theory::Value,
+    reason: ReasonModel,
+    level: Int,
 }
 
 #[cfg_attr(not(feature = "contracts"), derive(Hash))]
@@ -33,12 +41,23 @@ enum Reason {
 }
 
 #[cfg(feature = "contracts")]
+enum ReasonModel {
+    Justified(Seq<usize>),
+    Decision,
+    Input
+}
+
+#[cfg(feature = "contracts")]
 impl creusot_contracts::Model for Reason {
-    type ModelTy = Self;
+    type ModelTy = ReasonModel;
 
     #[logic]
-    fn model(self) -> Self {
-        self
+    fn model(self) -> Self::ModelTy {
+        match self {
+            Reason::Justified(a1) => ReasonModel::Justified(a1.model()),
+            Reason::Decision => ReasonModel::Decision,
+            Reason::Input => ReasonModel::Input,
+        }
     }
 }
 

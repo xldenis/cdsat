@@ -253,6 +253,7 @@ impl Trail {
     #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) && result.level(a) <= level)]
     #[ensures(level >= self.count_decision() ==> result == self)]
     #[ensures(forall<a : _> !self.contains(a) ==> !result.contains(a))]
+    #[ensures(forall<m : _> self.satisfied_by(m) ==> result.satisfied_by(m))]
     pub fn restrict(self, level: Int) -> Self {
         match self {
             Trail::Empty => Trail::Empty,
@@ -342,7 +343,7 @@ impl Trail {
     #[requires(l1 >= 0 && l2 >= 0)]
     #[requires(l1 <= l2)]
     #[ensures(self.restrict(l1) == self.restrict(l2).restrict(l1))]
-    fn restrict_idempotent(self, l1: Int, l2: Int) {
+    pub fn restrict_idempotent(self, l1: Int, l2: Int) {
         match self {
             Trail::Empty => (),
             Trail::Assign(_, _, tl) => tl.restrict_idempotent(l1, l2),
@@ -373,9 +374,9 @@ impl Trail {
     }
 
     #[predicate]
-    #[ensures(self.restrict(0).unsat() ==> result)]
+    // #[ensures(self.restrict(0).unsat() ==> result)]
     pub fn unsat(self) -> bool {
-        pearlite! { forall<m : _> self.satisfied_by(m) ==> false }
+        pearlite! { forall<m : _> self.restrict(0).satisfied_by(m) ==> false }
     }
 
     #[predicate]
@@ -453,13 +454,14 @@ impl Normal {
         } }
     }
 
-
     // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0
     #[predicate]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
-    #[ensures(result ==> self.0.restrict(0).unsat())]
+    #[ensures(result ==> self.0.unsat())]
     pub fn fail2(self, just: Set<(Term, Value)>) -> bool {
+        // need to know that if a model satisfies a trail then it satisfies a subset of the trail
+        // from that we conclude that if the trail is sat just must be sat and since just is not sat: contradiction
         pearlite! { {
             (forall<j : _> just.contains(j) ==> self.0.contains(j) ) &&
             (forall<m : Model> m.satisfy_set(just) ==> false) &&
