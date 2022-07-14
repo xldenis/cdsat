@@ -143,7 +143,12 @@ pub struct Trail {
 }
 
 impl Trail {
+    // TODO: Allow ghost fields in types
+    // TODO: Specify vec iter
+    // TODO: Specify vec new
     #[trusted]
+    #[ensures(result.invariant())]
+    #[ensures(result.ghost.sound())]
     pub fn new(inputs: Vec<(Term, Value)>) -> Self {
         let mut assignments = Vec::new();
         for (term, val) in inputs {
@@ -266,16 +271,13 @@ impl Trail {
         return None;
     }
 
-    #[trusted]
+    // what specification to give?
+    // this is a method on the trail as planning for future forms of justification
+    // which need information from the trail to determine the set of relevant clauses
     pub(crate) fn justification(&self, a: &Assignment) -> Option<Vec<usize>> {
         match &a.reason {
             Reason::Justified(v) => {
-                let mut j = Vec::new();
-                for i in v {
-                    j.push(*i);
-                }
-
-                Some(j)
+                Some(v.clone())
             }
             Reason::Decision => None,
             Reason::Input => None,
@@ -292,6 +294,9 @@ impl Trail {
     }
 
     #[trusted]
+    #[requires(self.invariant())]
+    #[ensures((^self).invariant())]
+    #[ensures(*(^self).ghost == self.ghost.restrict(@level))]
     pub(crate) fn restrict(&mut self, level: usize) {
         let mut i = 0;
 
