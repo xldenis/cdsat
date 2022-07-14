@@ -109,7 +109,7 @@ impl creusot_contracts::Model for Value {
 }
 
 impl Value {
-    #[trusted]
+    #[requires((@self).is_bool())]
     pub fn bool(&self) -> bool {
         match self {
             Value::Bool(b) => *b,
@@ -117,6 +117,7 @@ impl Value {
         }
     }
 
+    #[ensures(result == (@self).is_bool())]
     fn is_bool(&self) -> bool {
         match self {
             Value::Bool(_) => true,
@@ -124,10 +125,11 @@ impl Value {
         }
     }
 
-    #[trusted]
+    #[requires((@self).is_bool())]
+    #[ensures(@result == (@self).negate())]
     pub(crate) fn negate(&self) -> Self {
         match self {
-            Value::Bool(b) => Value::Bool(!b),
+            Value::Bool(b) => Value::Bool(!*b),
             _ => unreachable!(),
         }
     }

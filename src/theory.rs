@@ -20,7 +20,7 @@ pub enum Value {
 
 impl Value {
     #[predicate]
-    fn is_bool(self) -> bool {
+    pub fn is_bool(self) -> bool {
         match self {
             Value::Bool(_) => true,
             _ => false,
@@ -30,7 +30,7 @@ impl Value {
     #[logic]
     #[requires(self.is_bool())]
     #[ensures(result.is_bool())]
-    fn negate(self) -> Self {
+    pub fn negate(self) -> Self {
         match self {
             Value::Bool(b) => Value::Bool(!b),
             _ => self,
