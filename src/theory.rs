@@ -126,8 +126,8 @@ impl Trail {
     #[predicate]
     pub fn is_set_level(self, s: Set<(Term, Value)>, m: Int) -> bool {
         pearlite! {
-          (exists<i : _> s.contains(i) && self.level(i) == m) &&
-          (forall<i : _> s.contains(i) ==> self.level(i) <= m)
+          (exists<i : _> s.contains(i) && self.level_of(i) == m) &&
+          (forall<i : _> s.contains(i) ==> self.level_of(i) <= m)
         }
     }
 
@@ -139,7 +139,7 @@ impl Trail {
                 tl.invariant_level()
                     && match a {
                         Assign::Input(_, _) => l == 0,
-                        Assign::Decision(_, _) => tl.count_decision() == l,
+                        Assign::Decision(_, _) => tl.level() == l,
                         Assign::Justified(j, _, _) => tl.is_set_level(j, l),
                     }
             }
@@ -193,7 +193,7 @@ impl Trail {
 
     // TODO: While loops to ghost code
     #[logic]
-    fn level(self, d: (Term, Value)) -> Int {
+    fn level_of(self, d: (Term, Value)) -> Int {
         match self.find(d) {
             Some((_, l)) => l,
             None => 0,
@@ -249,9 +249,9 @@ impl Trail {
     #[logic]
     #[requires(self.invariant())]
     #[ensures(result.invariant())]
-    #[ensures(forall<a : _> self.contains(a) ==> self.level(a) <= level ==> result.contains(a) && result.level(a) == self.level(a))]
-    #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) && result.level(a) <= level)]
-    #[ensures(level >= self.count_decision() ==> result == self)]
+    #[ensures(forall<a : _> self.contains(a) ==> self.level_of(a) <= level ==> result.contains(a) && result.level_of(a) == self.level_of(a))]
+    #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) && result.level_of(a) <= level)]
+    #[ensures(level >= self.level() ==> result == self)]
     #[ensures(forall<a : _> !self.contains(a) ==> !result.contains(a))]
     #[ensures(forall<m : _> self.satisfied_by(m) ==> result.satisfied_by(m))]
     pub fn restrict(self, level: Int) -> Self {
@@ -283,7 +283,7 @@ impl Trail {
 
     #[logic]
     #[requires(self.invariant())]
-    #[ensures(forall< a: _> self.contains(a) ==> self.level(a) <= self.count_decision())]
+    #[ensures(forall< a: _> self.contains(a) ==> self.level_of(a) <= self.level())]
     fn count_bounds(self) -> () {
         match self {
             Trail::Empty => (),
@@ -295,11 +295,11 @@ impl Trail {
 
     #[logic]
     #[ensures(result >= 1)]
-    fn count_decision(self) -> Int {
+    pub fn level(self) -> Int {
         match self {
             Trail::Empty => 1,
-            Trail::Assign(Assign::Decision(_, _), _, tl) => 1 + tl.count_decision(),
-            Trail::Assign(_, _, tl) => tl.count_decision(),
+            Trail::Assign(Assign::Decision(_, _), _, tl) => 1 + tl.level(),
+            Trail::Assign(_, _, tl) => tl.level(),
         }
     }
 
@@ -323,7 +323,7 @@ impl Trail {
     #[logic]
     #[requires(self.invariant())]
     #[requires(self.contains(d))]
-    #[requires(level < self.level(d))]
+    #[requires(level < self.level_of(d))]
     #[ensures(!self.restrict(level).contains(d))]
     fn restrict_too_big(self, level: Int, d: (Term, Value)) {
         match self {
@@ -414,7 +414,7 @@ impl Normal {
             && tgt.0
                 == Trail::Assign(
                     Assign::Decision(t, val),
-                    self.0.count_decision(),
+                    self.0.level(),
                     Box::new(self.0),
                 )
     }
@@ -450,7 +450,7 @@ impl Normal {
           !self.0.contains((just.1, just.2)) &&
           (forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
           self.0.contains(not_l) &&
-          self.0.level(not_l) == 0 && self.0.is_set_level(just.0, 0)
+          self.0.level_of(not_l) == 0 && self.0.is_set_level(just.0, 0)
         } }
     }
 
@@ -536,7 +536,7 @@ impl Conflict {
           // Just need to load this
           Model(Mapping::cst(Value::Bool(false))).resolve_sound(self.1, just, a);
           self.0.is_justified(a) &&
-          (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level(a) < self.2 ) &&
+          (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.2 ) &&
           self.1.contains(a) && tgt == Conflict(self.0, self.1.remove(a).union(just), self.2)
         } }
     }
@@ -552,7 +552,7 @@ impl Conflict {
         pearlite! { {
           let e = self.1.remove(l);
           self.1.contains(l) && l.1.is_bool() &&
-          self.0.level(l) > self.2 &&
+          self.0.level_of(l) > self.2 &&
           exists<i : Int> self.0.is_set_level(e, i) && tgt.0 == Trail::Assign(Assign::Justified(e, l.0, l.1.negate()), i, Box::new(self.0.restrict(self.2)))
         } }
     }
@@ -592,8 +592,8 @@ impl Conflict {
           let restr = self.0.restrict(self.2 - 1);
           self.0.is_justified(l) &&
           l.1.is_bool() &&
-          (exists<a : _> just.contains(a) && !a.1.is_bool() && self.0.level(a) == self.2 ) &&
-          self.2 == self.0.level(l) && tgt.0 == Trail::Assign(Assign::Decision(l.0, l.1.negate()), restr.count_decision(), Box::new(restr))
+          (exists<a : _> just.contains(a) && !a.1.is_bool() && self.0.level_of(a) == self.2 ) &&
+          self.2 == self.0.level_of(l) && tgt.0 == Trail::Assign(Assign::Decision(l.0, l.1.negate()), restr.level(), Box::new(restr))
         } }
     }
 }

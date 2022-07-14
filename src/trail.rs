@@ -184,7 +184,9 @@ impl Trail {
     #[predicate]
     pub fn invariant(self) -> bool {
         pearlite! {
-            self.abstract_relation() && self.ghost.sound() && self.ghost.invariant()
+            self.abstract_relation() && self.ghost.sound() && self.ghost.invariant() &&
+            self.ghost.level() == @self.level && // should be for free
+            @self.level <= (@self.assignments).len()
         }
     }
 
@@ -208,7 +210,7 @@ impl Trail {
     }
 
     #[logic]
-    fn abstract_assign(self, a: Assignment) -> theory::Assign {
+    fn abstract_assign(&self, a: Assignment) -> theory::Assign {
         match a.reason {
             Reason::Input => theory::Assign::Input(a.term.model(), a.val.model()),
             Reason::Decision => theory::Assign::Decision(a.term.model(), a.val.model()),
@@ -237,19 +239,21 @@ impl Trail {
         self.level
     }
 
-    #[trusted]
     #[requires(self.invariant())]
     #[ensures((^self).invariant())]
     #[requires(self.ghost.acceptable(@term, @val))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
-        self.level += 1;
-        self.assignments.push(Assignment {
+        let assign = Assignment {
             term,
             val,
             reason: Reason::Decision,
             level: self.level,
-        });
+        };
+        self.assignments.push(assign);
+        let abs : Ghost<theory::Assign> = ghost! { self.abstract_assign(assign) };
+        self.ghost = ghost! { theory::Trail::Assign(abs.inner(), self.level.model(), Box::new(self.ghost.inner())) };
+        self.level += 1;
     }
 
     pub(crate) fn get(&self, a: &Term) -> Option<&Assignment> {
