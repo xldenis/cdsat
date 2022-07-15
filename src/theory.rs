@@ -45,7 +45,7 @@ impl Value {
 
 pub enum Assign {
     Decision(Term, Value),
-    Justified(FSet<(Term, Value)>, Term, Value),
+    Justified(Set<(Term, Value)>, Term, Value),
     Input(Term, Value),
 }
 
@@ -96,7 +96,7 @@ impl Model {
     }
 
     #[predicate]
-    pub fn satisfy_set(self, v: FSet<(Term, Value)>) -> bool {
+    pub fn satisfy_set(self, v: Set<(Term, Value)>) -> bool {
         pearlite! { forall<a : _> v.contains(a) ==> self.satisfies(a) }
     }
 
@@ -105,7 +105,7 @@ impl Model {
     #[requires(!self.satisfy_set(cflct))]
     #[requires(cflct.contains(a))]
     #[ensures(!self.satisfy_set(cflct.remove(a).union(just)))]
-    fn resolve_sound(self, cflct: FSet<(Term, Value)>, just: FSet<(Term, Value)>, a: (Term, Value)) {}
+    fn resolve_sound(self, cflct: Set<(Term, Value)>, just: Set<(Term, Value)>, a: (Term, Value)) {}
 }
 
 pub enum Trail {
@@ -124,9 +124,9 @@ impl Trail {
     }
 
     #[predicate]
-    pub fn is_set_level(self, s: FSet<(Term, Value)>, m: Int) -> bool {
+    pub fn is_set_level(self, s: Set<(Term, Value)>, m: Int) -> bool {
         pearlite! {
-            s == FSet::EMPTY ||
+            s == Set::EMPTY ||
             (exists<i : _> s.contains(i) && self.level_of(i) == m) &&
             (forall<i : _> s.contains(i) ==> self.level_of(i) <= m)
         }
@@ -231,11 +231,11 @@ impl Trail {
     #[requires(self.is_justified(d))]
     #[requires(self.sound())]
     #[ensures(forall<m : Model> m.satisfy_set(result) ==> m.satisfies(d))]
-    fn justification(self, d: (Term, Value)) -> FSet<(Term, Value)> {
+    fn justification(self, d: (Term, Value)) -> Set<(Term, Value)> {
         self.find_justified(d);
         match self.find(d) {
             Some((Assign::Justified(j, _, _), _)) => j,
-            _ => FSet::EMPTY,
+            _ => Set::EMPTY,
         }
     }
 
@@ -427,7 +427,7 @@ impl Normal {
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))] // WRONG: GOES WRONG WAY
-    pub fn deduce(self, just: (FSet<(Term, Value)>, Term, Value), tgt: Self) -> bool {
+    pub fn deduce(self, just: (Set<(Term, Value)>, Term, Value), tgt: Self) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
           !self.0.contains(not_l) &&
@@ -444,7 +444,7 @@ impl Normal {
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> self.0.unsat())]
-    pub fn fail(self, just: (FSet<(Term, Value)>, Term, Value)) -> bool {
+    pub fn fail(self, just: (Set<(Term, Value)>, Term, Value)) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
           (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
@@ -460,7 +460,7 @@ impl Normal {
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> self.0.unsat())]
-    pub fn fail2(self, just: FSet<(Term, Value)>) -> bool {
+    pub fn fail2(self, just: Set<(Term, Value)>) -> bool {
         // need to know that if a model satisfies a trail then it satisfies a subset of the trail
         // from that we conclude that if the trail is sat just must be sat and since just is not sat: contradiction
         pearlite! { {
@@ -479,7 +479,7 @@ impl Normal {
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    pub fn conflict_solve(self, just: (FSet<(Term, Value)>, Term, Value), tgt: Conflict) -> bool {
+    pub fn conflict_solve(self, just: (Set<(Term, Value)>, Term, Value), tgt: Conflict) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
           let conflict = just.0.insert(not_l);
@@ -501,7 +501,7 @@ impl Normal {
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    pub fn conflict_solve2(self, conflict: FSet<(Term, Value)>, tgt: Conflict) -> bool {
+    pub fn conflict_solve2(self, conflict: Set<(Term, Value)>, tgt: Conflict) -> bool {
         pearlite! { {
           (forall<j : _> conflict.contains(j) ==> self.0.contains(j) ) &&
           (forall<m : Model> m.satisfy_set(conflict) ==> false) &&
@@ -511,7 +511,7 @@ impl Normal {
     }
 }
 
-pub struct Conflict(pub Trail, pub FSet<(Term, Value)>, pub Int);
+pub struct Conflict(pub Trail, pub Set<(Term, Value)>, pub Int);
 
 impl Conflict {
     #[predicate]

@@ -228,10 +228,10 @@ impl Trail {
     #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < (@self.assignments).len() && a == (@self.assignments)[i].term_value())]
     #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < just.len() && a == (@self.assignments)[@just[i]].term_value())]
     #[ensures(forall<i : _ > 0 <= i && i < just.len() ==> result.contains((@self.assignments)[@just[i]].term_value()))]
-    #[ensures(result.len() == just.len())]
-    pub fn abstract_justification(self, just: Seq<usize>) -> FSet<(theory::Term, theory::Value)> {
+    // #[ensures(result.len() == just.len())]
+    pub fn abstract_justification(self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
         if just.len() == 0 {
-            FSet::EMPTY
+            Set::EMPTY
         } else {
             let set = self.abstract_justification(just.subsequence(1, just.len()));
             let a = (self.assignments.model())[just[0].model()];
