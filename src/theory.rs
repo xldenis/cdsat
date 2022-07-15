@@ -390,8 +390,6 @@ impl Trail {
     pub fn impls(self, rhs: Self) -> bool {
         pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
     }
-
-
 }
 
 pub struct Normal(pub Trail);
@@ -412,12 +410,7 @@ impl Normal {
     #[ensures(result ==> self.0.impls(tgt.0))]
     pub fn decide(self, t: Term, val: Value, tgt: Self) -> bool {
         self.0.acceptable(t, val)
-            && tgt.0
-                == Trail::Assign(
-                    Assign::Decision(t, val),
-                    self.0.level(),
-                    Box::new(self.0),
-                )
+            && tgt.0 == Trail::Assign(Assign::Decision(t, val), self.0.level(), Box::new(self.0))
     }
 
     // Γ ⟶ Γ, J⊢L, if ¬L ∉ Γ and L is l ← 𝔟 for some l ∈ ℬ
@@ -469,7 +462,6 @@ impl Normal {
             self.0.is_set_level(just, 0)
         } }
     }
-
 
     // just : J |- L
     // Γ ⟶ ⟨ Γ; J ∪ {¬ L} ⟩ if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0

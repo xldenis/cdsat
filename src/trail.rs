@@ -44,7 +44,7 @@ enum Reason {
 enum ReasonModel {
     Justified(Seq<usize>),
     Decision,
-    Input
+    Input,
 }
 
 #[cfg(feature = "contracts")]
@@ -216,9 +216,11 @@ impl Trail {
         match a.reason {
             Reason::Input => theory::Assign::Input(a.term.model(), a.val.model()),
             Reason::Decision => theory::Assign::Decision(a.term.model(), a.val.model()),
-            Reason::Justified(just) => {
-                theory::Assign::Justified(self.abstract_justification(just.model()), a.term.model(), a.val.model())
-            }
+            Reason::Justified(just) => theory::Assign::Justified(
+                self.abstract_justification(just.model()),
+                a.term.model(),
+                a.val.model(),
+            ),
         }
     }
 
@@ -230,12 +232,23 @@ impl Trail {
     #[ensures(forall<i : _ > 0 <= i && i < just.len() ==> result.contains((@self.assignments)[@just[i]].term_value()))]
     // #[ensures(result.len() == just.len())]
     pub fn abstract_justification(self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
-        if just.len() == 0 {
-            Set::EMPTY
-        } else {
-            let set = self.abstract_justification(just.subsequence(1, just.len()));
-            let a = (self.assignments.model())[just[0].model()];
+        self.abs_just_inner(just, 0)
+    }
+
+    #[logic]
+    #[variant(just.len() - ix)]
+    #[requires(ix >= 0)]
+    #[requires(forall<i : _> 0 <= i && i < just.len() ==> @just[i] < (@self.assignments).len())]
+    #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < (@self.assignments).len() && a == (@self.assignments)[i].term_value())]
+    #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> ix <= i && i < just.len() && a == (@self.assignments)[@just[i]].term_value())]
+    #[ensures(forall<i : _ > ix <= i && i < just.len() ==> result.contains((@self.assignments)[@just[i]].term_value()))]
+    pub fn abs_just_inner(self, just: Seq<usize>, ix: Int) -> Set<(theory::Term, theory::Value)> {
+        if ix < just.len() {
+            let set = self.abs_just_inner(just, ix + 1);
+            let a = (self.assignments.model())[just[ix].model()];
             set.insert((a.term.model(), a.val.model()))
+        } else {
+            Set::EMPTY
         }
     }
 
@@ -256,7 +269,7 @@ impl Trail {
             level: self.level,
         };
         self.assignments.push(assign);
-        let abs : Ghost<theory::Assign> = ghost! { self.abstract_assign(assign) };
+        let abs: Ghost<theory::Assign> = ghost! { self.abstract_assign(assign) };
         self.ghost = ghost! { theory::Trail::Assign(abs.inner(), self.level.model(), Box::new(self.ghost.inner())) };
         self.level += 1;
     }
@@ -286,9 +299,7 @@ impl Trail {
     // which need information from the trail to determine the set of relevant clauses
     pub(crate) fn justification(&self, a: &Assignment) -> Option<Vec<usize>> {
         match &a.reason {
-            Reason::Justified(v) => {
-                Some(v.clone())
-            }
+            Reason::Justified(v) => Some(v.clone()),
             Reason::Decision => None,
             Reason::Input => None,
         }
@@ -329,8 +340,8 @@ impl Trail {
         }
         // proof_assert!(forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.level_of((@self.assignments)[i].term_value()) == @(@self.assignments)[i].level);
 
-        let mut max : usize = self.assignments[assignments[0]].level();
-        let mut i : usize = 1;
+        let mut max: usize = self.assignments[assignments[0]].level();
+        let mut i: usize = 1;
         #[invariant(ix, @i <= (@assignments).len())]
         #[invariant(maxx, forall<j : Int> 0 <= j && j < @i ==> self.ghost.level_of((@self.assignments)[@(@assignments)[j]].term_value()) <= @max)]
         #[invariant(exists_max, exists<j : _> 0 <= j && j < @i && self.ghost.level_of((@self.assignments)[@(@assignments)[j]].term_value()) == @max)]

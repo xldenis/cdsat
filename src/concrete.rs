@@ -3,9 +3,9 @@
 
 // use creusot_contracts::*;
 // use priority_queue::PriorityQueue;
+use crate::theory;
 use crate::trail::*;
 use creusot_contracts::*;
-use crate::theory;
 
 pub struct Solver {
     bool_th: BoolTheory,
@@ -30,7 +30,7 @@ impl Solver {
     #[ensures(match result {
         Answer::Unsat => trail.unsat(),
         Answer::Sat => true, // ignore completeness for now.
-        Answer::Unknown => true, 
+        Answer::Unknown => true,
     })]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
         let old_trail = ghost! { trail };
