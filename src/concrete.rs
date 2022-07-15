@@ -1,4 +1,4 @@
-// use ::std::collections::{BinaryHeap, HashSet};
+// use ::std::collections::{BinaryHeap, HashFSet};
 // // use creusot_contracts::derive::{PartialEq};
 
 // use creusot_contracts::*;
@@ -64,8 +64,6 @@ impl Solver {
                     ExtendResult::Conflict(c) => {
                         if trail.max_level(&c) == 0 {
                             proof_assert!(theory::Normal(*trail.ghost).fail2(trail.abstract_justification(@c)));
-                            // proof_assert!(trail.ghost.restrict(0).unsat());
-                            proof_assert!(trail.ghost.restrict_idempotent(0,0); true);
                             return Answer::Unsat;
                         };
                         states = TheoryState::Unknown;

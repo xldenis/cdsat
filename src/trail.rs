@@ -206,7 +206,8 @@ impl Trail {
     #[predicate]
     fn abstract_relation(self) -> bool {
         pearlite! {
-            forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.contains((@self.assignments)[i].term_value())
+            (forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.contains((@self.assignments)[i].term_value())) &&
+            (forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.level_of((@self.assignments)[i].term_value()) == @(@self.assignments)[i].level)
         }
     }
 
@@ -225,10 +226,12 @@ impl Trail {
     #[variant(just.len())]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> @just[i] < (@self.assignments).len())]
     #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < (@self.assignments).len() && a == (@self.assignments)[i].term_value())]
-    // #[ensures(forall<i : _ > 0 <= i && i < just.len() ==> result.contains()]
-    pub fn abstract_justification(self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
+    #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < just.len() && a == (@self.assignments)[@just[i]].term_value())]
+    #[ensures(forall<i : _ > 0 <= i && i < just.len() ==> result.contains((@self.assignments)[@just[i]].term_value()))]
+    #[ensures(result.len() == just.len())]
+    pub fn abstract_justification(self, just: Seq<usize>) -> FSet<(theory::Term, theory::Value)> {
         if just.len() == 0 {
-            Set::EMPTY
+            FSet::EMPTY
         } else {
             let set = self.abstract_justification(just.subsequence(1, just.len()));
             let a = (self.assignments.model())[just[0].model()];
@@ -316,18 +319,37 @@ impl Trail {
         }
     }
 
-    #[trusted]
+    // #[trusted]
+    #[requires(self.invariant())]
     #[requires(forall<i : _> 0 <= i && i < (@assignments).len() ==> @(@assignments)[i] < (@self.assignments).len())]
     #[ensures(self.ghost.is_set_level(self.abstract_justification(@assignments), @result))]
     pub(crate) fn max_level(&self, assignments: &[usize]) -> usize {
-        0
+        if assignments.len() == 0 {
+            return 0;
+        }
+        // proof_assert!(forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.level_of((@self.assignments)[i].term_value()) == @(@self.assignments)[i].level);
+
+        let mut max : usize = self.assignments[assignments[0]].level();
+        let mut i : usize = 1;
+        #[invariant(ix, @i <= (@assignments).len())]
+        #[invariant(maxx, forall<j : Int> 0 <= j && j < @i ==> self.ghost.level_of((@self.assignments)[@(@assignments)[j]].term_value()) <= @max)]
+        #[invariant(exists_max, exists<j : _> 0 <= j && j < @i && self.ghost.level_of((@self.assignments)[@(@assignments)[j]].term_value()) == @max)]
+        while i < assignments.len() {
+            let a = &self.assignments[assignments[i]];
+            let level = a.level();
+            if max < level {
+                max = level;
+            }
+            i += 1;
+        }
+
+        max
     }
 }
 
 impl Index<usize> for Trail {
     type Output = Assignment;
 
-    #[trusted]
     #[requires(@index < (@self.assignments).len())]
     fn index(&self, index: usize) -> &Self::Output {
         &self.assignments[index]
@@ -340,6 +362,7 @@ impl Assignment {
         (self.term.model(), self.val.model())
     }
 
+    #[ensures(result == self.level)]
     pub(crate) fn level(&self) -> usize {
         self.level
     }
