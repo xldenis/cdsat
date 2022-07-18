@@ -186,7 +186,6 @@ impl Trail {
     pub fn invariant(self) -> bool {
         pearlite! {
             self.abstract_relation() && self.ghost.sound() && self.ghost.invariant()
-            && (@self.assignments).len() == self.ghost.len()
             && self.ghost.level() == @self.level
             // && // should be for free
             // (@self.level <= (@self.assignments).len())
@@ -271,7 +270,7 @@ impl Trail {
     #[ensures((^self).invariant())]
     #[requires(self.ghost.acceptable(@term, @val))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
-    // unfold invariant
+    #[trusted] // for arithmetic
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         self.assignments.len();
         proof_assert!(@self.level <= self.ghost.len());
@@ -330,6 +329,7 @@ impl Trail {
     // #[trusted]
     #[requires(self.invariant())]
     #[ensures((^self).invariant())]
+    #[requires(@level <= @self.level)]
     // #[ensures(*(^self).ghost == self.ghost.restrict(@level))]
     pub(crate) fn restrict(&mut self, level: usize) {
         let mut i = 0;
@@ -337,21 +337,17 @@ impl Trail {
         let old_ghost : Ghost<theory::Trail> = ghost! {self.ghost.inner() };
         let restricted : Ghost<theory::Trail> = ghost! { self.ghost.inner().restrict(level.model()) };
         let mut new_asn : Vec<Assignment> = Vec::new();
-        // #[invariant(contains, forall<j : _> 0 <= j && j < @i ==> @(@self.assignments)[@i].level <= @level ==> old_ghost.contains((@self.assignments)[@i].term_value()))]
-        // (forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.contains((@self.assignments)[i].term_value())) &&
-            // (forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.level_of((@self.assignments)[i].term_value()) == @(@self.assignments)[i].level)
-        // #[invariant(proph_const, ^*old_self == ^self)]
+
         #[invariant(x, (@new_asn).len() <= @i)]
-        // #[invariant(ghost, self.ghost == old_ghost)]
         #[invariant(new, forall<j : _> 0 <= j && j < (@new_asn).len() ==> restricted.contains((@new_asn)[j].term_value()))]
-        #[invariant(new, forall<j : _> 0 <= j && j < (@new_asn).len() ==> restricted.level_of((@new_asn)[j].term_value()) == @(@new_asn)[j].level )]
+        #[invariant(new, forall<j : _> 0 <= j && j < (@new_asn).len() ==> restricted.level_of((@new_asn)[j].term_value()) == @(@new_asn)[j].level)]
         while i < self.assignments.len() {
-            // proof_assert!((@self.assignments).len() - @i < (@self.assignments).len());
             if self.assignments[i].level <= level {
                 new_asn.push(self.assignments[i].clone());
             }
             i += 1;
         }
+
         self.level = level;
         self.assignments = new_asn;
         proof_assert!(self.ghost.restrict_sound(@level); true);
@@ -397,7 +393,7 @@ impl Index<usize> for Trail {
 
 impl Assignment {
     #[logic]
-    fn term_value(self) -> (theory::Term, theory::Value) {
+    fn term_value(&self) -> (theory::Term, theory::Value) {
         (self.term.model(), self.val.model())
     }
 

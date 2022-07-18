@@ -141,7 +141,8 @@ impl Trail {
                     && match a {
                         Assign::Input(_, _) => l == 0,
                         Assign::Decision(_, _) => tl.level() + 1 == l,
-                        Assign::Justified(j, _, _) => tl.is_set_level(j, l) && l <= self.level(), // technically speaking we shouldn't need <= level
+                        Assign::Justified(j, _, _) => tl.is_set_level(j, l)
+                        && l <= self.level(), // technically speaking we shouldn't need <= level
                     }
             }
         }
@@ -250,14 +251,15 @@ impl Trail {
     #[logic]
     #[requires(self.invariant())]
     #[ensures(result.invariant())]
-    // #[requires(level >= 0)]
+    #[requires(level >= 0)]
     #[ensures(forall<a : _> self.contains(a) ==> self.level_of(a) <= level ==> result.contains(a) && result.level_of(a) == self.level_of(a))]
     #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) && result.level_of(a) <= level)]
     #[ensures(level >= self.level() ==> result == self)]
     #[ensures(forall<a : _> !self.contains(a) ==> !result.contains(a))]
     #[ensures(forall<m : _> self.satisfied_by(m) ==> result.satisfied_by(m))]
-    // #[ensures(self.level() >= level ==> result.level() == level)]
-    // #[ensures(self.level() < level ==> result.level() == self.level())]
+    #[ensures(self.level() >= level ==> result.level() == level)]
+    #[ensures(self.level() < level ==> result.level() == self.level())]
+    #[ensures(result.len() <= self.len())]
     pub fn restrict(self, level: Int) -> Self {
         match self {
             Trail::Empty => Trail::Empty,
@@ -361,6 +363,7 @@ impl Trail {
     }
 
     #[logic]
+    #[requires(level >= 0)]
     #[requires(self.invariant())]
     #[requires(self.contains(d))]
     #[requires(level < self.level_of(d))]
@@ -526,7 +529,7 @@ pub struct Conflict(pub Trail, pub Set<(Term, Value)>, pub Int);
 impl Conflict {
     #[predicate]
     pub fn invariant(self) -> bool {
-        pearlite! { self.0.is_set_level(self.1, self.2) && self.0.invariant() && forall<a : _> self.1.contains(a) ==> self.0.contains(a) }
+        pearlite! { self.2 > 0 && self.0.is_set_level(self.1, self.2) && self.0.invariant() && forall<a : _> self.1.contains(a) ==> self.0.contains(a) }
     }
 
     #[predicate]
