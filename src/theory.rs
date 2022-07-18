@@ -275,6 +275,7 @@ impl Trail {
 
     #[logic]
     #[ensures(result >= 0)]
+    #[ensures(result <= self.len())]
     // #[ensures(self == Trail::Empty || result <= self.len())]
     pub fn level(self) -> Int {
         match self {
@@ -286,7 +287,7 @@ impl Trail {
 
     #[logic]
     // #[ensures]
-    // #[ensures(result >= 0)]
+    #[ensures(result >= 0)]
     pub fn len(self) -> Int {
         match self {
             Trail::Empty => 0,
