@@ -2,7 +2,7 @@
 // // use creusot_contracts::derive::{PartialEq};
 
 // use creusot_contracts::*;
-// use priority_queue::PriorityQueue;
+use priority_queue::PriorityQueue;
 use crate::theory;
 use crate::trail::*;
 use creusot_contracts::*;
@@ -93,23 +93,25 @@ impl Solver {
         }
     }
 
-    #[cfg(feature = "contracts")]
-    #[trusted]
-    #[maintains((mut trail).invariant())]
-    #[ensures(trail.ghost.impls(*(^trail).ghost))]
-    pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {}
+    // #[cfg(feature = "contracts")]
+    // #[trusted]
+    // #[maintains((mut trail).invariant())]
+    // #[ensures(trail.ghost.impls(*(^trail).ghost))]
+    // pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {}
 
     // Requires `trail` and `conflict` to form a conflict state
     // Requires that `trail` level is > 0
     // Ensures that `trail` is non-conflicting
-    #[trusted]
-    #[cfg(not(feature = "contracts"))]
+    // #[trusted`]
+    // #[cfg(not(feature = "contracts"))]
+    #[maintains((mut trail).invariant())]
+    #[ensures(trail.ghost.impls(*(^trail).ghost))]
     pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {
         // Can store index in trail in as part of the priority using lexicographic order
-        let mut heap: PriorityQueue<usize, usize> = PriorityQueue::new();
+        let mut heap: ConflictHeap = ConflictHeap::new();
 
         // calculate level of the conflict
-        for a in conflict.into_iter() {
+        for a in conflict {
             let l = trail[a].level();
             heap.push(a, l);
         }
@@ -264,5 +266,47 @@ impl BoolTheory {
                 None => Err(vec![a.clone()]),
             },
         }
+    }
+}
+
+
+#[trusted]
+struct ConflictHeap(PriorityQueue<usize, usize>);
+
+#[cfg(feature= "contracts")]
+impl creusot_contracts::Model for ConflictHeap {
+    type ModelTy = creusot_contracts::Mapping<Int, bool>;
+
+    #[logic]
+    #[trusted]
+    fn model(self) -> Self::ModelTy {
+        pearlite! { absurd }
+    }
+}
+
+impl ConflictHeap {
+    #[trusted]
+    fn new() -> Self {
+        ConflictHeap(PriorityQueue::new())
+    }
+
+    #[trusted]
+    fn push(&mut self, e : usize, prio: usize) -> Option<usize> {
+        self.0.push(e, prio)
+    }
+
+    #[trusted]
+    fn peek(&self) -> Option<(&usize, &usize)> {
+        self.0.peek()
+    }
+
+    #[trusted]
+    fn pop(&mut self) -> Option<(usize, usize)> {
+        self.0.pop()
+    }
+
+    #[trusted]
+    fn into_vec(self) -> Vec<usize> {
+        self.0.into_vec()
     }
 }
