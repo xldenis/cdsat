@@ -8,10 +8,13 @@ use creusot_contracts::*;
 #[cfg_attr(not(feature = "contracts"), derive(Hash))]
 #[derive(Clone, PartialEq, Eq)]
 pub struct Assignment {
+    // TODO: Make private
     pub term: Term,
+    // TODO: Make private
     pub val: Value,
     reason: Reason,
-    level: usize,
+    // TODO: Make private
+    pub level: usize,
 }
 
 #[cfg(feature = "contracts")]
@@ -241,7 +244,7 @@ impl Trail {
     #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < just.len() && a == (@self.assignments)[@just[i]].term_value())]
     #[ensures(forall<i : _ > 0 <= i && i < just.len() ==> result.contains((@self.assignments)[@just[i]].term_value()))]
     // #[ensures(result.len() == just.len())]
-    pub fn abstract_justification(self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
+    pub fn abstract_justification(&self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
         self.abs_just_inner(just, 0)
     }
 
@@ -317,6 +320,7 @@ impl Trail {
         }
     }
 
+    #[maintains((mut self).invariant())]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<usize>, term: Term, val: Value) {
         self.assignments.push(Assignment {
             term,
@@ -330,7 +334,7 @@ impl Trail {
     #[requires(self.invariant())]
     #[ensures((^self).invariant())]
     #[requires(@level <= @self.level)]
-    // #[ensures(*(^self).ghost == self.ghost.restrict(@level))]
+    #[ensures(*(^self).ghost == self.ghost.restrict(@level))]
     pub(crate) fn restrict(&mut self, level: usize) {
         let mut i = 0;
         let old_self : Ghost<&mut Self> = ghost! { self };
@@ -386,6 +390,7 @@ impl Index<usize> for Trail {
     type Output = Assignment;
 
     #[requires(@index < (@self.assignments).len())]
+    #[ensures(*result == (@self.assignments)[@index])]
     fn index(&self, index: usize) -> &Self::Output {
         &self.assignments[index]
     }
@@ -393,7 +398,7 @@ impl Index<usize> for Trail {
 
 impl Assignment {
     #[logic]
-    fn term_value(&self) -> (theory::Term, theory::Value) {
+    pub fn term_value(&self) -> (theory::Term, theory::Value) {
         (self.term.model(), self.val.model())
     }
 
@@ -406,6 +411,7 @@ impl Assignment {
         self.val.is_bool()
     }
 
+    #[ensures(result != (@self.val).is_bool())]
     pub(crate) fn first_order(&self) -> bool {
         !self.is_bool()
     }

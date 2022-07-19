@@ -108,13 +108,17 @@ impl Solver {
     #[ensures(trail.ghost.impls(*(^trail).ghost))]
     #[requires(forall<i : _> 0 <= i && i < (@conflict).len() ==> @(@conflict)[i] < (@trail.assignments).len())]
     #[requires((@conflict).len() > 0)]
+    #[requires({
+        let conflict = trail.abstract_justification(@conflict);
+        (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
+    })]
     pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {
         // Can store index in trail in as part of the priority using lexicographic order
         let mut heap: ConflictHeap = ConflictHeap::new();
         use creusot_contracts::std::iter::IteratorSpec;
 
         // calculate level of the conflict
-        #[invariant(xx, forall<i : _> 0 <= i && i < produced.len() ==> exists<l : _> (@heap).get(@produced[i]) == Some(l))]
+        #[invariant(xx, forall<i : _> 0 <= i && i < produced.len() ==> (@heap).get(@produced[i]) == Some(@(@trail.assignments)[@produced[i]].level))]
         for a in conflict {
             let l = trail[a].level();
             heap.push(a, l);
@@ -122,15 +126,31 @@ impl Solver {
 
         let level = *heap.peek().unwrap().1;
 
+        let mut conflict : Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model()), level.model()) };
+
+        proof_assert!(conflict.invariant());
         // #[variant()]
+        #[invariant(inv, trail.invariant())]
+        #[invariant(conf, conflict.invariant())]
+        #[invariant(from_set, forall<k: _, v : _> conflict.1.contains((k, v)) ==> exists<ix : Int, l : _> 0 <= ix && ix < (@trail.assignments).len() && @(@trail.assignments)[ix].term == k && (@heap).get(ix) == Some(l))]
+        #[invariant(to_set, forall<ix : Int, l : _> (@heap).get(ix) == Some(l) ==> ix < (@trail.assignments).len() && conflict.1.contains((@trail.assignments)[ix].term_value()) )]
+        #[invariant(unsat, forall<m : theory::Model> m.satisfy_set(conflict.1) ==> false)]
         while let Some((a, l)) = heap.pop() {
+            proof_assert!(conflict.2 >= @l);
             let a = trail[a].clone();
             // back jump
             if a.is_bool() && l > *heap.peek().unwrap().1 {
                 trail.restrict(*heap.peek().unwrap().1);
                 trail.add_justified(heap.into_vec(), a.term().clone(), a.value().negate());
+                proof_assert!(conflict.backjump(a.term_value(), theory::Normal(trail.ghost.inner())));
                 return;
             };
+
+            if a.first_order() && a.decision() && l > *heap.peek().unwrap().1 {
+                trail.restrict(level - 1);
+                proof_assert!(conflict.undo_clear(a.term_value(), theory::Normal(trail.ghost.inner())));
+                return;
+            }
 
             if let Some(just) = trail.justification(&a) {
                 for j in just.iter() {
@@ -140,17 +160,15 @@ impl Solver {
                         if *heap.peek().unwrap().1 == l {
                             trail.restrict(level - 1);
                             trail.add_decision(a.term().clone(), a.value().negate());
-                            return;
-                        }
-                        // undo clear
-                        else {
-                            trail.restrict(level - 1);
+                            proof_assert!(conflict.undo_decide(j.term_value(), theory::Normal(trail.ghost.inner())));
                             return;
                         }
                     }
                 }
 
                 // resolve
+                #[invariant(from_set, forall<k: _, v : _> conflict.1.contains((k, v)) ==> exists<ix : Int, l : _> @(@trail.assignments)[ix].term == k && (@heap).get(ix) == Some(l))]
+                #[invariant(to_set, forall<ix : Int, l : _> (@heap).get(ix) == Some(l) ==> ix < (@trail.assignments).len() && exists<v : _> conflict.1.contains((@(@trail.assignments)[ix].term, v)) )]
                 for a in just.into_iter() {
                     let l = trail[a].level();
                     heap.push(a, l);
@@ -283,7 +301,6 @@ impl creusot_contracts::Model for ConflictHeap {
 
     #[logic]
     #[trusted]
-    #[ensures(@self == Mapping::cst(None))]
     fn model(self) -> Self::ModelTy {
         pearlite! { absurd }
     }
@@ -291,6 +308,7 @@ impl creusot_contracts::Model for ConflictHeap {
 
 impl ConflictHeap {
     #[trusted]
+    #[ensures(@result == Mapping::cst(None))]
     fn new() -> Self {
         ConflictHeap(PriorityQueue::new())
     }
@@ -304,11 +322,14 @@ impl ConflictHeap {
     #[trusted]
     #[ensures(result == None ==> (@self) == Mapping::cst(None))]
     #[ensures(forall<e : _, l : _> result == Some((e, l)) ==> (@self).get(@e) == Some(@l))]
+    #[ensures(forall<e : _, l : _> result == Some((e, l)) ==> forall<e2 : usize, l2 : usize> (@self).get(@e2) == Some(@l2) ==> @l2 <= @l)]
     fn peek(&self) -> Option<(&usize, &usize)> {
         self.0.peek()
     }
 
     #[trusted]
+    #[ensures(result == None ==> (@self) == Mapping::cst(None))]
+    #[ensures(forall<e : _, l : _> result == Some((e, l)) ==> (@self).get(@e) == Some(@l) && (@^self) == (@*self).set(@e, None))]
     fn pop(&mut self) -> Option<(usize, usize)> {
         self.0.pop()
     }
