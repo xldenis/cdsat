@@ -106,11 +106,15 @@ impl Solver {
     // #[cfg(not(feature = "contracts"))]
     #[maintains((mut trail).invariant())]
     #[ensures(trail.ghost.impls(*(^trail).ghost))]
+    #[requires(forall<i : _> 0 <= i && i < (@conflict).len() ==> @(@conflict)[i] < (@trail.assignments).len())]
+    #[requires((@conflict).len() > 0)]
     pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {
         // Can store index in trail in as part of the priority using lexicographic order
         let mut heap: ConflictHeap = ConflictHeap::new();
+        use creusot_contracts::std::iter::IteratorSpec;
 
         // calculate level of the conflict
+        #[invariant(xx, forall<i : _> 0 <= i && i < produced.len() ==> exists<l : _> (@heap).get(@produced[i]) == Some(l))]
         for a in conflict {
             let l = trail[a].level();
             heap.push(a, l);
@@ -275,10 +279,11 @@ struct ConflictHeap(PriorityQueue<usize, usize>);
 
 #[cfg(feature= "contracts")]
 impl creusot_contracts::Model for ConflictHeap {
-    type ModelTy = creusot_contracts::Mapping<Int, bool>;
+    type ModelTy = creusot_contracts::Mapping<Int, Option<Int>>;
 
     #[logic]
     #[trusted]
+    #[ensures(@self == Mapping::cst(None))]
     fn model(self) -> Self::ModelTy {
         pearlite! { absurd }
     }
@@ -291,11 +296,14 @@ impl ConflictHeap {
     }
 
     #[trusted]
+    #[ensures((@^self) == (@self).set(@e, Some(@prio)))]
     fn push(&mut self, e : usize, prio: usize) -> Option<usize> {
         self.0.push(e, prio)
     }
 
     #[trusted]
+    #[ensures(result == None ==> (@self) == Mapping::cst(None))]
+    #[ensures(forall<e : _, l : _> result == Some((e, l)) ==> (@self).get(@e) == Some(@l))]
     fn peek(&self) -> Option<(&usize, &usize)> {
         self.0.peek()
     }
