@@ -11,7 +11,7 @@ pub enum Term {
 
 impl Term {
     #[logic]
-    fn sort(self) -> Sort {
+    pub fn sort(self) -> Sort {
         match self {
             Term::Variable(v) => v.1,
             Term::Value(v) => v.sort(),
@@ -137,7 +137,7 @@ impl Model {
     }
 
     #[predicate]
-    fn satisfies(self, v: (Term, Value)) -> bool {
+    pub fn satisfies(self, v: (Term, Value)) -> bool {
         self.interp(v.0) == v.1
     }
 
@@ -218,6 +218,18 @@ impl Trail {
             }
         }
     }
+
+    #[logic]
+    #[requires(self.invariant_nonneg())]
+    #[requires(forall<j : _> set.contains(j) ==> self.level_of(j) <= self.level_of(elem))]
+    #[ensures(self.set_level(set.insert(elem)) == self.level_of(elem))]
+    pub fn set_level_max(self, set: FSet<(Term, Value)>, elem: (Term, Value)) {}
+
+    #[logic]
+    #[requires(self.invariant_nonneg())]
+    #[requires(self.level_of(elem) < self.set_level(set))]
+    #[ensures(self.set_level(set.insert(elem)) == self.set_level(set))]
+    pub fn set_level_min(self, set: FSet<(Term, Value)>, elem: (Term, Value)) {}
 
     #[predicate]
     fn invariant_level(self) -> bool {
@@ -559,13 +571,17 @@ impl Normal {
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
     pub fn deduce(self, just: (FSet<(Term, Value)>, Term, Value), tgt: Self) -> bool {
-        pearlite! { {
-          self.0.count_bounds();
-          just.2.is_bool() && self.0.acceptable(just.1, just.2) &&
-          (forall<j : _> just.0.contains(j) ==> self.0.contains(j)) &&
-          (forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
-          tgt.0 == Trail::Assign(Assign::Justified(just.0, just.1, just.2), self.0.set_level(just.0), Box::new(self.0))
-        } }
+        self.0.count_bounds();
+        just.2.is_bool()
+            && self.0.acceptable(just.1, just.2)
+            && pearlite! { forall<j : _> just.0.contains(j) ==> self.0.contains(j) }
+            && pearlite! { forall<m : Model> m.invariant() ==> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2)) }
+            && tgt.0
+                == Trail::Assign(
+                    Assign::Justified(just.0, just.1, just.2),
+                    self.0.set_level(just.0),
+                    Box::new(self.0),
+                )
     }
 
     // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0

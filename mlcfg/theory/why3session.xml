@@ -203,6 +203,11 @@
  </transf>
  </goal>
 </theory>
+<theory name="Cdsat_Theory_Impl4_SetLevelMax_Impl" proved="true">
+ <goal name="set_level_max&#39;vc" expl="VC for set_level_max" proved="true">
+ <proof prover="2"><result status="valid" time="0.04" steps="395"/></proof>
+ </goal>
+</theory>
 <theory name="Cdsat_Theory_Impl4_RestrictSound_Impl" proved="true">
  <goal name="restrict_sound&#39;vc" expl="VC for restrict_sound" proved="true">
  <proof prover="2"><result status="valid" time="0.04" steps="424"/></proof>
@@ -309,6 +314,21 @@
  <proof prover="2"><result status="valid" time="0.01" steps="28"/></proof>
  </goal>
 </theory>
+<theory name="Cdsat_Theory_Impl5_Deduce_Impl" proved="true">
+ <goal name="deduce&#39;vc" expl="VC for deduce" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="deduce&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.10" steps="1502"/></proof>
+  </goal>
+  <goal name="deduce&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="979"/></proof>
+  </goal>
+  <goal name="deduce&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.71" steps="12813"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
 <theory name="Cdsat_Trail_Impl26" proved="true">
  <goal name="Eq1.eq&#39;refn&#39;vc" expl="VC for eq&#39;refn" proved="true">
  <proof prover="2"><result status="valid" time="0.01" steps="28"/></proof>
@@ -329,24 +349,14 @@
  <proof prover="2"><result status="valid" time="0.04" steps="477"/></proof>
  </goal>
 </theory>
+<theory name="Cdsat_Theory_Impl4_SetLevelMin_Impl" proved="true">
+ <goal name="set_level_min&#39;vc" expl="VC for set_level_min" proved="true">
+ <proof prover="2"><result status="valid" time="0.12" steps="2569"/></proof>
+ </goal>
+</theory>
 <theory name="Cdsat_Theory_Impl5_Decide_Impl" proved="true">
  <goal name="decide&#39;vc" expl="VC for decide" proved="true">
  <proof prover="2"><result status="valid" time="0.14" steps="2406"/></proof>
- </goal>
-</theory>
-<theory name="Cdsat_Theory_Impl5_Deduce_Impl" proved="true">
- <goal name="deduce&#39;vc" expl="VC for deduce" proved="true">
- <transf name="split_vc" proved="true" >
-  <goal name="deduce&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.10" steps="1502"/></proof>
-  </goal>
-  <goal name="deduce&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.07" steps="978"/></proof>
-  </goal>
-  <goal name="deduce&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.71" steps="12463"/></proof>
-  </goal>
- </transf>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl5_Fail_Impl" proved="true">

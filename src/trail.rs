@@ -337,13 +337,24 @@ impl Trail {
     }
 
     #[maintains((mut self).invariant())]
+    #[requires((@val).is_bool())]
+    #[requires(self.ghost.acceptable(@term, @val))]
+    #[requires(forall<m : theory::Model> m.invariant() ==> m.satisfy_set(self.abstract_justification(@into_vec)) ==> m.satisfies((@term, @val)))]
+    #[requires(forall<i : _> 0 <= i && i < (@into_vec).len() ==> @(@into_vec)[i] < (@self.assignments).len())]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<usize>, term: Term, val: Value) {
-        self.assignments.push(Assignment {
+        let level = self.max_level(&into_vec);
+        let just = ghost! { self.abstract_justification(into_vec.model()) };
+        let a = Assignment {
             term,
             val,
             reason: Reason::Justified(into_vec),
-            level: self.level,
-        })
+            level,
+        };
+        let old_ghost = ghost! { self.ghost.inner() };
+        self.ghost = ghost! { theory::Trail::Assign(self.abstract_assign(a), level.model(), Box::new(self.ghost.inner())) };
+        proof_assert! { theory::Normal(old_ghost.inner()).deduce((just.inner(), @a.term, @a.val), theory::Normal(self.ghost.inner())) };
+        // Seem to need to assert that previous indices are unchanged?
+        self.assignments.push(a);
     }
 
     // #[trusted]
@@ -377,27 +388,34 @@ impl Trail {
     // #[trusted]
     #[requires(self.invariant())]
     #[requires(forall<i : _> 0 <= i && i < (@assignments).len() ==> @(@assignments)[i] < (@self.assignments).len())]
-    #[ensures(self.ghost.is_set_level(self.abstract_justification(@assignments), @result))]
+    #[ensures(self.ghost.set_level(self.abstract_justification(@assignments)) == @result)]
     pub(crate) fn max_level(&self, assignments: &[usize]) -> usize {
         if assignments.len() == 0 {
             return 0;
         }
         // proof_assert!(forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.level_of((@self.assignments)[i].term_value()) == @(@self.assignments)[i].level);
 
-        let mut max: usize = self.assignments[assignments[0]].level();
-        let mut i: usize = 1;
+        let mut max: usize = 0;
+        let mut i: usize = 0;
+        let mut seen = ghost! { FSet::EMPTY };
         #[invariant(ix, @i <= (@assignments).len())]
-        #[invariant(maxx, forall<j : Int> 0 <= j && j < @i ==> self.ghost.level_of((@self.assignments)[@(@assignments)[j]].term_value()) <= @max)]
-        #[invariant(exists_max, exists<j : _> 0 <= j && j < @i && self.ghost.level_of((@self.assignments)[@(@assignments)[j]].term_value()) == @max)]
+        #[invariant(omg, forall<j : _> seen.contains(j) ==> self.abstract_justification(@assignments).contains(j))]
+        #[invariant(max_level, self.ghost.set_level(seen.inner()) == @max)]
+        #[invariant(wild, forall<a : _> self.abstract_justification(@assignments).contains(a) ==>
+            (seen.contains(a) || exists<j :_> @i <= j && j < (@assignments).len() && a == (@self.assignments)[@(@assignments)[j]].term_value())
+        )]
         while i < assignments.len() {
             let a = &self.assignments[assignments[i]];
+            let ghost_a = ghost! { *a };
             let level = a.level();
             if max < level {
+                proof_assert! { forall<j : _> seen.contains(j) ==> self.ghost.level_of(j) < @level };
                 max = level;
             }
+            proof_assert!(self.ghost.set_level_min(seen.inner(), (ghost_a.inner().term.model(), ghost_a.inner().val.model())); true);
+            seen = ghost! { seen.inner().insert((ghost_a.inner().term.model(), ghost_a.inner().val.model()))};
             i += 1;
         }
-
         max
     }
 }
@@ -423,6 +441,7 @@ impl Assignment {
         self.level
     }
 
+    #[ensures(result == (@self.val).is_bool())]
     pub(crate) fn is_bool(&self) -> bool {
         self.val.is_bool()
     }
