@@ -1,12 +1,19 @@
 #! /bin/bash
 
 focus=""
-
-if [ -z ${1+x} ]; then focus="" ; else focus="--focus-on=$1" ; fi
+output="mlcfg/cdsat.mlcfg"
+if [ -z ${1+x} ]
+then
+  focus=""
+else
+  focus="--focus-on=$1"
+  output="mlcfg/$1.mlcfg"
+fi
 
 cargo clean -p cdsat &&
 
-cargo creusot $focus --span-mode=absolute -- --features=contracts &&
 
- ../creusot/ide target/debug/cdsat-bin.mlcfg
+cargo creusot $focus --span-mode=absolute --output-file=$output -- --features=contracts &&
+
+ ../creusot/ide $output
 
