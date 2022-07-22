@@ -119,24 +119,32 @@ impl Solver {
 
         // calculate level of the conflict
         #[invariant(xx, forall<i : _> 0 <= i && i < produced.len() ==> (@heap).get(@produced[i]) == Some(@(@trail.assignments)[@produced[i]].level))]
+        #[invariant(from_set, forall<k: usize, v : usize> (@heap).get(@k) == Some(@v) ==> (@conflict).contains(k) && @v == @(@trail.assignments)[@k].level)]
         for a in conflict {
             let l = trail[a].level();
             heap.push(a, l);
         }
 
-        let level = *heap.peek().unwrap().1;
+        let (a, l) = heap.peek().unwrap();
+        let level =  *l;
+        proof_assert!(0 <= @a && @a < (@trail.assignments).len());
+        proof_assert!(trail.ghost.level_of((@trail.assignments)[@a].term_value()) == @level);
 
-        let mut conflict : Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model()), level.model()) };
+        proof_assert!((@conflict).contains(*a));
+        let mut conflict : Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model())) };
 
         proof_assert!(conflict.invariant());
+        proof_assert!(conflict.sound());
+        proof_assert!(conflict.conflict_size(); true);
         // #[variant()]
         #[invariant(inv, trail.invariant())]
         #[invariant(conf, conflict.invariant())]
+        #[invariant(conf, conflict.sound())]
         #[invariant(from_set, forall<k: _, v : _> conflict.1.contains((k, v)) ==> exists<ix : Int, l : _> 0 <= ix && ix < (@trail.assignments).len() && @(@trail.assignments)[ix].term == k && (@heap).get(ix) == Some(l))]
         #[invariant(to_set, forall<ix : Int, l : _> (@heap).get(ix) == Some(l) ==> ix < (@trail.assignments).len() && conflict.1.contains((@trail.assignments)[ix].term_value()) )]
         #[invariant(unsat, forall<m : theory::Model> m.satisfy_set(conflict.1) ==> false)]
         while let Some((a, l)) = heap.pop() {
-            proof_assert!(conflict.2 >= @l);
+            // proof_assert!(conflict.2 >= @l);
             let a = trail[a].clone();
             // back jump
             if a.is_bool() && l > *heap.peek().unwrap().1 {

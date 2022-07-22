@@ -9,7 +9,30 @@ pub enum Term {
     // TODO: complete others
 }
 
-pub struct Var(pub Int);
+impl Term {
+    #[logic]
+    fn sort(self) -> Sort {
+        match self {
+            Term::Variable(v) => v.1,
+            Term::Value(v) => v.sort(),
+            Term::Plus(_, _) => Sort::Rational,
+            Term::Eq(_, _) => Sort::Boolean,
+            Term::Conj(_, _) => Sort::Boolean,
+        }
+    }
+
+    #[predicate]
+    fn is_bool(self) -> bool {
+        self.sort() == Sort::Boolean
+    }
+}
+
+pub enum Sort {
+    Rational,
+    Boolean,
+}
+
+pub struct Var(pub Int, pub Sort);
 
 type Rational = Int;
 
@@ -21,9 +44,14 @@ pub enum Value {
 impl Value {
     #[predicate]
     pub fn is_bool(self) -> bool {
+        self.sort() == Sort::Boolean
+    }
+
+    #[logic]
+    pub fn sort(self) -> Sort {
         match self {
-            Value::Bool(_) => true,
-            _ => false,
+            Value::Bool(_) => Sort::Boolean,
+            Value::Rat(_) => Sort::Rational,
         }
     }
 
@@ -45,11 +73,20 @@ impl Value {
 
 pub enum Assign {
     Decision(Term, Value),
-    Justified(Set<(Term, Value)>, Term, Value),
+    Justified(FSet<(Term, Value)>, Term, Value),
     Input(Term, Value),
 }
 
 impl Assign {
+    #[predicate]
+    fn invariant(self) -> bool {
+        match self {
+            Assign::Decision(t, v) => t.sort() == v.sort(),
+            Assign::Justified(_, t, v) => t.sort() == v.sort(),
+            Assign::Input(t, v) => t.sort() == v.sort(),
+        }
+    }
+
     #[logic]
     pub fn to_pair(self) -> (Term, Value) {
         match self {
@@ -63,7 +100,7 @@ impl Assign {
     fn justified_sound(self) -> bool {
         match self {
             Assign::Justified(just, t, val) => pearlite! {
-              forall<m : Model> m.satisfy_set(just) ==> m.satisfies((t, val))
+              forall<m : Model> m.invariant() ==> m.satisfy_set(just) ==> m.satisfies((t, val))
             },
             _ => true,
         }
@@ -73,7 +110,16 @@ impl Assign {
 pub struct Model(Mapping<Var, Value>);
 
 impl Model {
+    // Models are 'well-sorted'
+    #[predicate]
+    pub fn invariant(self) -> bool {
+        pearlite! {
+            forall<k : _, v : _> self.0.get(k) == v ==> k.1 == v.sort()
+        }
+    }
+
     #[logic]
+    #[ensures(self.invariant() ==> result.sort() == t.sort())]
     fn interp(self, t: Term) -> Value {
         match t {
             Term::Variable(v) => self.0.get(v),
@@ -96,7 +142,7 @@ impl Model {
     }
 
     #[predicate]
-    pub fn satisfy_set(self, v: Set<(Term, Value)>) -> bool {
+    pub fn satisfy_set(self, v: FSet<(Term, Value)>) -> bool {
         pearlite! { forall<a : _> v.contains(a) ==> self.satisfies(a) }
     }
 
@@ -105,7 +151,25 @@ impl Model {
     #[requires(!self.satisfy_set(cflct))]
     #[requires(cflct.contains(a))]
     #[ensures(!self.satisfy_set(cflct.remove(a).union(just)))]
-    fn resolve_sound(self, cflct: Set<(Term, Value)>, just: Set<(Term, Value)>, a: (Term, Value)) {}
+    fn resolve_sound(
+        self,
+        cflct: FSet<(Term, Value)>,
+        just: FSet<(Term, Value)>,
+        a: (Term, Value),
+    ) {
+    }
+
+    #[logic]
+    #[requires(v.sort() == Sort::Boolean)]
+    #[requires(t.sort() == Sort::Boolean)]
+    #[requires(self.invariant())]
+    #[ensures(self.satisfies((t, v)) || self.satisfies((t, v.negate())))]
+    fn lemma(self, t: Term, v: Value) {
+        match self.interp(t) {
+            Value::Bool(_) => (),
+            _ => (),
+        }
+    }
 }
 
 pub enum Trail {
@@ -124,11 +188,34 @@ impl Trail {
     }
 
     #[predicate]
-    pub fn is_set_level(self, s: Set<(Term, Value)>, m: Int) -> bool {
+    pub fn is_set_level(self, s: FSet<(Term, Value)>, m: Int) -> bool {
         pearlite! {
-            (s == Set::EMPTY && m == 0) ||
+            (s == FSet::EMPTY && m == 0) ||
             (exists<i : _> s.contains(i) && self.level_of(i) == m) &&
             (forall<i : _> s.contains(i) ==> self.level_of(i) <= m)
+        }
+    }
+
+    #[logic]
+    #[variant(s.len())]
+    #[requires(self.invariant_nonneg())]
+    #[ensures(forall<i : _> s.contains(i) ==> self.level_of(i) <= result)]
+    #[ensures(s != FSet::EMPTY ==> exists<i : _> s.contains(i) && self.level_of(i) == result)]
+    #[ensures(result >= 0)]
+    #[ensures(result <= self.level())]
+    pub fn set_level(self, s: FSet<(Term, Value)>) -> Int {
+        if s.len() == 0 {
+            0
+        } else if s.len() == 1 {
+            self.level_of(s.peek())
+        } else {
+            let a = s.peek();
+            let rec = self.set_level(s.remove(a));
+            if self.level_of(a) >= rec {
+                self.level_of(a)
+            } else {
+                rec
+            }
         }
     }
 
@@ -141,10 +228,25 @@ impl Trail {
                     && match a {
                         Assign::Input(_, _) => l == 0,
                         Assign::Decision(_, _) => tl.level() + 1 == l,
-                        Assign::Justified(j, _, _) => tl.is_set_level(j, l)
-                        && l <= self.level(), // technically speaking we shouldn't need <= level
+                        Assign::Justified(j, _, _) => tl.set_level(j) == l, // technically speaking we shouldn't need <= level
                     }
             }
+        }
+    }
+
+    #[predicate]
+    fn invariant_nonneg(self) -> bool {
+        match self {
+            Trail::Empty => true,
+            Trail::Assign(a, l, tl) => tl.invariant_nonneg() && l >= 0 && l <= self.level(),
+        }
+    }
+
+    #[predicate]
+    fn invariant_assign(self) -> bool {
+        match self {
+            Trail::Empty => true,
+            Trail::Assign(a, l, tl) => tl.invariant_assign() && a.invariant(),
         }
     }
 
@@ -185,16 +287,24 @@ impl Trail {
 
     #[predicate]
     pub fn invariant(self) -> bool {
-        self.invariant_level() && self.invariant_contains() && self.trail_unique()
+        self.invariant_level()
+            && self.invariant_contains()
+            && self.trail_unique()
+            && self.invariant_nonneg()
+            && self.invariant_assign()
     }
 
     #[predicate]
     pub fn acceptable(self, t: Term, val: Value) -> bool {
-        !self.contains((t, val)) && pearlite! { val.is_bool() ==> !self.contains((t, val.negate()))}
+        !self.contains((t, val))
+            && t.sort() == val.sort()
+            && pearlite! { val.is_bool() ==> !self.contains((t, val.negate()))}
     }
 
     // TODO: While loops to ghost code
     #[logic]
+    #[requires(self.invariant_nonneg())]
+    #[ensures(result >= 0 && result <= self.level())]
     pub fn level_of(self, d: (Term, Value)) -> Int {
         match self.find(d) {
             Some((_, l)) => l,
@@ -203,6 +313,7 @@ impl Trail {
     }
 
     #[predicate]
+    #[ensures(self.invariant_assign() ==> result == true ==> d.0.sort() == d.1.sort())]
     pub fn contains(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some(ix) => true,
@@ -215,6 +326,8 @@ impl Trail {
       Some((a, l)) => a.to_pair() == d,
       _ => true,
     })]
+    #[ensures(self.invariant_nonneg() ==> forall<p : _> result == Some(p) ==> p.1 >= 0 && p.1 <= self.level())]
+    #[ensures(self.invariant_assign() ==> forall<p : _> result == Some(p) ==> d.0.sort() == d.1.sort())]
     pub fn find(self, d: (Term, Value)) -> Option<(Assign, Int)> {
         match self {
             Trail::Empty => None,
@@ -231,12 +344,12 @@ impl Trail {
     #[logic]
     #[requires(self.is_justified(d))]
     #[requires(self.sound())]
-    #[ensures(forall<m : Model> m.satisfy_set(result) ==> m.satisfies(d))]
-    fn justification(self, d: (Term, Value)) -> Set<(Term, Value)> {
+    #[ensures(forall<m : Model> m.invariant() ==> m.satisfy_set(result) ==> m.satisfies(d))]
+    fn justification(self, d: (Term, Value)) -> FSet<(Term, Value)> {
         self.find_justified(d);
         match self.find(d) {
             Some((Assign::Justified(j, _, _), _)) => j,
-            _ => Set::EMPTY,
+            _ => FSet::EMPTY,
         }
     }
 
@@ -322,7 +435,7 @@ impl Trail {
     #[predicate]
     // #[ensures(self.restrict(0).unsat() ==> result)]
     pub fn unsat(self) -> bool {
-        pearlite! { forall<m : _> self.restrict(0).satisfied_by(m) ==> false }
+        pearlite! { forall<m : Model> m.invariant() ==> self.restrict(0).satisfied_by(m) ==> false }
     }
 
     #[predicate]
@@ -333,7 +446,7 @@ impl Trail {
     #[predicate]
     #[ensures(result ==> (rhs.unsat() ==> self.unsat()))]
     pub fn impls(self, rhs: Self) -> bool {
-        pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
+        pearlite! { forall<m : Model> m.invariant() ==> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
     }
 
     // Lemmas
@@ -430,7 +543,12 @@ impl Normal {
     #[ensures(result ==> self.0.impls(tgt.0))]
     pub fn decide(self, t: Term, val: Value, tgt: Self) -> bool {
         self.0.acceptable(t, val)
-            && tgt.0 == Trail::Assign(Assign::Decision(t, val), self.0.level() + 1, Box::new(self.0))
+            && tgt.0
+                == Trail::Assign(
+                    Assign::Decision(t, val),
+                    self.0.level() + 1,
+                    Box::new(self.0),
+                )
     }
 
     // Γ ⟶ Γ, J⊢L, if ¬L ∉ Γ and L is l ← 𝔟 for some l ∈ ℬ
@@ -439,17 +557,14 @@ impl Normal {
     #[requires(self.sound())]
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
-    #[ensures(result ==> self.0.impls(tgt.0))] // WRONG: GOES WRONG WAY
-    pub fn deduce(self, just: (Set<(Term, Value)>, Term, Value), tgt: Self) -> bool {
+    #[ensures(result ==> self.0.impls(tgt.0))]
+    pub fn deduce(self, just: (FSet<(Term, Value)>, Term, Value), tgt: Self) -> bool {
         pearlite! { {
           self.0.count_bounds();
-          let not_l = (just.1, just.2.negate());
-          !self.0.contains(not_l) &&
-          !self.0.contains((just.1, just.2)) &&
-          just.2.is_bool() &&
+          just.2.is_bool() && self.0.acceptable(just.1, just.2) &&
           (forall<j : _> just.0.contains(j) ==> self.0.contains(j)) &&
           (forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
-          exists<i : _> self.0.is_set_level(just.0, i) && tgt.0 == Trail::Assign(Assign::Justified(just.0, just.1, just.2), i, Box::new(self.0))
+          tgt.0 == Trail::Assign(Assign::Justified(just.0, just.1, just.2), self.0.set_level(just.0), Box::new(self.0))
         } }
     }
 
@@ -458,14 +573,14 @@ impl Normal {
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> self.0.unsat())]
-    pub fn fail(self, just: (Set<(Term, Value)>, Term, Value)) -> bool {
+    pub fn fail(self, just: (FSet<(Term, Value)>, Term, Value)) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
           (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
           !self.0.contains((just.1, just.2)) &&
           (forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
           self.0.contains(not_l) &&
-          self.0.level_of(not_l) == 0 && self.0.is_set_level(just.0, 0)
+          self.0.level_of(not_l) == 0 && self.0.set_level(just.0) == 0
         } }
     }
 
@@ -474,13 +589,13 @@ impl Normal {
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> self.0.unsat())]
-    pub fn fail2(self, just: Set<(Term, Value)>) -> bool {
+    pub fn fail2(self, just: FSet<(Term, Value)>) -> bool {
         // need to know that if a model satisfies a trail then it satisfies a subset of the trail
         // from that we conclude that if the trail is sat just must be sat and since just is not sat: contradiction
         pearlite! { {
             (forall<j : _> just.contains(j) ==> self.0.contains(j) ) &&
             (forall<m : Model> m.satisfy_set(just) ==> false) &&
-            self.0.is_set_level(just, 0)
+            self.0.set_level(just) == 0
         } }
     }
 
@@ -492,17 +607,17 @@ impl Normal {
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    pub fn conflict_solve(self, just: (Set<(Term, Value)>, Term, Value), tgt: Conflict) -> bool {
+    pub fn conflict_solve(self, just: (FSet<(Term, Value)>, Term, Value), tgt: Conflict) -> bool {
         pearlite! { {
           let not_l = (just.1, just.2.negate());
           let conflict = just.0.insert(not_l);
           self.0.contains(not_l) &&
           (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
           !self.0.contains((just.1, just.2)) &&
-          (forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
+          (forall<m : Model> m.invariant() ==> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
 
-          exists<l : Int> l > 0 && self.0.is_set_level(conflict, l) &&
-          tgt == Conflict(self.0, conflict, l)
+          self.0.set_level(conflict) > 0 &&
+          tgt == Conflict(self.0, conflict)
         } }
     }
 
@@ -514,29 +629,44 @@ impl Normal {
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
-    pub fn conflict_solve2(self, conflict: Set<(Term, Value)>, tgt: Conflict) -> bool {
+    pub fn conflict_solve2(self, conflict: FSet<(Term, Value)>, tgt: Conflict) -> bool {
         pearlite! { {
           (forall<j : _> conflict.contains(j) ==> self.0.contains(j) ) &&
           (forall<m : Model> m.satisfy_set(conflict) ==> false) &&
-          exists<l : Int> l > 0 && self.0.is_set_level(conflict, l) &&
-          tgt == Conflict(self.0, conflict, l)
+          self.0.set_level(conflict) > 0 &&
+          tgt == Conflict(self.0, conflict)
         } }
     }
 }
 
-pub struct Conflict(pub Trail, pub Set<(Term, Value)>, pub Int);
+pub struct Conflict(pub Trail, pub FSet<(Term, Value)>);
 
 impl Conflict {
     #[predicate]
     pub fn invariant(self) -> bool {
-        pearlite! { self.2 > 0 && self.0.is_set_level(self.1, self.2) && self.0.invariant() && forall<a : _> self.1.contains(a) ==> self.0.contains(a) }
+        pearlite! { self.0.set_level(self.1) > 0 && self.0.invariant() && forall<a : _> self.1.contains(a) ==> self.0.contains(a) }
     }
 
     #[predicate]
     #[why3::attr = "inline:trivial"]
     pub fn sound(self) -> bool {
-        pearlite! { self.0.sound() && (forall<m : Model> m.satisfy_set(self.1) ==> false) }
+        pearlite! { self.0.sound() && (forall<m : Model> m.invariant() ==> m.satisfy_set(self.1) ==> false) }
     }
+
+    #[logic]
+    fn level(self) -> Int {
+        self.0.set_level(self.1)
+    }
+
+    // // TODO: Case analysis on the size of the conflict set
+    // // - size 0 => no conflict
+    // // - size 1 => soundness of trail means no conflict
+    // // - size >= 2 => done
+    #[logic]
+    // #[requires(self.sound())]
+    // #[requires(self.invariant())]
+    // #[ensures(self.1.len() >= 2)]
+    pub fn conflict_size(self) -> () {}
 
     // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
     #[predicate]
@@ -550,8 +680,8 @@ impl Conflict {
           // Just need to load this
           Model(Mapping::cst(Value::Bool(false))).resolve_sound(self.1, just, a);
           self.0.is_justified(a) &&
-          (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.2 ) &&
-          self.1.contains(a) && tgt == Conflict(self.0, self.1.remove(a).union(just), self.2)
+          (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.0.set_level(self.1)) &&
+          self.1.contains(a) && tgt == Conflict(self.0, self.1.remove(a).union(just))
         } }
     }
 
@@ -563,13 +693,47 @@ impl Conflict {
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
     pub fn backjump(self, l: (Term, Value), tgt: Normal) -> bool {
-        pearlite! { {
-          let e = self.1.remove(l);
-          self.1.contains(l) && l.1.is_bool() &&
-          self.0.level_of(l) > self.2 &&
-          exists<i : Int> self.0.is_set_level(e, i) && tgt.0 == Trail::Assign(Assign::Justified(e, l.0, l.1.negate()), i, Box::new(self.0.restrict(self.2)))
-        } }
+        let e = self.1.remove(l);
+        self.0.restrict_sound(self.0.set_level(e));
+        self.0.restrict_too_big(self.0.set_level(e), l);
+        self.0.trail_plausible(l);
+        self.0.restrict_idempotent(0, self.0.set_level(e));
+        l.1.negate_involutive();
+        Model(Mapping::cst(Value::Bool(false))).lemma(l.0, l.1);
+        let restricted = self.0.restrict(self.0.set_level(e));
+        self.1.contains(l)
+            && l.1.is_bool()
+            && l.0.is_bool()
+            && self.0.level_of(l) > self.0.set_level(e)
+            && tgt.0
+                == Trail::Assign(
+                    Assign::Justified(e, l.0, l.1.negate()),
+                    restricted.set_level(e),
+                    Box::new(restricted),
+                )
     }
+
+    // #[logic]
+    // #[requires(self.invariant())]
+    // #[requires(self.sound())]
+    // #[requires(self.1.contains(l) && l.1.is_bool())]
+    // #[requires(self.0.level_of(l) > self.0.set_level(self.1.remove(l)))]
+    // #[ensures(result.0.invariant())]
+    // #[ensures(result.sound())]
+    // #[ensures(self.0.impls(result.0))]
+    // pub fn backjump2(self, l: (Term, Value)) -> Normal {
+    //     let e = self.1.remove(l);
+    //     self.0.restrict_sound(self.0.set_level(e));
+    //     self.0.restrict_too_big(self.0.set_level(e), l);
+    //     self.0.trail_plausible(l);
+    //     l.1.negate_involutive();
+    //     let restricted = self.0.restrict(self.0.set_level(e));
+    //     Normal(Trail::Assign(
+    //         Assign::Justified(e, l.0, l.1.negate()),
+    //         restricted.set_level(e),
+    //         Box::new(restricted),
+    //     ))
+    // }
 
     // ⟨ Γ; { A } ⊔ E ⟩  ⇒ Γ≤m-1, if A is a first-order decision of level m > level_Γ(E)
     #[predicate]
@@ -580,11 +744,11 @@ impl Conflict {
     #[ensures(result ==> self.0.impls(tgt.0))]
     pub fn undo_clear(self, a: (Term, Value), tgt: Normal) -> bool {
         pearlite! { {
-          let _ = self.0.restrict_sound(self.2 - 1);
-          let _ = self.0.restrict_idempotent(0, self.2 - 1);
+          let _ = self.0.restrict_sound(self.level() - 1);
+          let _ = self.0.restrict_idempotent(0, self.level() - 1);
           let e = self.1.remove(a);
-          self.1.contains(a) && !a.1.is_bool() && (exists<l : Int> l >= 0 && self.2 > l && self.0.is_set_level(e, l)) &&
-          tgt.0 == self.0.restrict(self.2 - 1)
+          self.1.contains(a) && !a.1.is_bool() && (exists<l : Int> l >= 0 && self.level() > l && self.0.is_set_level(e, l)) &&
+          tgt.0 == self.0.restrict(self.level() - 1)
         } }
     }
 
@@ -597,17 +761,17 @@ impl Conflict {
     #[ensures(result ==> self.0.impls(tgt.0))]
     pub fn undo_decide(self, l: (Term, Value), tgt: Normal) -> bool {
         pearlite! { {
-          let _ = self.0.restrict_sound(self.2 - 1);
-          self.0.restrict_too_big(self.2 - 1, l);
+          let _ = self.0.restrict_sound(self.level() - 1);
+          self.0.restrict_too_big(self.level() - 1, l);
           self.0.trail_plausible(l);
           l.1.negate_involutive();
           let just = self.0.justification(l);
           let e = self.1.remove(l);
-          let restr = self.0.restrict(self.2 - 1);
+          let restr = self.0.restrict(self.level() - 1);
           self.0.is_justified(l) &&
           l.1.is_bool() &&
-          (exists<a : _> just.contains(a) && !a.1.is_bool() && self.0.level_of(a) == self.2 ) &&
-          self.2 == self.0.level_of(l) && tgt.0 == Trail::Assign(Assign::Decision(l.0, l.1.negate()), restr.level() + 1, Box::new(restr))
+          (exists<a : _> just.contains(a) && !a.1.is_bool() && self.0.level_of(a) == self.level() ) &&
+          self.level() == self.0.level_of(l) && tgt.0 == Trail::Assign(Assign::Decision(l.0, l.1.negate()), restr.level() + 1, Box::new(restr))
         } }
     }
 }

@@ -64,10 +64,26 @@ impl creusot_contracts::Model for Reason {
     }
 }
 
+#[derive(Clone, PartialEq, Eq)]
+pub enum Sort { Boolean, Rational }
+
+#[cfg(feature = "contracts")]
+impl creusot_contracts::Model for Sort {
+    type ModelTy = theory::Sort;
+
+    #[logic]
+    fn model(self) -> Self::ModelTy {
+        match self {
+            Sort::Boolean => theory::Sort::Boolean,
+            Sort::Rational => theory::Sort::Rational,
+        }
+    }
+}
+
 #[cfg_attr(not(feature = "contracts"), derive(Hash))]
 #[derive(Clone, PartialEq, Eq)]
 pub enum Term {
-    Variable(usize),
+    Variable(usize, Sort),
     Value(Value),
     Plus(Box<Term>, Box<Term>),
     Eq(Box<Term>, Box<Term>),
@@ -82,7 +98,7 @@ impl creusot_contracts::Model for Term {
     #[logic]
     fn model(self) -> Self::ModelTy {
         match self {
-            Term::Variable(v) => theory::Term::Variable(theory::Var(v.model())),
+            Term::Variable(v, s) => theory::Term::Variable(theory::Var(v.model(), s.model())),
             Term::Value(v) => theory::Term::Value(v.model()),
             Term::Plus(l, r) => theory::Term::Plus(Box::new((*l).model()), Box::new((*r).model())),
             Term::Eq(l, r) => theory::Term::Eq(Box::new((*l).model()), Box::new((*r).model())),
@@ -244,7 +260,7 @@ impl Trail {
     #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < just.len() && a == (@self.assignments)[@just[i]].term_value())]
     #[ensures(forall<i : _ > 0 <= i && i < just.len() ==> result.contains((@self.assignments)[@just[i]].term_value()))]
     // #[ensures(result.len() == just.len())]
-    pub fn abstract_justification(&self, just: Seq<usize>) -> Set<(theory::Term, theory::Value)> {
+    pub fn abstract_justification(&self, just: Seq<usize>) -> FSet<(theory::Term, theory::Value)> {
         self.abs_just_inner(just, 0)
     }
 
@@ -255,13 +271,13 @@ impl Trail {
     #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < (@self.assignments).len() && a == (@self.assignments)[i].term_value())]
     #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> ix <= i && i < just.len() && a == (@self.assignments)[@just[i]].term_value())]
     #[ensures(forall<i : _ > ix <= i && i < just.len() ==> result.contains((@self.assignments)[@just[i]].term_value()))]
-    pub fn abs_just_inner(self, just: Seq<usize>, ix: Int) -> Set<(theory::Term, theory::Value)> {
+    pub fn abs_just_inner(self, just: Seq<usize>, ix: Int) -> FSet<(theory::Term, theory::Value)> {
         if ix < just.len() {
             let set = self.abs_just_inner(just, ix + 1);
             let a = (self.assignments.model())[just[ix].model()];
             set.insert((a.term.model(), a.val.model()))
         } else {
-            Set::EMPTY
+            FSet::EMPTY
         }
     }
 
