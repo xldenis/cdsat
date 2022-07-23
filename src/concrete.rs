@@ -117,11 +117,11 @@ impl Solver {
         // Can store index in trail in as part of the priority using lexicographic order
         let mut heap: ConflictHeap = ConflictHeap::new();
         use creusot_contracts::std::iter::IteratorSpec;
-        let mut conflict : Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model())) };
+        let mut abstract_conflict : Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model())) };
 
         // calculate level of the conflict
         #[invariant(xx, forall<i : _> 0 <= i && i < produced.len() ==> (@heap).get(@produced[i]) == Some(@(@trail.assignments)[@produced[i]].level))]
-        #[invariant(from_set, forall<k: usize, v : usize> (@heap).get(@k) == Some(@v) ==> @k < (@trail.assignments).len() && (@conflict).contains(k) && @v == @(@trail.assignments)[@k].level)]
+        #[invariant(from_set, forall<k: usize, v : usize> (@heap).get(@k) == Some(@v) ==> @k < (@trail.assignments).len() && abstract_conflict.1.contains((@trail.assignments)[@k].term_value()) && @v == @(@trail.assignments)[@k].level)]
         for a in conflict {
             let l = trail[a].level();
             heap.push(a, l);
@@ -129,25 +129,22 @@ impl Solver {
 
         let (a, l) = heap.peek().unwrap();
         let level =  *l;
-        proof_assert!(@a < (@trail.assignments).len());
-        proof_assert!(trail.ghost.level_of((@trail.assignments)[@a].term_value()) == @level);
+        proof_assert!(@level > 0);
+        // proof_assert!(trail.ghost.level_of((@trail.assignments)[@a].term_value()) == @level);
 
-        proof_assert!((@conflict).contains(*a));
-        proof_assert!(forall<j :_> trail.abstract_justification(conflict.model()).contains(j) ==> trail.ghost.contains(j));
-        let mut conflict : Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model())) };
-        proof_assert!(conflict.invariant());
-        proof_assert!(conflict.sound());
-        proof_assert!(conflict.conflict_size(); true);
+        // proof_assert!(forall<j :_> trail.abstract_justification(conflict.model()).contains(j) ==> trail.ghost.contains(j));
+        let mut conflict = abstract_conflict;
+        // let mut conflict : Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model())) };
         // #[variant()]
         #[invariant(inv, trail.invariant())]
         #[invariant(conf, conflict.invariant())]
         #[invariant(conf, conflict.sound())]
         #[invariant(from_set, forall<k: _, v : _> conflict.1.contains((k, v)) ==> exists<ix : Int, l : _> 0 <= ix && ix < (@trail.assignments).len() && @(@trail.assignments)[ix].term == k && (@heap).get(ix) == Some(l))]
-        #[invariant(to_set, forall<ix : Int, l : _> (@heap).get(ix) == Some(l) ==> ix < (@trail.assignments).len() && conflict.1.contains((@trail.assignments)[ix].term_value()) )]
-        #[invariant(unsat, forall<m : theory::Model> m.satisfy_set(conflict.1) ==> false)]
+        #[invariant(to_set, forall<ix : usize, l : usize> (@heap).get(@ix) == Some(@l) ==> @ix < (@trail.assignments).len() && conflict.1.contains((@trail.assignments)[@ix].term_value()) )]
         while let Some((a, l)) = heap.pop() {
             // proof_assert!(conflict.2 >= @l);
             let a = trail[a].clone();
+            proof_assert!(@l <= conflict.level());
             // back jump
             if a.is_bool() && l > *heap.peek().unwrap().1 {
                 trail.restrict(*heap.peek().unwrap().1);
@@ -163,6 +160,7 @@ impl Solver {
             }
 
             if let Some(just) = trail.justification(&a) {
+                proof_assert!(forall<i : _> 0 <= i && i < (@just).len() ==> @(@just)[i] < (@trail.assignments).len());
                 for j in just.iter() {
                     let j = &trail[*j];
                     if j.level() == level && j.first_order() && j.decision() {

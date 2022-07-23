@@ -455,10 +455,12 @@ impl Assignment {
         self.reason == Reason::Decision
     }
 
+    #[ensures(*result == self.val)]
     pub(crate) fn value(&self) -> &Value {
         &self.val
     }
 
+    #[ensures(*result == self.term)]
     pub(crate) fn term(&self) -> &Term {
         &self.term
     }

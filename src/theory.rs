@@ -670,7 +670,7 @@ impl Conflict {
     }
 
     #[logic]
-    fn level(self) -> Int {
+    pub fn level(self) -> Int {
         self.0.set_level(self.1)
     }
 
