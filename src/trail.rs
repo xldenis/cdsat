@@ -3,9 +3,12 @@ use ::std::ops::Index;
 use creusot_contracts::derive::{Clone, PartialEq};
 use creusot_contracts::*;
 // use num_rational::BigRational;
+//
+#[cfg(not(feature = "contracts"))]
+struct FSet<T>(T);
 
 // // Todo: Distinguish between boolean and fo assignments as an optim?
-#[cfg_attr(not(feature = "contracts"), derive(Hash))]
+// #[cfg_attr(not(feature = "contracts"), derive(Hash))]
 #[derive(Clone, PartialEq, Eq)]
 pub struct Assignment {
     // TODO: Make private
@@ -35,7 +38,7 @@ pub struct AssignmentModel {
     level: Int,
 }
 
-#[cfg_attr(not(feature = "contracts"), derive(Hash))]
+// #[cfg_attr(not(feature = "contracts"), derive(Hash))]
 #[derive(Clone, PartialEq, Eq)]
 enum Reason {
     Justified(Vec<usize>),
@@ -80,7 +83,7 @@ impl creusot_contracts::Model for Sort {
     }
 }
 
-#[cfg_attr(not(feature = "contracts"), derive(Hash))]
+// #[cfg_attr(not(feature = "contracts"), derive(Hash))]
 #[derive(Clone, PartialEq, Eq)]
 pub enum Term {
     Variable(usize, Sort),
@@ -182,7 +185,7 @@ impl Trail {
         Trail {
             assignments,
             level: 0,
-            ghost: Ghost::new(&theory::Trail::Empty),
+            ghost: ghost! { theory::Trail::Empty },
         }
     }
 
@@ -340,17 +343,19 @@ impl Trail {
     #[requires((@val).is_bool())]
     #[requires(self.ghost.acceptable(@term, @val))]
     #[requires(forall<m : theory::Model> m.invariant() ==> m.satisfy_set(self.abstract_justification(@into_vec)) ==> m.satisfies((@term, @val)))]
-    #[requires(forall<i : _> 0 <= i && i < (@into_vec).len() ==> @(@into_vec)[i] < (@self.assignments).len())]
+    #[requires(forall<i : _> 0 <= i && i < (@into_vec).len() ==>
+        @(@into_vec)[i] < (@self.assignments).len()
+    )]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<usize>, term: Term, val: Value) {
         let level = self.max_level(&into_vec);
-        let just = ghost! { self.abstract_justification(into_vec.model()) };
+        let just : Ghost<FSet<(theory::Term, theory::Value)>> = ghost! { self.abstract_justification(into_vec.model()) };
         let a = Assignment {
             term,
             val,
             reason: Reason::Justified(into_vec),
             level,
         };
-        let old_ghost = ghost! { self.ghost.inner() };
+        let old_ghost : Ghost<theory::Trail> = ghost! { self.ghost.inner() };
         self.ghost = ghost! { theory::Trail::Assign(self.abstract_assign(a), level.model(), Box::new(self.ghost.inner())) };
         proof_assert! { theory::Normal(old_ghost.inner()).deduce((just.inner(), @a.term, @a.val), theory::Normal(self.ghost.inner())) };
         // Seem to need to assert that previous indices are unchanged?
@@ -397,7 +402,7 @@ impl Trail {
 
         let mut max: usize = 0;
         let mut i: usize = 0;
-        let mut seen = ghost! { FSet::EMPTY };
+        let mut seen : Ghost<FSet<(theory::Term, theory::Value)>> = ghost! { FSet::EMPTY };
         #[invariant(ix, @i <= (@assignments).len())]
         #[invariant(omg, forall<j : _> seen.contains(j) ==> self.abstract_justification(@assignments).contains(j))]
         #[invariant(max_level, self.ghost.set_level(seen.inner()) == @max)]
@@ -406,7 +411,7 @@ impl Trail {
         )]
         while i < assignments.len() {
             let a = &self.assignments[assignments[i]];
-            let ghost_a = ghost! { *a };
+            let ghost_a : Ghost<Assignment> = ghost! { *a };
             let level = a.level();
             if max < level {
                 proof_assert! { forall<j : _> seen.contains(j) ==> self.ghost.level_of(j) < @level };

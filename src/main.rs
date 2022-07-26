@@ -1,10 +1,20 @@
 #![feature(box_syntax)]
-
+#![feature(stmt_expr_attributes, proc_macro_hygiene)]
 pub mod concrete;
 pub mod trail;
 
-// #[cfg(feature = "contracts")]
+#[cfg(feature = "contracts")]
 pub mod theory;
+
+#[cfg(not(feature = "contracts"))]
+pub mod theory {
+    pub struct Sort;
+    pub struct Assign;
+    pub struct Trail;
+    pub struct Conflict;
+    pub struct Term;
+    pub struct Value;
+}
 
 // use concrete::Solver;
 // use trail::{Term, Value, Trail};

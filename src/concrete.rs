@@ -33,7 +33,7 @@ impl Solver {
         Answer::Unknown => true,
     })]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
-        let old_trail = ghost! { trail };
+        let old_trail : Ghost<theory::Trail> = ghost! { trail };
         // Invariant:
         // Every theory is coherent up to last_index with the trail
         // Invariant: trail is sound & has type invariants
@@ -114,8 +114,11 @@ impl Solver {
         (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
     })]
     pub fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<usize>) {
+        let old_trail : Ghost<theory::Trail> = ghost! { trail };
         // Can store index in trail in as part of the priority using lexicographic order
         let mut heap: ConflictHeap = ConflictHeap::new();
+
+        #[cfg(feature = "contracts")]
         use creusot_contracts::std::iter::IteratorSpec;
         let mut abstract_conflict : Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model())) };
 
@@ -136,18 +139,21 @@ impl Solver {
         let mut conflict = abstract_conflict;
         // let mut conflict : Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model())) };
         // #[variant()]
+        #[invariant(trail_unchanged, trail == *old_trail)]
         #[invariant(inv, trail.invariant())]
         #[invariant(conf, conflict.invariant())]
         #[invariant(conf, conflict.sound())]
         #[invariant(from_set, forall<k: _, v : _> conflict.1.contains((k, v)) ==> exists<ix : Int, l : _> 0 <= ix && ix < (@trail.assignments).len() && @(@trail.assignments)[ix].term == k && (@heap).get(ix) == Some(l))]
-        #[invariant(to_set, forall<ix : usize, l : usize> (@heap).get(@ix) == Some(@l) ==> @ix < (@trail.assignments).len() && conflict.1.contains((@trail.assignments)[@ix].term_value()) )]
+        #[invariant(to_set, forall<ix : Int, l : usize> (@heap).get(ix) == Some(@l) ==> 0<= ix && ix < (@trail.assignments).len() && conflict.1.contains((@trail.assignments)[ix].term_value()) )]
         while let Some((a, l)) = heap.pop() {
+            conflict = ghost! { theory::Conflict(conflict.inner().0, conflict.inner().1.remove(((&trail.assignments).model())[a.model()].term_value())) };
             // proof_assert!(conflict.2 >= @l);
             let a = trail[a].clone();
             proof_assert!(@l <= conflict.level());
             // back jump
             if a.is_bool() && l > *heap.peek().unwrap().1 {
                 trail.restrict(*heap.peek().unwrap().1);
+                // ISSUE: need to show that `into_vec` produces indices that correspond to entries that are less than level
                 trail.add_justified(heap.into_vec(), a.term().clone(), a.value().negate());
                 proof_assert!(conflict.backjump(a.term_value(), theory::Normal(trail.ghost.inner())));
                 return;
@@ -343,6 +349,8 @@ impl ConflictHeap {
     }
 
     #[trusted]
+    #[ensures(forall<i : Int> 0 <= i && i < (@result).len() ==> exists<l : usize> (@self).get(@(@result)[i]) == Some(@l))]
+    #[ensures(forall<k : usize, l : usize> (@self).get(@k) == Some(@l) ==> exists<ix :_> 0 <= ix && ix < (@result).len() && (@result)[ix] == k)]
     fn into_vec(self) -> Vec<usize> {
         self.0.into_vec()
     }
