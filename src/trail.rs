@@ -112,6 +112,7 @@ impl creusot_contracts::Model for Term {
             Term::Plus(l, r) => theory::Term::Plus(Box::new((*l).model()), Box::new((*r).model())),
             Term::Eq(l, r) => theory::Term::Eq(Box::new((*l).model()), Box::new((*r).model())),
             Term::Conj(l, r) => theory::Term::Conj(Box::new((*l).model()), Box::new((*r).model())),
+            _ => theory::Term::Value(theory::Value::Bool(true))
         }
     }
 }
@@ -168,6 +169,16 @@ impl Value {
 #[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
 pub struct TrailIndex(usize, usize);
 
+#[cfg(feature = "contracts")]
+impl creusot_contracts::Model for TrailIndex {
+    type ModelTy = Self;
+
+    #[logic]
+    fn model(self) -> Self::ModelTy {
+        self
+    }
+}
+
 impl TrailIndex {
     pub fn level(&self) -> usize {
         self.0
@@ -183,6 +194,7 @@ pub struct Trail {
     pub ghost: Ghost<theory::Trail>,
 }
 
+#[cfg(not(feature = "contracts"))]
 impl ::std::fmt::Debug for Trail {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         self.assignments.fmt(f)
@@ -234,6 +246,7 @@ impl Trail {
         pearlite! {
             self.abstract_relation() && self.ghost.sound() && self.ghost.invariant()
             && self.ghost.level() == @self.level
+            && @self.level == (@self.assignments).len() - 1
             // && // should be for free
             // (@self.level <= (@self.assignments).len())
         }
@@ -253,16 +266,25 @@ impl Trail {
     // a weaker relation
     #[predicate]
     fn abstract_relation(self) -> bool {
-        pearlite! {
+        pearlite! { forall<i : Int> 0 <= i && i < (@self.assignments).len() ==>
+                self.level_in_trail(i, @(@self.assignments)[i])
         }
     }
 
     #[predicate]
-    fn relate_between(self, low: Int, up: Int) -> bool {
+    fn contains(self, ix: TrailIndex) -> bool {
         pearlite! {
+            @ix.0 < (@self.assignments).len() && @ix.1 < (@(@self.assignments)[@ix.0]).len()
         }
     }
 
+    #[predicate]
+    fn level_in_trail(self, l : Int, s : Seq<Assignment>) -> bool {
+        pearlite! {
+            forall<i : Int> 0 <= i && i < s.len() ==>
+                self.ghost.contains(s[i].term_value()) && self.ghost.level_of(s[i].term_value()) == l
+        }
+    }
 
     #[logic]
     fn abstract_assign(&self, a: Assignment) -> theory::Assign {
@@ -280,7 +302,7 @@ impl Trail {
     #[logic]
     #[variant(just.len())]
     // #[ensures(result.len() == just.len())]
-    pub fn abstract_justification(&self, just: Seq<TraiIndex>) -> FSet<(theory::Term, theory::Value)> {
+    pub fn abstract_justification(&self, just: Seq<TrailIndex>) -> FSet<(theory::Term, theory::Value)> {
         self.abs_just_inner(just, 0)
     }
 
@@ -290,7 +312,8 @@ impl Trail {
     pub fn abs_just_inner(self, just: Seq<TrailIndex>, ix: Int) -> FSet<(theory::Term, theory::Value)> {
         if ix < just.len() {
             let set = self.abs_just_inner(just, ix + 1);
-            let a = (self.assignments.model())[just[ix].model()];
+            let ix = just[ix];
+            let a = (self.assignments.model())[ix.0.model()].model()[ix.1.model()];
             set.insert((a.term.model(), a.val.model()))
         } else {
             FSet::EMPTY
@@ -348,9 +371,9 @@ impl Trail {
     #[requires((@val).is_bool())]
     #[requires(self.ghost.acceptable(@term, @val))]
     #[requires(forall<m : theory::Model> m.invariant() ==> m.satisfy_set(self.abstract_justification(@into_vec)) ==> m.satisfies((@term, @val)))]
-    #[requires(forall<i : _> 0 <= i && i < (@into_vec).len() ==>
-        @(@into_vec)[i] < (@self.assignments).len()
-    )]
+    // #[requires(forall<i : _> 0 <= i && i < (@into_vec).len() ==>
+    //     @(@into_vec)[i] < (@self.assignments).len()
+    // )]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
         let level = self.max_level(&into_vec);
         let just : Ghost<FSet<(theory::Term, theory::Value)>> = ghost! { self.abstract_justification(into_vec.model()) };
@@ -364,15 +387,26 @@ impl Trail {
     }
 
     // #[trusted]
-    #[requires(self.invariant())]
-    #[ensures((^self).invariant())]
+    #[maintains((mut self).invariant())]
     #[requires(@level <= @self.level)]
     #[ensures(*(^self).ghost == self.ghost.restrict(@level))]
     pub(crate) fn restrict(&mut self, level: usize) {
-        for _ in level..self.level {
+        let old : Ghost<&mut Trail> = ghost! { self };
+
+        // restrict the ghost state at each iteration
+        #[invariant(abs_rel, self.invariant())]
+        #[invariant(proph_const, ^self == ^*old)]
+        #[invariant(restrict, *self.ghost == old.ghost.restrict(@self.level))]
+        #[invariant(l, self.level >= level)]
+        while level < self.level {
             self.assignments.pop();
+            self.level -= 1;
+            self.ghost = ghost! { self.ghost.inner().restrict(self.level.model()) };
+            proof_assert!(self.ghost.restrict_idempotent(@self.level, @self.level + 1); true);
         }
-        self.level = level;
+        proof_assert!(level == self.level);
+        proof_assert!(self.ghost.inner() ==  old.inner().ghost.inner().restrict(level.model()));
+        proof_assert!(old.ghost.restrict_sound(@level); true);
     }
 
     // #[trusted]
@@ -409,12 +443,10 @@ impl IndexIterator<'_> {
     pub fn trail(&self) -> &Trail {
         &self.trail
     }
-}
 
-impl<'a> Iterator for IndexIterator<'a> {
-    type Item = TrailIndex;
-
-    fn next(&mut self) -> Option<Self::Item> {
+    // Not an actual iterator impl because it crashes...
+    #[trusted]
+    pub fn next(&mut self) -> Option<TrailIndex> {
         if self.cur_ix.0 >= self.trail.assignments.len() {
             return None
         };
@@ -435,8 +467,8 @@ impl<'a> Iterator for IndexIterator<'a> {
 impl Index<TrailIndex> for Trail {
     type Output = Assignment;
 
-    #[requires(@index < (@self.assignments).len())]
-    #[ensures(*result == (@self.assignments)[@index])]
+    // #[requires(@index < (@self.assignments).len())]
+    // #[ensures(*result == (@self.assignments)[@index])]
     fn index(&self, index: TrailIndex) -> &Self::Output {
         &self.assignments[index.0][index.1]
     }

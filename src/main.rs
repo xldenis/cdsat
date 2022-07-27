@@ -1,5 +1,5 @@
 #![feature(box_syntax)]
-#![feature(stmt_expr_attributes, proc_macro_hygiene)]
+#![cfg_attr(not(feature = "contracts"), feature(stmt_expr_attributes, proc_macro_hygiene))]
 pub mod concrete;
 pub mod trail;
 
@@ -21,6 +21,7 @@ use trail::{Term, Trail, Value};
 
 use crate::{concrete::Answer, trail::Sort};
 
+#[creusot_contracts::trusted]
 fn main() {
     let mut trail = Trail::new(vec![(
         Term::Conj(
