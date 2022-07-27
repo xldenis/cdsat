@@ -6,6 +6,9 @@ pub mod trail;
 #[cfg(feature = "contracts")]
 pub mod theory;
 
+#[cfg(feature = "contracts")]
+pub mod bag;
+
 #[cfg(not(feature = "contracts"))]
 pub mod theory {
     pub struct Sort;

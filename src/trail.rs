@@ -71,7 +71,10 @@ impl creusot_contracts::Model for Reason {
 
 #[cfg_attr(not(feature = "contracts"), derive(Debug))]
 #[derive(Clone, PartialEq, Eq)]
-pub enum Sort { Boolean, Rational }
+pub enum Sort {
+    Boolean,
+    Rational,
+}
 
 #[cfg(feature = "contracts")]
 impl creusot_contracts::Model for Sort {
@@ -112,7 +115,7 @@ impl creusot_contracts::Model for Term {
             Term::Plus(l, r) => theory::Term::Plus(Box::new((*l).model()), Box::new((*r).model())),
             Term::Eq(l, r) => theory::Term::Eq(Box::new((*l).model()), Box::new((*r).model())),
             Term::Conj(l, r) => theory::Term::Conj(Box::new((*l).model()), Box::new((*r).model())),
-            _ => theory::Term::Value(theory::Value::Bool(true))
+            _ => theory::Term::Value(theory::Value::Bool(true)),
         }
     }
 }
@@ -169,6 +172,57 @@ impl Value {
 #[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
 pub struct TrailIndex(usize, usize);
 
+use creusot_contracts::OrdLogic;
+impl OrdLogic for TrailIndex {
+    #[logic]
+    fn cmp_log(self, rhs: Self) -> Ordering {
+        match self.0.cmp_log(rhs.0) {
+            Ordering::Less => Ordering::Less,
+            Ordering::Greater => Ordering::Greater,
+            Ordering::Equal => self.1.cmp_log(rhs.1),
+        }
+    }
+
+    #[law]
+    #[ensures(x.le_log(y) == (x.cmp_log(y) != Ordering::Greater))]
+    fn cmp_le_log(x: Self, y: Self) {}
+
+    #[law]
+    #[ensures(x.lt_log(y) == (x.cmp_log(y) == Ordering::Less))]
+    fn cmp_lt_log(x: Self, y: Self) {}
+    #[law]
+    #[ensures(x.ge_log(y) == (x.cmp_log(y) != Ordering::Less))]
+    fn cmp_ge_log(x: Self, y: Self) {}
+
+    #[law]
+    #[ensures(x.gt_log(y) == (x.cmp_log(y) == Ordering::Greater))]
+    fn cmp_gt_log(x: Self, y: Self) {}
+
+    #[law]
+    #[ensures(x.cmp_log(x) == Ordering::Equal)]
+    fn refl(x: Self) {}
+
+    #[law]
+    #[requires(x.cmp_log(y) == o)]
+    #[requires(y.cmp_log(z) == o)]
+    #[ensures(x.cmp_log(z) == o)]
+    fn trans(x: Self, y: Self, z: Self, o: Ordering) {}
+
+    #[law]
+    #[requires(x.cmp_log(y) == Ordering::Less)]
+    #[ensures(y.cmp_log(x) == Ordering::Greater)]
+    fn antisym1(x: Self, y: Self) {}
+
+    #[law]
+    #[requires(x.cmp_log(y) == Ordering::Greater)]
+    #[ensures(y.cmp_log(x) == Ordering::Less)]
+    fn antisym2(x: Self, y: Self) {}
+
+    #[law]
+    #[ensures((x == y) == (x.cmp_log(y) == Ordering::Equal))]
+    fn eq_cmp(x: Self, y: Self) {}
+}
+
 #[cfg(feature = "contracts")]
 impl creusot_contracts::Model for TrailIndex {
     type ModelTy = Self;
@@ -180,6 +234,7 @@ impl creusot_contracts::Model for TrailIndex {
 }
 
 impl TrailIndex {
+    #[ensures(result == self.0)]
     pub fn level(&self) -> usize {
         self.0
     }
@@ -189,8 +244,8 @@ type Justification = Vec<TrailIndex>;
 
 pub struct Trail {
     // todo make private
-    assignments: Vec<Vec<Assignment>>,
-    level: usize,
+    pub assignments: Vec<Vec<Assignment>>,
+    pub level: usize,
     pub ghost: Ghost<theory::Trail>,
 }
 
@@ -272,14 +327,14 @@ impl Trail {
     }
 
     #[predicate]
-    fn contains(self, ix: TrailIndex) -> bool {
+    pub fn contains(self, ix: TrailIndex) -> bool {
         pearlite! {
             @ix.0 < (@self.assignments).len() && @ix.1 < (@(@self.assignments)[@ix.0]).len()
         }
     }
 
     #[predicate]
-    fn level_in_trail(self, l : Int, s : Seq<Assignment>) -> bool {
+    fn level_in_trail(self, l: Int, s: Seq<Assignment>) -> bool {
         pearlite! {
             forall<i : Int> 0 <= i && i < s.len() ==>
                 self.ghost.contains(s[i].term_value()) && self.ghost.level_of(s[i].term_value()) == l
@@ -302,14 +357,21 @@ impl Trail {
     #[logic]
     #[variant(just.len())]
     // #[ensures(result.len() == just.len())]
-    pub fn abstract_justification(&self, just: Seq<TrailIndex>) -> FSet<(theory::Term, theory::Value)> {
+    pub fn abstract_justification(
+        &self,
+        just: Seq<TrailIndex>,
+    ) -> FSet<(theory::Term, theory::Value)> {
         self.abs_just_inner(just, 0)
     }
 
     #[logic]
     #[variant(just.len() - ix)]
     #[requires(ix >= 0)]
-    pub fn abs_just_inner(self, just: Seq<TrailIndex>, ix: Int) -> FSet<(theory::Term, theory::Value)> {
+    pub fn abs_just_inner(
+        self,
+        just: Seq<TrailIndex>,
+        ix: Int,
+    ) -> FSet<(theory::Term, theory::Value)> {
         if ix < just.len() {
             let set = self.abs_just_inner(just, ix + 1);
             let ix = just[ix];
@@ -347,7 +409,7 @@ impl Trail {
             let mut offset = 0;
             for asgn in assignments {
                 if &asgn.term == a {
-                    return Some(TrailIndex(level, offset))
+                    return Some(TrailIndex(level, offset));
                 }
                 offset += 1;
             }
@@ -376,7 +438,8 @@ impl Trail {
     // )]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
         let level = self.max_level(&into_vec);
-        let just : Ghost<FSet<(theory::Term, theory::Value)>> = ghost! { self.abstract_justification(into_vec.model()) };
+        let just: Ghost<FSet<(theory::Term, theory::Value)>> =
+            ghost! { self.abstract_justification(into_vec.model()) };
         let a = Assignment {
             term,
             val,
@@ -391,7 +454,7 @@ impl Trail {
     #[requires(@level <= @self.level)]
     #[ensures(*(^self).ghost == self.ghost.restrict(@level))]
     pub(crate) fn restrict(&mut self, level: usize) {
-        let old : Ghost<&mut Trail> = ghost! { self };
+        let old: Ghost<&mut Trail> = ghost! { self };
 
         // restrict the ghost state at each iteration
         #[invariant(abs_rel, self.invariant())]
@@ -405,7 +468,7 @@ impl Trail {
             proof_assert!(self.ghost.restrict_idempotent(@self.level, @self.level + 1); true);
         }
         proof_assert!(level == self.level);
-        proof_assert!(self.ghost.inner() ==  old.inner().ghost.inner().restrict(level.model()));
+        proof_assert!(self.ghost.inner() == old.inner().ghost.inner().restrict(level.model()));
         proof_assert!(old.ghost.restrict_sound(@level); true);
     }
 
@@ -418,13 +481,18 @@ impl Trail {
         }
         let mut max = 0;
         for ix in assignments {
-            if ix.0 > max { max = ix.0 }
+            if ix.0 > max {
+                max = ix.0
+            }
         }
         max
     }
 
     pub(crate) fn indices(&mut self) -> IndexIterator<'_> {
-        IndexIterator { trail: self, cur_ix: TrailIndex(0, 0) }
+        IndexIterator {
+            trail: self,
+            cur_ix: TrailIndex(0, 0),
+        }
     }
 }
 
@@ -436,7 +504,7 @@ pub struct IndexIterator<'a> {
 }
 
 impl IndexIterator<'_> {
-    fn add_justified(&mut self, just: Justification, term: Term, value: Value) {
+    pub fn add_justified(&mut self, just: Justification, term: Term, value: Value) {
         self.trail.add_justified(just, term, value)
     }
 
@@ -448,13 +516,13 @@ impl IndexIterator<'_> {
     #[trusted]
     pub fn next(&mut self) -> Option<TrailIndex> {
         if self.cur_ix.0 >= self.trail.assignments.len() {
-            return None
+            return None;
         };
 
         if self.cur_ix.1 < self.trail.assignments[self.cur_ix.0].len() {
             let res = self.cur_ix;
             self.cur_ix.1 += 1;
-            return Some(res)
+            return Some(res);
         }
 
         self.cur_ix.0 += 1;

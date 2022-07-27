@@ -97,21 +97,34 @@ impl Solver {
         }
     }
 
+    #[maintains((mut trail).invariant())]
+    #[requires((@conflict).len() > 0)]
+    #[requires(forall< i : _ > 0 <= i && i < (@conflict).len() ==> trail.contains((@conflict)[i]))]
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
         // eprintln!("conflict!");
         let mut heap: ConflictHeap = ConflictHeap::new();
+
+
+        #[invariant(mem, forall<a : _> produced.contains(a) ==> (@heap).contains(a))]
+        #[invariant(mem, forall<i : _> 0 <= i && i < produced.len() ==> (@heap).contains(produced[i]))]
+        #[invariant(mem2, forall<a : _> (@heap).contains(a) ==> produced.contains(a))]
+        #[invariant(heap_size, (@heap).len() == produced.len())]
         for a in conflict {
             heap.push(a);
         }
 
+        proof_assert!((@heap) != Bag::EMPTY);
         let conflict_level = heap.peek().unwrap().level();
 
+        proof_assert!(@conflict_level < (@trail.assignments).len());
+        proof_assert!(0 < @conflict_level && @conflict_level <= @trail.level);
         while let Some(ix) = heap.pop() {
             let rem_level = match heap.peek() {
                 Some(ix) => ix.level(),
                 None => 0,
             };
             let a = trail[ix].clone();
+            proof_assert!(@rem_level <= @conflict_level);
 
             if a.is_bool() && ix.level() > rem_level {
                 trail.restrict(rem_level);
@@ -278,26 +291,49 @@ impl BoolTheory {
     }
 }
 
+use crate::bag::*;
+impl creusot_contracts::Model for ConflictHeap {
+    type ModelTy = Bag<TrailIndex>;
+
+    #[logic]
+    #[trusted]
+    fn model(self) -> Self::ModelTy {
+        absurd
+    }
+}
+
 #[trusted]
 struct ConflictHeap(BinaryHeap<TrailIndex>);
 
 impl ConflictHeap {
     #[trusted]
+    #[ensures(@result == Bag::EMPTY)]
     fn new() -> Self {
         ConflictHeap(BinaryHeap::new())
     }
 
     #[trusted]
+    #[ensures(@^self == (@self).insert(e))]
     fn push(&mut self, e: TrailIndex) {
         self.0.push(e)
     }
 
     #[trusted]
+    #[ensures(forall<a : _> result == Some(a) ==>
+        (@self).contains(*a) &&
+        forall<other : TrailIndex> (@self).contains(other) ==> other <= *a
+    )]
+    #[ensures(((@self) == Bag::EMPTY) == (result == None))]
     fn peek(&self) -> Option<&TrailIndex> {
         self.0.peek()
     }
 
     #[trusted]
+    #[ensures(((@self) == Bag::EMPTY) == (result == None))]
+    #[ensures(forall<a : _> result == Some(a) ==>
+        @^self == (@self).diff(Bag::singleton(a)) && (@self).contains(a) &&
+        (forall<other : TrailIndex> (@self).contains(other) ==> other <= a)
+    )]
     fn pop(&mut self) -> Option<TrailIndex> {
         self.0.pop()
     }
