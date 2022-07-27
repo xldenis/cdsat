@@ -16,17 +16,64 @@ pub mod theory {
     pub struct Value;
 }
 
-// use concrete::Solver;
-// use trail::{Term, Value, Trail};
+use concrete::Solver;
+use trail::{Term, Trail, Value};
 
-// use crate::concrete::Answer;
+use crate::{concrete::Answer, trail::Sort};
 
 fn main() {
-    //     let mut trail = Trail::new(vec![(Term::Conj(box Term::Variable("A".into()), box Term::Variable("B".into())), Value::Bool(true))]);
+    let mut trail = Trail::new(vec![(
+        Term::Conj(
+            box Term::Neg(box Term::Variable(0, Sort::Boolean)),
+            box Term::Variable(0, Sort::Boolean),
+        ),
+        Value::Bool(true),
+    )]);
 
-    //     let mut solver = Solver::new();
+    let mut solver = Solver::new();
 
-    //     let res = solver.solver(&mut trail);
+    let res = solver.solver(&mut trail);
 
-    //     assert!(matches!(res, Answer::Sat));
+    assert!(matches!(res, Answer::Unsat));
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::concrete::Solver;
+    use crate::trail::{Term, Trail, Value};
+
+    use crate::{concrete::Answer, trail::Sort};
+    #[test]
+    fn conjuction() {
+        let mut trail = Trail::new(vec![(
+            Term::Conj(
+                box Term::Variable(0, Sort::Boolean),
+                box Term::Variable(1, Sort::Boolean),
+            ),
+            Value::Bool(true),
+        )]);
+
+        let mut solver = Solver::new();
+
+        let res = solver.solver(&mut trail);
+
+        assert!(matches!(res, Answer::Sat));
+    }
+
+    #[test]
+    fn a_not_a() {
+        let mut trail = Trail::new(vec![(
+            Term::Conj(
+                box Term::Neg(box Term::Variable(0, Sort::Boolean)),
+                box Term::Variable(0, Sort::Boolean),
+            ),
+            Value::Bool(true),
+        )]);
+
+        let mut solver = Solver::new();
+
+        let res = solver.solver(&mut trail);
+
+        assert!(matches!(res, Answer::Unsat));
+    }
 }

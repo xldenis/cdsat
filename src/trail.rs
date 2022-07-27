@@ -9,6 +9,7 @@ struct FSet<T>(T);
 
 // // Todo: Distinguish between boolean and fo assignments as an optim?
 // #[cfg_attr(not(feature = "contracts"), derive(Hash))]
+#[cfg_attr(not(feature = "contracts"), derive(Debug))]
 #[derive(Clone, PartialEq, Eq)]
 pub struct Assignment {
     // TODO: Make private
@@ -39,16 +40,17 @@ pub struct AssignmentModel {
 }
 
 // #[cfg_attr(not(feature = "contracts"), derive(Hash))]
+#[cfg_attr(not(feature = "contracts"), derive(Debug))]
 #[derive(Clone, PartialEq, Eq)]
 enum Reason {
-    Justified(Vec<usize>),
+    Justified(Vec<TrailIndex>),
     Decision,
     Input,
 }
 
 #[cfg(feature = "contracts")]
 enum ReasonModel {
-    Justified(Seq<usize>),
+    Justified(Seq<TrailIndex>),
     Decision,
     Input,
 }
@@ -67,6 +69,7 @@ impl creusot_contracts::Model for Reason {
     }
 }
 
+#[cfg_attr(not(feature = "contracts"), derive(Debug))]
 #[derive(Clone, PartialEq, Eq)]
 pub enum Sort { Boolean, Rational }
 
@@ -83,7 +86,7 @@ impl creusot_contracts::Model for Sort {
     }
 }
 
-// #[cfg_attr(not(feature = "contracts"), derive(Hash))]
+#[cfg_attr(not(feature = "contracts"), derive(Debug))]
 #[derive(Clone, PartialEq, Eq)]
 pub enum Term {
     Variable(usize, Sort),
@@ -91,6 +94,9 @@ pub enum Term {
     Plus(Box<Term>, Box<Term>),
     Eq(Box<Term>, Box<Term>),
     Conj(Box<Term>, Box<Term>),
+    Neg(Box<Term>),
+    Disj(Box<Term>, Box<Term>),
+    Impl(Box<Term>, Box<Term>),
     // TODO: complete others
 }
 
@@ -110,6 +116,7 @@ impl creusot_contracts::Model for Term {
     }
 }
 
+#[cfg_attr(not(feature = "contracts"), derive(Debug))]
 #[cfg_attr(not(feature = "contracts"), derive(Hash))]
 #[derive(Clone, PartialEq, Eq)]
 pub enum Value {
@@ -157,30 +164,48 @@ impl Value {
     }
 }
 
+#[cfg_attr(not(feature = "contracts"), derive(Debug))]
+#[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
+pub struct TrailIndex(usize, usize);
+
+impl TrailIndex {
+    pub fn level(&self) -> usize {
+        self.0
+    }
+}
+
+type Justification = Vec<TrailIndex>;
+
 pub struct Trail {
     // todo make private
-    pub assignments: Vec<Assignment>,
+    assignments: Vec<Vec<Assignment>>,
     level: usize,
     pub ghost: Ghost<theory::Trail>,
 }
 
+impl ::std::fmt::Debug for Trail {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        self.assignments.fmt(f)
+    }
+}
+
 impl Trail {
-    // TODO: Allow ghost fields in types
-    // TODO: Specify vec iter
-    // TODO: Specify vec new
     #[trusted]
     #[ensures(result.invariant())]
     #[ensures(result.ghost.sound())]
     pub fn new(inputs: Vec<(Term, Value)>) -> Self {
-        let mut assignments = Vec::new();
+        let mut input = Vec::new();
         for (term, val) in inputs {
-            assignments.push(Assignment {
+            input.push(Assignment {
                 term,
                 val,
                 reason: Reason::Input,
                 level: 0,
             })
         }
+
+        let mut assignments = Vec::new();
+        assignments.insert(0, input);
 
         Trail {
             assignments,
@@ -229,16 +254,12 @@ impl Trail {
     #[predicate]
     fn abstract_relation(self) -> bool {
         pearlite! {
-            (forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.contains((@self.assignments)[i].term_value())) &&
-            (forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.level_of((@self.assignments)[i].term_value()) == @(@self.assignments)[i].level)
         }
     }
 
     #[predicate]
     fn relate_between(self, low: Int, up: Int) -> bool {
         pearlite! {
-            (forall<i : Int> low <= i && i < up ==> self.ghost.contains((@self.assignments)[i].term_value())) &&
-            (forall<i : Int> low <= i && i < up ==> self.ghost.level_of((@self.assignments)[i].term_value()) == @(@self.assignments)[i].level)
         }
     }
 
@@ -258,23 +279,15 @@ impl Trail {
 
     #[logic]
     #[variant(just.len())]
-    #[requires(forall<i : _> 0 <= i && i < just.len() ==> @just[i] < (@self.assignments).len())]
-    #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < (@self.assignments).len() && a == (@self.assignments)[i].term_value())]
-    #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < just.len() && a == (@self.assignments)[@just[i]].term_value())]
-    #[ensures(forall<i : _ > 0 <= i && i < just.len() ==> result.contains((@self.assignments)[@just[i]].term_value()))]
     // #[ensures(result.len() == just.len())]
-    pub fn abstract_justification(&self, just: Seq<usize>) -> FSet<(theory::Term, theory::Value)> {
+    pub fn abstract_justification(&self, just: Seq<TraiIndex>) -> FSet<(theory::Term, theory::Value)> {
         self.abs_just_inner(just, 0)
     }
 
     #[logic]
     #[variant(just.len() - ix)]
     #[requires(ix >= 0)]
-    #[requires(forall<i : _> 0 <= i && i < just.len() ==> @just[i] < (@self.assignments).len())]
-    #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> 0 <= i && i < (@self.assignments).len() && a == (@self.assignments)[i].term_value())]
-    #[ensures(forall<a : _> result.contains(a) ==> exists<i : _> ix <= i && i < just.len() && a == (@self.assignments)[@just[i]].term_value())]
-    #[ensures(forall<i : _ > ix <= i && i < just.len() ==> result.contains((@self.assignments)[@just[i]].term_value()))]
-    pub fn abs_just_inner(self, just: Seq<usize>, ix: Int) -> FSet<(theory::Term, theory::Value)> {
+    pub fn abs_just_inner(self, just: Seq<TrailIndex>, ix: Int) -> FSet<(theory::Term, theory::Value)> {
         if ix < just.len() {
             let set = self.abs_just_inner(just, ix + 1);
             let a = (self.assignments.model())[just[ix].model()];
@@ -295,7 +308,6 @@ impl Trail {
     #[trusted] // for arithmetic
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         self.assignments.len();
-        proof_assert!(@self.level <= self.ghost.len());
         self.level += 1;
         let assign = Assignment {
             term,
@@ -303,35 +315,28 @@ impl Trail {
             reason: Reason::Decision,
             level: self.level,
         };
-        self.assignments.push(assign);
-        let abs: Ghost<theory::Assign> = ghost! { self.abstract_assign(assign) };
-        self.ghost = ghost! { theory::Trail::Assign(abs.inner(), self.level.model(), Box::new(self.ghost.inner())) };
+        self.assignments.push(vec![assign]);
     }
 
-    pub(crate) fn get(&self, a: &Term) -> Option<&Assignment> {
-        match self.index_of(a) {
-            Some(i) => Some(&self[i]),
-            None => None,
-        }
-    }
-
-    #[ensures(forall<i : _> result == Some(i) ==> @i < (@self.assignments).len())]
-    pub(crate) fn index_of(&self, a: &Term) -> Option<usize> {
-        let mut i = 0;
-        while i < self.len() {
-            if &self[i].term == a {
-                return Some(i);
+    pub(crate) fn index_of(&self, a: &Term) -> Option<TrailIndex> {
+        let mut level = 0;
+        for assignments in &self.assignments {
+            let mut offset = 0;
+            for asgn in assignments {
+                if &asgn.term == a {
+                    return Some(TrailIndex(level, offset))
+                }
+                offset += 1;
             }
-            i += 1
+            level += 1;
         }
-
-        return None;
+        None
     }
 
     // what specification to give?
     // this is a method on the trail as planning for future forms of justification
     // which need information from the trail to determine the set of relevant clauses
-    pub(crate) fn justification(&self, a: &Assignment) -> Option<Vec<usize>> {
+    pub(crate) fn justification(&self, a: &Assignment) -> Option<Vec<TrailIndex>> {
         match &a.reason {
             Reason::Justified(v) => Some(v.clone()),
             Reason::Decision => None,
@@ -346,7 +351,7 @@ impl Trail {
     #[requires(forall<i : _> 0 <= i && i < (@into_vec).len() ==>
         @(@into_vec)[i] < (@self.assignments).len()
     )]
-    pub(crate) fn add_justified(&mut self, into_vec: Vec<usize>, term: Term, val: Value) {
+    pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
         let level = self.max_level(&into_vec);
         let just : Ghost<FSet<(theory::Term, theory::Value)>> = ghost! { self.abstract_justification(into_vec.model()) };
         let a = Assignment {
@@ -355,11 +360,7 @@ impl Trail {
             reason: Reason::Justified(into_vec),
             level,
         };
-        let old_ghost : Ghost<theory::Trail> = ghost! { self.ghost.inner() };
-        self.ghost = ghost! { theory::Trail::Assign(self.abstract_assign(a), level.model(), Box::new(self.ghost.inner())) };
-        proof_assert! { theory::Normal(old_ghost.inner()).deduce((just.inner(), @a.term, @a.val), theory::Normal(self.ghost.inner())) };
-        // Seem to need to assert that previous indices are unchanged?
-        self.assignments.push(a);
+        self.assignments[level].push(a);
     }
 
     // #[trusted]
@@ -368,70 +369,76 @@ impl Trail {
     #[requires(@level <= @self.level)]
     #[ensures(*(^self).ghost == self.ghost.restrict(@level))]
     pub(crate) fn restrict(&mut self, level: usize) {
-        let mut i = 0;
-        let old_self : Ghost<&mut Self> = ghost! { self };
-        let old_ghost : Ghost<theory::Trail> = ghost! {self.ghost.inner() };
-        let restricted : Ghost<theory::Trail> = ghost! { self.ghost.inner().restrict(level.model()) };
-        let mut new_asn : Vec<Assignment> = Vec::new();
-
-        #[invariant(x, (@new_asn).len() <= @i)]
-        #[invariant(new, forall<j : _> 0 <= j && j < (@new_asn).len() ==> restricted.contains((@new_asn)[j].term_value()))]
-        #[invariant(new, forall<j : _> 0 <= j && j < (@new_asn).len() ==> restricted.level_of((@new_asn)[j].term_value()) == @(@new_asn)[j].level)]
-        while i < self.assignments.len() {
-            if self.assignments[i].level <= level {
-                new_asn.push(self.assignments[i].clone());
-            }
-            i += 1;
+        for _ in level..self.level {
+            self.assignments.pop();
         }
-
         self.level = level;
-        self.assignments = new_asn;
-        proof_assert!(self.ghost.restrict_sound(@level); true);
-        self.ghost = restricted;
     }
 
     // #[trusted]
     #[requires(self.invariant())]
-    #[requires(forall<i : _> 0 <= i && i < (@assignments).len() ==> @(@assignments)[i] < (@self.assignments).len())]
     #[ensures(self.ghost.set_level(self.abstract_justification(@assignments)) == @result)]
-    pub(crate) fn max_level(&self, assignments: &[usize]) -> usize {
+    pub(crate) fn max_level(&self, assignments: &[TrailIndex]) -> usize {
         if assignments.len() == 0 {
             return 0;
         }
-        // proof_assert!(forall<i : Int> 0 <= i && i < (@self.assignments).len() ==> self.ghost.level_of((@self.assignments)[i].term_value()) == @(@self.assignments)[i].level);
-
-        let mut max: usize = 0;
-        let mut i: usize = 0;
-        let mut seen : Ghost<FSet<(theory::Term, theory::Value)>> = ghost! { FSet::EMPTY };
-        #[invariant(ix, @i <= (@assignments).len())]
-        #[invariant(omg, forall<j : _> seen.contains(j) ==> self.abstract_justification(@assignments).contains(j))]
-        #[invariant(max_level, self.ghost.set_level(seen.inner()) == @max)]
-        #[invariant(wild, forall<a : _> self.abstract_justification(@assignments).contains(a) ==>
-            (seen.contains(a) || exists<j :_> @i <= j && j < (@assignments).len() && a == (@self.assignments)[@(@assignments)[j]].term_value())
-        )]
-        while i < assignments.len() {
-            let a = &self.assignments[assignments[i]];
-            let ghost_a : Ghost<Assignment> = ghost! { *a };
-            let level = a.level();
-            if max < level {
-                proof_assert! { forall<j : _> seen.contains(j) ==> self.ghost.level_of(j) < @level };
-                max = level;
-            }
-            proof_assert!(self.ghost.set_level_min(seen.inner(), (ghost_a.inner().term.model(), ghost_a.inner().val.model())); true);
-            seen = ghost! { seen.inner().insert((ghost_a.inner().term.model(), ghost_a.inner().val.model()))};
-            i += 1;
+        let mut max = 0;
+        for ix in assignments {
+            if ix.0 > max { max = ix.0 }
         }
         max
     }
+
+    pub(crate) fn indices(&mut self) -> IndexIterator<'_> {
+        IndexIterator { trail: self, cur_ix: TrailIndex(0, 0) }
+    }
 }
 
-impl Index<usize> for Trail {
+/// Offers an iterator over all indices in the trail, while allowing new justified decisions to be added
+///
+pub struct IndexIterator<'a> {
+    trail: &'a mut Trail,
+    cur_ix: TrailIndex,
+}
+
+impl IndexIterator<'_> {
+    fn add_justified(&mut self, just: Justification, term: Term, value: Value) {
+        self.trail.add_justified(just, term, value)
+    }
+
+    pub fn trail(&self) -> &Trail {
+        &self.trail
+    }
+}
+
+impl<'a> Iterator for IndexIterator<'a> {
+    type Item = TrailIndex;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.cur_ix.0 >= self.trail.assignments.len() {
+            return None
+        };
+
+        if self.cur_ix.1 < self.trail.assignments[self.cur_ix.0].len() {
+            let res = self.cur_ix;
+            self.cur_ix.1 += 1;
+            return Some(res)
+        }
+
+        self.cur_ix.0 += 1;
+        self.cur_ix.1 = 0;
+
+        self.next()
+    }
+}
+
+impl Index<TrailIndex> for Trail {
     type Output = Assignment;
 
     #[requires(@index < (@self.assignments).len())]
     #[ensures(*result == (@self.assignments)[@index])]
-    fn index(&self, index: usize) -> &Self::Output {
-        &self.assignments[index]
+    fn index(&self, index: TrailIndex) -> &Self::Output {
+        &self.assignments[index.0][index.1]
     }
 }
 
@@ -452,7 +459,7 @@ impl Assignment {
     }
 
     #[ensures(result != (@self.val).is_bool())]
-    pub(crate) fn first_order(&self) -> bool {
+    pub(crate) fn is_first_order(&self) -> bool {
         !self.is_bool()
     }
 
