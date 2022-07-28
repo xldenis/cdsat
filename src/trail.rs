@@ -151,7 +151,7 @@ impl Value {
     }
 
     #[ensures(result == (@self).is_bool())]
-    fn is_bool(&self) -> bool {
+    pub fn is_bool(&self) -> bool {
         match self {
             Value::Bool(_) => true,
             Value::Rat(_) => false,
@@ -238,6 +238,11 @@ impl TrailIndex {
     pub fn level(&self) -> usize {
         self.0
     }
+
+    #[logic]
+    pub fn level_log(self) -> Int {
+        self.0.model()
+    }
 }
 
 type Justification = Vec<TrailIndex>;
@@ -307,22 +312,21 @@ impl Trail {
         }
     }
 
-    // #[predicate]
-    // pub fn abstract_relation(self) -> bool {
-    //     pearlite! {
-    //         forall<i: Int> 0 <= i && i < (@self.assignments).len() ==>
-    //             {
-    //                 let ass = (@self.assignments)[i];
-    //                 self.ghost.find(ass.term_value()) == Some((self.abstract_assign(ass), @ass.level))
-    //             }
-    //     }
-    // }
-
-    // a weaker relation
     #[predicate]
     fn abstract_relation(self) -> bool {
-        pearlite! { forall<i : Int> 0 <= i && i < (@self.assignments).len() ==>
-                self.level_in_trail(i, @(@self.assignments)[i])
+        pearlite! {
+            (forall<ix : _> self.contains(ix) ==> self.ghost.contains(self.index_logic(ix))) &&
+            (forall<ix : _> self.contains(ix) ==> self.ghost.level_of(self.index_logic(ix)) == @ix.0) &&
+            (forall<a : _> self.ghost.contains(a) ==> exists<ix : _> self.contains(ix) && ix.level_log() == self.ghost.level_of(a) && self.index_logic(ix) == a)
+        }
+    }
+
+    #[predicate]
+    fn abstract_relation_bounded(self, level: Int) -> bool {
+        pearlite! {
+            (forall<ix : _> self.contains(ix) ==> ix.level_log() <= level ==> self.ghost.contains(self.index_logic(ix))) &&
+            (forall<ix : _> self.contains(ix) ==> ix.level_log() <= level ==>  self.ghost.level_of(self.index_logic(ix)) == @ix.0) &&
+            (forall<a : _> self.ghost.contains(a) ==>  exists<ix : TrailIndex> ix.level_log() <= level && self.contains(ix) && ix.level_log() == self.ghost.level_of(a) && self.index_logic(ix) == a)
         }
     }
 
@@ -356,7 +360,11 @@ impl Trail {
 
     #[logic]
     #[variant(just.len())]
-    // #[ensures(result.len() == just.len())]
+    #[ensures(result.len() == just.len())]
+    #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
+    #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
+    #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> 0 <= ix && ix < just.len() && a == self.index_logic(just[ix]))]
+    #[ensures(forall<i : _> 0 <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
     pub fn abstract_justification(
         &self,
         just: Seq<TrailIndex>,
@@ -453,11 +461,17 @@ impl Trail {
     #[maintains((mut self).invariant())]
     #[requires(@level <= @self.level)]
     #[ensures(*(^self).ghost == self.ghost.restrict(@level))]
+    // Redundant but incredibly useful
+    #[ensures(forall<ix : TrailIndex> ix.level_log() <= @level ==> self.contains(ix) ==> (^self).contains(ix))]
+    #[ensures(forall<ix : TrailIndex> (^self).contains(ix) ==> self.index_logic(ix) == (^self).index_logic(ix))]
     pub(crate) fn restrict(&mut self, level: usize) {
         let old: Ghost<&mut Trail> = ghost! { self };
 
         // restrict the ghost state at each iteration
-        #[invariant(abs_rel, self.invariant())]
+        // #[invariant(level, forall<i : Int> 0 <= i && i < @self.level ==> self.level_in_trail(i, @(@self.assignments)[i]))]
+        // #[invariant(abs_rel, self.abstract_relation_bounded(@self.level))]
+        #[invariant(x, forall<i : _> 0 <= i && i <= @self.level ==> (@self.assignments)[i] == (@old.assignments)[i])]
+        #[invariant(abs_rel2, self.invariant())]
         #[invariant(proph_const, ^self == ^*old)]
         #[invariant(restrict, *self.ghost == old.ghost.restrict(@self.level))]
         #[invariant(l, self.level >= level)]
@@ -466,6 +480,10 @@ impl Trail {
             self.level -= 1;
             self.ghost = ghost! { self.ghost.inner().restrict(self.level.model()) };
             proof_assert!(self.ghost.restrict_idempotent(@self.level, @self.level + 1); true);
+            // proof_assert!(@self.level == self.ghost.level());
+            // proof_assert!(forall<a : _> self.ghost.contains(a) ==> self.ghost.level_of(a) <= self.ghost.level());
+
+            // proof_assert!(forall<ix : _> self.contains(ix) ==> ix.level_log() <= self.ghost.level());
         }
         proof_assert!(level == self.level);
         proof_assert!(self.ghost.inner() == old.inner().ghost.inner().restrict(level.model()));
@@ -486,6 +504,13 @@ impl Trail {
             }
         }
         max
+    }
+
+    #[logic]
+    pub fn index_logic(self, ix: TrailIndex) -> (theory::Term, theory::Value) {
+        pearlite!{
+            (@(@self.assignments)[@ix.0])[@ix.1].term_value()
+        }
     }
 
     pub(crate) fn indices(&mut self) -> IndexIterator<'_> {
@@ -537,6 +562,8 @@ impl Index<TrailIndex> for Trail {
 
     // #[requires(@index < (@self.assignments).len())]
     // #[ensures(*result == (@self.assignments)[@index])]
+    #[requires(self.contains(index))]
+    #[ensures(*result == (@(@self.assignments)[@index.0])[@index.1])]
     fn index(&self, index: TrailIndex) -> &Self::Output {
         &self.assignments[index.0][index.1]
     }

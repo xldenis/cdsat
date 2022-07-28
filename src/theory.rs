@@ -22,7 +22,7 @@ impl Term {
     }
 
     #[predicate]
-    fn is_bool(self) -> bool {
+    pub fn is_bool(self) -> bool {
         self.sort() == Sort::Boolean
     }
 }
@@ -334,6 +334,25 @@ impl Trail {
     }
 
     #[logic]
+    #[requires(self.trail_unique())]
+    #[requires(self.contains(d))]
+    #[requires(d.1.is_bool())]
+    #[ensures(!self.contains((d.0, d.1.negate())))]
+    pub fn contains_inverse(self, d: (Term, Value)) {
+        d.1.negate_involutive();
+        match self {
+            Trail::Empty => (),
+            Trail::Assign(a, l, tl) => {
+                if a.to_pair() == d {
+                    ()
+                } else {
+                    tl.contains_inverse(d)
+                }
+            }
+        }
+    }
+
+    #[logic]
     #[ensures(match result {
       Some((a, l)) => a.to_pair() == d,
       _ => true,
@@ -378,7 +397,7 @@ impl Trail {
     #[ensures(result.invariant())]
     #[requires(level >= 0)]
     #[ensures(forall<a : _> self.contains(a) ==> self.level_of(a) <= level ==> result.contains(a) && result.level_of(a) == self.level_of(a))]
-    #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) && result.level_of(a) <= level)]
+    #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) && result.level_of(a) <= level && result.level_of(a) == self.level_of(a))]
     #[ensures(level >= self.level() ==> result == self)]
     #[ensures(forall<a : _> !self.contains(a) ==> !result.contains(a))]
     #[ensures(forall<m : _> self.satisfied_by(m) ==> result.satisfied_by(m))]
@@ -493,7 +512,7 @@ impl Trail {
     #[requires(self.contains(d))]
     #[requires(level < self.level_of(d))]
     #[ensures(!self.restrict(level).contains(d))]
-    fn restrict_too_big(self, level: Int, d: (Term, Value)) {
+    pub fn restrict_too_big(self, level: Int, d: (Term, Value)) {
         match self {
             Trail::Empty => (),
             Trail::Assign(a, l, tl) => {
@@ -674,6 +693,16 @@ impl Conflict {
         self.0.set_level(self.1)
     }
 
+    #[logic]
+    #[requires(self.invariant())]
+    #[requires(self.sound())]
+    #[requires(self.1.contains(ass))]
+    #[requires(ass.0.is_bool() && ass.1.is_bool())]
+    #[ensures(forall<m : Model> m.invariant() ==> m.satisfy_set(self.1.remove(ass)) ==> m.satisfies((ass.0, ass.1.negate())))]
+    pub fn learn_justified(self, ass : (Term, Value)) {
+        Model(Mapping::cst(Value::Bool(false))).lemma(ass.0, ass.1);
+    }
+
     // // TODO: Case analysis on the size of the conflict set
     // // - size 0 => no conflict
     // // - size 1 => soundness of trail means no conflict
@@ -715,7 +744,7 @@ impl Conflict {
         self.0.trail_plausible(l);
         self.0.restrict_idempotent(0, self.0.set_level(e));
         l.1.negate_involutive();
-        Model(Mapping::cst(Value::Bool(false))).lemma(l.0, l.1);
+        self.learn_justified(l);
         let restricted = self.0.restrict(self.0.set_level(e));
         self.1.contains(l)
             && l.1.is_bool()
