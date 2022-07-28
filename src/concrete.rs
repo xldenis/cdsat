@@ -143,21 +143,17 @@ impl Solver {
             if a.is_bool() && ix.level() > rem_level {
                 proof_assert!(trail.ghost.restrict_too_big(ix.level_log(), a.term_value()); true);
                 proof_assert!(trail.ghost.contains_inverse(a.term_value()); true);
-                proof_assert!(forall<b : _> b != a.term_value() ==> abs_cflct.1.contains(b) ==> exists<ix : _> trail.contains(ix) && (@heap).contains(ix) && trail.index_logic(ix) == b);
                 let just = heap.into_vec();
-                proof_assert!(forall<b : _> b != a.term_value() ==> abs_cflct.1.contains(b) ==> exists<ix : _> trail.contains(ix) && (@just).contains(ix) && trail.index_logic(ix) == b);
                 proof_assert!(forall<i : _> 0 <= i && i < (@just).len() ==> (@just)[i].level_log() <= @rem_level);
-                proof_assert!(forall<i : _> 0 <= i && i < (@just).len() ==> trail.contains((@just)[i]));
 
+                proof_assert!(forall<b : _> b != a.term_value() ==> abs_cflct.1.contains(b) ==> exists<ix : _> (@just).contains(ix) && trail.index_logic(ix) == b);
                 trail.restrict(rem_level);
-                proof_assert!(forall<b : _> b != a.term_value() ==> abs_cflct.1.contains(b) ==> exists<ix : _> trail.contains(ix) && (@just).contains(ix) && trail.index_logic(ix) == b);
+                proof_assert!(forall<b : _> b != a.term_value() ==> abs_cflct.1.contains(b) ==> exists<ix : _> (@just).contains(ix) && trail.index_logic(ix) == b);
 
                 proof_assert!((@a.term).is_bool());
-                proof_assert!(abs_cflct.learn_justified(a.term_value()); true);
                 proof_assert!(forall<i : _> 0 <= i && i < (@just).len() ==> trail.contains((@just)[i]));
-                proof_assert!(forall<i : _> 0 <= i && i < (@just).len() ==> trail.abstract_justification(@just).contains(trail.index_logic((@just)[i])));
+                proof_assert!(abs_cflct.learn_justified(a.term_value()); true);
                 proof_assert!(forall<b : _> b != a.term_value() ==> abs_cflct.1.contains(b) ==> trail.abstract_justification(@just).contains(b));
-                // proof_assert!(forall<a : _> trail.abstract_justification(@just).contains(a) ==> abs_cflct.1.contains(a));
                 trail.add_justified(just, a.term, a.val.negate());
                 // proof_assert!(abs_cflct.backjump(a.term_value(), theory::Normal(trail)));
                 // eprintln!("backjump!");

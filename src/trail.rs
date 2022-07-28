@@ -322,26 +322,9 @@ impl Trail {
     }
 
     #[predicate]
-    fn abstract_relation_bounded(self, level: Int) -> bool {
-        pearlite! {
-            (forall<ix : _> self.contains(ix) ==> ix.level_log() <= level ==> self.ghost.contains(self.index_logic(ix))) &&
-            (forall<ix : _> self.contains(ix) ==> ix.level_log() <= level ==>  self.ghost.level_of(self.index_logic(ix)) == @ix.0) &&
-            (forall<a : _> self.ghost.contains(a) ==>  exists<ix : TrailIndex> ix.level_log() <= level && self.contains(ix) && ix.level_log() == self.ghost.level_of(a) && self.index_logic(ix) == a)
-        }
-    }
-
-    #[predicate]
     pub fn contains(self, ix: TrailIndex) -> bool {
         pearlite! {
             @ix.0 < (@self.assignments).len() && @ix.1 < (@(@self.assignments)[@ix.0]).len()
-        }
-    }
-
-    #[predicate]
-    fn level_in_trail(self, l: Int, s: Seq<Assignment>) -> bool {
-        pearlite! {
-            forall<i : Int> 0 <= i && i < s.len() ==>
-                self.ghost.contains(s[i].term_value()) && self.ghost.level_of(s[i].term_value()) == l
         }
     }
 
@@ -441,9 +424,6 @@ impl Trail {
     #[requires((@val).is_bool())]
     #[requires(self.ghost.acceptable(@term, @val))]
     #[requires(forall<m : theory::Model> m.invariant() ==> m.satisfy_set(self.abstract_justification(@into_vec)) ==> m.satisfies((@term, @val)))]
-    // #[requires(forall<i : _> 0 <= i && i < (@into_vec).len() ==>
-    //     @(@into_vec)[i] < (@self.assignments).len()
-    // )]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
         let level = self.max_level(&into_vec);
         let just: Ghost<FSet<(theory::Term, theory::Value)>> =
@@ -467,9 +447,6 @@ impl Trail {
     pub(crate) fn restrict(&mut self, level: usize) {
         let old: Ghost<&mut Trail> = ghost! { self };
 
-        // restrict the ghost state at each iteration
-        // #[invariant(level, forall<i : Int> 0 <= i && i < @self.level ==> self.level_in_trail(i, @(@self.assignments)[i]))]
-        // #[invariant(abs_rel, self.abstract_relation_bounded(@self.level))]
         #[invariant(x, forall<i : _> 0 <= i && i <= @self.level ==> (@self.assignments)[i] == (@old.assignments)[i])]
         #[invariant(abs_rel2, self.invariant())]
         #[invariant(proph_const, ^self == ^*old)]
@@ -480,10 +457,6 @@ impl Trail {
             self.level -= 1;
             self.ghost = ghost! { self.ghost.inner().restrict(self.level.model()) };
             proof_assert!(self.ghost.restrict_idempotent(@self.level, @self.level + 1); true);
-            // proof_assert!(@self.level == self.ghost.level());
-            // proof_assert!(forall<a : _> self.ghost.contains(a) ==> self.ghost.level_of(a) <= self.ghost.level());
-
-            // proof_assert!(forall<ix : _> self.contains(ix) ==> ix.level_log() <= self.ghost.level());
         }
         proof_assert!(level == self.level);
         proof_assert!(self.ghost.inner() == old.inner().ghost.inner().restrict(level.model()));
