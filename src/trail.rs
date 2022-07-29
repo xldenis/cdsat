@@ -307,8 +307,8 @@ impl Trail {
             self.abstract_relation() && self.ghost.sound() && self.ghost.invariant()
             && self.ghost.level() == @self.level
             && @self.level == (@self.assignments).len() - 1
-            // && // should be for free
-            // (@self.level <= (@self.assignments).len())
+            // && pearlite! { forall<l : _> 0 <= l && l < (@self.assignments).len() ==> (@(@self.assignments)[l]).unique() }
+            && pearlite! { forall<i : TrailIndex, j : TrailIndex> self.contains(i) ==> self.contains(j) ==> i != j ==> self.index_logic(i) != self.index_logic(j) }
         }
     }
 
@@ -346,7 +346,7 @@ impl Trail {
     #[ensures(result.len() == just.len())]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
     #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
-    #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> 0 <= ix && ix < just.len() && a == self.index_logic(just[ix]))]
+    #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> just.contains(ix) && a == self.index_logic(ix))]
     #[ensures(forall<i : _> 0 <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
     pub fn abstract_justification(
         &self,
@@ -412,11 +412,13 @@ impl Trail {
     // what specification to give?
     // this is a method on the trail as planning for future forms of justification
     // which need information from the trail to determine the set of relevant clauses
-    pub(crate) fn justification(&self, a: &Assignment) -> Option<Vec<TrailIndex>> {
+    #[ensures(forall<i : _> 0 <= i && i < (@result).len() ==> self.contains((@result)[i]))]
+    #[ensures(self.abstract_justification(@result) == self.ghost.justification(a.term_value()))]
+    pub(crate) fn justification(&self, a: &Assignment) -> Vec<TrailIndex> {
         match &a.reason {
-            Reason::Justified(v) => Some(v.clone()),
-            Reason::Decision => None,
-            Reason::Input => None,
+            Reason::Justified(v) => v.clone(),
+            Reason::Decision => Vec::new(),
+            Reason::Input => Vec::new(),
         }
     }
 
@@ -561,6 +563,10 @@ impl Assignment {
     #[ensures(result != (@self.val).is_bool())]
     pub(crate) fn is_first_order(&self) -> bool {
         !self.is_bool()
+    }
+
+    pub(crate) fn is_justified(&self) -> bool {
+        matches!(self.reason, Reason::Justified(_))
     }
 
     pub(crate) fn decision(&self) -> bool {

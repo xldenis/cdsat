@@ -83,4 +83,23 @@ impl<T: ?Sized> Bag<T> {
     where T : Sized {
       absurd
     }
+
+    #[predicate]
+    pub fn is_set(self) -> bool
+    where T : Sized {
+        pearlite! { forall<a : T> self.count(a) <= 1 }
+    }
+
+    #[logic]
+    #[why3::attr = "inline:trivial"]
+    pub fn count(self, e : T) -> Int {
+        Self::nb_occ(e, self)
+    }
+
+    #[trusted]
+    #[logic]
+    #[creusot::builtins = "bag.Bag.nb_occ"]
+    fn nb_occ(_ : T, _: Self) -> Int {
+        absurd
+    }
 }

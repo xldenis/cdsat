@@ -146,6 +146,11 @@ impl Model {
         pearlite! { forall<a : _> v.contains(a) ==> self.satisfies(a) }
     }
 
+    #[predicate]
+    pub fn entails(self, j: FSet<(Term, Value)>, c: (Term, Value)) -> bool {
+        pearlite! { self.invariant() ==> self.satisfy_set(j) ==> self.satisfies(c) }
+    }
+
     #[logic]
     #[requires(self.satisfy_set(just) ==> self.satisfies(a))]
     #[requires(!self.satisfy_set(cflct))]
@@ -375,8 +380,8 @@ impl Trail {
     #[logic]
     #[requires(self.is_justified(d))]
     #[requires(self.sound())]
-    #[ensures(forall<m : Model> m.invariant() ==> m.satisfy_set(result) ==> m.satisfies(d))]
-    fn justification(self, d: (Term, Value)) -> FSet<(Term, Value)> {
+    #[ensures(forall<m : Model> m.entails(result, d))]
+    pub fn justification(self, d: (Term, Value)) -> FSet<(Term, Value)> {
         self.find_justified(d);
         match self.find(d) {
             Some((Assign::Justified(j, _, _), _)) => j,
@@ -594,7 +599,7 @@ impl Normal {
         just.2.is_bool()
             && self.0.acceptable(just.1, just.2)
             && pearlite! { forall<j : _> just.0.contains(j) ==> self.0.contains(j) }
-            && pearlite! { forall<m : Model> m.invariant() ==> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2)) }
+            && pearlite! { forall<m : Model> m.entails(just.0, (just.1, just.2)) }
             && tgt.0
                 == Trail::Assign(
                     Assign::Justified(just.0, just.1, just.2),
@@ -613,7 +618,7 @@ impl Normal {
           let not_l = (just.1, just.2.negate());
           (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
           !self.0.contains((just.1, just.2)) &&
-          (forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
+          (forall<m : Model> m.entails(just.0, (just.1, just.2))) &&
           self.0.contains(not_l) &&
           self.0.level_of(not_l) == 0 && self.0.set_level(just.0) == 0
         } }
@@ -649,7 +654,7 @@ impl Normal {
           self.0.contains(not_l) &&
           (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
           !self.0.contains((just.1, just.2)) &&
-          (forall<m : Model> m.invariant() ==> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2))) &&
+          (forall<m : Model> m.invariant() ==> m.entails(just.0, (just.1, just.2))) &&
 
           self.0.set_level(conflict) > 0 &&
           tgt == Conflict(self.0, conflict)
