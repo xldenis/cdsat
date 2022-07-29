@@ -397,6 +397,14 @@ impl Trail {
         }
     }
 
+    #[predicate]
+    pub fn is_decision(self, d: (Term, Value)) -> bool {
+        match self.find(d) {
+            Some((Assign::Decision, _)) => true,
+            _ => false,
+        }
+    }
+
     #[logic]
     #[requires(self.invariant())]
     #[ensures(result.invariant())]
@@ -714,7 +722,7 @@ impl Conflict {
     #[requires(self.sound())]
     #[requires(self.0.is_justified(a))]
     #[requires(self.1.contains(a))]
-    #[requires(forall<j : _> self.0.justification(a).contains(j) && !j.1.is_bool() ==> self.0.level_of(j) <= self.0.set_level(self.1))]
+    #[requires(forall<j : _> self.0.justification(a).contains(j) && !j.1.is_bool() ==> self.0.level_of(j) < self.0.set_level(self.1))]
     #[ensures(result.invariant())]
     #[ensures(result.sound())]
     pub fn resolvef(self, a: (Term, Value)) -> Self {
@@ -735,7 +743,7 @@ impl Conflict {
         // Just need to load this
         Model(Mapping::cst(Value::Bool(false))).resolve_sound(self.1, just, a);
         self.0.is_justified(a)
-            && pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) <= self.0.set_level(self.1)) }
+            && pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.0.set_level(self.1)) }
             && self.1.contains(a)
             && tgt == Conflict(self.0, self.1.remove(a).union(just))
     }
