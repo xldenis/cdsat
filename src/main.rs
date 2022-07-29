@@ -1,5 +1,6 @@
 #![feature(box_syntax)]
 #![cfg_attr(not(feature = "contracts"), feature(stmt_expr_attributes, proc_macro_hygiene))]
+#![feature(map_first_last)]
 pub mod concrete;
 pub mod trail;
 

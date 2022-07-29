@@ -390,7 +390,7 @@ impl Trail {
     }
 
     #[predicate]
-    fn is_justified(self, d: (Term, Value)) -> bool {
+    pub fn is_justified(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Justified(_, _, _), _)) => true,
             _ => false,
@@ -704,35 +704,40 @@ impl Conflict {
     #[requires(self.1.contains(ass))]
     #[requires(ass.0.is_bool() && ass.1.is_bool())]
     #[ensures(forall<m : Model> m.invariant() ==> m.satisfy_set(self.1.remove(ass)) ==> m.satisfies((ass.0, ass.1.negate())))]
-    pub fn learn_justified(self, ass : (Term, Value)) {
+    pub fn learn_justified(self, ass: (Term, Value)) {
         Model(Mapping::cst(Value::Bool(false))).lemma(ass.0, ass.1);
     }
 
-    // // TODO: Case analysis on the size of the conflict set
-    // // - size 0 => no conflict
-    // // - size 1 => soundness of trail means no conflict
-    // // - size >= 2 => done
+    // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
     #[logic]
-    // #[requires(self.sound())]
-    // #[requires(self.invariant())]
-    // #[ensures(self.1.len() >= 2)]
-    pub fn conflict_size(self) -> () {}
+    #[requires(self.invariant())]
+    #[requires(self.sound())]
+    #[requires(self.0.is_justified(a))]
+    #[requires(self.1.contains(a))]
+    #[requires(forall<j : _> self.0.justification(a).contains(j) && !j.1.is_bool() ==> self.0.level_of(j) <= self.0.set_level(self.1))]
+    #[ensures(result.invariant())]
+    #[ensures(result.sound())]
+    pub fn resolvef(self, a: (Term, Value)) -> Self {
+        let just = self.0.justification(a);
+        // Just need to load this
+        Model(Mapping::cst(Value::Bool(false))).resolve_sound(self.1, just, a);
+        Conflict(self.0, self.1.remove(a).union(just))
+    }
 
     // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
     #[predicate]
     #[requires(self.invariant())]
     #[requires(self.sound())]
-    #[ensures(result ==> tgt.0.invariant())]
+    #[ensures(result ==> tgt.invariant())]
     #[ensures(result ==> tgt.sound())]
     pub fn resolve(self, a: (Term, Value), tgt: Self) -> bool {
-        pearlite! { {
-          let just = self.0.justification(a);
-          // Just need to load this
-          Model(Mapping::cst(Value::Bool(false))).resolve_sound(self.1, just, a);
-          self.0.is_justified(a) &&
-          (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.0.set_level(self.1)) &&
-          self.1.contains(a) && tgt == Conflict(self.0, self.1.remove(a).union(just))
-        } }
+        let just = self.0.justification(a);
+        // Just need to load this
+        Model(Mapping::cst(Value::Bool(false))).resolve_sound(self.1, just, a);
+        self.0.is_justified(a)
+            && pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) <= self.0.set_level(self.1)) }
+            && self.1.contains(a)
+            && tgt == Conflict(self.0, self.1.remove(a).union(just))
     }
 
     // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m, E⊢¬L, if level_Γ(L) > m, where m = level_Γ(E)

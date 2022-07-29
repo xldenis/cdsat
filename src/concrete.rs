@@ -1,6 +1,7 @@
 // use ::std::collections::{BinaryHeap, HashSet};
 // // use creusot_contracts::derive::{PartialEq};
 
+use ::std::collections::BTreeSet;
 use ::std::collections::BinaryHeap;
 
 // use creusot_contracts::*;
@@ -114,29 +115,29 @@ impl Solver {
         #[invariant(mem, forall<i : _> 0 <= i && i < produced.len() ==> (@heap).contains(produced[i]))]
         #[invariant(mem2, forall<a : _> (@heap).contains(a) ==> produced.contains(a))]
         for a in conflict {
-            heap.push(a);
+            heap.insert(a);
         }
         proof_assert!(forall<a : _> (@heap).contains(a) ==> abs_cflct.1.contains(trail.index_logic(a)));
 
-        proof_assert!((@heap) != Bag::EMPTY);
-        let max_ix = *heap.peek().unwrap();
+        proof_assert!((@heap) != FSet::EMPTY);
+        let max_ix = *heap.last().unwrap();
         let conflict_level = max_ix.level();
 
         proof_assert!(@conflict_level < (@trail.assignments).len());
         proof_assert!(0 < @conflict_level && @conflict_level <= @trail.level);
+        #[invariant(cflict, abs_cflct.0 == *trail.ghost)]
         #[invariant(cflct_sound, abs_cflct.sound())]
         #[invariant(cflict_inv, abs_cflct.invariant())]
-        #[invariant(level, forall<ix : _> (@heap).contains(ix) ==> ix <= max_ix)]
+        #[invariant(level, forall<ix : _> (@heap).contains(ix) ==> ix.level_log() <= @conflict_level)]
         #[invariant(to_cflct, forall<a : _> (@heap).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
         #[invariant(from_cflct, forall< a : _> abs_cflct.1.contains(a) ==> exists<ix : _> trail.contains(ix) && (@heap).contains(ix) && trail.index_logic(ix) == a)]
-        #[invariant(heap_set, (@heap).is_set())]
-        while let Some(ix) = heap.pop() {
+        while let Some(ix) = heap.pop_last() {
             proof_assert!(!(@heap).contains(ix));
 
-            proof_assert!(ix <= max_ix);
-            let rem_level = match heap.peek() {
+            proof_assert!(ix.level_log() <= max_ix.level_log());
+            let rem_level = match heap.last() {
                 Some(ix2) => {
-                    proof_assert!(ix2 <= ix);
+                    proof_assert!(ix2.level_log() <= ix.level_log());
                     ix2.level()
                 }
                 None => 0,
@@ -173,7 +174,7 @@ impl Solver {
             //     return;
             // }
 
-            let just = trail.justification(&a);
+            let just = trail.justification(ix);
 
             if a.is_justified() {
                 // if rem_level == ix.level() {
@@ -204,28 +205,29 @@ impl Solver {
                 proof_assert!(forall<ix : _> (@heap).contains(ix) ==>abs_cflct.1.remove(a.term_value()).contains(trail.index_logic(ix)));
                 // proof_assert!(forall< a2 : _> abs_cflct.1.remove(a).contains(a2) ==> exists<ix : _> (@heap).contains(ix) && trail.index_logic(ix) == a2);
 
+                proof_assert!(trail.abstract_justification(@just) == trail.ghost.justification(trail.index_logic(ix)));
                 // Do abstract resolve rule here
-                abs_cflct = ghost! { theory::Conflict(abs_cflct.inner().0, abs_cflct.inner().1.remove(a.term_value()).union(trail.abstract_justification(just.model())))};
+                let old_c = ghost! { abs_cflct.inner() };
+                // abs_cflct = ghost! { theory::Conflict(abs_cflct.inner().0, abs_cflct.inner().1.remove(a.term_value()).union(trail.abstract_justification(just.model())))};
+                abs_cflct = ghost! { abs_cflct.unwrap().resolvef(a.term_value()) };
 
+                proof_assert!(old_c.inner().resolve(a.term_value(), abs_cflct.inner()));
                 proof_assert!(abs_cflct.sound());
                 proof_assert!(abs_cflct.invariant());
 
 
                 proof_assert!(forall<a : _> (@heap).contains(a) ==>abs_cflct.1.contains(trail.index_logic(a)));
                 let old_heap : Ghost<ConflictHeap> = ghost! { heap };
-                let abs_just = ghost! { trail.abstract_justification(just.model()) };
+                let abs_just : Ghost<FSet<_>> = ghost! { trail.abstract_justification(just.model()) };
                 proof_assert!(forall<a : _> abs_just.contains(a) ==> exists<ix : TrailIndex> (@just).contains(ix) && trail.index_logic(ix) == a);
                 // Resolve
-                #[invariant(level, forall<ix : _> (@heap).contains(ix) ==> ix <= max_ix)]
+                #[invariant(level, forall<ix : _> (@heap).contains(ix) ==> ix.level_log() <= @conflict_level)]
                 #[invariant(to_cflct, forall<a : _> (@heap).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
                 #[invariant(adding, forall<ix : _> (@old_heap).contains(ix) ==> (@heap).contains(ix))]
                 #[invariant(seen, forall<i : _> 0 <= i && i < produced.len() ==> (@heap).contains(produced[i]))]
-                #[invariant(to_set, (@heap).is_set())]
                 // Need invariant saying we only add things
                 for a in just {
-                    if !heap.contains(a) {
-                        heap.push(a);
-                    }
+                    heap.insert(a);
                 }
 
                 proof_assert!(forall< a : _> abs_just.contains(a) ==> exists<ix : _> trail.contains(ix) && (@heap).contains(ix) && trail.index_logic(ix) == a);
@@ -370,7 +372,7 @@ impl BoolTheory {
 
 use crate::bag::*;
 impl creusot_contracts::Model for ConflictHeap {
-    type ModelTy = Bag<TrailIndex>;
+    type ModelTy = FSet<TrailIndex>;
 
     #[logic]
     #[trusted]
@@ -380,24 +382,20 @@ impl creusot_contracts::Model for ConflictHeap {
 }
 
 #[trusted]
-struct ConflictHeap(BinaryHeap<TrailIndex>);
+struct ConflictHeap(BTreeSet<TrailIndex>);
 
 impl ConflictHeap {
     #[trusted]
-    #[ensures(@result == Bag::EMPTY)]
+    #[ensures(@result == FSet::EMPTY)]
     fn new() -> Self {
-        ConflictHeap(BinaryHeap::new())
+        ConflictHeap(BTreeSet::new())
     }
 
-    #[trusted]
-    fn contains(&self, e: &TrailIndex) {
-        self.0.contains(e)
-    }
 
     #[trusted]
     #[ensures(@^self == (@self).insert(e))]
-    fn push(&mut self, e: TrailIndex) {
-        self.0.push(e)
+    fn insert(&mut self, e: TrailIndex) -> bool {
+        self.0.insert(e)
     }
 
     #[trusted]
@@ -405,25 +403,26 @@ impl ConflictHeap {
         (@self).contains(*a) &&
         forall<other : TrailIndex> (@self).contains(other) ==> other <= *a
     )]
-    #[ensures(((@self) == Bag::EMPTY) == (result == None))]
-    fn peek(&self) -> Option<&TrailIndex> {
-        self.0.peek()
+    #[ensures(((@self) == FSet::EMPTY) == (result == None))]
+    fn last(&self) -> Option<&TrailIndex> {
+        self.0.last()
     }
 
     #[trusted]
-    #[ensures(((@self) == Bag::EMPTY) == (result == None))]
+    #[ensures(((@self) == FSet::EMPTY) == (result == None))]
     #[ensures(forall<a : _> result == Some(a) ==>
-        @^self == (@self).diff(Bag::singleton(a)) && (@self).contains(a) &&
+        @^self == (@self).remove(a) && (@self).contains(a) &&
         (forall<other : TrailIndex> (@^self).contains(other) ==> other <= a)
     )]
-    fn pop(&mut self) -> Option<TrailIndex> {
-        self.0.pop()
+    fn pop_last(&mut self) -> Option<TrailIndex> {
+        self.0.pop_last()
     }
 
     #[trusted]
     #[ensures(forall<e : _> (@self).contains(e) ==> (@result).contains(e))]
     #[ensures(forall<i : _> 0 <= i && i < (@result).len() ==> (@self).contains((@result)[i]))]
     fn into_vec(self) -> Vec<TrailIndex> {
-        self.0.into_vec()
+        // self.0.into_vec()
+        self.0.into_iter().collect()
     }
 }

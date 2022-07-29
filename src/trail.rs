@@ -309,6 +309,18 @@ impl Trail {
             && @self.level == (@self.assignments).len() - 1
             // && pearlite! { forall<l : _> 0 <= l && l < (@self.assignments).len() ==> (@(@self.assignments)[l]).unique() }
             && pearlite! { forall<i : TrailIndex, j : TrailIndex> self.contains(i) ==> self.contains(j) ==> i != j ==> self.index_logic(i) != self.index_logic(j) }
+            && self.justified_is_justified()
+        }
+    }
+
+    #[predicate]
+    fn justified_is_justified(self) -> bool {
+        pearlite! {
+            forall<ix : _> self.contains(ix) ==>
+                match (@(@self.assignments)[@ix.0])[@ix.1].reason {
+                    Reason::Justified(_) => self.ghost.is_justified(self.index_logic(ix)),
+                    _ => true,
+                }
         }
     }
 
@@ -413,9 +425,10 @@ impl Trail {
     // this is a method on the trail as planning for future forms of justification
     // which need information from the trail to determine the set of relevant clauses
     #[ensures(forall<i : _> 0 <= i && i < (@result).len() ==> self.contains((@result)[i]))]
-    #[ensures(self.abstract_justification(@result) == self.ghost.justification(a.term_value()))]
-    pub(crate) fn justification(&self, a: &Assignment) -> Vec<TrailIndex> {
-        match &a.reason {
+    #[ensures(self.abstract_justification(@result) == self.ghost.justification(self.index_logic(a)))]
+    #[ensures(forall<i : _> 0 <= i && i < (@result).len() ==> (@result)[i].level_log() <= a.level_log())]
+    pub(crate) fn justification(&self, a: TrailIndex) -> Vec<TrailIndex> {
+        match &self[a].reason {
             Reason::Justified(v) => v.clone(),
             Reason::Decision => Vec::new(),
             Reason::Input => Vec::new(),
@@ -565,6 +578,7 @@ impl Assignment {
         !self.is_bool()
     }
 
+    #[ensures(result == (exists<j : _> self.reason == Reason::Justified(j)))]
     pub(crate) fn is_justified(&self) -> bool {
         matches!(self.reason, Reason::Justified(_))
     }
