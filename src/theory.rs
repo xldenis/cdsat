@@ -1,4 +1,4 @@
-use creusot_contracts::*;
+use creusot_contracts::{*, logic::*};
 
 pub enum Term {
     Variable(Var),
@@ -400,7 +400,7 @@ impl Trail {
     #[predicate]
     pub fn is_decision(self, d: (Term, Value)) -> bool {
         match self.find(d) {
-            Some((Assign::Decision, _)) => true,
+            Some((Assign::Decision(_, _), _)) => true,
             _ => false,
         }
     }

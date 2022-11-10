@@ -8,6 +8,8 @@ use ::std::collections::BinaryHeap;
 use crate::theory;
 use crate::trail::*;
 use creusot_contracts::*;
+use creusot_contracts::logic::*;
+use creusot_contracts::std::*;
 use priority_queue::PriorityQueue;
 
 pub struct Solver {
@@ -109,7 +111,7 @@ impl Solver {
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
         // eprintln!("conflict!");
         let mut heap: ConflictHeap = ConflictHeap::new();
-        let mut abs_cflct: Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.model()))};
+        let mut abs_cflct: Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.shallow_model()))};
 
         #[invariant(mem, forall<a : _> produced.contains(a) ==> (@heap).contains(a))]
         #[invariant(mem, forall<i : _> 0 <= i && i < produced.len() ==> (@heap).contains(produced[i]))]
@@ -208,14 +210,14 @@ impl Solver {
             proof_assert!(trail.abstract_justification(@just) == trail.ghost.justification(trail.index_logic(ix)));
             // Do abstract resolve rule here
             let old_c = ghost! { abs_cflct.inner() };
-            // abs_cflct = ghost! { theory::Conflict(abs_cflct.inner().0, abs_cflct.inner().1.remove(a.term_value()).union(trail.abstract_justification(just.model())))};
-            abs_cflct = ghost! { abs_cflct.unwrap().resolvef(a.term_value()) };
+            // abs_cflct = ghost! { theory::Conflict(abs_cflct.inner().0, abs_cflct.inner().1.remove(a.term_value()).union(trail.abstract_justification(just.shallow_model())))};
+            abs_cflct = ghost! { abs_cflct.resolvef(a.term_value()) };
 
             proof_assert!(old_c.inner().resolve(a.term_value(), abs_cflct.inner()));
 
             proof_assert!(forall<a : _> (@heap).contains(a) ==>abs_cflct.1.contains(trail.index_logic(a)));
             let old_heap: Ghost<ConflictHeap> = ghost! { heap };
-            let abs_just: Ghost<FSet<_>> = ghost! { trail.abstract_justification(just.model()) };
+            let abs_just: Ghost<FSet<_>> = ghost! { trail.abstract_justification(just.shallow_model()) };
             proof_assert!(forall<a : _> abs_just.contains(a) ==> exists<ix : TrailIndex> (@just).contains(ix) && trail.index_logic(ix) == a);
             // Resolve
             #[invariant(level, forall<ix : _> (@heap).contains(ix) ==> ix.level_log() <= @conflict_level)]
@@ -366,13 +368,13 @@ impl BoolTheory {
     }
 }
 
-use crate::bag::*;
-impl creusot_contracts::Model for ConflictHeap {
-    type ModelTy = FSet<TrailIndex>;
+// use crate::bag::*;
+impl creusot_contracts::ShallowModel for ConflictHeap {
+    type ShallowModelTy = FSet<TrailIndex>;
 
     #[logic]
     #[trusted]
-    fn model(self) -> Self::ModelTy {
+    fn shallow_model(self) -> Self::ShallowModelTy {
         absurd
     }
 }
