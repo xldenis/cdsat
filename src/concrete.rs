@@ -209,7 +209,7 @@ impl Solver {
 
             proof_assert!(trail.abstract_justification(@just) == trail.ghost.justification(trail.index_logic(ix)));
             // Do abstract resolve rule here
-            let old_c = ghost! { abs_cflct.inner() };
+            let old_c : Ghost<theory::Conflict> = ghost! { abs_cflct.inner() };
             // abs_cflct = ghost! { theory::Conflict(abs_cflct.inner().0, abs_cflct.inner().1.remove(a.term_value()).union(trail.abstract_justification(just.shallow_model())))};
             abs_cflct = ghost! { abs_cflct.resolvef(a.term_value()) };
 
@@ -217,7 +217,7 @@ impl Solver {
 
             proof_assert!(forall<a : _> (@heap).contains(a) ==>abs_cflct.1.contains(trail.index_logic(a)));
             let old_heap: Ghost<ConflictHeap> = ghost! { heap };
-            let abs_just: Ghost<FSet<_>> = ghost! { trail.abstract_justification(just.shallow_model()) };
+            let abs_just: Ghost<FSet<(theory::Term, theory::Value)>> = ghost! { trail.abstract_justification(just.shallow_model()) };
             proof_assert!(forall<a : _> abs_just.contains(a) ==> exists<ix : TrailIndex> (@just).contains(ix) && trail.index_logic(ix) == a);
             // Resolve
             #[invariant(level, forall<ix : _> (@heap).contains(ix) ==> ix.level_log() <= @conflict_level)]
@@ -245,7 +245,7 @@ pub enum Answer {
     Unknown,
 }
 
-#[cfg_attr(not(feature = "contracts"), derive(Debug))]
+#[cfg_attr(not(creusot), derive(Debug))]
 enum ExtendResult {
     Conflict(Vec<TrailIndex>),
     Decision(Term, Value),

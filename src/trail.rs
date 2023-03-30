@@ -4,12 +4,12 @@ use creusot_contracts::{Clone, PartialEq};
 use creusot_contracts::{*, logic::*};
 // use num_rational::BigRational;
 //
-#[cfg(not(feature = "contracts"))]
+#[cfg(not(creusot))]
 struct FSet<T>(T);
 
 // // Todo: Distinguish between boolean and fo assignments as an optim?
-// #[cfg_attr(not(feature = "contracts"), derive(Hash))]
-#[cfg_attr(not(feature = "contracts"), derive(Debug))]
+// #[cfg_attr(not(creusot), derive(Hash))]
+#[cfg_attr(not(creusot), derive(Debug))]
 #[derive(Clone, PartialEq, Eq)]
 pub struct Assignment {
     // TODO: Make private
@@ -21,7 +21,7 @@ pub struct Assignment {
     pub level: usize,
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::ShallowModel for Assignment {
     type ShallowModelTy = AssignmentModel;
 
@@ -31,7 +31,7 @@ impl creusot_contracts::ShallowModel for Assignment {
     }
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::DeepModel for Assignment {
     type DeepModelTy = AssignmentModel;
 
@@ -42,7 +42,7 @@ impl creusot_contracts::DeepModel for Assignment {
 }
 
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 pub struct AssignmentModel {
     pub term: theory::Term,
     pub val: theory::Value,
@@ -50,8 +50,8 @@ pub struct AssignmentModel {
     level: Int,
 }
 
-// #[cfg_attr(not(feature = "contracts"), derive(Hash))]
-#[cfg_attr(not(feature = "contracts"), derive(Debug))]
+// #[cfg_attr(not(creusot), derive(Hash))]
+#[cfg_attr(not(creusot), derive(Debug))]
 #[derive(Clone, PartialEq, Eq)]
 enum Reason {
     Justified(Vec<TrailIndex>),
@@ -59,14 +59,14 @@ enum Reason {
     Input,
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 enum ReasonModel {
     Justified(Seq<TrailIndex>),
     Decision,
     Input,
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::ShallowModel for Reason {
     type ShallowModelTy = ReasonModel;
 
@@ -80,7 +80,7 @@ impl creusot_contracts::ShallowModel for Reason {
     }
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::DeepModel for Reason {
     type DeepModelTy = ReasonModel;
 
@@ -95,14 +95,14 @@ impl creusot_contracts::DeepModel for Reason {
 }
 
 
-#[cfg_attr(not(feature = "contracts"), derive(Debug))]
+#[cfg_attr(not(creusot), derive(Debug))]
 #[derive(Clone, PartialEq, Eq)]
 pub enum Sort {
     Boolean,
     Rational,
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::ShallowModel for Sort {
     type ShallowModelTy = theory::Sort;
 
@@ -115,7 +115,7 @@ impl creusot_contracts::ShallowModel for Sort {
     }
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::DeepModel for Sort {
     type DeepModelTy = theory::Sort;
 
@@ -129,7 +129,7 @@ impl creusot_contracts::DeepModel for Sort {
 }
 
 
-#[cfg_attr(not(feature = "contracts"), derive(Debug))]
+#[cfg_attr(not(creusot), derive(Debug))]
 #[derive(Clone, PartialEq, Eq)]
 pub enum Term {
     Variable(usize, Sort),
@@ -143,7 +143,7 @@ pub enum Term {
     // TODO: complete others
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::ShallowModel for Term {
     type ShallowModelTy = theory::Term;
 
@@ -160,7 +160,7 @@ impl creusot_contracts::ShallowModel for Term {
     }
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::DeepModel for Term {
     type DeepModelTy = theory::Term;
 
@@ -177,15 +177,15 @@ impl creusot_contracts::DeepModel for Term {
     }
 }
 
-#[cfg_attr(not(feature = "contracts"), derive(Debug))]
-#[cfg_attr(not(feature = "contracts"), derive(Hash))]
+#[cfg_attr(not(creusot), derive(Debug))]
+#[cfg_attr(not(creusot), derive(Hash))]
 #[derive(Clone, PartialEq, Eq)]
 pub enum Value {
     Bool(bool),
     Rat(u64),
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::ShallowModel for Value {
     type ShallowModelTy = theory::Value;
 
@@ -198,7 +198,7 @@ impl creusot_contracts::ShallowModel for Value {
     }
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::DeepModel for Value {
     type DeepModelTy = theory::Value;
 
@@ -238,7 +238,7 @@ impl Value {
     }
 }
 
-#[cfg_attr(not(feature = "contracts"), derive(Debug))]
+#[cfg_attr(not(creusot), derive(Debug))]
 #[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
 pub struct TrailIndex(usize, usize);
 
@@ -294,7 +294,7 @@ impl OrdLogic for TrailIndex {
     fn eq_cmp(x: Self, y: Self) {}
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::ShallowModel for TrailIndex {
     type ShallowModelTy = Self;
 
@@ -304,7 +304,7 @@ impl creusot_contracts::ShallowModel for TrailIndex {
     }
 }
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 impl creusot_contracts::DeepModel for TrailIndex {
     type DeepModelTy = Self;
 
@@ -335,7 +335,7 @@ pub struct Trail {
     pub ghost: Ghost<theory::Trail>,
 }
 
-#[cfg(not(feature = "contracts"))]
+#[cfg(not(creusot))]
 impl ::std::fmt::Debug for Trail {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         self.assignments.fmt(f)

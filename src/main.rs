@@ -1,16 +1,16 @@
 #![feature(box_syntax)]
-#![cfg_attr(not(feature = "contracts"), feature(stmt_expr_attributes, proc_macro_hygiene))]
+#![cfg_attr(not(creusot), feature(stmt_expr_attributes, proc_macro_hygiene))]
 #![feature(map_first_last)]
 pub mod concrete;
 pub mod trail;
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 pub mod theory;
 
-#[cfg(feature = "contracts")]
+#[cfg(creusot)]
 pub mod bag;
 
-#[cfg(not(feature = "contracts"))]
+#[cfg(not(creusot))]
 pub mod theory {
     pub struct Sort;
     pub struct Assign;
