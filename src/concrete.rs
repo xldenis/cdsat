@@ -7,7 +7,7 @@ use ::std::collections::BinaryHeap;
 // use creusot_contracts::*;
 use crate::theory;
 use crate::trail::*;
-use creusot_contracts::*;
+use creusot_contracts::{vec, *};
 use creusot_contracts::logic::*;
 use creusot_contracts::std::*;
 use priority_queue::PriorityQueue;

@@ -1,7 +1,7 @@
 use crate::theory::{self, Assign};
 use ::std::ops::Index;
 use creusot_contracts::{Clone, PartialEq};
-use creusot_contracts::{*, logic::*};
+use creusot_contracts::{vec, *, logic::*};
 // use num_rational::BigRational;
 //
 #[cfg(not(creusot))]
