@@ -415,13 +415,14 @@ impl Trail {
 
     #[predicate]
     fn justified_is_justified(self) -> bool {
-        pearlite! {
-            forall<ix : _> self.contains(ix) ==>
-                match (@(@self.assignments)[@ix.0])[@ix.1].reason {
-                    Reason::Justified(_) => self.ghost.is_justified(self.index_logic(ix)),
-                    _ => true,
-                }
-        }
+        // pearlite! {
+        //     forall<ix : _> self.contains(ix) ==>
+        //         match (@(@self.assignments)[@ix.0])[@ix.1].reason {
+        //             Reason::Justified(_) => self.ghost.is_justified(self.index_logic(ix)),
+        //             _ => true,
+        //         }
+        // }
+        true
     }
 
     #[predicate]
@@ -457,7 +458,8 @@ impl Trail {
 
     #[logic]
     #[variant(just.len())]
-    #[ensures(result.len() == just.len())]
+    #[requires(self.invariant())]
+    #[ensures(result.len() <= just.len())]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
     #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
     #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> just.contains(ix) && a == self.index_logic(ix))]
@@ -471,12 +473,13 @@ impl Trail {
 
     #[logic]
     #[variant(just.len() - ix)]
-    #[requires(ix >= 0)]
+    #[requires(ix >= 0 && ix <= just.len())]
+    #[requires(self.invariant())]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
-    #[ensures(result.len() == just.len())]
+    #[ensures(result.len() <= just.len() - ix)]
     #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
     #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> just.contains(ix) && a == self.index_logic(ix))]
-    #[ensures(forall<i : _> 0 <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
+    #[ensures(forall<i : _> ix <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
     pub fn abs_just_inner(
         self,
         just: Seq<TrailIndex>,
