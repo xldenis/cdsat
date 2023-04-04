@@ -472,6 +472,11 @@ impl Trail {
     #[logic]
     #[variant(just.len() - ix)]
     #[requires(ix >= 0)]
+    #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
+    #[ensures(result.len() == just.len())]
+    #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
+    #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> just.contains(ix) && a == self.index_logic(ix))]
+    #[ensures(forall<i : _> 0 <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
     pub fn abs_just_inner(
         self,
         just: Seq<TrailIndex>,
@@ -573,6 +578,7 @@ impl Trail {
         while level < self.level {
             self.assignments.pop();
             self.level -= 1;
+            proof_assert!(old.invariant());
             self.ghost = ghost! { self.ghost.inner().restrict(self.level.shallow_model()) };
             proof_assert!(self.ghost.restrict_idempotent(@self.level, @self.level + 1); true);
         }
