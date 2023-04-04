@@ -7,9 +7,9 @@ use ::std::collections::BinaryHeap;
 // use creusot_contracts::*;
 use crate::theory;
 use crate::trail::*;
-use creusot_contracts::{vec, *};
 use creusot_contracts::logic::*;
 use creusot_contracts::std::*;
+use creusot_contracts::{vec, *};
 use priority_queue::PriorityQueue;
 
 pub struct Solver {
@@ -148,77 +148,63 @@ impl Solver {
             proof_assert!(@rem_level <= ix.level_log());
 
             if a.is_bool() && ix.level() > rem_level {
-                //     // TODO: Optimize this proof
-                proof_assert!(trail.ghost.restrict_too_big(ix.level_log(), a.term_value()); true);
-                proof_assert!(trail.ghost.contains_inverse(a.term_value()); true);
-                let just = heap.into_vec();
-                proof_assert!(forall<i : _> 0 <= i && i < (@just).len() ==> (@just)[i].level_log() <= @rem_level);
-
-                proof_assert!(forall<b : _> b != a.term_value() ==> abs_cflct.1.contains(b) ==> exists<ix : _> (@just).contains(ix) && trail.index_logic(ix) == b);
                 trail.restrict(rem_level);
-                proof_assert!(forall<b : _> b != a.term_value() ==> abs_cflct.1.contains(b) ==> exists<ix : _> (@just).contains(ix) && trail.index_logic(ix) == b);
-
-                proof_assert!((@a.term).is_bool());
-                proof_assert!(forall<i : _> 0 <= i && i < (@just).len() ==> trail.contains((@just)[i]));
-                proof_assert!(abs_cflct.learn_justified(a.term_value()); true);
-                proof_assert!(forall<b : _> b != a.term_value() ==> abs_cflct.1.contains(b) ==> trail.abstract_justification(@just).contains(b));
+                let just = heap.into_vec();
                 trail.add_justified(just, a.term, a.val.negate());
-                // proof_assert!(abs_cflct.backjump(a.term_value(), theory::Normal(trail)));
-                // eprintln!("backjump!");
                 return;
             }
 
-            if a.is_first_order() && a.decision() {
+            // False?
+            // proof_assert!((@a.val).is_bool() ==> !trail.ghost.is_decision(a.term_value()));
+            // if a is a boolean then the rem_level == ix_level which if we have dec < just implies it must be justified.
+
+            // If we use an order st dec < just then this is not enough...
+
+            // Undo Clear
+            if a.is_first_order() && a.is_decision() {
                 trail.restrict(ix.level() - 1);
-                // eprintln!("undo clear!");
                 return;
             }
 
-            // TODO: PROVE A is justified here
-            //
+            // Use an order such that decision < justified,
+            // thus we should now have that rem_level == level???
+
+            proof_assert!(@rem_level == ix.level_log());
+            // proof_assert!(trail.ghost.is_justified(a.term_value()));
+            proof_assert!(!trail.ghost.is_decision(a.term_value()));
+            // proof_assert!()
             let just = trail.justification(ix);
 
-            if rem_level == ix.level() {
-                #[invariant(dummy, true)]
-                for jix in just.iter() {
-                    let j = &trail[*jix];
+            // Conflict level > 0 so we cannot be looking at an input clause
+            proof_assert!(!trail.ghost.is_input(a.term_value()));
 
-                    if jix.level() == ix.level() && j.is_first_order() && j.decision() {
-                        // TODO: true because decisions cannot have level 0
-                        proof_assert!(jix.level_log() > 0);
-                        // TODO: True because justified assignments are always boolean and a is justified
-                        proof_assert!((@a.val).is_bool());
-                        // undo decide
-                        trail.restrict(ix.level() - 1);
-                        trail.add_decision(a.term, a.val.negate());
-                        return;
-                    }
+            proof_assert!(trail.ghost.is_justified(a.term_value()) && a.term_value().1.is_bool());
+            // Why is *this* check necessary?
+            #[invariant(dummy, true)]
+            for jix in just.iter() {
+                let j = &trail[*jix];
+
+                if jix.level() == ix.level() && j.is_first_order() && j.is_decision() {
+                    // undo decide
+                    trail.restrict(ix.level() - 1);
+                    trail.add_decision(a.term, a.val.negate());
+                    return;
                 }
             }
 
-            // TODO MINIMIZE ASSERTIONS
-            proof_assert!(forall<m : theory::Model> m.entails(trail.abstract_justification(@just), a.term_value()));
-            proof_assert!(forall<a : _> (@heap).contains(a) ==>abs_cflct.1.contains(trail.index_logic(a)));
-            proof_assert!(forall<a : _> (@heap).contains(a) ==> trail.contains(a));
-            // NEED TO SHOW THAT each concrete ix leads to a different abstract term
-            // Only need to require that levels are unique
-            proof_assert!(trail.contains(ix));
-            proof_assert!(ix.level_log() == trail.ghost.level_of(a.term_value()));
-            proof_assert!(forall<ix : _> (@heap).contains(ix) ==>abs_cflct.1.remove(a.term_value()).contains(trail.index_logic(ix)));
-            // proof_assert!(forall< a2 : _> abs_cflct.1.remove(a).contains(a2) ==> exists<ix : _> (@heap).contains(ix) && trail.index_logic(ix) == a2);
+            proof_assert!(
+                let j = trail.abstract_justification(@just);
+                forall<t : _> j.contains(t) ==> !t.1.is_bool() ==>
+                    abs_cflct.0.is_decision(t) ==>
+                    abs_cflct.0.level_of(t) < abs_cflct.0.set_level(abs_cflct.1)
+            );
 
-            proof_assert!(trail.abstract_justification(@just) == trail.ghost.justification(trail.index_logic(ix)));
+            // TODO MINIMIZE ASSERTIONS
             // Do abstract resolve rule here
-            let old_c : Ghost<theory::Conflict> = ghost! { abs_cflct.inner() };
-            // abs_cflct = ghost! { theory::Conflict(abs_cflct.inner().0, abs_cflct.inner().1.remove(a.term_value()).union(trail.abstract_justification(just.shallow_model())))};
+            let old_c: Ghost<theory::Conflict> = ghost! { abs_cflct.inner() };
             abs_cflct = ghost! { abs_cflct.resolvef(a.term_value()) };
 
-            proof_assert!(old_c.inner().resolve(a.term_value(), abs_cflct.inner()));
-
-            proof_assert!(forall<a : _> (@heap).contains(a) ==>abs_cflct.1.contains(trail.index_logic(a)));
             let old_heap: Ghost<ConflictHeap> = ghost! { heap };
-            let abs_just: Ghost<FSet<(theory::Term, theory::Value)>> = ghost! { trail.abstract_justification(just.shallow_model()) };
-            proof_assert!(forall<a : _> abs_just.contains(a) ==> exists<ix : TrailIndex> (@just).contains(ix) && trail.index_logic(ix) == a);
             // Resolve
             #[invariant(level, forall<ix : _> (@heap).contains(ix) ==> ix.level_log() <= @conflict_level)]
             #[invariant(to_cflct, forall<a : _> (@heap).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
@@ -229,11 +215,15 @@ impl Solver {
                 heap.insert(a);
             }
 
-            proof_assert!(forall< a : _> abs_just.contains(a) ==> exists<ix : _> trail.contains(ix) && (@heap).contains(ix) && trail.index_logic(ix) == a);
-            // True because either the value is in just (trivial), or it was in the heap already (and we only added things)
-            proof_assert!(forall< a : _> abs_cflct.1.contains(a) ==> exists<ix : _> trail.contains(ix) && trail.index_logic(ix) == a);
-            proof_assert!(forall< a : _> abs_cflct.1.contains(a) ==> exists<ix : _> (@heap).contains(ix) && trail.index_logic(ix) == a);
-            proof_assert!(forall< a : _> abs_cflct.1.contains(a) ==> exists<ix : _> trail.contains(ix) && (@heap).contains(ix) && trail.index_logic(ix) == a);
+            proof_assert!(old_c.0.is_justified(a.term_value()));
+            proof_assert!(old_c.1.contains(a.term_value()));
+
+            // Key missing property
+            //
+            // The reasoning should be that if
+            proof_assert!(let just = old_c.0.justification(a.term_value()); forall<a : (theory::Term, theory::Value)> just.contains(a) && !a.1.is_bool() ==> old_c.0.level_of(a) < old_c.0.set_level(old_c.1));
+
+            proof_assert!((*old_c).resolve(a.term_value(), *abs_cflct));
         }
     }
 }

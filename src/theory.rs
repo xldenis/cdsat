@@ -1,4 +1,4 @@
-use creusot_contracts::{*, logic::*};
+use creusot_contracts::{logic::*, *};
 
 pub enum Term {
     Variable(Var),
@@ -82,7 +82,7 @@ impl Assign {
     fn invariant(self) -> bool {
         match self {
             Assign::Decision(t, v) => t.sort() == v.sort(),
-            Assign::Justified(_, t, v) => t.sort() == v.sort(),
+            Assign::Justified(_, t, v) => t.sort() == v.sort() && t.sort() == Sort::Boolean,
             Assign::Input(t, v) => t.sort() == v.sort(),
         }
     }
@@ -401,6 +401,14 @@ impl Trail {
     pub fn is_decision(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Decision(_, _), _)) => true,
+            _ => false,
+        }
+    }
+
+    #[predicate]
+    pub fn is_input(self, d: (Term, Value)) -> bool {
+        match self.find(d) {
+            Some((Assign::Input(_, _), _)) => true,
             _ => false,
         }
     }

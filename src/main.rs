@@ -1,4 +1,3 @@
-#![feature(box_syntax)]
 #![cfg_attr(not(creusot), feature(stmt_expr_attributes, proc_macro_hygiene))]
 #![feature(map_first_last)]
 pub mod concrete;
@@ -29,8 +28,8 @@ use crate::{concrete::Answer, trail::Sort};
 fn main() {
     let mut trail = Trail::new(vec![(
         Term::Conj(
-            box Term::Neg(box Term::Variable(0, Sort::Boolean)),
-            box Term::Variable(0, Sort::Boolean),
+            Box::new(Term::Neg(Box::new(Term::Variable(0, Sort::Boolean)))),
+            Box::new(Term::Variable(0, Sort::Boolean)),
         ),
         Value::Bool(true),
     )]);
@@ -50,13 +49,15 @@ mod tests {
     use crate::{concrete::Answer, trail::Sort};
     #[test]
     fn conjuction() {
-        let mut trail = Trail::new(vec![(
-            Term::Conj(
-                box Term::Variable(0, Sort::Boolean),
-                box Term::Variable(1, Sort::Boolean),
+        let mut trail = Trail::new(vec![
+            (
+                Term::Conj(
+                    box Term::Variable(0, Sort::Boolean),
+                    box Term::Variable(1, Sort::Boolean),
+                ),
+                Value::Bool(true),
             ),
-            Value::Bool(true),
-        )]);
+        ]);
 
         let mut solver = Solver::new();
 
@@ -67,13 +68,15 @@ mod tests {
 
     #[test]
     fn a_not_a() {
-        let mut trail = Trail::new(vec![(
-            Term::Conj(
-                box Term::Neg(box Term::Variable(0, Sort::Boolean)),
-                box Term::Variable(0, Sort::Boolean),
+        let mut trail = Trail::new(vec![
+            (
+                Term::Conj(
+                    box Term::Neg(box Term::Variable(0, Sort::Boolean)),
+                    box Term::Variable(0, Sort::Boolean),
+                ),
+                Value::Bool(true),
             ),
-            Value::Bool(true),
-        )]);
+        ]);
 
         let mut solver = Solver::new();
 

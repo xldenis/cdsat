@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+SCRIPTPATH=$(dirname "$BASH_SOURCE")
+why3 --warn-off=clone_not_abstract --warn-off=unused_variable ide -L $SCRIPTPATH/../creusot/prelude $@
