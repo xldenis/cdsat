@@ -79,7 +79,7 @@ pub enum Assign {
 
 impl Assign {
     #[predicate]
-    fn invariant(self) -> bool {
+    pub fn invariant(self) -> bool {
         match self {
             Assign::Decision(t, v) => t.sort() == v.sort(),
             Assign::Justified(_, t, v) => t.sort() == v.sort() && t.sort() == Sort::Boolean,
@@ -97,7 +97,7 @@ impl Assign {
     }
 
     #[predicate]
-    fn justified_sound(self) -> bool {
+    pub fn justified_sound(self) -> bool {
         match self {
             Assign::Justified(just, t, val) => pearlite! {
               forall<m : Model> m.invariant() ==> m.satisfy_set(just) ==> m.satisfies((t, val))
@@ -188,7 +188,7 @@ impl Trail {
     pub fn sound(self) -> bool {
         match self {
             Trail::Empty => true,
-            Trail::Assign(a, l, tl) => tl.sound() && a.justified_sound(),
+            Trail::Assign(a, _, tl) => tl.sound() && a.justified_sound(),
         }
     }
 

@@ -468,31 +468,83 @@ impl Trail {
         &self,
         just: Seq<TrailIndex>,
     ) -> FSet<(theory::Term, theory::Value)> {
-        self.abs_just_inner(just, 0)
+        if just.len() > 0{
+            let set = self.abstract_justification(just.subsequence(1, just.len()));
+            let ix = just[0];
+            let a = self.index_logic(ix);
+            set.insert(a)
+        } else {
+            FSet::EMPTY
+        }
+    }
+
+    // #[logic]
+    // #[variant(just.len() - ix)]
+    // #[requires(ix >= 0 && ix <= just.len())]
+    // #[requires(self.invariant())]
+    // #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
+    // #[ensures(result.len() <= just.len() - ix)]
+    // #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
+    // #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> just.contains(ix) && a == self.index_logic(ix))]
+    // #[ensures(forall<i : _> ix <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
+    // pub fn abs_just_inner(
+    //     self,
+    //     just: Seq<TrailIndex>,
+    //     ix: Int,
+    // ) -> FSet<(theory::Term, theory::Value)> {
+    //     if ix < just.len() {
+    //         let set = self.abs_just_inner(just, ix + 1);
+    //         let ix = just[ix];
+    //         let a = self.index_logic(ix);
+    //         set.insert(a)
+    //     } else {
+    //         FSet::EMPTY
+    //     }
+    // }
+
+    // #[logic]
+    // #[variant(just.len())]
+    // #[requires(self.invariant())]
+    // #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
+    // #[ensures(result.len() <= just.len())]
+    // #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
+    // #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> just.contains(ix) && a == self.index_logic(ix))]
+    // #[ensures(forall<i : _> 0 <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
+    // pub fn abs_just_inner2(
+    //     self,
+    //     just: Seq<TrailIndex>,
+    // ) -> FSet<(theory::Term, theory::Value)> {
+    //     if just.len() > 0{
+    //         let set = self.abs_just_inner2(just.subsequence(1, just.len()));
+    //         let ix = just[0];
+    //         let a = self.index_logic(ix);
+    //         set.insert(a)
+    //     } else {
+    //         FSet::EMPTY
+    //     }
+    // }
+
+    #[logic]
+    #[variant(just.len())]
+    #[requires(self.contains(elem))]
+    #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
+    #[ensures(self.abstract_justification(Seq::singleton(elem).concat(just)) == self.abstract_justification(just).insert(self.index_logic(elem)))]
+    fn abs_just_cons(self, just: Seq<TrailIndex>, elem: TrailIndex) {
+        ()
     }
 
     #[logic]
-    #[variant(just.len() - ix)]
-    #[requires(ix >= 0 && ix <= just.len())]
-    #[requires(self.invariant())]
+    #[variant(just.len())]
+    #[requires(self.contains(elem))]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
-    #[ensures(result.len() <= just.len() - ix)]
-    #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
-    #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> just.contains(ix) && a == self.index_logic(ix))]
-    #[ensures(forall<i : _> ix <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
-    pub fn abs_just_inner(
-        self,
-        just: Seq<TrailIndex>,
-        ix: Int,
-    ) -> FSet<(theory::Term, theory::Value)> {
-        if ix < just.len() {
-            let set = self.abs_just_inner(just, ix + 1);
-            let ix = just[ix];
-            let a = (self.assignments.shallow_model())[ix.0.shallow_model()].shallow_model()
-                [ix.1.shallow_model()];
-            set.insert((a.term.shallow_model(), a.val.shallow_model()))
+    #[ensures(self.abstract_justification(just.push(elem)) == self.abstract_justification(just).insert(self.index_logic(elem)))]
+    fn abs_just_snoc(self, just: Seq<TrailIndex>, elem: TrailIndex) {
+        if just == Seq::EMPTY {
+            ()
         } else {
-            FSet::EMPTY
+            let j = just.push(elem);
+            let _ = self.abs_just_cons(j.subsequence(1, j.len()), j[0]);
+            self.abs_just_snoc(just.subsequence(1, just.len()), elem)
         }
     }
 
@@ -535,6 +587,8 @@ impl Trail {
     // what specification to give?
     // this is a method on the trail as planning for future forms of justification
     // which need information from the trail to determine the set of relevant clauses
+    #[requires(self.invariant())]
+    #[requires(self.contains(a))]
     #[ensures(forall<i : _> 0 <= i && i < (@result).len() ==> self.contains((@result)[i]))]
     #[ensures(self.abstract_justification(@result) == self.ghost.justification(self.index_logic(a)))]
     #[ensures(forall<i : _> 0 <= i && i < (@result).len() ==> (@result)[i].level_log() <= a.level_log())]
@@ -548,6 +602,7 @@ impl Trail {
 
     #[maintains((mut self).invariant())]
     #[requires((@val).is_bool())]
+    #[requires(forall<i : _> 0 <= i && i < (@into_vec).len() ==> self.contains((@into_vec)[i]))]
     #[requires(self.ghost.acceptable(@term, @val))]
     #[requires(forall<m : theory::Model> m.invariant() ==> m.satisfy_set(self.abstract_justification(@into_vec)) ==> m.satisfies((@term, @val)))]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
@@ -560,6 +615,11 @@ impl Trail {
             reason: Reason::Justified(into_vec),
             level,
         };
+
+        let g : Ghost<theory::Assign> = ghost! { Assign::Justified(*just, term.shallow_model(), val.shallow_model()) };
+        proof_assert!(g.invariant());
+        proof_assert!(g.justified_sound());
+        self.ghost = ghost! { theory::Trail::Assign(*g, level.shallow_model(), Box::new(*self.ghost)) };
         self.assignments[level].push(a);
     }
 
@@ -594,15 +654,23 @@ impl Trail {
 
     // #[trusted]
     #[requires(self.invariant())]
+    #[requires(forall<i : _> 0 <= i && i < (@assignments).len() ==> self.contains((@assignments)[i]))]
     #[ensures(self.ghost.set_level(self.abstract_justification(@assignments)) == @result)]
     pub(crate) fn max_level(&self, assignments: &[TrailIndex]) -> usize {
-        if assignments.len() == 0 {
-            return 0;
-        }
         let mut max = 0;
+        #[invariant(dummy, true)]
+        #[invariant(blah, self.ghost.set_level(self.abstract_justification(produced.to_owned())) == @max)]
         for ix in assignments {
-            if ix.0 > max {
+            proof_assert!(self.abs_just_snoc(produced.to_owned(), *ix); true);
+            proof_assert!(self.abstract_justification(@assignments).insert(self.index_logic(*ix)) == self.abstract_justification((@assignments).push(*ix)));
+            proof_assert!((@assignments).contains(*ix));
+            proof_assert!(self.contains(*ix));
+            proof_assert! { self.ghost.level_of(self.index_logic(*ix)) == @ix.0 };
+            if ix.0 >= max {
+                proof_assert!(self.ghost.set_level_max(self.abstract_justification(produced.to_owned()), self.index_logic(*ix)); true);
                 max = ix.0
+            } else {
+                proof_assert!(self.ghost.set_level_min(self.abstract_justification(produced.to_owned()), self.index_logic(*ix)); true);
             }
         }
         max
@@ -631,6 +699,7 @@ pub struct IndexIterator<'a> {
 }
 
 impl IndexIterator<'_> {
+    #[trusted]
     pub fn add_justified(&mut self, just: Justification, term: Term, value: Value) {
         self.trail.add_justified(just, term, value)
     }
