@@ -444,6 +444,24 @@ impl Trail {
     }
 
     #[logic]
+    #[requires(self.invariant())]
+    #[requires(level >= 0)]
+    #[requires(self.restrict(level).contains(d))]
+    #[ensures(self.restrict(level).find(d) == self.find(d))]
+    pub fn restrict_find(self, level : Int, d: (Term, Value))   {
+        match self {
+            Trail::Empty => (),
+            Trail::Assign(a, _, tl) => {
+                if a.to_pair() == d {
+                    ()
+                } else {
+                    tl.restrict_find(level, d)
+                }
+            }
+        }
+    }
+
+    #[logic]
     #[ensures(result >= 0)]
     #[ensures(result <= self.len())]
     // #[ensures(self == Trail::Empty || result <= self.len())]
@@ -531,6 +549,28 @@ impl Trail {
             Trail::Empty => (),
             Trail::Assign(a, l, tl) => {
                 tl.restrict_sound(level);
+            }
+        }
+    }
+
+    #[logic]
+    #[requires(self.invariant())]
+    #[requires(level >= 0)]
+    #[requires(self.restrict(level).contains(d))]
+    #[ensures(self.is_justified(d) ==> self.restrict(level).is_justified(d)) ]
+    #[ensures(self.justification(d) == self.restrict(level).justification(d)) ]
+    #[ensures(self.is_decision(d) ==> self.restrict(level).is_decision(d))]
+    #[ensures(self.is_input(d) ==> self.restrict(level).is_input(d))]
+    pub fn restrict_kind_unchanged(self, level: Int, d: (Term, Value)) {
+        self.restrict_find(level, d);
+         match self {
+            Trail::Empty => (),
+            Trail::Assign(a, _, tl) => {
+                if a.to_pair() == d {
+                    ()
+                } else {
+                    tl.restrict_kind_unchanged(level, d);
+                }
             }
         }
     }

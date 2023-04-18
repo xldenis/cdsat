@@ -460,7 +460,6 @@ impl Trail {
 
     #[logic]
     #[variant(just.len())]
-    // #[requires(self.invariant())] // breaks part of the rpoof
     #[ensures(result.len() <= just.len())]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
     #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
@@ -647,9 +646,16 @@ impl Trail {
         while level < self.level {
             self.assignments.pop();
             self.level -= 1;
-            proof_assert!(old.invariant());
-            self.ghost = ghost! { self.ghost.inner().restrict(self.level.shallow_model()) };
+            proof_assert!(exists<t : _> (self.ghost.restrict_kind_unchanged(self.level.shallow_model(), t) == () || true) );
+            proof_assert!((exists<t : _> self.ghost.justification_contains(t) == () || true));
+            self.ghost = ghost! { self.ghost.restrict(self.level.shallow_model()) };
+            proof_assert! {
+                forall<ix : _> self.contains(ix) ==> (@(@self.assignments)[@ix.0])[@ix.1] == (@(@old.assignments)[@ix.0])[@ix.1]
+            };
+            proof_assert!(forall<ix : _> self.contains(ix) ==> self.ghost.contains(self.index_logic(ix)));
             proof_assert!(self.ghost.restrict_idempotent(@self.level, @self.level + 1); true);
+            proof_assert!(forall<ix : _> self.contains(ix) ==> self.index_logic(ix) == old.index_logic(ix));
+            // proof_assert!(forall<ix : _> old.abstract_justification(?) ==)
         }
         proof_assert!(level == self.level);
         proof_assert!(

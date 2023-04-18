@@ -5,53 +5,30 @@
 <prover id="0" name="Z3" version="4.8.14" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="1" name="Alt-Ergo" version="2.4.1" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="3" name="Z3" version="4.11.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="4" name="CVC5" version="1.0.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="5" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="mlcfg">
 <path name=".."/><path name="restrict.mlcfg"/>
-<theory name="Cdsat_Trail_Impl18" proved="true">
- <goal name="Eq1.eq&#39;refn&#39;vc" expl="VC for eq&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.01" steps="12"/></proof>
- </goal>
-</theory>
 <theory name="Cdsat_Theory_Impl4_Restrict_Impl" proved="true">
  <goal name="restrict&#39;vc" expl="VC for restrict" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="restrict&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="75"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="75"/></proof>
   </goal>
   <goal name="restrict&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="24"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="24"/></proof>
   </goal>
-  <goal name="restrict&#39;vc.2" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="restrict&#39;vc.2.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.01" steps="24"/></proof>
-   </goal>
-   <goal name="restrict&#39;vc.2.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.34" steps="5507"/></proof>
-   </goal>
-  </transf>
+  <goal name="restrict&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="26"/></proof>
   </goal>
   <goal name="restrict&#39;vc.3" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="restrict&#39;vc.3.0" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="restrict&#39;vc.3.0.0" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.01" steps="29"/></proof>
-    </goal>
-    <goal name="restrict&#39;vc.3.0.1" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.21" steps="3419"/></proof>
-    </goal>
-   </transf>
+   <proof prover="5"><result status="valid" time="0.01" steps="24"/></proof>
    </goal>
    <goal name="restrict&#39;vc.3.1" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="restrict&#39;vc.3.1.0" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.01" steps="29"/></proof>
-    </goal>
-    <goal name="restrict&#39;vc.3.1.1" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.09" steps="1297"/></proof>
-    </goal>
-   </transf>
+   <proof prover="5"><result status="valid" time="0.64" steps="10650"/></proof>
    </goal>
   </transf>
   </goal>
@@ -60,30 +37,20 @@
    <goal name="restrict&#39;vc.4.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="restrict&#39;vc.4.0.0" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.01" steps="27"/></proof>
+    <proof prover="5"><result status="valid" time="0.01" steps="29"/></proof>
     </goal>
     <goal name="restrict&#39;vc.4.0.1" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.07" steps="1064"/></proof>
+    <proof prover="5"><result status="valid" time="0.21" steps="3413"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="restrict&#39;vc.4.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="restrict&#39;vc.4.1.0" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.01" steps="35"/></proof>
+    <proof prover="5"><result status="valid" time="0.09" steps="29"/></proof>
     </goal>
     <goal name="restrict&#39;vc.4.1.1" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.14" steps="2630"/></proof>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="restrict&#39;vc.4.2" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="restrict&#39;vc.4.2.0" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.01" steps="27"/></proof>
-    </goal>
-    <goal name="restrict&#39;vc.4.2.1" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.15" steps="2272"/></proof>
+    <proof prover="5"><result status="valid" time="0.01" steps="1307"/></proof>
     </goal>
    </transf>
    </goal>
@@ -92,236 +59,449 @@
   <goal name="restrict&#39;vc.5" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="restrict&#39;vc.5.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.01" steps="26"/></proof>
+   <transf name="split_vc" proved="true" >
+    <goal name="restrict&#39;vc.5.0.0" expl="postcondition" proved="true">
+    <proof prover="5"><result status="valid" time="0.07" steps="27"/></proof>
+    </goal>
+    <goal name="restrict&#39;vc.5.0.1" expl="postcondition" proved="true">
+    <proof prover="5"><result status="valid" time="0.01" steps="1064"/></proof>
+    </goal>
+   </transf>
    </goal>
    <goal name="restrict&#39;vc.5.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.12" steps="1692"/></proof>
+   <transf name="split_vc" proved="true" >
+    <goal name="restrict&#39;vc.5.1.0" expl="postcondition" proved="true">
+    <proof prover="5"><result status="valid" time="0.01" steps="35"/></proof>
+    </goal>
+    <goal name="restrict&#39;vc.5.1.1" expl="postcondition" proved="true">
+    <proof prover="5"><result status="valid" time="0.15" steps="2630"/></proof>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="restrict&#39;vc.5.2" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="restrict&#39;vc.5.2.0" expl="postcondition" proved="true">
+    <proof prover="5"><result status="valid" time="0.01" steps="27"/></proof>
+    </goal>
+    <goal name="restrict&#39;vc.5.2.1" expl="postcondition" proved="true">
+    <proof prover="5"><result status="valid" time="0.14" steps="2271"/></proof>
+    </goal>
+   </transf>
    </goal>
   </transf>
   </goal>
   <goal name="restrict&#39;vc.6" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="28"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="restrict&#39;vc.6.0" expl="postcondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.01" steps="26"/></proof>
+   </goal>
+   <goal name="restrict&#39;vc.6.1" expl="postcondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.30" steps="4883"/></proof>
+   </goal>
+  </transf>
   </goal>
   <goal name="restrict&#39;vc.7" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="68"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="28"/></proof>
   </goal>
   <goal name="restrict&#39;vc.8" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="restrict&#39;vc.8.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.01" steps="31"/></proof>
-   </goal>
-   <goal name="restrict&#39;vc.8.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.19" steps="2917"/></proof>
-   </goal>
-  </transf>
+  <proof prover="5"><result status="valid" time="0.01" steps="68"/></proof>
   </goal>
   <goal name="restrict&#39;vc.9" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="27"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.10" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
-   <goal name="restrict&#39;vc.10.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.01" steps="37"/></proof>
+   <goal name="restrict&#39;vc.9.0" expl="postcondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.01" steps="31"/></proof>
    </goal>
-   <goal name="restrict&#39;vc.10.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.02" steps="93"/></proof>
+   <goal name="restrict&#39;vc.9.1" expl="postcondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.44" steps="7593"/></proof>
    </goal>
   </transf>
+  </goal>
+  <goal name="restrict&#39;vc.10" expl="postcondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="27"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.11" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="restrict&#39;vc.11.0" expl="postcondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.02" steps="37"/></proof>
+   </goal>
+   <goal name="restrict&#39;vc.11.1" expl="postcondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.01" steps="93"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Theory_Impl4_RestrictFind_Impl" proved="true">
+ <goal name="restrict_find&#39;vc" expl="VC for restrict_find" proved="true">
+ <proof prover="5"><result status="valid" time="0.10" steps="1947"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="restrict_find&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="107"/></proof>
+  </goal>
+  <goal name="restrict_find&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="30"/></proof>
+  </goal>
+  <goal name="restrict_find&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.02" steps="167"/></proof>
+  </goal>
+  <goal name="restrict_find&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="614078"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="147959"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="restrict_find&#39;vc.3.0" expl="postcondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.01" steps="49"/></proof>
+   </goal>
+   <goal name="restrict_find&#39;vc.3.1" expl="postcondition" proved="true">
+   <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="631115"/></proof>
+   <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="129002"/></proof>
+   <proof prover="5"><result status="valid" time="0.04" steps="591"/></proof>
+   </goal>
+   <goal name="restrict_find&#39;vc.3.2" expl="postcondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.01" steps="178"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Theory_Impl4_RestrictKindUnchanged_Impl" proved="true">
+ <goal name="restrict_kind_unchanged&#39;vc" expl="VC for restrict_kind_unchanged" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="restrict_kind_unchanged&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="26"/></proof>
+  </goal>
+  <goal name="restrict_kind_unchanged&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="597880"/></proof>
+  <proof prover="3" obsolete="true"><result status="failure" time="0.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="157661"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="26"/></proof>
+  </goal>
+  <goal name="restrict_kind_unchanged&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="26"/></proof>
+  </goal>
+  <goal name="restrict_kind_unchanged&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="115"/></proof>
+  </goal>
+  <goal name="restrict_kind_unchanged&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="32"/></proof>
+  </goal>
+  <goal name="restrict_kind_unchanged&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.02" steps="176"/></proof>
+  </goal>
+  <goal name="restrict_kind_unchanged&#39;vc.6" expl="postcondition" proved="true">
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="585995"/></proof>
+  <proof prover="3" obsolete="true"><result status="failure" time="0.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="129796"/></proof>
+  <proof prover="5"><result status="valid" time="0.02" steps="184"/></proof>
+  </goal>
+  <goal name="restrict_kind_unchanged&#39;vc.7" expl="postcondition" proved="true">
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="638923"/></proof>
+  <proof prover="3" obsolete="true"><result status="failure" time="0.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="150319"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="34"/></proof>
+  </goal>
+  <goal name="restrict_kind_unchanged&#39;vc.8" expl="postcondition" proved="true">
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="638820"/></proof>
+  <proof prover="3" obsolete="true"><result status="failure" time="0.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="147522"/></proof>
+  <proof prover="5"><result status="valid" time="0.02" steps="381"/></proof>
+  </goal>
+  <goal name="restrict_kind_unchanged&#39;vc.9" expl="postcondition" proved="true">
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="638833"/></proof>
+  <proof prover="3" obsolete="true"><result status="failure" time="0.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="135263"/></proof>
+  <proof prover="5"><result status="valid" time="0.03" steps="434"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Theory_Impl4_RestrictIdempotent_Impl" proved="true">
+ <goal name="restrict_idempotent&#39;vc" expl="VC for restrict_idempotent" proved="true">
+ <proof prover="5"><result status="valid" time="0.06" steps="773"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Theory_Impl4_RestrictSound_Impl" proved="true">
+ <goal name="restrict_sound&#39;vc" expl="VC for restrict_sound" proved="true">
+ <proof prover="5"><result status="valid" time="0.02" steps="220"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl15_Restrict" proved="true">
+ <goal name="restrict&#39;vc" expl="VC for restrict" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="restrict&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="5"><result status="valid" time="0.02" steps="40"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="5"><result status="valid" time="0.02" steps="36"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.2" expl="loop invariant init" proved="true">
+  <proof prover="5"><result status="valid" time="0.02" steps="37"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.3" expl="loop invariant init" proved="true">
+  <proof prover="5"><result status="valid" time="0.03" steps="103"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.4" expl="loop invariant init" proved="true">
+  <proof prover="5"><result status="valid" time="0.02" steps="40"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.5" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.03" steps="95"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.6" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.02" steps="68"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.7" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.02" steps="68"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.8" expl="postcondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.03" steps="105"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.9" expl="postcondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.03" steps="116"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.10" expl="postcondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.05" steps="384"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.11" expl="postcondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.05" steps="381"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.12" expl="integer overflow" proved="true">
+  <proof prover="5"><result status="valid" time="0.04" steps="258"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.13" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.03" steps="91"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.14" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.03" steps="91"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.15" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.04" steps="147"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.16" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.04" steps="149"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.17" expl="assertion" proved="true">
+  <proof prover="4"><result status="valid" time="0.19" steps="51515"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.18" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.08" steps="476346"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.19" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.04" steps="105"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.20" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.07" steps="517"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.21" expl="loop invariant preservation" proved="true">
+  <proof prover="4"><result status="valid" time="0.16" steps="51018"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.22" expl="loop invariant preservation" proved="true">
+  <transf name="inline_goal" proved="true" >
+   <goal name="restrict&#39;vc.22.0" expl="loop invariant preservation" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="restrict&#39;vc.22.0.0" expl="loop invariant preservation" proved="true">
+    <proof prover="3"><result status="valid" time="0.35" steps="1311236"/></proof>
+    </goal>
+    <goal name="restrict&#39;vc.22.0.1" expl="loop invariant preservation" proved="true">
+    <proof prover="5"><result status="valid" time="0.05" steps="318"/></proof>
+    </goal>
+    <goal name="restrict&#39;vc.22.0.2" expl="loop invariant preservation" proved="true">
+    <proof prover="5"><result status="valid" time="0.05" steps="240"/></proof>
+    </goal>
+    <goal name="restrict&#39;vc.22.0.3" expl="loop invariant preservation" proved="true">
+    <proof prover="5"><result status="valid" time="0.06" steps="323"/></proof>
+    </goal>
+    <goal name="restrict&#39;vc.22.0.4" expl="loop invariant preservation" proved="true">
+    <proof prover="4"><result status="valid" time="0.20" steps="50952"/></proof>
+    </goal>
+    <goal name="restrict&#39;vc.22.0.5" expl="loop invariant preservation" proved="true">
+    <proof prover="4"><result status="valid" time="0.56" steps="94644"/></proof>
+    </goal>
+    <goal name="restrict&#39;vc.22.0.6" expl="loop invariant preservation" proved="true">
+    <transf name="inline_goal" proved="true" >
+     <goal name="restrict&#39;vc.22.0.6.0" expl="loop invariant preservation" proved="true">
+     <transf name="split_vc" proved="true" >
+      <goal name="restrict&#39;vc.22.0.6.0.0" expl="loop invariant preservation" proved="true">
+      <proof prover="4"><result status="valid" time="0.29" steps="65405"/></proof>
+      </goal>
+      <goal name="restrict&#39;vc.22.0.6.0.1" expl="loop invariant preservation" proved="true">
+      <transf name="assert" proved="true" arg1="(forall ix1:t_trailindex.
+   contains1 (shallow_model1 x) ix1 -&gt; contains ( * self_1) ix1)">
+       <goal name="restrict&#39;vc.22.0.6.0.1.0" expl="asserted formula" proved="true">
+       <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,get,set,([]),([&lt;-]),uint64&#39;minInt,max_uint64,length1,radix,min_unsigned,in_bounds,([]&#39;),singleton1,cons,snoc,(++),(==),subset,is_empty,singleton,disjoint,new,inner,trailindex_0,trailindex_1,assignment_term,assignment_val,assignment_reason,assignment_level,var_1,trail_ghost,model_0,remove,shallow_model6,sort1,sort,invariant&#39;3,interp,insert,is_bool,negate,len,level1,invariant&#39;2,invariant_assign,to_pair,invariant_nonneg,find,level_of,contains3,satisfies,satisfy_set,justified_sound,contains2,sound,find_justified,shallow_model5,shallow_model4,mAX&#39;,term_value,index_logic,trail_unique,invariant_contains,invariant_level,entails,satisfied_by,invariant&#39;1,count_bounds,restrict1,restrict_find,is_input,is_decision,is_justified,justification,level_log,restrict_sound,resolve,restrict_idempotent,justification_contains,restrict_kind_unchanged,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,to_int_in_bounds,extensionality1,zero_unsigned_is_zero,length_nonnegative,(==)&#39;spec,create&#39;spec,empty&#39;def,set&#39;spec,set&#39;def,([&lt;-])&#39;def,singleton&#39;spec,cons&#39;spec,snoc&#39;spec,([..])&#39;def,([_..])&#39;def,([.._])&#39;def,(++)&#39;spec,extensionality,subset_refl,subset_trans,is_empty_empty,empty_is_empty,add_def,mem_singleton,remove_def,add_remove,remove_add,subset_remove,union_def,subset_union_1,subset_union_2,inter_def,subset_inter_1,subset_inter_2,diff_def,subset_diff,pick_def,disjoint_inter_empty,disjoint_diff_eq,disjoint_diff_s2,filter_def,subset_filter,map_def,mem_map,cardinal_nonneg,cardinal_empty,cardinal_add,cardinal_remove,cardinal_subset,subset_eq,cardinal1,cardinal_union,cardinal_inter_disjoint,cardinal_diff,cardinal_filter,cardinal_map,rat_0&#39;def,bool_0&#39;def,impl_0&#39;def,impl_1&#39;def,disj_0&#39;def,disj_1&#39;def,neg_0&#39;def,conj_0&#39;def,conj_1&#39;def,eq_0&#39;def,eq_1&#39;def,plus_0&#39;def,plus_1&#39;def,value_0&#39;def,variable_0&#39;def,variable_1&#39;def,justified_0&#39;def,some_0&#39;def,interp_spec,negate_spec,len_spec,level_spec,find_spec,level_of_spec,def1,set_level_spec,contains_spec,find_justified_spec,shallow_model_spec2,shallow_model_spec1,def,shallow_model_spec,count_bounds_spec,restrict_spec,restrict_find_spec,justification_spec,restrict_sound_spec,restrict_idempotent_spec,restrict_kind_unchanged_spec">
+        <goal name="restrict&#39;vc.22.0.6.0.1.0.0" expl="asserted formula" proved="true">
+        <proof prover="5"><result status="valid" time="0.77" steps="23547"/></proof>
+        </goal>
+       </transf>
+       </goal>
+       <goal name="restrict&#39;vc.22.0.6.0.1.1" expl="loop invariant preservation" proved="true">
+       <transf name="assert" proved="true" arg1="(abstract_justification ( * self_1) (shallow_model1 x)
+  == abstract_justification ( * self_13) (shallow_model1 x))">
+        <goal name="restrict&#39;vc.22.0.6.0.1.1.0" expl="asserted formula" proved="true">
+        <proof prover="3"><result status="valid" time="0.73" steps="2309132"/></proof>
+        </goal>
+        <goal name="restrict&#39;vc.22.0.6.0.1.1.1" expl="loop invariant preservation" proved="true">
+        <proof prover="4"><result status="valid" time="0.28" steps="66373"/></proof>
+        </goal>
+       </transf>
+       </goal>
+      </transf>
+      </goal>
+      <goal name="restrict&#39;vc.22.0.6.0.2" expl="loop invariant preservation" proved="true">
+      <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,get,set,([]),([&lt;-]),uint64&#39;minInt,max_uint64,length1,radix,min_unsigned,in_bounds,([]&#39;),singleton1,cons,snoc,(++),(==),subset,is_empty,singleton,disjoint,new,inner,trailindex_0,trailindex_1,assignment_term,assignment_val,assignment_reason,assignment_level,var_1,trail_ghost,model_0,remove,shallow_model6,sort1,sort,invariant&#39;3,interp,insert,is_bool,negate,len,level1,invariant&#39;2,invariant_assign,to_pair,invariant_nonneg,find,level_of,contains3,satisfies,satisfy_set,justified_sound,contains2,sound,find_justified,shallow_model5,shallow_model4,mAX&#39;,term_value,index_logic,trail_unique,invariant_contains,invariant_level,entails,satisfied_by,invariant&#39;1,count_bounds,restrict1,restrict_find,is_input,is_decision,is_justified,justification,level_log,restrict_sound,resolve,restrict_idempotent,justification_contains,restrict_kind_unchanged,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,to_int_in_bounds,extensionality1,zero_unsigned_is_zero,length_nonnegative,(==)&#39;spec,create&#39;spec,empty&#39;def,set&#39;spec,set&#39;def,([&lt;-])&#39;def,singleton&#39;spec,cons&#39;spec,snoc&#39;spec,([..])&#39;def,([_..])&#39;def,([.._])&#39;def,(++)&#39;spec,extensionality,subset_refl,subset_trans,is_empty_empty,empty_is_empty,add_def,mem_singleton,remove_def,add_remove,remove_add,subset_remove,union_def,subset_union_1,subset_union_2,inter_def,subset_inter_1,subset_inter_2,diff_def,subset_diff,pick_def,disjoint_inter_empty,disjoint_diff_eq,disjoint_diff_s2,filter_def,subset_filter,map_def,mem_map,cardinal_nonneg,cardinal_empty,cardinal_add,cardinal_remove,cardinal_subset,subset_eq,cardinal1,cardinal_union,cardinal_inter_disjoint,cardinal_diff,cardinal_filter,cardinal_map,rat_0&#39;def,bool_0&#39;def,impl_0&#39;def,impl_1&#39;def,disj_0&#39;def,disj_1&#39;def,neg_0&#39;def,conj_0&#39;def,conj_1&#39;def,eq_0&#39;def,eq_1&#39;def,plus_0&#39;def,plus_1&#39;def,value_0&#39;def,variable_0&#39;def,variable_1&#39;def,justified_0&#39;def,some_0&#39;def,interp_spec,negate_spec,len_spec,level_spec,find_spec,level_of_spec,def1,set_level_spec,contains_spec,find_justified_spec,shallow_model_spec2,shallow_model_spec1,def,shallow_model_spec,count_bounds_spec,restrict_spec,restrict_find_spec,justification_spec,restrict_sound_spec,restrict_idempotent_spec,restrict_kind_unchanged_spec">
+       <goal name="restrict&#39;vc.22.0.6.0.2.0" expl="loop invariant preservation" proved="true">
+       <proof prover="5"><result status="valid" time="0.76" steps="23485"/></proof>
+       </goal>
+      </transf>
+      </goal>
+      <goal name="restrict&#39;vc.22.0.6.0.3" expl="loop invariant preservation" proved="true">
+      <proof prover="4"><result status="valid" time="0.29" steps="65909"/></proof>
+      </goal>
+      <goal name="restrict&#39;vc.22.0.6.0.4" expl="loop invariant preservation" proved="true">
+      <proof prover="4"><result status="valid" time="0.29" steps="65907"/></proof>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="restrict&#39;vc.23" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.04" steps="105"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.24" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.09" steps="545"/></proof>
+  </goal>
+  <goal name="restrict&#39;vc.25" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.05" steps="193"/></proof>
   </goal>
  </transf>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_RestrictTooBig_Impl" proved="true">
  <goal name="restrict_too_big&#39;vc" expl="VC for restrict_too_big" proved="true">
- <proof prover="1"><result status="valid" time="0.07" steps="393"/></proof>
+ <proof prover="5"><result status="valid" time="0.07" steps="392"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Trail_Impl6" proved="true">
- <goal name="cmp_le_log_spec" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
- </goal>
- <goal name="cmp_lt_log_spec" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
- </goal>
- <goal name="cmp_ge_log_spec" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
- </goal>
- <goal name="cmp_gt_log_spec" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
- </goal>
- <goal name="refl_spec" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
- </goal>
- <goal name="trans_spec" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
- </goal>
- <goal name="antisym1_spec" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
- </goal>
- <goal name="antisym2_spec" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
- </goal>
- <goal name="eq_cmp_spec" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
+<theory name="Cdsat_Trail_Impl19" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="7"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Trail_Impl29" proved="true">
- <goal name="Clone1.clone&#39;&#39;refn&#39;vc" expl="VC for clone&#39;&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
+<theory name="Cdsat_Trail_Impl23" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="7"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Trail_Impl21" proved="true">
- <goal name="Clone1.clone&#39;&#39;refn&#39;vc" expl="VC for clone&#39;&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="0"/></proof>
+<theory name="Cdsat_Trail_Impl27" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="0"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Trail_Impl25" proved="true">
- <goal name="Clone1.clone&#39;&#39;refn&#39;vc" expl="VC for clone&#39;&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
+<theory name="Cdsat_Trail_Impl31" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Trail_Impl17" proved="true">
- <goal name="Clone1.clone&#39;&#39;refn&#39;vc" expl="VC for clone&#39;&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="7"/></proof>
+<theory name="Cdsat_Trail_Impl35" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Theory_Impl4_RestrictIdempotent_Impl" proved="true">
- <goal name="restrict_idempotent&#39;vc" expl="VC for restrict_idempotent" proved="true">
- <proof prover="1"><result status="valid" time="0.06" steps="773"/></proof>
+<theory name="Cdsat_Trail_Impl42" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Theory_Impl4_RestrictSound_Impl" proved="true">
- <goal name="restrict_sound&#39;vc" expl="VC for restrict_sound" proved="true">
- <proof prover="1"><result status="valid" time="0.02" steps="220"/></proof>
+<theory name="Cdsat_Trail_Impl20" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.01" steps="12"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Trail_Impl9_Restrict" proved="true">
- <goal name="restrict&#39;vc" expl="VC for restrict" proved="true">
- <transf name="split_vc" proved="true" >
-  <goal name="restrict&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="40"/></proof>
+<theory name="Cdsat_Trail_Impl24" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="12"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl28" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl32" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl36" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl39" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1" obsolete="true"><result status="failure" time="0.00"/></proof>
+ <proof prover="2" obsolete="true"><result status="unknown" time="0.05" steps="10655"/></proof>
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl44">
+ <goal name="partial_cmp_refn">
+ <proof prover="2"><result status="timeout" time="1.00" steps="482176"/></proof>
+ <proof prover="3"><result status="timeout" time="1.00"/></proof>
+ <proof prover="4"><result status="timeout" time="1.00" steps="370176"/></proof>
+ <proof prover="5"><result status="timeout" time="1.00"/></proof>
+ <transf name="split_vc" >
+  <goal name="partial_cmp_refn.0">
   </goal>
-  <goal name="restrict&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="36"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.2" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="37"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.3" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.03" steps="101"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.4" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="40"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.5" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.03" steps="94"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.6" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.03" steps="67"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.7" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="68"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.8" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.03" steps="103"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.9" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.03" steps="114"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.10" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.05" steps="374"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.11" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.05" steps="371"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.12" expl="integer overflow" proved="true">
-  <proof prover="1"><result status="valid" time="0.04" steps="257"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.13" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.04" steps="104"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.14" expl="loop invariant preservation" proved="true">
-  <transf name="destruct_term_subst" proved="true" arg1="o1">
-   <goal name="restrict&#39;vc.14.0" expl="loop invariant preservation" proved="true">
-   <proof prover="1"><result status="valid" time="0.09" steps="589"/></proof>
-   </goal>
-   <goal name="restrict&#39;vc.14.1" expl="loop invariant preservation" proved="true">
-   <proof prover="1"><result status="valid" time="0.05" steps="200"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="restrict&#39;vc.15" expl="loop invariant preservation" proved="true">
-  <transf name="destruct_term_subst" proved="true" arg1="o1">
-   <goal name="restrict&#39;vc.15.0" expl="loop invariant preservation" proved="true">
-   <proof prover="0"><result status="valid" time="0.16" steps="1250277"/></proof>
-   </goal>
-   <goal name="restrict&#39;vc.15.1" expl="loop invariant preservation" proved="true">
-   <proof prover="1"><result status="valid" time="0.05" steps="187"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="restrict&#39;vc.16" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.04" steps="105"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.17" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.09" steps="537"/></proof>
-  </goal>
-  <goal name="restrict&#39;vc.18" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.05" steps="192"/></proof>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl45">
+ <goal name="cmp_refn">
+ <proof prover="2"><result status="unknown" time="0.02" steps="1587"/></proof>
+ <proof prover="3"><result status="unknown" time="0.01" steps="7107"/></proof>
+ <proof prover="4"><result status="unknown" time="0.02" steps="2602"/></proof>
+ <proof prover="5"><result status="timeout" time="1.00"/></proof>
+ <transf name="split_vc" >
+  <goal name="cmp_refn.0">
   </goal>
  </transf>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl11" proved="true">
- <goal name="Index1.index&#39;refn&#39;vc" expl="VC for index&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.01" steps="9"/></proof>
+ <goal name="cmp_le_log_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.01" steps="2"/></proof>
  </goal>
-</theory>
-<theory name="Cdsat_Trail_Impl13" proved="true">
- <goal name="Clone1.clone&#39;&#39;refn&#39;vc" expl="VC for clone&#39;&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.01" steps="7"/></proof>
+ <goal name="cmp_gt_log_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
-</theory>
-<theory name="Cdsat_Trail_Impl30" proved="true">
- <goal name="Eq1.eq&#39;refn&#39;vc" expl="VC for eq&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
+ <goal name="refl_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
-</theory>
-<theory name="Cdsat_Trail_Impl22" proved="true">
- <goal name="Eq1.eq&#39;refn&#39;vc" expl="VC for eq&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="0"/></proof>
+ <goal name="antisym2_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
-</theory>
-<theory name="Cdsat_Trail_Impl26" proved="true">
- <goal name="Eq1.eq&#39;refn&#39;vc" expl="VC for eq&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
+ <goal name="cmp_lt_log_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
-</theory>
-<theory name="Cdsat_Trail_Impl36" proved="true">
- <goal name="Clone1.clone&#39;&#39;refn&#39;vc" expl="VC for clone&#39;&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
+ <goal name="trans_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
-</theory>
-<theory name="Cdsat_Trail_Impl14" proved="true">
- <goal name="Eq1.eq&#39;refn&#39;vc" expl="VC for eq&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.01" steps="12"/></proof>
+ <goal name="cmp_ge_log_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
-</theory>
-<theory name="Cdsat_Trail_Impl33" proved="true">
- <goal name="Eq1.eq&#39;refn&#39;vc" expl="VC for eq&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
+ <goal name="antisym1_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
-</theory>
-<theory name="Cdsat_Trail_Impl38" proved="true">
- <goal name="PartialCmp1.partial_cmp&#39;refn&#39;vc" expl="VC for partial_cmp&#39;refn" proved="true">
- <proof prover="1"><result status="valid" time="0.00" steps="2"/></proof>
- </goal>
-</theory>
-<theory name="Cdsat_Trail_Impl39">
- <goal name="Cmp1.cmp&#39;refn&#39;vc" expl="VC for cmp&#39;refn">
- <proof prover="0"><result status="timeout" time="1.00"/></proof>
- <proof prover="1"><undone/></proof>
- <proof prover="2"><result status="unknown" time="0.05" steps="10655"/></proof>
+ <goal name="eq_cmp_refn" proved="true">
+ <proof prover="5"><result status="valid" time="0.00" steps="2"/></proof>
  </goal>
 </theory>
 </file>
