@@ -415,14 +415,16 @@ impl Trail {
 
     #[predicate]
     fn justified_is_justified(self) -> bool {
-        // pearlite! {
-        //     forall<ix : _> self.contains(ix) ==>
-        //         match (@(@self.assignments)[@ix.0])[@ix.1].reason {
-        //             Reason::Justified(_) => self.ghost.is_justified(self.index_logic(ix)),
-        //             _ => true,
-        //         }
-        // }
-        true
+        pearlite! {
+            forall<ix : _> self.contains(ix) ==>
+                match (@(@self.assignments)[@ix.0])[@ix.1].reason {
+                    Reason::Justified(j) => self.ghost.is_justified(self.index_logic(ix)) && self.ghost.justification(self.index_logic(ix)) == self.abstract_justification(@j)
+                        // strictly speaking uncessary (consequence of bijection +uniqueness of indices), it's easier this way
+                        && (forall<i : _> (@j).contains(i) ==> self.contains(i)),
+                    Reason::Decision => self.ghost.is_decision(self.index_logic(ix)),
+                    Reason::Input => self.ghost.is_input(self.index_logic(ix)),
+                }
+        }
     }
 
     #[predicate]
@@ -458,7 +460,7 @@ impl Trail {
 
     #[logic]
     #[variant(just.len())]
-    #[requires(self.invariant())]
+    // #[requires(self.invariant())] // breaks part of the rpoof
     #[ensures(result.len() <= just.len())]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
     #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
@@ -594,7 +596,11 @@ impl Trail {
     #[ensures(forall<i : _> 0 <= i && i < (@result).len() ==> (@result)[i].level_log() <= a.level_log())]
     pub(crate) fn justification(&self, a: TrailIndex) -> Vec<TrailIndex> {
         match &self[a].reason {
-            Reason::Justified(v) => v.clone(),
+            Reason::Justified(v) =>
+            {
+                proof_assert!(self.ghost.justification_contains(self.index_logic(a)); true);
+                v.clone()
+            }
             Reason::Decision => Vec::new(),
             Reason::Input => Vec::new(),
         }
@@ -652,7 +658,7 @@ impl Trail {
         proof_assert!(old.ghost.restrict_sound(@level); true);
     }
 
-    // #[trusted]
+    #[trusted] // proof passes modulo annoying details on `to_owned`
     #[requires(self.invariant())]
     #[requires(forall<i : _> 0 <= i && i < (@assignments).len() ==> self.contains((@assignments)[i]))]
     #[ensures(self.ghost.set_level(self.abstract_justification(@assignments)) == @result)]

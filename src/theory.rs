@@ -378,9 +378,12 @@ impl Trail {
     }
 
     #[logic]
+    #[requires(self.invariant())]
     #[requires(self.is_justified(d))]
     #[requires(self.sound())]
     #[ensures(forall<m : Model> m.entails(result, d))]
+    #[ensures(self.is_input(d) ==> result == FSet::EMPTY)]
+    #[ensures(self.is_decision(d) ==> result == FSet::EMPTY)]
     pub fn justification(self, d: (Term, Value)) -> FSet<(Term, Value)> {
         self.find_justified(d);
         match self.find(d) {
@@ -474,6 +477,23 @@ impl Trail {
                     ()
                 } else {
                     tl.find_justified(kv)
+                }
+            }
+        }
+    }
+
+    #[logic]
+    #[requires(self.invariant())]
+    #[requires(self.is_justified(kv))]
+    #[ensures(forall<e : _> self.justification(kv).contains(e) ==> self.contains(e) && self.level_of(e) <= self.level_of(kv))]
+    pub fn justification_contains(self, kv: (Term, Value)) {
+        match self {
+            Trail::Empty => (),
+            Trail::Assign(a, l, tl) => {
+                if a.to_pair() == kv {
+                    ()
+                } else {
+                    tl.justification_contains(kv)
                 }
             }
         }

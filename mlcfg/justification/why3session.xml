@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Z3" version="4.11.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC5" version="1.0.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="3" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="mlcfg">
+<path name=".."/><path name="justification.mlcfg"/>
+<theory name="Cdsat_Theory_Impl4_Justification_Impl" proved="true">
+ <goal name="justification&#39;vc" expl="VC for justification" proved="true">
+ <proof prover="3"><result status="valid" time="0.03" steps="462"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="justification&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.01" steps="24"/></proof>
+  </goal>
+  <goal name="justification&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.01" steps="26"/></proof>
+  </goal>
+  <goal name="justification&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="16513"/></proof>
+  </goal>
+  <goal name="justification&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="16015"/></proof>
+  </goal>
+  <goal name="justification&#39;vc.4" expl="postcondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.02" steps="212"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl15_AbstractJustification_Impl" proved="true">
+ <goal name="abstract_justification&#39;vc" expl="VC for abstract_justification" proved="true">
+ <transf name="use_th" proved="true" arg1="seq.FreeMonoid">
+  <goal name="abstract_justification&#39;vc.0" expl="VC for abstract_justification" proved="true">
+  <proof prover="3"><result status="valid" time="0.16" steps="2691"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Theory_Impl4_JustificationContains_Impl" proved="true">
+ <goal name="justification_contains&#39;vc" expl="VC for justification_contains" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="justification_contains&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.02" steps="84"/></proof>
+  </goal>
+  <goal name="justification_contains&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.02" steps="213"/></proof>
+  </goal>
+  <goal name="justification_contains&#39;vc.2" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="justification_contains&#39;vc.2.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="justification_contains&#39;vc.2.0.0" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.04" steps="50"/></proof>
+    </goal>
+    <goal name="justification_contains&#39;vc.2.0.1" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.11" steps="2362"/></proof>
+    </goal>
+    <goal name="justification_contains&#39;vc.2.0.2" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.01" steps="394"/></proof>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="justification_contains&#39;vc.2.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="justification_contains&#39;vc.2.1.0" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.04" steps="47"/></proof>
+    </goal>
+    <goal name="justification_contains&#39;vc.2.1.1" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.16" steps="4113"/></proof>
+    </goal>
+    <goal name="justification_contains&#39;vc.2.1.2" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.01" steps="509"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl15_Justification" proved="true">
+ <goal name="justification&#39;vc" expl="VC for justification" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="justification&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.01" steps="36"/></proof>
+  </goal>
+  <goal name="justification&#39;vc.1" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.02" steps="44"/></proof>
+  </goal>
+  <goal name="justification&#39;vc.2" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="justification&#39;vc.2.0" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.01" steps="840"/></proof>
+   </goal>
+   <goal name="justification&#39;vc.2.1" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.01" steps="46"/></proof>
+   </goal>
+   <goal name="justification&#39;vc.2.2" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.07" steps="46"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="justification&#39;vc.3" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="justification&#39;vc.3.0" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.04" steps="446"/></proof>
+   </goal>
+   <goal name="justification&#39;vc.3.1" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.06" steps="1321"/></proof>
+   </goal>
+   <goal name="justification&#39;vc.3.2" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.04" steps="1326"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="justification&#39;vc.4" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.83" steps="193217"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="justification&#39;vc.4.0" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.02" steps="807"/></proof>
+   </goal>
+   <goal name="justification&#39;vc.4.1" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.02" steps="48"/></proof>
+   </goal>
+   <goal name="justification&#39;vc.4.2" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.01" steps="48"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl19" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl23" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl27" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl31" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl35" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl42" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl20" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.01" steps="12"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl24" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="12"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl28" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl32" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl36" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl39" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl44">
+ <goal name="partial_cmp_refn">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="575742"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="568404"/></proof>
+ <proof prover="3"><result status="timeout" time="1.00"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl45">
+ <goal name="cmp_refn">
+ <proof prover="0"><result status="unknown" time="0.01" steps="7107"/></proof>
+ <proof prover="1"><result status="unknown" time="0.02" steps="1587"/></proof>
+ <proof prover="2"><result status="unknown" time="0.02" steps="2602"/></proof>
+ <proof prover="3"><result status="timeout" time="1.00"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl11" proved="true">
+ <goal name="cmp_le_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_gt_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="refl_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="antisym2_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_lt_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="trans_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_ge_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="antisym1_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="eq_cmp_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>
