@@ -7054,6 +7054,8 @@ module Cdsat_Concrete_Impl0_ResolveConflict
   use prelude.Slice
   use prelude.Seq
   use set.Fset
+
+
   use Core_Cmp_Ordering_Type as Core_Cmp_Ordering_Type
   clone CreusotContracts_Logic_Ord_Impl8_CmpLog as CmpLog1
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
@@ -7095,6 +7097,8 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     predicate LtLog0.lt_log = LtLog0.lt_log,
     function CmpLog0.cmp_log = CmpLog0.cmp_log,
     axiom .
+
+
   clone CreusotContracts_Logic_Ord_OrdLogic_LeLog as LeLog0 with
     type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
     function CmpLog0.cmp_log = CmpLog0.cmp_log
@@ -7110,10 +7114,12 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     type ShallowModelTy0.shallowModelTy = seq (Cdsat_Trail_TrailIndex_Type.t_trailindex),
     function ShallowModel0.shallow_model = ShallowModel13.shallow_model
   clone Core_Num_Impl11_Max as Max0
+  goal g4 : false
   clone CreusotContracts_Std1_Slice_Impl0_ShallowModel as ShallowModel16 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
     val Max0.mAX' = Max0.mAX',
     axiom .
+  goal g3 : false
   use Cdsat_Trail_Sort_Type as Cdsat_Trail_Sort_Type
   use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
   clone Cdsat_Trail_Impl4_ShallowModel as ShallowModel15
@@ -7129,6 +7135,8 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     function Len0.len = Len0.len
   use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
   clone Cdsat_Theory_Impl1_Sort as Sort1
+
+
   use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
   use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
   clone Cdsat_Theory_Impl0_Sort as Sort0 with
@@ -7140,6 +7148,9 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     predicate Invariant0.invariant' = Invariant6.invariant'
   clone Cdsat_Theory_Impl2_ToPair as ToPair0
   use prelude.Int
+
+
+
   use Core_Option_Option_Type as Core_Option_Option_Type
   clone Cdsat_Theory_Impl4_Find as Find0 with
     function ToPair0.to_pair = ToPair0.to_pair,
@@ -7201,6 +7212,8 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     function Remove0.remove = Remove0.remove,
     function Len0.len = Len0.len,
     axiom .
+
+
   clone Cdsat_Theory_Impl4_InvariantLevel as InvariantLevel0 with
     function Level0.level = Level1.level,
     function SetLevel0.set_level = SetLevel0.set_level,
@@ -7418,6 +7431,9 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
     predicate Satisfies0.satisfies = Satisfies0.satisfies
   use Cdsat_Trail_Reason_Type as Cdsat_Trail_Reason_Type
+
+  goal g2 : false
+
   clone Cdsat_Theory_Impl4_Acceptable as Acceptable0 with
     predicate Contains0.contains = Contains4.contains,
     function Sort0.sort = Sort0.sort,
@@ -7682,6 +7698,10 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     predicate Acceptable0.acceptable = Acceptable0.acceptable,
     predicate Impls0.impls = Impls0.impls,
     predicate Unsat0.unsat = Unsat0.unsat
+
+  goal g1 : false
+
+
   clone Core_Slice_Iter_Impl181_Next_Interface as Next1 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
     type Item0.item = Cdsat_Trail_TrailIndex_Type.t_trailindex,
@@ -7821,6 +7841,10 @@ module Cdsat_Concrete_Impl0_ResolveConflict
   use Cdsat_Concrete_Solver_Type as Cdsat_Concrete_Solver_Type
   clone CreusotContracts_Resolve_Impl1_Resolve as Resolve0 with
     type t = Cdsat_Concrete_Solver_Type.t_solver
+
+  goal g : false
+
+
   let rec cfg resolve_conflict [#"/Users/xavier/Code/cdsat/src/concrete.rs" 111 4 111 80] [@cfg:stackify] [@cfg:subregion_analysis] (self : borrowed (Cdsat_Concrete_Solver_Type.t_solver)) (trail : borrowed (Cdsat_Trail_Trail_Type.t_trail)) (conflict : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)) : ()
     requires {[#"/Users/xavier/Code/cdsat/src/concrete.rs" 103 4 103 41] Invariant0.invariant' ( * trail)}
     requires {[#"/Users/xavier/Code/cdsat/src/concrete.rs" 104 15 104 36] Seq.length (ShallowModel0.shallow_model conflict) > 0}

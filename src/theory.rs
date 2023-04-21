@@ -504,6 +504,7 @@ impl Trail {
     #[requires(self.invariant())]
     #[requires(self.is_justified(kv))]
     #[ensures(forall<e : _> self.justification(kv).contains(e) ==> self.contains(e) && self.level_of(e) <= self.level_of(kv))]
+    #[ensures(self.set_level(self.justification(kv)) == self.level_of(kv))]
     pub fn justification_contains(self, kv: (Term, Value)) {
         match self {
             Trail::Empty => (),
@@ -534,7 +535,7 @@ impl Trail {
     }
 
     #[predicate]
-    #[ensures(result ==> (rhs.unsat() ==> self.unsat()))]
+    #[ensures(result ==> rhs.unsat() ==> self.unsat())]
     pub fn impls(self, rhs: Self) -> bool {
         pearlite! { forall<m : Model> m.invariant() ==> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
     }
@@ -688,6 +689,8 @@ impl Normal {
     #[predicate]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
+    #[requires(just.2.is_bool())]
+    #[requires(  forall<m : Model> m.invariant() ==> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2)))]
     #[ensures(result ==> self.0.unsat())]
     pub fn fail(self, just: (FSet<(Term, Value)>, Term, Value)) -> bool {
         pearlite! { {
@@ -720,6 +723,7 @@ impl Normal {
     #[predicate]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
+    #[requires(just.2.is_bool())]
     #[ensures(result ==> (tgt.0).invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
@@ -781,7 +785,8 @@ impl Conflict {
     #[requires(ass.0.is_bool() && ass.1.is_bool())]
     #[ensures(forall<m : Model> m.invariant() ==> m.satisfy_set(self.1.remove(ass)) ==> m.satisfies((ass.0, ass.1.negate())))]
     pub fn learn_justified(self, ass: (Term, Value)) {
-        Model(Mapping::cst(Value::Bool(false))).lemma(ass.0, ass.1);
+        let _ = Model::lemma;
+        // Model(Mapping::cst(Value::Bool(false))).lemma(ass.0, ass.1);
     }
 
     // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
@@ -796,7 +801,8 @@ impl Conflict {
     pub fn resolvef(self, a: (Term, Value)) -> Self {
         let just = self.0.justification(a);
         // Just need to load this
-        Model(Mapping::cst(Value::Bool(false))).resolve_sound(self.1, just, a);
+        self.0.justification_contains(a);
+        let _ = Model::resolve_sound;
         Conflict(self.0, self.1.remove(a).union(just))
     }
 
@@ -804,15 +810,16 @@ impl Conflict {
     #[predicate]
     #[requires(self.invariant())]
     #[requires(self.sound())]
+    #[requires(self.0.is_justified(a))]
     #[ensures(result ==> tgt.invariant())]
     #[ensures(result ==> tgt.sound())]
     pub fn resolve(self, a: (Term, Value), tgt: Self) -> bool {
         let just = self.0.justification(a);
         // Just need to load this
-        Model(Mapping::cst(Value::Bool(false))).resolve_sound(self.1, just, a);
-        self.0.is_justified(a)
-            && pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.0.set_level(self.1)) }
-            && self.1.contains(a)
+        self.0.justification_contains(a);
+        let _ = Model::resolve_sound;
+        self.1.contains(a) &&
+        pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.0.set_level(self.1)) }
             && tgt == Conflict(self.0, self.1.remove(a).union(just))
     }
 
@@ -825,12 +832,11 @@ impl Conflict {
     #[ensures(result ==> self.0.impls(tgt.0))]
     pub fn backjump(self, l: (Term, Value), tgt: Normal) -> bool {
         let e = self.1.remove(l);
-        self.0.restrict_sound(self.0.set_level(e));
-        self.0.restrict_too_big(self.0.set_level(e), l);
-        self.0.trail_plausible(l);
-        self.0.restrict_idempotent(0, self.0.set_level(e));
-        l.1.negate_involutive();
-        self.learn_justified(l);
+        let _ = Trail::restrict_sound;
+        let _ = Trail::trail_plausible;
+        let _ = Trail::restrict_idempotent;
+        let _ = Value::negate_involutive;
+        let _ = Conflict::learn_justified;
         let restricted = self.0.restrict(self.0.set_level(e));
         self.1.contains(l)
             && l.1.is_bool()
@@ -887,19 +893,19 @@ impl Conflict {
     #[predicate]
     #[requires(self.invariant())]
     #[requires(self.sound())]
+    #[requires(self.0.is_justified(l))]
     #[ensures(result ==> tgt.0.invariant())]
     #[ensures(result ==> tgt.sound())]
     #[ensures(result ==> self.0.impls(tgt.0))]
     pub fn undo_decide(self, l: (Term, Value), tgt: Normal) -> bool {
+        let _ = Trail::restrict_sound;
+        let _ = Trail::restrict_too_big;
+        let _ = Trail::trail_plausible;
+        let _ = Value::negate_involutive;
         pearlite! { {
-          let _ = self.0.restrict_sound(self.level() - 1);
-          self.0.restrict_too_big(self.level() - 1, l);
-          self.0.trail_plausible(l);
-          l.1.negate_involutive();
           let just = self.0.justification(l);
           let e = self.1.remove(l);
           let restr = self.0.restrict(self.level() - 1);
-          self.0.is_justified(l) &&
           l.1.is_bool() &&
           (exists<a : _> just.contains(a) && !a.1.is_bool() && self.0.level_of(a) == self.level() ) &&
           self.level() == self.0.level_of(l) && tgt.0 == Trail::Assign(Assign::Decision(l.0, l.1.negate()), restr.level() + 1, Box::new(restr))
