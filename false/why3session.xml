@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Eprover" version="2.6" timelimit="5" steplimit="0" memlimit="1000"/>
+<file format="whyml">
+<path name=".."/><path name="false.mlw"/>
+<theory name="Top">
+ <goal name="s">
+ <proof prover="0"><result status="unknown" time="0.01"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>

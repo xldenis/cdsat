@@ -579,7 +579,7 @@
    <goal name="backjump&#39;vc.9.0" expl="postcondition" proved="true">
    <transf name="inline_goal" proved="true" >
     <goal name="backjump&#39;vc.9.0.0" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.97" steps="18913"/></proof>
+    <proof prover="5" timelimit="5"><result status="valid" time="1.23" steps="18766"/></proof>
     </goal>
    </transf>
    </goal>
@@ -594,6 +594,44 @@
    </goal>
    <goal name="backjump&#39;vc.9.4" expl="postcondition" proved="true">
    <proof prover="5" timelimit="5" memlimit="2000"><result status="valid" time="0.01" steps="32"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Theory_Impl6_Backjump2_Impl" proved="true">
+ <goal name="backjump2&#39;vc" expl="VC for backjump2" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="backjump2&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="75"/></proof>
+  </goal>
+  <goal name="backjump2&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="35"/></proof>
+  </goal>
+  <goal name="backjump2&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="36"/></proof>
+  </goal>
+  <goal name="backjump2&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.02" steps="153"/></proof>
+  </goal>
+  <goal name="backjump2&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.01" steps="32"/></proof>
+  </goal>
+  <goal name="backjump2&#39;vc.5" expl="postcondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.63" steps="9180"/></proof>
+  </goal>
+  <goal name="backjump2&#39;vc.6" expl="postcondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.27" steps="3955"/></proof>
+  </goal>
+  <goal name="backjump2&#39;vc.7" expl="postcondition" proved="true">
+  <transf name="inline_goal" proved="true" >
+   <goal name="backjump2&#39;vc.7.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="backjump2&#39;vc.7.0.0" expl="postcondition" proved="true">
+    <proof prover="5" timelimit="5"><result status="valid" time="1.56" steps="24596"/></proof>
+    </goal>
+   </transf>
    </goal>
   </transf>
   </goal>

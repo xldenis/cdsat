@@ -10,74 +10,41 @@
 <file format="mlcfg">
 <path name=".."/><path name="resolve_conflict.mlcfg"/>
 <theory name="Cdsat_Concrete_Impl0_ResolveConflict">
- <goal name="g4">
- <proof prover="1" timelimit="5"><result status="timeout" time="5.00"/></proof>
- </goal>
- <goal name="g3" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.07"/></proof>
- </goal>
- <goal name="g2" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.10"/></proof>
- </goal>
- <goal name="g1" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.29"/></proof>
- </goal>
- <goal name="g" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.24"/></proof>
- </goal>
- <goal name="resolve_conflict&#39;vc" expl="VC for resolve_conflict" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="3.11"/></proof>
- <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),get,set,int64&#39;maxInt,min_int64,max_int64,to_int1,uint64&#39;minInt,max_uint64,length,([]&#39;),singleton1,cons,snoc,(++),( *_),(^_),new,inner,invariant&#39;6,remove1,satisfy_set,justified_sound,sound1,find_justified,resolve_sound,satisfied_by,restrict,impls,completed1,shallow_model11,produces1,produces_trans1,produces_refl1,invariant&#39;3,is_inhabited1,into_iter_post1,into_iter_pre1,shallow_model9,entails,acceptable,shallow_model8,shallow_model7,shallow_model6,remove,shallow_model4,insert1,shallow_model3,resolve6,completed,produces,produces_trans,produces_refl,invariant&#39;2,is_inhabited,Unit_def_r,Comm1,Assoc,Unitary,NonTrivialRing,Refl,ZeroLessOne,CompatOrderMult,Div_mod,Mod_bound,Div_sign_pos,Div_sign_neg,Div_1,Mod_1,Mod_inf,Div_mult,Mod_mult,to_int_in_bounds,(==)&#39;spec,empty&#39;def,set&#39;spec,set&#39;def,([&lt;-])&#39;def,singleton&#39;spec,cons&#39;spec,snoc&#39;spec,([..])&#39;spec,([..])&#39;def,([_..])&#39;def,([.._])&#39;def,(++)&#39;spec,subset_refl,subset_trans,is_empty_empty,add_remove,rat_0&#39;def,bool_0&#39;def,impl_0&#39;def,impl_1&#39;def,disj_0&#39;def,neg_0&#39;def,conj_0&#39;def,conj_1&#39;def,eq_1&#39;def,plus_0&#39;def,plus_1&#39;def,variable_0&#39;def,variable_1&#39;def,justified_0&#39;def,contains_spec,count_bounds_spec,eq_cmp_spec,antisym2_spec,antisym1_spec,trans_spec,find_justified_spec,resolve_sound_spec,restrict_spec,impls_spec,to_ref_seq_spec,produces_trans_spec1,produces_refl_spec1,is_inhabited_spec1,shallow_model_spec2,produces_trans_spec,produces_refl_spec,is_inhabited_spec">
-  <goal name="resolve_conflict&#39;vc.0" expl="VC for resolve_conflict" proved="true">
-  <proof prover="1" timelimit="5"><result status="valid" time="1.01"/></proof>
-  <transf name="assert" proved="true" arg1="false">
-   <goal name="resolve_conflict&#39;vc.0.0" expl="asserted formula" proved="true">
-   <proof prover="1" timelimit="5"><result status="valid" time="0.20"/></proof>
-   <transf name="remove" proved="true" arg1="abs,([]),([&lt;-]),const,int64&#39;minInt,in_bounds1,min_unsigned,in_bounds,solver_bool_th,(==),subset,is_empty,singleton,disjoint,trailindex_0,trailindex_1,assignment_term,assignment_val,assignment_reason,assignment_level,var_1,trail_assignments,trail_ghost,trail_level,model_0,subsequence,conflict_1,conflict_0,cmp_log1,cmp_log,eq_cmp1,antisym21,antisym11,trans1,refl1,gt_log,cmp_gt_log1,ge_log,cmp_ge_log1,lt_log,cmp_lt_log1,le_log,cmp_le_log1,shallow_model16,mAX&#39;,shallow_model14,len,level,invariant_nonneg,sort1,sort,invariant_assign,to_pair,find,level_of,contains4,is_bool,negate,trail_unique,contains3,invariant_contains,invariant_level,invariant&#39;5,count_bounds,shallow_model12,invariant&#39;4,interp,satisfies,unsat,resolve7,into_iter_post,into_iter_pre,resolve5,insert,is_input,is_decision,contains2,term_value,index_logic,contains1,is_justified,justification,justified_is_justified,level_log,abstract_relation,sound,invariant&#39;1,resolve4,shallow_model,resolvef,resolve2,Inv_def_l,Mul_distr_l,Mul_distr_r,Comm,Abs_le,Abs_pos,Div_bound,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_inf,to_int_in_bounds,extensionality2,extensionality1,zero_unsigned_is_zero,length_nonnegative,extensionality,add_def,mem_singleton,remove_def,remove_add,subset_remove,union_def,subset_union_2,subset_inter_1,subset_inter_2,disjoint_inter_empty,disjoint_diff_eq,disjoint_diff_s2,filter_def,subset_filter,map_def,mem_map,cardinal_nonneg,cardinal_add,cardinal_remove,subset_eq,cardinal1,cardinal_inter_disjoint,cardinal_filter,cardinal_map,disj_1&#39;def,eq_0&#39;def,value_0&#39;def,some_0&#39;def,eq_cmp_spec,antisym2_spec,antisym1_spec,trans_spec,refl_spec1,cmp_gt_log_spec1,cmp_ge_log_spec1,cmp_lt_log_spec1,cmp_le_log_spec1,len_spec,level_spec,find_spec,level_of_spec,negate_spec,def1,set_level_spec,refl_spec,cmp_gt_log_spec,cmp_ge_log_spec,cmp_lt_log_spec,cmp_le_log_spec,interp_spec,shallow_model_spec1,shallow_model_spec,def,abstract_justification_spec,justification_spec,resolve_spec,resolvef_spec">
-    <goal name="resolve_conflict&#39;vc.0.0.0" expl="asserted formula" proved="true">
-    <proof prover="1" timelimit="0.79"><result status="valid" time="0.79"/></proof>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="resolve_conflict&#39;vc.0.1" expl="VC for resolve_conflict" proved="true">
-   <proof prover="5"><result status="valid" time="0.44" steps="22"/></proof>
-   </goal>
-  </transf>
-  </goal>
- </transf>
- <transf name="split_vc" proved="true" >
+ <goal name="resolve_conflict&#39;vc" expl="VC for resolve_conflict">
+ <transf name="split_vc" >
   <goal name="resolve_conflict&#39;vc.0" expl="precondition" proved="true">
   <proof prover="1"><result status="valid" time="0.21"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.1" expl="precondition" proved="true">
   <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="48"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.2" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.04"/></proof>
+  <proof prover="5"><result status="valid" time="0.03" steps="54"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.3" expl="loop invariant init" proved="true">
   <proof prover="1"><result status="valid" time="0.05"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.4" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.30"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="115"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.5" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.09"/></proof>
+  <proof prover="1"><result status="valid" time="0.12"/></proof>
+  <proof prover="5"><result status="valid" time="0.07" steps="80"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.6" expl="loop invariant init" proved="true">
   <proof prover="1"><result status="valid" time="0.09"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.7" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.48"/></proof>
+  <goal name="resolve_conflict&#39;vc.7" expl="assertion">
   </goal>
   <goal name="resolve_conflict&#39;vc.8" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.62"/></proof>
+  <proof prover="5"><result status="valid" time="0.62" steps="8165"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.9" expl="precondition" proved="true">
   <proof prover="1"><result status="valid" time="0.04"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.10" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="1.45"/></proof>
+  <proof prover="5"><result status="valid" time="0.59" steps="7534"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.11" expl="assertion" proved="true">
   <proof prover="1"><result status="valid" time="0.10"/></proof>
@@ -89,346 +56,462 @@
   <proof prover="1"><result status="valid" time="0.10"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.14" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.48"/></proof>
+  <proof prover="5"><result status="valid" time="0.34" steps="3744"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.15" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.19"/></proof>
+  <proof prover="4"><result status="valid" time="0.97" steps="150092"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.16" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.39"/></proof>
+  <goal name="resolve_conflict&#39;vc.16" expl="loop invariant init">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="189678"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.62"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="142512"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <transf name="split_vc" >
+   <goal name="resolve_conflict&#39;vc.16.0" expl="loop invariant init">
+   <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="174982"/></proof>
+   <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="151694"/></proof>
+   <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   </goal>
+  </transf>
   </goal>
   <goal name="resolve_conflict&#39;vc.17" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.31"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="resolve_conflict&#39;vc.17.0" expl="loop invariant init" proved="true">
+   <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="199387"/></proof>
+   <proof prover="3"><result status="valid" time="0.07" steps="379187"/></proof>
+   <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="153830"/></proof>
+   <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   </goal>
+   <goal name="resolve_conflict&#39;vc.17.1" expl="loop invariant init" proved="true">
+   <proof prover="3"><result status="valid" time="0.15" steps="329381"/></proof>
+   <proof prover="5"><result status="valid" time="0.04" steps="113"/></proof>
+   </goal>
+  </transf>
   </goal>
-  <goal name="resolve_conflict&#39;vc.18" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.11"/></proof>
+  <goal name="resolve_conflict&#39;vc.18" expl="loop invariant init" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="resolve_conflict&#39;vc.18.0" expl="loop invariant init" proved="true">
+   <proof prover="5"><result status="valid" time="0.05" steps="248"/></proof>
+   </goal>
+  </transf>
   </goal>
   <goal name="resolve_conflict&#39;vc.19" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.25"/></proof>
+  <proof prover="5"><result status="valid" time="0.03" steps="104"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.20" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.68"/></proof>
+  <proof prover="1"><result status="valid" time="0.11"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.21" expl="precondition" proved="true">
-  <proof prover="4"><result status="valid" time="0.27" steps="58793"/></proof>
+  <goal name="resolve_conflict&#39;vc.21" expl="assertion" proved="true">
+  <proof prover="1"><result status="valid" time="0.12"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.22" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.37"/></proof>
+  <goal name="resolve_conflict&#39;vc.22" expl="assertion">
   </goal>
-  <goal name="resolve_conflict&#39;vc.23" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <goal name="resolve_conflict&#39;vc.23" expl="assertion" proved="true">
+  <proof prover="4"><result status="valid" time="0.32" steps="63038"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.24" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.77"/></proof>
+  <goal name="resolve_conflict&#39;vc.24" expl="assertion">
   </goal>
   <goal name="resolve_conflict&#39;vc.25" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.21"/></proof>
+  <proof prover="4"><result status="valid" time="0.32" steps="63166"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.26" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <goal name="resolve_conflict&#39;vc.26" expl="assertion" proved="true">
+  <proof prover="4"><result status="valid" time="0.41" steps="73739"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.27" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.10"/></proof>
+  <goal name="resolve_conflict&#39;vc.27" expl="assertion" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="146169"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4"><result status="valid" time="1.11" steps="163046"/></proof>
+  <proof prover="5" obsolete="true"><result status="failure" time="0.00"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.28" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.33"/></proof>
+  <goal name="resolve_conflict&#39;vc.28" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.16" steps="1229"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.29" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.32"/></proof>
+  <goal name="resolve_conflict&#39;vc.29" expl="assertion">
   </goal>
-  <goal name="resolve_conflict&#39;vc.30" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.38"/></proof>
+  <goal name="resolve_conflict&#39;vc.30" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.05" steps="146"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.31" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.76"/></proof>
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="162460"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="125269"/></proof>
+  <proof prover="5"><result status="valid" time="0.20" steps="1642"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.32" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.77"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="251"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.33" expl="precondition" proved="true">
   <proof prover="1"><result status="valid" time="0.05"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.34" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.46"/></proof>
+  <proof prover="4"><result status="valid" time="0.36" steps="74709"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.35" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.55"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="297"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.36" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.56"/></proof>
+  <proof prover="5"><result status="valid" time="0.06" steps="164"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.37" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <goal name="resolve_conflict&#39;vc.37" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.04" steps="281"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.38" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <goal name="resolve_conflict&#39;vc.38" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.04" steps="167"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.39" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
-  </goal>
-  <goal name="resolve_conflict&#39;vc.40" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
-  </goal>
-  <goal name="resolve_conflict&#39;vc.41" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
-  </goal>
-  <goal name="resolve_conflict&#39;vc.42" expl="assertion" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="resolve_conflict&#39;vc.42.0" expl="assertion" proved="true">
+  <goal name="resolve_conflict&#39;vc.39" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.27" steps="3730"/></proof>
+  <transf name="inline_goal" proved="true" >
+   <goal name="resolve_conflict&#39;vc.39.0" expl="assertion" proved="true">
    <transf name="split_vc" proved="true" >
-    <goal name="resolve_conflict&#39;vc.42.0.0" expl="assertion" proved="true">
-    <proof prover="1"><result status="valid" time="0.09"/></proof>
+    <goal name="resolve_conflict&#39;vc.39.0.0" expl="assertion" proved="true">
+    <proof prover="5"><result status="valid" time="0.04" steps="168"/></proof>
     </goal>
-    <goal name="resolve_conflict&#39;vc.42.0.1" expl="assertion" proved="true">
-    <transf name="split_vc" proved="true" >
-     <goal name="resolve_conflict&#39;vc.42.0.1.0" expl="assertion" proved="true">
-     <transf name="split_vc" proved="true" >
-      <goal name="resolve_conflict&#39;vc.42.0.1.0.0" expl="assertion" proved="true">
-      <proof prover="1" timelimit="5" memlimit="2000"><result status="valid" time="0.07"/></proof>
-      </goal>
-      <goal name="resolve_conflict&#39;vc.42.0.1.0.1" expl="assertion" proved="true">
-      <proof prover="5"><result status="valid" time="0.05" steps="271"/></proof>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
+    <goal name="resolve_conflict&#39;vc.39.0.1" expl="assertion" proved="true">
+    <proof prover="5"><result status="valid" time="0.05" steps="285"/></proof>
+    </goal>
+    <goal name="resolve_conflict&#39;vc.39.0.2" expl="assertion" proved="true">
+    <proof prover="4"><result status="valid" time="0.38" steps="78447"/></proof>
+    <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
+    </goal>
+    <goal name="resolve_conflict&#39;vc.39.0.3" expl="assertion" proved="true">
+    <proof prover="5"><result status="valid" time="0.05" steps="287"/></proof>
+    </goal>
+    <goal name="resolve_conflict&#39;vc.39.0.4" expl="assertion" proved="true">
+    <proof prover="4"><result status="valid" time="0.46" steps="86452"/></proof>
+    <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
+    </goal>
+    <goal name="resolve_conflict&#39;vc.39.0.5" expl="assertion" proved="true">
+    <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="168798"/></proof>
+    <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+    <proof prover="4"><result status="valid" time="0.22" steps="50814"/></proof>
+    <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
     </goal>
    </transf>
    </goal>
-   <goal name="resolve_conflict&#39;vc.42.1" expl="assertion" proved="true">
-   <proof prover="1"><result status="valid" time="0.92"/></proof>
-   </goal>
   </transf>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.40" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.04"/></proof>
+  <proof prover="5"><result status="valid" time="0.04" steps="170"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.41" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.06" steps="287"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.42" expl="precondition" proved="true">
+  <proof prover="4"><result status="valid" time="0.46" steps="76448"/></proof>
+  <proof prover="5"><result status="valid" time="0.07" steps="290"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.43" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.04"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="289"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.44" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.12"/></proof>
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="190243"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="162880"/></proof>
+  <proof prover="5"><result status="valid" time="0.06" steps="176"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.45" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <goal name="resolve_conflict&#39;vc.45" expl="assertion" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="159052"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="142574"/></proof>
+  <proof prover="5"><result status="valid" time="0.11" steps="842"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.46" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.49"/></proof>
+  <proof prover="1"><result status="valid" time="0.21"/></proof>
+  <proof prover="5"><result status="valid" time="0.08" steps="324"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.47" expl="precondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="resolve_conflict&#39;vc.47.0" expl="precondition" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="resolve_conflict&#39;vc.47.0.0" expl="precondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.09"/></proof>
-    </goal>
-    <goal name="resolve_conflict&#39;vc.47.0.1" expl="precondition" proved="true">
-    <transf name="split_vc" proved="true" >
-     <goal name="resolve_conflict&#39;vc.47.0.1.0" expl="precondition" proved="true">
-     <transf name="split_vc" proved="true" >
-      <goal name="resolve_conflict&#39;vc.47.0.1.0.0" expl="precondition" proved="true">
-      <proof prover="1" timelimit="5" memlimit="2000"><result status="valid" time="0.07"/></proof>
-      </goal>
-      <goal name="resolve_conflict&#39;vc.47.0.1.0.1" expl="precondition" proved="true">
-      <proof prover="0"><result status="valid" time="0.44" steps="84237"/></proof>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="resolve_conflict&#39;vc.47.1" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.96"/></proof>
-   </goal>
-  </transf>
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.06" steps="192"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.48" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.04"/></proof>
+  <proof prover="1"><result status="valid" time="0.26"/></proof>
+  <proof prover="5"><result status="valid" time="0.08" steps="332"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.49" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <goal name="resolve_conflict&#39;vc.49" expl="precondition" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="154259"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.66"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="120427"/></proof>
+  <proof prover="5"><result status="valid" time="0.14" steps="1012"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.50" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.04"/></proof>
+  <goal name="resolve_conflict&#39;vc.50" expl="precondition" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="176322"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.64"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="131467"/></proof>
+  <proof prover="5"><result status="valid" time="0.13" steps="1017"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.51" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.72"/></proof>
+  <goal name="resolve_conflict&#39;vc.51" expl="precondition" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="150863"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.76"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="123568"/></proof>
+  <proof prover="5"><result status="valid" time="0.13" steps="1139"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.52" expl="loop invariant init" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="resolve_conflict&#39;vc.52.0" expl="loop invariant init" proved="true">
-   <proof prover="1"><result status="valid" time="0.39"/></proof>
-   </goal>
-   <goal name="resolve_conflict&#39;vc.52.1" expl="loop invariant init" proved="true">
-   <proof prover="1"><result status="valid" time="0.39"/></proof>
+  <goal name="resolve_conflict&#39;vc.52" expl="assertion" proved="true">
+  <transf name="inline_goal" proved="true" >
+   <goal name="resolve_conflict&#39;vc.52.0" expl="assertion" proved="true">
+   <proof prover="5"><result status="valid" time="0.88" steps="10436"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="resolve_conflict&#39;vc.53" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <goal name="resolve_conflict&#39;vc.53" expl="assertion">
   </goal>
-  <goal name="resolve_conflict&#39;vc.54" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.47"/></proof>
+  <goal name="resolve_conflict&#39;vc.54" expl="assertion" proved="true">
+  <proof prover="4"><result status="valid" time="0.42" steps="80468"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.55" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.06"/></proof>
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="165261"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="2.00"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="141068"/></proof>
+  <proof prover="5"><result status="valid" time="0.04" steps="140"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.56" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.58"/></proof>
+  <goal name="resolve_conflict&#39;vc.56" expl="assertion">
   </goal>
   <goal name="resolve_conflict&#39;vc.57" expl="assertion" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="resolve_conflict&#39;vc.57.0" expl="assertion" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="resolve_conflict&#39;vc.57.0.0" expl="assertion" proved="true">
-    <proof prover="1"><result status="valid" time="0.09"/></proof>
-    </goal>
-    <goal name="resolve_conflict&#39;vc.57.0.1" expl="assertion" proved="true">
-    <transf name="split_vc" proved="true" >
-     <goal name="resolve_conflict&#39;vc.57.0.1.0" expl="assertion" proved="true">
-     <transf name="split_vc" proved="true" >
-      <goal name="resolve_conflict&#39;vc.57.0.1.0.0" expl="assertion" proved="true">
-      <proof prover="1" timelimit="5" memlimit="2000"><result status="valid" time="0.08"/></proof>
-      </goal>
-      <goal name="resolve_conflict&#39;vc.57.0.1.0.1" expl="assertion" proved="true">
-      <proof prover="0"><result status="valid" time="0.46" steps="85792"/></proof>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="resolve_conflict&#39;vc.57.1" expl="assertion" proved="true">
-   <proof prover="1" timelimit="5"><result status="valid" time="1.63"/></proof>
-   </goal>
-  </transf>
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="181263"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="2.00"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="0.77"/></proof>
+  <proof prover="4"><result status="valid" time="0.40" steps="80727"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.58" expl="assertion" proved="true">
-  <proof prover="5"><result status="valid" time="0.18" steps="2242"/></proof>
+  <goal name="resolve_conflict&#39;vc.58" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.04" steps="150"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.59" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.25"/></proof>
+  <goal name="resolve_conflict&#39;vc.59" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="4"><result status="valid" time="0.21" steps="50886"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="151"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.60" expl="loop invariant preservation" proved="true">
-  <proof prover="5"><result status="valid" time="0.45" steps="4654"/></proof>
+  <goal name="resolve_conflict&#39;vc.60" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.04" steps="152"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.61" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.38"/></proof>
+  <goal name="resolve_conflict&#39;vc.61" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.10" steps="961"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.62" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.14"/></proof>
+  <goal name="resolve_conflict&#39;vc.62" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="162"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.63" expl="loop invariant preservation" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="resolve_conflict&#39;vc.63.0" expl="loop invariant preservation" proved="true">
-   <proof prover="1"><result status="valid" time="0.14"/></proof>
-   </goal>
-   <goal name="resolve_conflict&#39;vc.63.1" expl="loop invariant preservation" proved="true">
-   <proof prover="1"><result status="valid" time="0.14"/></proof>
-   </goal>
-  </transf>
+  <goal name="resolve_conflict&#39;vc.63" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="162"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.64" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.53"/></proof>
+  <goal name="resolve_conflict&#39;vc.64" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="168"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.65" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.06"/></proof>
+  <goal name="resolve_conflict&#39;vc.65" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.06" steps="297"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.66" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.55"/></proof>
+  <goal name="resolve_conflict&#39;vc.66" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.68"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="339"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.67" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.75"/></proof>
+  <goal name="resolve_conflict&#39;vc.67" expl="assertion">
   </goal>
-  <goal name="resolve_conflict&#39;vc.68" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.55"/></proof>
+  <goal name="resolve_conflict&#39;vc.68" expl="precondition" proved="true">
+  <proof prover="5"><result status="valid" time="0.05" steps="184"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.69" expl="loop invariant preservation" proved="true">
-  <proof prover="5"><result status="valid" time="0.14" steps="310"/></proof>
+  <goal name="resolve_conflict&#39;vc.69" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.12"/></proof>
+  <proof prover="5"><result status="valid" time="0.06" steps="312"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.70" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.92"/></proof>
+  <goal name="resolve_conflict&#39;vc.70" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="184"/></proof>
   </goal>
   <goal name="resolve_conflict&#39;vc.71" expl="precondition" proved="true">
-  <transf name="subst_all" proved="true" >
-   <goal name="resolve_conflict&#39;vc.71.0" expl="precondition" proved="true">
-   <proof prover="1" timelimit="5"><result status="valid" time="0.35"/></proof>
-   </goal>
-  </transf>
+  <proof prover="4"><result status="valid" time="0.46" steps="86639"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.72" expl="loop invariant preservation" proved="true">
+  <goal name="resolve_conflict&#39;vc.72" expl="precondition">
+  </goal>
+  <goal name="resolve_conflict&#39;vc.73" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.04"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="194"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.74" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="200"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.75" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.04"/></proof>
+  <proof prover="5"><result status="valid" time="0.07" steps="322"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.76" expl="loop invariant init" proved="true">
+  <proof prover="4"><result status="valid" time="0.48" steps="87946"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.77" expl="loop invariant init" proved="true">
+  <proof prover="3"><result status="valid" time="0.08" steps="571105"/></proof>
+  <proof prover="4"><result status="valid" time="0.83" steps="121173"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.78" expl="loop invariant init" proved="true">
+  <proof prover="5"><result status="valid" time="0.05" steps="204"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.79" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.65"/></proof>
+  <proof prover="5"><result status="valid" time="0.07" steps="354"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.80" expl="assertion" proved="true">
   <proof prover="1"><result status="valid" time="0.06"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="216"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.73" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.95"/></proof>
+  <goal name="resolve_conflict&#39;vc.81" expl="assertion" proved="true">
+  <proof prover="4"><result status="valid" time="0.47" steps="88127"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.74" expl="loop invariant preservation" proved="true">
+  <goal name="resolve_conflict&#39;vc.82" expl="assertion">
+  </goal>
+  <goal name="resolve_conflict&#39;vc.83" expl="assertion" proved="true">
+  <proof prover="5"><result status="valid" time="0.32" steps="3530"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.84" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.25"/></proof>
+  <proof prover="5"><result status="valid" time="0.07" steps="358"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.85" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.97" steps="12048"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.86" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.51"/></proof>
+  <proof prover="5"><result status="valid" time="0.34" steps="3946"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.87" expl="loop invariant preservation" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="140615"/></proof>
+  <proof prover="1"><result status="valid" time="0.13"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="123733"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.14"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.88" expl="loop invariant preservation">
+  </goal>
+  <goal name="resolve_conflict&#39;vc.89" expl="loop invariant preservation" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="156582"/></proof>
+  <proof prover="1"><result status="valid" time="0.15"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="127183"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.14"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.90" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.35" steps="4082"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.91" expl="loop invariant preservation" proved="true">
   <proof prover="1"><result status="valid" time="0.06"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="232"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.75" expl="integer overflow" proved="true">
+  <goal name="resolve_conflict&#39;vc.92" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.07" steps="377"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.93" expl="loop invariant preservation">
+  </goal>
+  <goal name="resolve_conflict&#39;vc.94" expl="loop invariant preservation">
+  </goal>
+  <goal name="resolve_conflict&#39;vc.95" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.08" steps="385"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.96" expl="loop invariant preservation" proved="true">
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.20"/></proof>
+  <proof prover="5"><result status="valid" time="0.19" steps="1440"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.97" expl="precondition">
+  </goal>
+  <goal name="resolve_conflict&#39;vc.98" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.06"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="182"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.99" expl="loop invariant preservation" proved="true">
+  <proof prover="4"><result status="valid" time="0.32" steps="77106"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  </goal>
+  <goal name="resolve_conflict&#39;vc.100" expl="loop invariant preservation">
+  </goal>
+  <goal name="resolve_conflict&#39;vc.101" expl="integer overflow" proved="true">
   <transf name="split_vc" proved="true" >
-   <goal name="resolve_conflict&#39;vc.75.0" expl="integer overflow" proved="true">
+   <goal name="resolve_conflict&#39;vc.101.0" expl="integer overflow" proved="true">
    <transf name="split_vc" proved="true" >
-    <goal name="resolve_conflict&#39;vc.75.0.0" expl="integer overflow" proved="true">
-    <proof prover="1"><result status="valid" time="0.06"/></proof>
+    <goal name="resolve_conflict&#39;vc.101.0.0" expl="integer overflow" proved="true">
+    <proof prover="5"><result status="valid" time="0.05" steps="227"/></proof>
     </goal>
-    <goal name="resolve_conflict&#39;vc.75.0.1" expl="integer overflow" proved="true">
+    <goal name="resolve_conflict&#39;vc.101.0.1" expl="integer overflow" proved="true">
     <proof prover="1"><result status="valid" time="0.10"/></proof>
+    <proof prover="5"><result status="valid" time="0.05" steps="230"/></proof>
     </goal>
    </transf>
    </goal>
-   <goal name="resolve_conflict&#39;vc.75.1" expl="integer overflow" proved="true">
-   <proof prover="1"><result status="valid" time="1.10"/></proof>
+   <goal name="resolve_conflict&#39;vc.101.1" expl="integer overflow" proved="true">
+   <proof prover="5"><result status="valid" time="0.11" steps="1009"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="resolve_conflict&#39;vc.76" expl="precondition" proved="true">
+  <goal name="resolve_conflict&#39;vc.102" expl="precondition" proved="true">
   <proof prover="1"><result status="valid" time="0.07"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="202"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.77" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.85"/></proof>
+  <goal name="resolve_conflict&#39;vc.103" expl="precondition" proved="true">
+  <proof prover="4"><result status="valid" time="0.46" steps="86538"/></proof>
+  <proof prover="5"><result status="valid" time="0.08" steps="476"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.78" expl="precondition" proved="true">
+  <goal name="resolve_conflict&#39;vc.104" expl="precondition" proved="true">
   <proof prover="1"><result status="valid" time="0.19"/></proof>
+  <proof prover="5"><result status="valid" time="0.09" steps="406"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.79" expl="precondition" proved="true">
+  <goal name="resolve_conflict&#39;vc.105" expl="precondition" proved="true">
   <proof prover="1"><result status="valid" time="0.06"/></proof>
+  <proof prover="5"><result status="valid" time="0.06" steps="222"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.80" expl="precondition" proved="true">
+  <goal name="resolve_conflict&#39;vc.106" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
-   <goal name="resolve_conflict&#39;vc.80.0" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.07"/></proof>
+   <goal name="resolve_conflict&#39;vc.106.0" expl="precondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.06" steps="184"/></proof>
    </goal>
-   <goal name="resolve_conflict&#39;vc.80.1" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.78"/></proof>
+   <goal name="resolve_conflict&#39;vc.106.1" expl="precondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.92" steps="10122"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="resolve_conflict&#39;vc.81" expl="integer overflow" proved="true">
-  <proof prover="1" timelimit="5"><result status="valid" time="1.90"/></proof>
+  <goal name="resolve_conflict&#39;vc.107" expl="integer overflow" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="140853"/></proof>
+  <proof prover="1" timelimit="5" obsolete="true"><result status="timeout" time="5.00"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="134165"/></proof>
+  <proof prover="5"><result status="valid" time="0.08" steps="560"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.82" expl="precondition" proved="true">
+  <goal name="resolve_conflict&#39;vc.108" expl="precondition" proved="true">
   <proof prover="1"><result status="valid" time="0.07"/></proof>
+  <proof prover="5"><result status="valid" time="0.05" steps="160"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.83" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.85"/></proof>
+  <goal name="resolve_conflict&#39;vc.109" expl="precondition" proved="true">
+  <proof prover="4"><result status="valid" time="0.41" steps="75190"/></proof>
+  <proof prover="5"><result status="valid" time="0.07" steps="343"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.84" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.04"/></proof>
+  <goal name="resolve_conflict&#39;vc.110" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.05"/></proof>
+  <proof prover="5"><result status="valid" time="0.03" steps="86"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.85" expl="loop invariant preservation" proved="true">
-  <proof prover="5"><result status="valid" time="0.07" steps="106"/></proof>
+  <goal name="resolve_conflict&#39;vc.111" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.04" steps="106"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.86" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.33"/></proof>
+  <goal name="resolve_conflict&#39;vc.112" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.11" steps="1039"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.87" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.10"/></proof>
+  <goal name="resolve_conflict&#39;vc.113" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.06" steps="397"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.88" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.35"/></proof>
+  <goal name="resolve_conflict&#39;vc.114" expl="loop invariant preservation" proved="true">
+  <proof prover="5"><result status="valid" time="0.30" steps="3410"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.89" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.62"/></proof>
+  <goal name="resolve_conflict&#39;vc.115" expl="postcondition" proved="true">
+  <proof prover="4"><result status="valid" time="0.59" steps="162792"/></proof>
+  <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
   </goal>
  </transf>
  </goal>
@@ -503,6 +586,10 @@
   <goal name="partial_cmp_refn.0">
   <transf name="split_vc" >
    <goal name="partial_cmp_refn.0.0">
+   <proof prover="0"><result status="unknown" time="0.03" steps="2966"/></proof>
+   <proof prover="3"><result status="timeout" time="1.00"/></proof>
+   <proof prover="4"><result status="timeout" time="1.00" steps="400597"/></proof>
+   <proof prover="5"><result status="timeout" time="1.00"/></proof>
    </goal>
   </transf>
   </goal>

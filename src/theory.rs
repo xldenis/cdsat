@@ -448,7 +448,7 @@ impl Trail {
     #[requires(level >= 0)]
     #[requires(self.restrict(level).contains(d))]
     #[ensures(self.restrict(level).find(d) == self.find(d))]
-    pub fn restrict_find(self, level : Int, d: (Term, Value))   {
+    pub fn restrict_find(self, level: Int, d: (Term, Value)) {
         match self {
             Trail::Empty => (),
             Trail::Assign(a, _, tl) => {
@@ -564,7 +564,7 @@ impl Trail {
     #[ensures(self.is_input(d) ==> self.restrict(level).is_input(d))]
     pub fn restrict_kind_unchanged(self, level: Int, d: (Term, Value)) {
         self.restrict_find(level, d);
-         match self {
+        match self {
             Trail::Empty => (),
             Trail::Assign(a, _, tl) => {
                 if a.to_pair() == d {
@@ -635,6 +635,14 @@ impl Trail {
                 }
             }
         }
+    }
+
+    #[logic]
+    #[requires(self.invariant_assign())]
+    #[requires(self.is_justified(a))]
+    #[ensures(a.1.is_bool())]
+    pub fn justified_is_bool(self, a : (Term, Value)) {
+
     }
 }
 
@@ -818,8 +826,8 @@ impl Conflict {
         // Just need to load this
         self.0.justification_contains(a);
         let _ = Model::resolve_sound;
-        self.1.contains(a) &&
-        pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.0.set_level(self.1)) }
+        self.1.contains(a)
+            && pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.0.set_level(self.1)) }
             && tgt == Conflict(self.0, self.1.remove(a).union(just))
     }
 
@@ -848,6 +856,40 @@ impl Conflict {
                     restricted.set_level(e),
                     Box::new(restricted),
                 )
+    }
+
+    #[predicate]
+    #[ensures(self.0.set_level(self.1.remove(l)) <= self.0.level_of(l))]
+    pub fn backjump2_pre(self, l: (Term, Value)) -> bool {
+        self.invariant() && self.sound() && self.1.contains(l) && (l.1.is_bool() && l.0.is_bool()) &&
+        self.0.level_of(l) > self.0.set_level(self.1.remove(l))
+    }
+
+    // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m, E⊢¬L, if level_Γ(L) > m, where m = level_Γ(E)
+    #[logic]
+    #[requires(self.invariant())]
+    #[requires(self.sound())]
+    #[requires(self.1.contains(l))]
+    #[requires(l.1.is_bool() && l.0.is_bool())]
+    #[requires(self.0.level_of(l) > self.0.set_level(self.1.remove(l)))]
+    #[ensures(result.0.invariant())]
+    #[ensures(result.sound())]
+    #[ensures(self.0.impls(result.0))]
+    #[ensures(self.0.acceptable(l.0, l.1))]
+    pub fn backjump2(self, l: (Term, Value)) -> Normal {
+        let e = self.1.remove(l);
+        let _ = Trail::restrict_sound;
+        let _ = Trail::trail_plausible;
+        let _ = Trail::restrict_idempotent;
+        let _ = Value::negate_involutive;
+        let _ = Conflict::learn_justified;
+        let restricted = self.0.restrict(self.0.set_level(e));
+
+        Normal(Trail::Assign(
+            Assign::Justified(e, l.0, l.1.negate()),
+            restricted.set_level(e),
+            Box::new(restricted),
+        ))
     }
 
     // #[logic]
