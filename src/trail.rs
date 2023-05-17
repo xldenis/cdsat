@@ -1,6 +1,6 @@
 use crate::theory::{self, Assign};
 use ::std::ops::Index;
-use creusot_contracts::{logic::*, vec, *};
+use creusot_contracts::{logic::*, vec, DeepModel, *};
 use creusot_contracts::{Clone, PartialEq};
 // use num_rational::BigRational;
 //
@@ -10,7 +10,7 @@ struct FSet<T>(T);
 // // Todo: Distinguish between boolean and fo assignments as an optim?
 // #[cfg_attr(not(creusot), derive(Hash))]
 #[cfg_attr(not(creusot), derive(Debug))]
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, DeepModel)]
 pub struct Assignment {
     // TODO: Make private
     pub term: Term,
@@ -23,35 +23,17 @@ pub struct Assignment {
 
 #[cfg(creusot)]
 impl creusot_contracts::ShallowModel for Assignment {
-    type ShallowModelTy = AssignmentModel;
+    type ShallowModelTy = <Self as DeepModel>::DeepModelTy;
 
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
-        pearlite! { AssignmentModel { term: self.term@, val: self.val@, reason: self.reason@, level: self.level@}}
+        self.deep_model()
     }
-}
-
-#[cfg(creusot)]
-impl creusot_contracts::DeepModel for Assignment {
-    type DeepModelTy = AssignmentModel;
-
-    #[logic]
-    fn deep_model(self) -> Self::DeepModelTy {
-        pearlite! { AssignmentModel { term: self.term@, val: self.val@, reason: self.reason@, level: self.level@}}
-    }
-}
-
-#[cfg(creusot)]
-pub struct AssignmentModel {
-    pub term: theory::Term,
-    pub val: theory::Value,
-    reason: ReasonModel,
-    level: Int,
 }
 
 // #[cfg_attr(not(creusot), derive(Hash))]
 #[cfg_attr(not(creusot), derive(Debug))]
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, DeepModel)]
 enum Reason {
     Justified(Vec<TrailIndex>),
     Decision,
@@ -59,42 +41,18 @@ enum Reason {
 }
 
 #[cfg(creusot)]
-enum ReasonModel {
-    Justified(Seq<TrailIndex>),
-    Decision,
-    Input,
-}
-
-#[cfg(creusot)]
 impl creusot_contracts::ShallowModel for Reason {
-    type ShallowModelTy = ReasonModel;
+    type ShallowModelTy = <Self as DeepModel>::DeepModelTy;
 
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
-        match self {
-            Reason::Justified(a1) => ReasonModel::Justified(a1.shallow_model()),
-            Reason::Decision => ReasonModel::Decision,
-            Reason::Input => ReasonModel::Input,
-        }
-    }
-}
-
-#[cfg(creusot)]
-impl creusot_contracts::DeepModel for Reason {
-    type DeepModelTy = ReasonModel;
-
-    #[logic]
-    fn deep_model(self) -> Self::DeepModelTy {
-        match self {
-            Reason::Justified(a1) => ReasonModel::Justified(a1.shallow_model()),
-            Reason::Decision => ReasonModel::Decision,
-            Reason::Input => ReasonModel::Input,
-        }
+        self.deep_model()
     }
 }
 
 #[cfg_attr(not(creusot), derive(Debug))]
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, DeepModel)]
+#[DeepModelTy = "theory::Sort"]
 pub enum Sort {
     Boolean,
     Rational,
@@ -106,23 +64,7 @@ impl creusot_contracts::ShallowModel for Sort {
 
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
-        match self {
-            Sort::Boolean => theory::Sort::Boolean,
-            Sort::Rational => theory::Sort::Rational,
-        }
-    }
-}
-
-#[cfg(creusot)]
-impl creusot_contracts::DeepModel for Sort {
-    type DeepModelTy = theory::Sort;
-
-    #[logic]
-    fn deep_model(self) -> Self::DeepModelTy {
-        match self {
-            Sort::Boolean => theory::Sort::Boolean,
-            Sort::Rational => theory::Sort::Rational,
-        }
+        self.deep_model()
     }
 }
 
@@ -146,25 +88,7 @@ impl creusot_contracts::ShallowModel for Term {
 
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
-        match self {
-            Term::Variable(v, s) => {
-                theory::Term::Variable(theory::Var(v.shallow_model(), s.shallow_model()))
-            }
-            Term::Value(v) => theory::Term::Value(v.shallow_model()),
-            Term::Plus(l, r) => theory::Term::Plus(
-                Box::new((*l).shallow_model()),
-                Box::new((*r).shallow_model()),
-            ),
-            Term::Eq(l, r) => theory::Term::Eq(
-                Box::new((*l).shallow_model()),
-                Box::new((*r).shallow_model()),
-            ),
-            Term::Conj(l, r) => theory::Term::Conj(
-                Box::new((*l).shallow_model()),
-                Box::new((*r).shallow_model()),
-            ),
-            _ => theory::Term::Value(theory::Value::Bool(true)),
-        }
+        self.deep_model()
     }
 }
 
@@ -176,20 +100,20 @@ impl creusot_contracts::DeepModel for Term {
     fn deep_model(self) -> Self::DeepModelTy {
         match self {
             Term::Variable(v, s) => {
-                theory::Term::Variable(theory::Var(v.shallow_model(), s.shallow_model()))
+                theory::Term::Variable(theory::Var(v.deep_model(), s.deep_model()))
             }
-            Term::Value(v) => theory::Term::Value(v.shallow_model()),
+            Term::Value(v) => theory::Term::Value(v.deep_model()),
             Term::Plus(l, r) => theory::Term::Plus(
-                Box::new((*l).shallow_model()),
-                Box::new((*r).shallow_model()),
+                Box::new((*l).deep_model()),
+                Box::new((*r).deep_model()),
             ),
             Term::Eq(l, r) => theory::Term::Eq(
-                Box::new((*l).shallow_model()),
-                Box::new((*r).shallow_model()),
+                Box::new((*l).deep_model()),
+                Box::new((*r).deep_model()),
             ),
             Term::Conj(l, r) => theory::Term::Conj(
-                Box::new((*l).shallow_model()),
-                Box::new((*r).shallow_model()),
+                Box::new((*l).deep_model()),
+                Box::new((*r).deep_model()),
             ),
             _ => theory::Term::Value(theory::Value::Bool(true)),
         }
@@ -198,7 +122,8 @@ impl creusot_contracts::DeepModel for Term {
 
 #[cfg_attr(not(creusot), derive(Debug))]
 #[cfg_attr(not(creusot), derive(Hash))]
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, DeepModel)]
+#[DeepModelTy = "theory::Value"]
 pub enum Value {
     Bool(bool),
     Rat(u64),
@@ -210,23 +135,7 @@ impl creusot_contracts::ShallowModel for Value {
 
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
-        match self {
-            Value::Bool(b) => theory::Value::Bool(b),
-            Value::Rat(r) => theory::Value::Rat(r.shallow_model()),
-        }
-    }
-}
-
-#[cfg(creusot)]
-impl creusot_contracts::DeepModel for Value {
-    type DeepModelTy = theory::Value;
-
-    #[logic]
-    fn deep_model(self) -> Self::DeepModelTy {
-        match self {
-            Value::Bool(b) => theory::Value::Bool(b),
-            Value::Rat(r) => theory::Value::Rat(r.shallow_model()),
-        }
+        self.deep_model()
     }
 }
 
@@ -258,7 +167,7 @@ impl Value {
 }
 
 #[cfg_attr(not(creusot), derive(Debug))]
-#[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
+#[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord, DeepModel)]
 pub struct TrailIndex(usize, pub usize);
 
 use ::std::cmp::Ordering;
@@ -469,7 +378,7 @@ impl Trail {
         &self,
         just: Seq<TrailIndex>,
     ) -> FSet<(theory::Term, theory::Value)> {
-        if just.len() > 0{
+        if just.len() > 0 {
             let set = self.abstract_justification(just.subsequence(1, just.len()));
             let ix = just[0];
             let a = self.index_logic(ix);
@@ -595,8 +504,7 @@ impl Trail {
     #[ensures(forall<i : _> 0 <= i && i < (result@).len() ==> (result@)[i].level_log() <= a.level_log())]
     pub(crate) fn justification(&self, a: TrailIndex) -> Vec<TrailIndex> {
         match &self[a].reason {
-            Reason::Justified(v) =>
-            {
+            Reason::Justified(v) => {
                 proof_assert!(self.ghost.justification_contains(self.index_logic(a)); true);
                 v.clone()
             }
@@ -621,10 +529,12 @@ impl Trail {
             level,
         };
 
-        let g : Ghost<theory::Assign> = ghost! { Assign::Justified(*just, term.shallow_model(), val.shallow_model()) };
+        let g: Ghost<theory::Assign> =
+            ghost! { Assign::Justified(*just, term.shallow_model(), val.shallow_model()) };
         proof_assert!(g.invariant());
         proof_assert!(g.justified_sound());
-        self.ghost = ghost! { theory::Trail::Assign(*g, level.shallow_model(), Box::new(*self.ghost)) };
+        self.ghost =
+            ghost! { theory::Trail::Assign(*g, level.shallow_model(), Box::new(*self.ghost)) };
         self.assignments[level].push(a);
     }
 

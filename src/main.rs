@@ -1,5 +1,5 @@
 #![cfg_attr(not(creusot), feature(stmt_expr_attributes, proc_macro_hygiene))]
-#![feature(map_first_last)]
+#![allow(dead_code, unused_variables)]
 pub mod concrete;
 pub mod trail;
 
