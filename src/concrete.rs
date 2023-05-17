@@ -42,9 +42,9 @@ impl Solver {
         // Invariant:
         // Every theory is coherent up to last_index with the trail
         // Invariant: trail is sound & has type invariants
-        #[invariant(tl_inv, trail.invariant())]
-        #[invariant(proph, ^trail == ^*old_trail)]
-        #[invariant(sound, old_trail.ghost.impls(*trail.ghost))]
+        #[invariant(trail.invariant())]
+        #[invariant(^trail == ^*old_trail)]
+        #[invariant(old_trail.ghost.impls(*trail.ghost))]
         loop {
             // Tracks if all theories are satisfied with the trail.
             let mut states;
@@ -54,9 +54,9 @@ impl Solver {
             // Invariant:
             // Every theory is coherent up to last_index with the trail
             // Invariant: trail is sound & has type invariants
-            #[invariant(tl_inv, trail.invariant())]
-            #[invariant(proph, ^trail == ^*old_trail)]
-            #[invariant(sound, old_trail.ghost.impls(*trail.ghost))]
+            #[invariant(trail.invariant())]
+            #[invariant(^trail == ^*old_trail)]
+            #[invariant(old_trail.ghost.impls(*trail.ghost))]
             loop {
                 // println!("{:?}", trail.len());
                 let trail_len = trail.len();
@@ -114,9 +114,9 @@ impl Solver {
         let mut heap: ConflictHeap = ConflictHeap::new();
         let mut abs_cflct: Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.shallow_model()))};
 
-        #[invariant(mem, forall<a : _> produced.contains(a) ==> (heap@).contains(a))]
-        #[invariant(mem, forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
-        #[invariant(mem2, forall<a :_> (heap@).contains(a) ==> produced.contains(a))]
+        #[invariant(forall<a : _> produced.contains(a) ==> (heap@).contains(a))]
+        #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
+        #[invariant(forall<a :_> (heap@).contains(a) ==> produced.contains(a))]
         for a in conflict {
             heap.insert(a);
         }
@@ -127,13 +127,13 @@ impl Solver {
         let conflict_level = max_ix.level();
         proof_assert!(exists<ix : _> (heap@).contains(ix) && ix.level_log() > 0);
         proof_assert!(0 < conflict_level@);
-        #[invariant(cflict, abs_cflct.0 == *trail.ghost)]
-        #[invariant(cflct_sound, abs_cflct.sound())]
-        #[invariant(cflict_inv, abs_cflct.invariant())]
-        #[invariant(level, forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
-        #[invariant(to_from_cflct, ix_to_abs(*trail, heap@) == abs_cflct.1)]
-        #[invariant(to_cflct, forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
-        #[invariant(from_cflct, forall< a : _> abs_cflct.1.contains(a) ==> exists<ix : _> trail.contains(ix) && (heap@).contains(ix) && trail.index_logic(ix) == a)]
+        #[invariant(abs_cflct.0 == *trail.ghost)]
+        #[invariant(abs_cflct.sound())]
+        #[invariant(abs_cflct.invariant())]
+        #[invariant(forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
+        #[invariant(ix_to_abs(*trail, heap@) == abs_cflct.1)]
+        #[invariant(forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
+        #[invariant(forall< a : _> abs_cflct.1.contains(a) ==> exists<ix : _> trail.contains(ix) && (heap@).contains(ix) && trail.index_logic(ix) == a)]
         while let Some(ix) = heap.pop_last() {
             proof_assert!(ix_to_abs_remove(*trail, ix, heap@); true);
             proof_assert!(!(heap@).contains(ix));
@@ -210,7 +210,7 @@ impl Solver {
 
             proof_assert!(trail.ghost.justified_is_bool(a.term_value()); true);
             proof_assert!(trail.ghost.is_justified(a.term_value()) && a.term_value().1.is_bool());
-            #[invariant(dummy, forall<i : _> 0 <= i && i < produced.len() ==> !trail.index_logic(*produced[i]).1.is_bool() ==>
+            #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> !trail.index_logic(*produced[i]).1.is_bool() ==>
                     abs_cflct.0.is_decision(trail.index_logic(*produced[i])) ==>
                     abs_cflct.0.level_of(trail.index_logic(*produced[i])) < abs_cflct.0.set_level(abs_cflct.1))]
             for jix in just.iter() {
@@ -238,10 +238,10 @@ impl Solver {
 
             let old_heap: Ghost<ConflictHeap> = ghost! { heap };
             // Resolve
-            #[invariant(level, forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
-            #[invariant(to_cflct, forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
-            #[invariant(adding, forall<ix : _> (old_heap@).contains(ix) ==> (heap@).contains(ix))]
-            #[invariant(seen, forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
+            #[invariant(forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
+            #[invariant(forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
+            #[invariant(forall<ix : _> (old_heap@).contains(ix) ==> (heap@).contains(ix))]
+            #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
             // Need invariant saying we only add things
             for a in just {
                 heap.insert(a);

@@ -638,11 +638,11 @@ impl Trail {
     pub(crate) fn restrict(&mut self, level: usize) {
         let old: Ghost<&mut Trail> = ghost! { self };
 
-        #[invariant(x, forall<i : _> 0 <= i && i <= self.level@ ==> (self.assignments@)[i] == (old.assignments)@[i])]
-        #[invariant(abs_rel2, self.invariant())]
-        #[invariant(proph_const, ^self == ^*old)]
-        #[invariant(restrict, *self.ghost == old.ghost.restrict(self.level@))]
-        #[invariant(l, self.level >= level)]
+        #[invariant(forall<i : _> 0 <= i && i <= self.level@ ==> (self.assignments@)[i] == (old.assignments)@[i])]
+        #[invariant(self.invariant())]
+        #[invariant(^self == ^*old)]
+        #[invariant(*self.ghost == old.ghost.restrict(self.level@))]
+        #[invariant(self.level >= level)]
         while level < self.level {
             self.assignments.pop();
             self.level -= 1;
@@ -670,8 +670,8 @@ impl Trail {
     #[ensures(self.ghost.set_level(self.abstract_justification(assignments@)) == result@)]
     pub(crate) fn max_level(&self, assignments: &[TrailIndex]) -> usize {
         let mut max = 0;
-        #[invariant(dummy, true)]
-        #[invariant(blah, self.ghost.set_level(self.abstract_justification(produced.to_owned())) == max@)]
+        #[invariant(true)]
+        #[invariant(self.ghost.set_level(self.abstract_justification(produced.to_owned())) == max@)]
         for ix in assignments {
             proof_assert!(self.abs_just_snoc(produced.to_owned(), *ix); true);
             proof_assert!(self.abstract_justification(assignments@).insert(self.index_logic(*ix)) == self.abstract_justification((assignments@).push(*ix)));
