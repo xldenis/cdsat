@@ -279,7 +279,41 @@
   <proof prover="2"><result status="valid" time="0.15" steps="51749"/></proof>
   <proof prover="3"><result status="valid" time="0.05" steps="405007"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.66" expl="assertion">
+  <goal name="resolve_conflict&#39;vc.66" expl="assertion" proved="true">
+  <transf name="assert" proved="true" arg1="(exists i. 0 &lt;= i &lt; length1 (inner produced_172) &amp;&amp; index_logic ( * trail_2) (get1 produced_172 i) = t)">
+   <goal name="resolve_conflict&#39;vc.66.0" expl="asserted formula" proved="true">
+   <transf name="instantiate" proved="true" arg1="abstract_justification_spec" arg2="( * trail_2),(shallow_model18 just_155)">
+    <goal name="resolve_conflict&#39;vc.66.0.0" expl="asserted formula" proved="true">
+    <transf name="destruct_rec" proved="true" arg1="Hinst">
+     <goal name="resolve_conflict&#39;vc.66.0.0.0" expl="destruct premise" proved="true">
+     <proof prover="5"><result status="valid" time="0.07" steps="342"/></proof>
+     </goal>
+     <goal name="resolve_conflict&#39;vc.66.0.0.1" expl="asserted formula" proved="true">
+     <transf name="instantiate" proved="true" arg1="Hinst2" arg2="t">
+      <goal name="resolve_conflict&#39;vc.66.0.0.1.0" expl="asserted formula" proved="true">
+      <transf name="destruct_rec" proved="true" arg1="Hinst">
+       <goal name="resolve_conflict&#39;vc.66.0.0.1.0.0" expl="destruct premise" proved="true">
+       <proof prover="5"><result status="valid" time="0.05" steps="192"/></proof>
+       </goal>
+       <goal name="resolve_conflict&#39;vc.66.0.0.1.0.1" expl="asserted formula" proved="true">
+       <transf name="unfold" proved="true" arg1="contains2" arg2="in" arg3="Hinst1">
+        <goal name="resolve_conflict&#39;vc.66.0.0.1.0.1.0" expl="asserted formula" proved="true">
+        <proof prover="5"><result status="valid" time="0.67" steps="7417"/></proof>
+        </goal>
+       </transf>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="resolve_conflict&#39;vc.66.1" expl="assertion" proved="true">
+   <proof prover="5"><result status="valid" time="0.07" steps="336"/></proof>
+   </goal>
+  </transf>
   </goal>
   <goal name="resolve_conflict&#39;vc.67" expl="precondition" proved="true">
   <proof prover="3"><result status="valid" time="0.02" steps="26379"/></proof>
@@ -557,18 +591,42 @@
   <goal name="resolve_conflict&#39;vc.107" expl="loop invariant preservation" proved="true">
   <proof prover="2"><result status="valid" time="0.33" steps="68482"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.108" expl="loop invariant preservation">
+  <goal name="resolve_conflict&#39;vc.108" expl="loop invariant preservation" proved="true">
   <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="158423"/></proof>
   <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
   <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <transf name="use_th" arg1="seq.FreeMonoid">
-   <goal name="resolve_conflict&#39;vc.108.0" expl="loop invariant preservation">
-   <transf name="case" arg1="(i = length1 (inner produced_172) - 1)
+  <transf name="use_th" proved="true" arg1="seq.FreeMonoid">
+   <goal name="resolve_conflict&#39;vc.108.0" expl="loop invariant preservation" proved="true">
+   <transf name="case" proved="true" arg1="(i = length1 (inner produced_172) - 1)
 ">
-    <goal name="resolve_conflict&#39;vc.108.0.0" expl="true case (loop invariant preservation)">
-    <proof prover="2" timelimit="5"><result status="timeout" time="5.00" steps="465964"/></proof>
-    <proof prover="3" timelimit="5"><result status="timeout" time="5.00"/></proof>
-    <proof prover="5"><result status="timeout" time="1.00"/></proof>
+    <goal name="resolve_conflict&#39;vc.108.0.0" expl="true case (loop invariant preservation)" proved="true">
+    <proof prover="2" timelimit="5" memlimit="2000"><result status="timeout" time="5.00" steps="460458"/></proof>
+    <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.00"/></proof>
+    <proof prover="5" timelimit="30" memlimit="4000"><undone/></proof>
+    <transf name="assert" proved="true" arg1="(is_decision (conflict_0 (inner abs_cflct_11)) (term_value j_185) /\
+  not is_bool1 (assignmentdeepmodel_val (shallow_model j_185)))">
+     <goal name="resolve_conflict&#39;vc.108.0.0.0" expl="asserted formula" proved="true">
+     <proof prover="2"><result status="timeout" time="1.00" steps="149826"/></proof>
+     <proof prover="3"><result status="valid" time="0.13" steps="614190"/></proof>
+     <proof prover="5"><result status="timeout" time="1.00"/></proof>
+     </goal>
+     <goal name="resolve_conflict&#39;vc.108.0.0.1" expl="true case (loop invariant preservation)" proved="true">
+     <proof prover="2"><result status="timeout" time="1.00" steps="151628"/></proof>
+     <proof prover="3"><result status="timeout" time="1.00"/></proof>
+     <proof prover="5"><result status="timeout" time="1.00"/></proof>
+     <transf name="assert" proved="true" arg1="( level_of (conflict_0 (inner abs_cflct_11))
+  (index_logic ( * trail_2) (get1 produced_172 i)) = level_log jix_184)">
+      <goal name="resolve_conflict&#39;vc.108.0.0.1.0" expl="asserted formula" proved="true">
+      <proof prover="2" timelimit="5" memlimit="2000"><result status="timeout" time="5.00" steps="461117"/></proof>
+      <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="1.16" steps="2525013"/></proof>
+      <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.00"/></proof>
+      </goal>
+      <goal name="resolve_conflict&#39;vc.108.0.0.1.1" expl="true case (loop invariant preservation)" proved="true">
+      <proof prover="5"><result status="valid" time="0.08" steps="385"/></proof>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
     </goal>
     <goal name="resolve_conflict&#39;vc.108.0.1" expl="false case (loop invariant preservation)" proved="true">
     <proof prover="3"><result status="valid" time="0.10" steps="536323"/></proof>
