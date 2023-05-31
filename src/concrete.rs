@@ -130,15 +130,18 @@ impl Solver {
         #[invariant(abs_cflct.0 == *trail.ghost)]
         #[invariant(abs_cflct.sound())]
         #[invariant(abs_cflct.invariant())]
+        #[invariant(abs_cflct.level() == conflict_level@)]
         #[invariant(forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
-        // #[invariant(ix_to_abs(*trail, heap@) == abs_cflct.1)]
+        #[invariant(ix_to_abs(*trail, heap@) == abs_cflct.1)]
         #[invariant(forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
-        #[invariant(forall< a : _> abs_cflct.1.contains(a) ==> exists<ix : _> trail.contains(ix) && (heap@).contains(ix) && trail.index_logic(ix) == a)]
+        #[invariant(forall< a : _> abs_cflct.1.contains(a) ==>
+            exists<ix : _> trail.contains(ix) && (heap@).contains(ix) && trail.index_logic(ix) == a
+        )]
         while let Some(ix) = heap.pop_last() {
-            // proof_assert!(ix_to_abs_remove(*trail, ix, heap@); true);
+            proof_assert!(ix.level_log() == abs_cflct.level());
+            proof_assert!(ix_to_abs_remove(*trail, ix, heap@); true);
             proof_assert!(!(heap@).contains(ix));
             // proof_assert!(ix_to_abs_remove(abs_cflct.0, ))
-            proof_assert!(ix.level_log() <= max_ix.level_log());
             let rem_level = match heap.last() {
                 Some(ix2) => {
                     proof_assert!(ix2.level_log() <= ix.level_log());
@@ -147,9 +150,12 @@ impl Solver {
                 None => 0,
             };
 
-            // proof_assert!(ix_to_abs(*trail, heap@).ext_eq(abs_cflct.1.remove(trail.index_logic(ix))));
-
+            proof_assert!(ix_to_abs(*trail, heap@).ext_eq(abs_cflct.1.remove(trail.index_logic(ix))));
+            // proof_assert!(set_max(heap@).level_log() == rem_level@);
+            proof_assert!(abs_cflct.0.set_level(abs_cflct.1) == ix.level_log());
             // TODO: Show this to be true because the rem_level is the second highest level. (Spec of peek)
+            proof_assert!({ix_to_abs_level(*trail, heap@); true});
+            // proof_assert!(abs_cflct.0.set_level(ix_to_abs(*trail, heap@)) == set_max(heap@).level_log());
             proof_assert!(abs_cflct.0.set_level(abs_cflct.1.remove(trail.index_logic(ix))) == rem_level@);
 
             let a = trail[ix].clone();
@@ -311,16 +317,47 @@ fn ix_to_abs(t: Trail, s: FSet<TrailIndex>) -> FSet<(theory::Term, theory::Value
 }
 
 #[logic]
+#[requires(!s.is_empty())]
 #[variant(s.len())]
+#[ensures(s.contains(result))]
+#[ensures(forall<o : _> s.contains(o) ==> o <= result )]
+fn set_max(s: FSet<TrailIndex>) -> TrailIndex {
+    let x = s.peek();
+    let s = s.remove(x);
+
+    if s.is_empty() {
+        x
+    } else {
+        let rec = set_max(s);
+        if x >= rec {
+            x
+        } else {
+            rec
+        }
+    }
+}
+
+#[logic]
+#[requires(t.invariant())]
+#[variant(s.len())]
+#[requires(forall<i :_> s.contains(i) ==> t.contains(i))]
+#[ensures(!s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == set_max(s).level_log())]
+#[ensures(s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == 0)]
+fn ix_to_abs_level(
+    t: Trail,
+    s: FSet<TrailIndex>,
+)  {
+    ()
+}
+
+#[logic]
+#[variant(s.len())]
+#[requires(t.invariant())]
 #[requires(t.contains(x))]
+#[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
 #[ensures(ix_to_abs(t, s.remove(x)) == ix_to_abs(t, s).remove(t.index_logic(x)))]
 fn ix_to_abs_remove(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
-    if s == FSet::EMPTY {
-        ()
-    } else {
-        let a = s.peek();
-        ix_to_abs_remove(t, x, s.remove(a))
-    }
+   ()
 }
 
 // #[derive(Debug, PartialEq, Eq)]
