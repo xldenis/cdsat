@@ -167,7 +167,7 @@ impl Value {
 }
 
 #[cfg_attr(not(creusot), derive(Debug))]
-#[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord, DeepModel)]
+#[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
 pub struct TrailIndex(usize, pub usize);
 
 use ::std::cmp::Ordering;

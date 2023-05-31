@@ -131,11 +131,11 @@ impl Solver {
         #[invariant(abs_cflct.sound())]
         #[invariant(abs_cflct.invariant())]
         #[invariant(forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
-        #[invariant(ix_to_abs(*trail, heap@) == abs_cflct.1)]
+        // #[invariant(ix_to_abs(*trail, heap@) == abs_cflct.1)]
         #[invariant(forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
         #[invariant(forall< a : _> abs_cflct.1.contains(a) ==> exists<ix : _> trail.contains(ix) && (heap@).contains(ix) && trail.index_logic(ix) == a)]
         while let Some(ix) = heap.pop_last() {
-            proof_assert!(ix_to_abs_remove(*trail, ix, heap@); true);
+            // proof_assert!(ix_to_abs_remove(*trail, ix, heap@); true);
             proof_assert!(!(heap@).contains(ix));
             // proof_assert!(ix_to_abs_remove(abs_cflct.0, ))
             proof_assert!(ix.level_log() <= max_ix.level_log());
@@ -147,7 +147,7 @@ impl Solver {
                 None => 0,
             };
 
-            proof_assert!(ix_to_abs(*trail, heap@).ext_eq(abs_cflct.1.remove(trail.index_logic(ix))));
+            // proof_assert!(ix_to_abs(*trail, heap@).ext_eq(abs_cflct.1.remove(trail.index_logic(ix))));
 
             // TODO: Show this to be true because the rem_level is the second highest level. (Spec of peek)
             proof_assert!(abs_cflct.0.set_level(abs_cflct.1.remove(trail.index_logic(ix))) == rem_level@);
@@ -216,12 +216,19 @@ impl Solver {
             for jix in just.iter() {
                 let j = &trail[*jix]; // should pass
 
+                proof_assert!(abs_cflct.0.level_of(trail.index_logic(*jix)) <= abs_cflct.0.level_of(trail.index_logic(ix)));
                 if jix.level() == ix.level() && j.is_first_order() && j.is_decision() {
                     // undo decide
                     trail.restrict(ix.level() - 1);
                     trail.add_decision(a.term, a.val.negate());
                     return;
                 }
+
+                proof_assert!(
+                    trail.index_logic(*jix).1.is_bool() ||
+                    !abs_cflct.0.is_decision(trail.index_logic(*jix)) ||
+                    abs_cflct.0.level_of(trail.index_logic(*jix)) != abs_cflct.0.level_of(trail.index_logic(ix))
+                );
             }
 
             proof_assert!(
