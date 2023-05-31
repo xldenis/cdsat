@@ -418,6 +418,15 @@ impl Trail {
 
     #[logic]
     #[requires(self.invariant())]
+    #[requires(self.is_input(d))]
+    #[ensures(self.level_of(d) == 0)]
+    pub fn is_input_inv(self, d : (Term, Value)) {
+        ()
+    }
+
+
+    #[logic]
+    #[requires(self.invariant())]
     #[ensures(result.invariant())]
     #[requires(level >= 0)]
     #[ensures(forall<a : _> self.contains(a) ==> self.level_of(a) <= level ==> result.contains(a) && result.level_of(a) == self.level_of(a))]
@@ -803,7 +812,7 @@ impl Conflict {
     #[requires(self.sound())]
     #[requires(self.0.is_justified(a))]
     #[requires(self.1.contains(a))]
-    #[requires(forall<j : _> self.0.justification(a).contains(j) && !j.1.is_bool() ==> self.0.level_of(j) < self.0.set_level(self.1))]
+    #[requires(forall<j : _> self.0.justification(a).contains(j) ==> !j.1.is_bool() ==> self.0.is_decision(j) ==> self.0.level_of(j) < self.0.set_level(self.1))]
     #[ensures(result.invariant())]
     #[ensures(result.sound())]
     pub fn resolvef(self, a: (Term, Value)) -> Self {
@@ -827,7 +836,7 @@ impl Conflict {
         self.0.justification_contains(a);
         let _ = Model::resolve_sound;
         self.1.contains(a)
-            && pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() ==> self.0.level_of(a) < self.0.set_level(self.1)) }
+            && pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() && self.0.is_decision(a) ==> self.0.level_of(a) < self.0.set_level(self.1)) }
             && tgt == Conflict(self.0, self.1.remove(a).union(just))
     }
 

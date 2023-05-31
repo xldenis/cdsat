@@ -16,7 +16,8 @@ pub struct Assignment {
     pub term: Term,
     // TODO: Make private
     pub val: Value,
-    reason: Reason,
+    // TODO: Make private
+    pub reason: Reason,
     // TODO: Make private
     pub level: usize,
 }
@@ -34,7 +35,7 @@ impl creusot_contracts::ShallowModel for Assignment {
 // #[cfg_attr(not(creusot), derive(Hash))]
 #[cfg_attr(not(creusot), derive(Debug))]
 #[derive(Clone, PartialEq, Eq, DeepModel)]
-enum Reason {
+pub enum Reason {
     Justified(Vec<TrailIndex>),
     Decision,
     Input,

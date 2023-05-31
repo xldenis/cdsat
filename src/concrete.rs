@@ -168,14 +168,14 @@ impl Solver {
                 proof_assert!(rem_level@ < ix.level_log());
                 proof_assert!(abs_cflct.0.set_level(abs_cflct.1.remove(a.term_value())) == rem_level@);
                 proof_assert!(abs_cflct.0.set_level(abs_cflct.1) == ix.level_log());
-                proof_assert!(abs_cflct.0.set_level(abs_cflct.1.remove(a.term_value())) < ix.level_log());
+                proof_assert!(
+                    abs_cflct.0.set_level(abs_cflct.1.remove(a.term_value())) < ix.level_log()
+                );
                 proof_assert! { abs_cflct.backjump2_pre(a.term_value()) };
-                let n : Ghost<theory::Normal> = ghost! { abs_cflct.backjump2(a.term_value()) };
+                let n: Ghost<theory::Normal> = ghost! { abs_cflct.backjump2(a.term_value()) };
                 proof_assert!(abs_cflct.0.acceptable(a.term_value().0, a.term_value().1));
 
-
                 trail.add_justified(just, a.term, a.val.negate());
-
 
                 return;
             }
@@ -203,20 +203,26 @@ impl Solver {
             proof_assert!(!trail.ghost.is_decision(a.term_value()));
             // Trivial: Trail has non-zero level so by invariant we can't be input.
             //  Proof is blocked due to properties of `find`.
-            proof_assert!(!trail.ghost.is_input(a.term_value()));
-             proof_assert!(trail.ghost.is_justified(a.term_value()));
+            proof_assert!({
+                trail.ghost.is_input_inv(a.term_value());
+                !trail.ghost.is_input(a.term_value())
+            });
+            proof_assert!(trail.ghost.is_justified(a.term_value()));
             // proof_assert!()
             let just = trail.justification(ix);
 
             proof_assert!(trail.ghost.justified_is_bool(a.term_value()); true);
             proof_assert!(trail.ghost.is_justified(a.term_value()) && a.term_value().1.is_bool());
+
+            proof_assert!(forall<i : _> 0 <= i && i < just@.len() ==> trail.contains(just@[i]));
             #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> !trail.index_logic(*produced[i]).1.is_bool() ==>
                     abs_cflct.0.is_decision(trail.index_logic(*produced[i])) ==>
                     abs_cflct.0.level_of(trail.index_logic(*produced[i])) < abs_cflct.0.set_level(abs_cflct.1))]
             for jix in just.iter() {
                 let j = &trail[*jix]; // should pass
 
-                proof_assert!(abs_cflct.0.level_of(trail.index_logic(*jix)) <= abs_cflct.0.level_of(trail.index_logic(ix)));
+                proof_assert!(jix.level_log() <= ix.level_log());
+                // proof_assert!(abs_cflct.0.level_of(trail.index_logic(*jix)) <= abs_cflct.0.level_of(trail.index_logic(ix)));
                 if jix.level() == ix.level() && j.is_first_order() && j.is_decision() {
                     // undo decide
                     trail.restrict(ix.level() - 1);
@@ -224,11 +230,22 @@ impl Solver {
                     return;
                 }
 
-                proof_assert!(
-                    trail.index_logic(*jix).1.is_bool() ||
-                    !abs_cflct.0.is_decision(trail.index_logic(*jix)) ||
-                    abs_cflct.0.level_of(trail.index_logic(*jix)) != abs_cflct.0.level_of(trail.index_logic(ix))
-                );
+                proof_assert!(j.reason == Reason::Decision ==> trail.ghost.is_decision(trail.index_logic(*jix)));
+                proof_assert!(j.reason == Reason::Input ==> trail.ghost.is_input(trail.index_logic(*jix)));
+                proof_assert!((exists<v:_> j.reason == Reason::Justified(v)) ==> trail.ghost.is_justified(trail.index_logic(*jix)));
+
+                proof_assert!(!(
+                    jix.level_log() == ix.level_log() &&
+                    !j.val@.is_bool() &&
+                    abs_cflct.0.is_decision(j.term_value())
+                ));
+                proof_assert!((abs_cflct.0.is_decision(j.term_value()) && !j@.val.is_bool()) ==> jix.level_log() < ix.level_log());
+
+                // proof_assert!(
+                //     trail.index_logic(*jix).1.is_bool() ||
+                //     !abs_cflct.0.is_decision(trail.index_logic(*jix)) ||
+                //     abs_cflct.0.level_of(trail.index_logic(*jix)) != abs_cflct.0.level_of(trail.index_logic(ix))
+                // );
             }
 
             proof_assert!(
@@ -244,6 +261,13 @@ impl Solver {
             abs_cflct = ghost! { abs_cflct.resolvef(a.term_value()) };
 
             let old_heap: Ghost<ConflictHeap> = ghost! { heap };
+
+            proof_assert!(ix.level_log() <= conflict_level@);
+
+            proof_assert!(
+                forall<i : _ > 0 <= i && i < just@.len() ==> abs_cflct.1.contains(trail.index_logic(just@[i]))
+            );
+
             // Resolve
             #[invariant(forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
             #[invariant(forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
@@ -251,6 +275,8 @@ impl Solver {
             #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
             // Need invariant saying we only add things
             for a in just {
+                proof_assert!(a.level_log() <= ix.level_log());
+                proof_assert!(abs_cflct.1.contains(trail.index_logic(a)));
                 heap.insert(a);
             }
 
@@ -260,7 +286,11 @@ impl Solver {
             // Key missing property
             //
             // The reasoning should be that if
-            proof_assert!(let just = old_c.0.justification(a.term_value()); forall<a : (theory::Term, theory::Value)> just.contains(a) && !a.1.is_bool() ==> old_c.0.level_of(a) < old_c.0.set_level(old_c.1));
+            proof_assert!(let just = old_c.0.justification(a.term_value());
+                forall<a : (theory::Term, theory::Value)> just.contains(a) && !a.1.is_bool() ==>
+                old_c.0.is_decision(a) ==>
+                old_c.0.level_of(a) < old_c.0.set_level(old_c.1)
+            );
 
             proof_assert!((*old_c).resolve(a.term_value(), *abs_cflct));
         }
@@ -284,8 +314,8 @@ fn ix_to_abs(t: Trail, s: FSet<TrailIndex>) -> FSet<(theory::Term, theory::Value
 #[variant(s.len())]
 #[requires(t.contains(x))]
 #[ensures(ix_to_abs(t, s.remove(x)) == ix_to_abs(t, s).remove(t.index_logic(x)))]
-fn ix_to_abs_remove(t: Trail, x: TrailIndex, s :  FSet<TrailIndex>) {
-     if s == FSet::EMPTY {
+fn ix_to_abs_remove(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
+    if s == FSet::EMPTY {
         ()
     } else {
         let a = s.peek();
