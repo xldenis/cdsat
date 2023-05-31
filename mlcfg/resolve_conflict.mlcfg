@@ -9179,139 +9179,140 @@ module Cdsat_Concrete_Impl0_ResolveConflict
   var _85 : ();
   var _87 : ();
   var _89 : ();
-  var _90 : bool;
-  var _91 : bool;
-  var _92 : Cdsat_Trail_Assignment_Type.t_assignment;
+  var _91 : ();
+  var _92 : bool;
   var _93 : bool;
-  var _94 : usize;
-  var _95 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
+  var _94 : Cdsat_Trail_Assignment_Type.t_assignment;
+  var _95 : bool;
   var _96 : usize;
-  var _97 : ();
-  var _98 : ();
+  var _97 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
+  var _98 : usize;
+  var _99 : ();
   var _100 : ();
   var _102 : ();
   var _104 : ();
-  var _105 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
-  var _106 : usize;
-  var just_107 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
-  var _108 : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap;
-  var _109 : ();
+  var _106 : ();
+  var _107 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
+  var _108 : usize;
+  var just_109 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
+  var _110 : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap;
   var _111 : ();
   var _113 : ();
   var _115 : ();
   var _117 : ();
-  var n_119 : Ghost.ghost_ty (Cdsat_Theory_Normal_Type.t_normal);
-  var _121 : ();
+  var _119 : ();
+  var n_121 : Ghost.ghost_ty (Cdsat_Theory_Normal_Type.t_normal);
   var _123 : ();
-  var _124 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
-  var _125 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
-  var _126 : Cdsat_Trail_Term_Type.t_term;
-  var _127 : Cdsat_Trail_Value_Type.t_value;
-  var _128 : Cdsat_Trail_Value_Type.t_value;
-  var _129 : ();
-  var _130 : bool;
-  var _131 : bool;
-  var _132 : Cdsat_Trail_Assignment_Type.t_assignment;
+  var _125 : ();
+  var _126 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
+  var _127 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
+  var _128 : Cdsat_Trail_Term_Type.t_term;
+  var _129 : Cdsat_Trail_Value_Type.t_value;
+  var _130 : Cdsat_Trail_Value_Type.t_value;
+  var _131 : ();
+  var _132 : bool;
   var _133 : bool;
   var _134 : Cdsat_Trail_Assignment_Type.t_assignment;
-  var _135 : ();
-  var _136 : ();
-  var _137 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
-  var _138 : usize;
-  var _139 : usize;
-  var _140 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var _141 : ();
+  var _135 : bool;
+  var _136 : Cdsat_Trail_Assignment_Type.t_assignment;
+  var _137 : ();
+  var _138 : ();
+  var _139 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
+  var _140 : usize;
+  var _141 : usize;
+  var _142 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
   var _143 : ();
   var _145 : ();
   var _147 : ();
   var _149 : ();
   var _151 : ();
-  var just_153 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
-  var _154 : Cdsat_Trail_Trail_Type.t_trail;
-  var _155 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var _156 : ();
+  var _153 : ();
+  var just_155 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
+  var _156 : Cdsat_Trail_Trail_Type.t_trail;
+  var _157 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
   var _158 : ();
   var _160 : ();
   var _162 : ();
-  var iter_163 : Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex);
-  var _164 : Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex);
-  var _165 : slice (Cdsat_Trail_TrailIndex_Type.t_trailindex);
-  var _166 : slice (Cdsat_Trail_TrailIndex_Type.t_trailindex);
-  var _167 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
-  var iter_old_168 : Ghost.ghost_ty (Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex));
-  var produced_170 : Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
-  var _175 : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex);
-  var _176 : borrowed (Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex));
-  var _177 : borrowed (Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex));
-  var _178 : isize;
-  var __creusot_proc_iter_elem_179 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var _180 : Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
-  var jix_182 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var j_183 : Cdsat_Trail_Assignment_Type.t_assignment;
-  var _184 : Cdsat_Trail_Assignment_Type.t_assignment;
-  var _185 : Cdsat_Trail_Trail_Type.t_trail;
-  var _186 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var _187 : ();
+  var _164 : ();
+  var iter_165 : Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex);
+  var _166 : Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex);
+  var _167 : slice (Cdsat_Trail_TrailIndex_Type.t_trailindex);
+  var _168 : slice (Cdsat_Trail_TrailIndex_Type.t_trailindex);
+  var _169 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
+  var iter_old_170 : Ghost.ghost_ty (Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex));
+  var produced_172 : Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
+  var _177 : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex);
+  var _178 : borrowed (Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex));
+  var _179 : borrowed (Core_Slice_Iter_Iter_Type.t_iter (Cdsat_Trail_TrailIndex_Type.t_trailindex));
+  var _180 : isize;
+  var __creusot_proc_iter_elem_181 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
+  var _182 : Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
+  var jix_184 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
+  var j_185 : Cdsat_Trail_Assignment_Type.t_assignment;
+  var _186 : Cdsat_Trail_Assignment_Type.t_assignment;
+  var _187 : Cdsat_Trail_Trail_Type.t_trail;
+  var _188 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
   var _189 : ();
-  var _190 : bool;
-  var _191 : bool;
+  var _191 : ();
   var _192 : bool;
-  var _193 : usize;
-  var _194 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
+  var _193 : bool;
+  var _194 : bool;
   var _195 : usize;
   var _196 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var _197 : bool;
-  var _198 : Cdsat_Trail_Assignment_Type.t_assignment;
+  var _197 : usize;
+  var _198 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
   var _199 : bool;
   var _200 : Cdsat_Trail_Assignment_Type.t_assignment;
-  var _201 : ();
-  var _202 : ();
-  var _203 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
-  var _204 : usize;
-  var _205 : usize;
-  var _206 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var _207 : ();
-  var _208 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
-  var _209 : Cdsat_Trail_Term_Type.t_term;
-  var _210 : Cdsat_Trail_Value_Type.t_value;
-  var _211 : Cdsat_Trail_Value_Type.t_value;
-  var _212 : ();
+  var _201 : bool;
+  var _202 : Cdsat_Trail_Assignment_Type.t_assignment;
+  var _203 : ();
+  var _204 : ();
+  var _205 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
+  var _206 : usize;
+  var _207 : usize;
+  var _208 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
+  var _209 : ();
+  var _210 : borrowed (Cdsat_Trail_Trail_Type.t_trail);
+  var _211 : Cdsat_Trail_Term_Type.t_term;
+  var _212 : Cdsat_Trail_Value_Type.t_value;
+  var _213 : Cdsat_Trail_Value_Type.t_value;
   var _214 : ();
   var _216 : ();
   var _218 : ();
   var _220 : ();
   var _222 : ();
-  var _223 : ();
-  var old_c_225 : Ghost.ghost_ty (Cdsat_Theory_Conflict_Type.t_conflict);
-  var _227 : Ghost.ghost_ty (Cdsat_Theory_Conflict_Type.t_conflict);
-  var old_heap_229 : Ghost.ghost_ty (Cdsat_Concrete_ConflictHeap_Type.t_conflictheap);
-  var _231 : ();
+  var _224 : ();
+  var _225 : ();
+  var old_c_227 : Ghost.ghost_ty (Cdsat_Theory_Conflict_Type.t_conflict);
+  var _229 : Ghost.ghost_ty (Cdsat_Theory_Conflict_Type.t_conflict);
+  var old_heap_231 : Ghost.ghost_ty (Cdsat_Concrete_ConflictHeap_Type.t_conflictheap);
   var _233 : ();
   var _235 : ();
-  var iter_236 : Alloc_Vec_IntoIter_IntoIter_Type.t_intoiter (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
-  var _237 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
-  var iter_old_238 : Ghost.ghost_ty (Alloc_Vec_IntoIter_IntoIter_Type.t_intoiter (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global));
-  var produced_240 : Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
-  var _248 : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex);
-  var _249 : borrowed (Alloc_Vec_IntoIter_IntoIter_Type.t_intoiter (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global));
-  var _250 : borrowed (Alloc_Vec_IntoIter_IntoIter_Type.t_intoiter (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global));
-  var _251 : isize;
-  var __creusot_proc_iter_elem_252 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var _253 : Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
-  var a_255 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var _256 : ();
+  var _237 : ();
+  var iter_238 : Alloc_Vec_IntoIter_IntoIter_Type.t_intoiter (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
+  var _239 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
+  var iter_old_240 : Ghost.ghost_ty (Alloc_Vec_IntoIter_IntoIter_Type.t_intoiter (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global));
+  var produced_242 : Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
+  var _250 : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex);
+  var _251 : borrowed (Alloc_Vec_IntoIter_IntoIter_Type.t_intoiter (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global));
+  var _252 : borrowed (Alloc_Vec_IntoIter_IntoIter_Type.t_intoiter (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global));
+  var _253 : isize;
+  var __creusot_proc_iter_elem_254 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
+  var _255 : Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
+  var a_257 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
   var _258 : ();
-  var _260 : bool;
-  var _261 : borrowed (Cdsat_Concrete_ConflictHeap_Type.t_conflictheap);
-  var _262 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
-  var _263 : ();
-  var _264 : ();
+  var _260 : ();
+  var _262 : bool;
+  var _263 : borrowed (Cdsat_Concrete_ConflictHeap_Type.t_conflictheap);
+  var _264 : Cdsat_Trail_TrailIndex_Type.t_trailindex;
+  var _265 : ();
   var _266 : ();
   var _268 : ();
   var _270 : ();
   var _272 : ();
-  var _273 : ();
   var _274 : ();
+  var _275 : ();
+  var _276 : ();
   {
     self_1 <- self;
     trail_2 <- trail;
@@ -9548,86 +9549,88 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     _85 <- ();
     assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 159 26 159 61] LevelLog0.level_log ix_61 = Level1.level (Ghost.inner abs_cflct_11) };
     _87 <- ();
-    _92 <- a_76;
-    _91 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 162 15 162 26] IsBool0.is_bool _92);
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 160 12 160 98] IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (TermValue0.term_value a_76) -> LevelLog0.level_log ix_61 > UIntSize.to_int rem_level_66 };
+    _89 <- ();
+    _94 <- a_76;
+    _93 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 162 15 162 26] IsBool0.is_bool _94);
     goto BB50
   }
   BB47 {
-    _90 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 162 15 162 52] false);
+    _92 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 162 15 162 52] false);
     goto BB49
   }
   BB48 {
-    _95 <- ix_61;
-    _94 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 162 30 162 40] Level0.level _95);
+    _97 <- ix_61;
+    _96 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 162 30 162 40] Level0.level _97);
     goto BB51
   }
   BB49 {
-    switch (_90)
+    switch (_92)
       | False -> goto BB58
       | True -> goto BB52
       end
   }
   BB50 {
-    switch (_91)
+    switch (_93)
       | False -> goto BB47
       | True -> goto BB48
       end
   }
   BB51 {
-    _96 <- rem_level_66;
-    _93 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 162 30 162 52] _94 > _96);
-    _90 <- _93;
-    _93 <- any bool;
+    _98 <- rem_level_66;
+    _95 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 162 30 162 52] _96 > _98);
+    _92 <- _95;
+    _95 <- any bool;
     goto BB49
   }
   BB52 {
     assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 163 30 163 48] Contains0.contains ( * trail_2) ix_61 };
-    _98 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 164 30 164 91] LevelLog0.level_log ix_61 = LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) ix_61) };
     _100 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 165 30 165 69] IndexLogic0.index_logic ( * trail_2) ix_61 = TermValue0.term_value a_76 };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 164 30 164 91] LevelLog0.level_log ix_61 = LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) ix_61) };
     _102 <- ();
-    _105 <- borrow_mut ( * trail_2);
-    trail_2 <- { trail_2 with current = ( ^ _105) };
-    _106 <- rem_level_66;
-    _104 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 166 16 166 41] Restrict0.restrict _105 _106);
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 165 30 165 69] IndexLogic0.index_logic ( * trail_2) ix_61 = TermValue0.term_value a_76 };
+    _104 <- ();
+    _107 <- borrow_mut ( * trail_2);
+    trail_2 <- { trail_2 with current = ( ^ _107) };
+    _108 <- rem_level_66;
+    _106 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 166 16 166 41] Restrict0.restrict _107 _108);
     goto BB53
   }
   BB53 {
-    _108 <- heap_10;
+    _110 <- heap_10;
     heap_10 <- any Cdsat_Concrete_ConflictHeap_Type.t_conflictheap;
-    just_107 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 167 27 167 42] IntoVec0.into_vec _108);
+    just_109 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 167 27 167 42] IntoVec0.into_vec _110);
     goto BB54
   }
   BB54 {
     assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 168 30 168 57] UIntSize.to_int rem_level_66 < LevelLog0.level_log ix_61 };
-    _109 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 169 30 169 101] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) (TermValue0.term_value a_76)) = UIntSize.to_int rem_level_66 };
     _111 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 170 30 170 82] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) = LevelLog0.level_log ix_61 };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 169 30 169 101] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) (TermValue0.term_value a_76)) = UIntSize.to_int rem_level_66 };
     _113 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 172 20 172 94] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) (TermValue0.term_value a_76)) < LevelLog0.level_log ix_61 };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 170 30 170 82] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) = LevelLog0.level_log ix_61 };
     _115 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 174 32 174 71] Backjump2Pre0.backjump2_pre (Ghost.inner abs_cflct_11) (TermValue0.term_value a_76) };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 172 20 172 94] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) (TermValue0.term_value a_76)) < LevelLog0.level_log ix_61 };
     _117 <- ();
-    n_119 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 175 47 175 93] Ghost.new (Backjump20.backjump2 (Ghost.inner abs_cflct_11) (TermValue0.term_value a_76)));
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 174 32 174 71] Backjump2Pre0.backjump2_pre (Ghost.inner abs_cflct_11) (TermValue0.term_value a_76) };
+    _119 <- ();
+    n_121 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 175 47 175 93] Ghost.new (Backjump20.backjump2 (Ghost.inner abs_cflct_11) (TermValue0.term_value a_76)));
     goto BB55
   }
   BB55 {
     assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 176 16 176 89] Acceptable0.acceptable (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (let (a, _) = TermValue0.term_value a_76 in a) (let (_, a) = TermValue0.term_value a_76 in a) };
-    _121 <- ();
-    _124 <- borrow_mut ( * trail_2);
-    trail_2 <- { trail_2 with current = ( ^ _124) };
-    _125 <- just_107;
-    just_107 <- any Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
-    _126 <- Cdsat_Trail_Assignment_Type.assignment_term a_76;
+    _123 <- ();
+    _126 <- borrow_mut ( * trail_2);
+    trail_2 <- { trail_2 with current = ( ^ _126) };
+    _127 <- just_109;
+    just_109 <- any Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
+    _128 <- Cdsat_Trail_Assignment_Type.assignment_term a_76;
     a_76 <- (let Cdsat_Trail_Assignment_Type.C_Assignment a b c d = a_76 in Cdsat_Trail_Assignment_Type.C_Assignment (any Cdsat_Trail_Term_Type.t_term) b c d);
-    _128 <- Cdsat_Trail_Assignment_Type.assignment_val a_76;
-    _127 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 178 50 178 64] Negate0.negate _128);
+    _130 <- Cdsat_Trail_Assignment_Type.assignment_val a_76;
+    _129 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 178 50 178 64] Negate0.negate _130);
     goto BB56
   }
   BB56 {
-    _123 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 178 16 178 65] AddJustified0.add_justified _124 _125 _126 _127);
+    _125 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 178 16 178 65] AddJustified0.add_justified _126 _127 _128 _129);
     goto BB57
   }
   BB57 {
@@ -9636,47 +9639,47 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     goto BB129
   }
   BB58 {
-    _89 <- ();
-    _132 <- a_76;
-    _131 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 190 15 190 33] IsFirstOrder0.is_first_order _132);
+    _91 <- ();
+    _134 <- a_76;
+    _133 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 190 15 190 33] IsFirstOrder0.is_first_order _134);
     goto BB62
   }
   BB59 {
-    _130 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 190 15 190 52] false);
+    _132 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 190 15 190 52] false);
     goto BB61
   }
   BB60 {
-    _134 <- a_76;
-    _133 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 190 37 190 52] IsDecision1.is_decision _134);
+    _136 <- a_76;
+    _135 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 190 37 190 52] IsDecision1.is_decision _136);
     goto BB63
   }
   BB61 {
-    switch (_130)
+    switch (_132)
       | False -> goto BB67
       | True -> goto BB64
       end
   }
   BB62 {
-    switch (_131)
+    switch (_133)
       | False -> goto BB59
       | True -> goto BB60
       end
   }
   BB63 {
-    _130 <- _133;
-    _133 <- any bool;
+    _132 <- _135;
+    _135 <- any bool;
     goto BB61
   }
   BB64 {
-    _137 <- borrow_mut ( * trail_2);
-    trail_2 <- { trail_2 with current = ( ^ _137) };
-    _140 <- ix_61;
-    _139 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 191 31 191 41] Level0.level _140);
+    _139 <- borrow_mut ( * trail_2);
+    trail_2 <- { trail_2 with current = ( ^ _139) };
+    _142 <- ix_61;
+    _141 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 191 31 191 41] Level0.level _142);
     goto BB65
   }
   BB65 {
-    _138 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 191 31 191 45] _139 - ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 191 44 191 45] (1 : usize)));
-    _136 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 191 16 191 46] Restrict0.restrict _137 _138);
+    _140 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 191 31 191 45] _141 - ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 191 44 191 45] (1 : usize)));
+    _138 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 191 16 191 46] Restrict0.restrict _139 _140);
     goto BB66
   }
   BB66 {
@@ -9685,191 +9688,191 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     goto BB130
   }
   BB67 {
-    _129 <- ();
+    _131 <- ();
     assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 198 12 198 116] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . forall t : Cdsat_Theory_Trail_Type.t_trail . IsDecision0.is_decision t a -> not IsInput0.is_input t a /\ not IsJustified0.is_justified t a };
-    _141 <- ();
+    _143 <- ();
     assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 200 26 200 90] not (IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) /\ IsBool1.is_bool (Cdsat_Trail_AssignmentDeepModel_Type.assignmentdeepmodel_val (ShallowModel2.shallow_model a_76))) };
     goto BB68
   }
   BB68 {
-    _143 <- ();
+    _145 <- ();
     assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 202 26 202 91] not (IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) /\ not IsBool1.is_bool (Cdsat_Trail_AssignmentDeepModel_Type.assignmentdeepmodel_val (ShallowModel2.shallow_model a_76))) };
     goto BB69
   }
   BB69 {
-    _145 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 203 12 203 67] not IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) };
     _147 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 206 12 209 14] let _ = IsInputInv0.is_input_inv (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) in not IsInput0.is_input (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 203 12 203 67] not IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) };
     _149 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 210 12 210 67] IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 206 12 209 14] let _ = IsInputInv0.is_input_inv (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) in not IsInput0.is_input (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) };
     _151 <- ();
-    _154 <-  * trail_2;
-    _155 <- ix_61;
-    just_153 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 212 23 212 46] Justification0.justification _154 _155);
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 210 12 210 67] IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) };
+    _153 <- ();
+    _156 <-  * trail_2;
+    _157 <- ix_61;
+    just_155 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 212 23 212 46] Justification0.justification _156 _157);
     goto BB70
   }
   BB70 {
     assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 214 12 214 78] let _ = JustifiedIsBool0.justified_is_bool (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) in true };
-    _156 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 215 12 215 97] IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) /\ IsBool1.is_bool (let (_, a) = TermValue0.term_value a_76 in a) };
     _158 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 217 12 217 95] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel0.shallow_model just_153) -> Contains0.contains ( * trail_2) (Seq.get (ShallowModel0.shallow_model just_153) i) };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 215 12 215 97] IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (TermValue0.term_value a_76) /\ IsBool1.is_bool (let (_, a) = TermValue0.term_value a_76 in a) };
+    _160 <- ();
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 217 12 217 95] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel0.shallow_model just_155) -> Contains0.contains ( * trail_2) (Seq.get (ShallowModel0.shallow_model just_155) i) };
     goto BB71
   }
   BB71 {
-    _160 <- ();
-    _167 <- just_153;
-    _166 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 221 23 221 34] Deref0.deref _167);
+    _162 <- ();
+    _169 <- just_155;
+    _168 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 221 23 221 34] Deref0.deref _169);
     goto BB72
   }
   BB72 {
-    _165 <- _166;
-    _164 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 221 23 221 34] Iter1.iter _165);
+    _167 <- _168;
+    _166 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 221 23 221 34] Iter1.iter _167);
     goto BB73
   }
   BB73 {
-    iter_163 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] IntoIter2.into_iter _164);
+    iter_165 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] IntoIter2.into_iter _166);
     goto BB74
   }
   BB74 {
-    iter_old_168 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Ghost.new iter_163);
+    iter_old_170 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Ghost.new iter_165);
     goto BB75
   }
   BB75 {
-    produced_170 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Ghost.new (Seq.empty ));
+    produced_172 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Ghost.new (Seq.empty ));
     goto BB76
   }
   BB76 {
     goto BB77
   }
   BB77 {
-    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Invariant3.invariant' iter_163 };
-    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Produces1.produces (Ghost.inner iter_old_168) (Ghost.inner produced_170) iter_163 };
-    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] forall i : int . 0 <= i /\ i < Seq.length (Ghost.inner produced_170) -> not IsBool1.is_bool (let (_, a) = IndexLogic0.index_logic ( * trail_2) (Seq.get produced_170 i) in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) (Seq.get produced_170 i)) -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) (Seq.get produced_170 i)) < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) };
+    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Invariant3.invariant' iter_165 };
+    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Produces1.produces (Ghost.inner iter_old_170) (Ghost.inner produced_172) iter_165 };
+    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] forall i : int . 0 <= i /\ i < Seq.length (Ghost.inner produced_172) -> not IsBool1.is_bool (let (_, a) = IndexLogic0.index_logic ( * trail_2) (Seq.get produced_172 i) in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) (Seq.get produced_172 i)) -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) (Seq.get produced_172 i)) < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) };
     goto BB78
   }
   BB78 {
-    _177 <- borrow_mut iter_163;
-    iter_163 <-  ^ _177;
-    _176 <- borrow_mut ( * _177);
-    _177 <- { _177 with current = ( ^ _176) };
-    _175 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Next1.next _176);
+    _179 <- borrow_mut iter_165;
+    iter_165 <-  ^ _179;
+    _178 <- borrow_mut ( * _179);
+    _179 <- { _179 with current = ( ^ _178) };
+    _177 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Next1.next _178);
     goto BB79
   }
   BB79 {
-    assume { Resolve4.resolve _177 };
-    switch (_175)
+    assume { Resolve4.resolve _179 };
+    switch (_177)
       | Core_Option_Option_Type.C_None -> goto BB80
       | Core_Option_Option_Type.C_Some _ -> goto BB81
       end
   }
   BB80 {
-    _162 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 251 12 256 13] let j = AbstractJustification0.abstract_justification ( * trail_2) (ShallowModel0.shallow_model just_153) in forall t : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains3.contains j t -> not IsBool1.is_bool (let (_, a) = t in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) t -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) t < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) };
+    _164 <- ();
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 251 12 256 13] let j = AbstractJustification0.abstract_justification ( * trail_2) (ShallowModel0.shallow_model just_155) in forall t : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains3.contains j t -> not IsBool1.is_bool (let (_, a) = t in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) t -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) t < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) };
     goto BB101
   }
   BB81 {
     goto BB82
   }
   BB82 {
-    __creusot_proc_iter_elem_179 <- Core_Option_Option_Type.some_0 _175;
-    _180 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Ghost.new (Seq.(++) (Ghost.inner produced_170) (Seq.singleton __creusot_proc_iter_elem_179)));
+    __creusot_proc_iter_elem_181 <- Core_Option_Option_Type.some_0 _177;
+    _182 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 218 12 220 112] Ghost.new (Seq.(++) (Ghost.inner produced_172) (Seq.singleton __creusot_proc_iter_elem_181)));
     goto BB83
   }
   BB83 {
-    produced_170 <- _180;
-    _180 <- any Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
-    jix_182 <- __creusot_proc_iter_elem_179;
-    _185 <-  * trail_2;
-    _186 <- jix_182;
-    _184 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 222 25 222 36] Index0.index _185 _186);
+    produced_172 <- _182;
+    _182 <- any Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
+    jix_184 <- __creusot_proc_iter_elem_181;
+    _187 <-  * trail_2;
+    _188 <- jix_184;
+    _186 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 222 25 222 36] Index0.index _187 _188);
     goto BB84
   }
   BB84 {
-    j_183 <- _184;
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 224 30 224 63] LevelLog0.level_log jix_182 <= LevelLog0.level_log ix_61 };
-    _187 <- ();
-    _194 <- jix_182;
-    _193 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 19 226 30] Level0.level _194);
+    j_185 <- _186;
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 224 30 224 63] LevelLog0.level_log jix_184 <= LevelLog0.level_log ix_61 };
+    _189 <- ();
+    _196 <- jix_184;
+    _195 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 19 226 30] Level0.level _196);
     goto BB91
   }
   BB85 {
-    _190 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 19 226 85] false);
+    _192 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 19 226 85] false);
     goto BB87
   }
   BB86 {
-    _200 <- j_183;
-    _199 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 70 226 85] IsDecision1.is_decision _200);
+    _202 <- j_185;
+    _201 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 70 226 85] IsDecision1.is_decision _202);
     goto BB94
   }
   BB87 {
-    switch (_190)
+    switch (_192)
       | False -> goto BB100
       | True -> goto BB95
       end
   }
   BB88 {
-    _191 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 19 226 66] false);
+    _193 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 19 226 66] false);
     goto BB90
   }
   BB89 {
-    _198 <- j_183;
-    _197 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 48 226 66] IsFirstOrder0.is_first_order _198);
+    _200 <- j_185;
+    _199 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 48 226 66] IsFirstOrder0.is_first_order _200);
     goto BB93
   }
   BB90 {
-    switch (_191)
+    switch (_193)
       | False -> goto BB85
       | True -> goto BB86
       end
   }
   BB91 {
-    _196 <- ix_61;
-    _195 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 34 226 44] Level0.level _196);
+    _198 <- ix_61;
+    _197 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 34 226 44] Level0.level _198);
     goto BB92
   }
   BB92 {
-    _192 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 19 226 44] _193 = _195);
-    switch (_192)
+    _194 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 226 19 226 44] _195 = _197);
+    switch (_194)
       | False -> goto BB88
       | True -> goto BB89
       end
   }
   BB93 {
-    _191 <- _197;
-    _197 <- any bool;
+    _193 <- _199;
+    _199 <- any bool;
     goto BB90
   }
   BB94 {
-    _190 <- _199;
-    _199 <- any bool;
+    _192 <- _201;
+    _201 <- any bool;
     goto BB87
   }
   BB95 {
-    assume { Resolve5.resolve just_153 };
-    _203 <- borrow_mut ( * trail_2);
-    trail_2 <- { trail_2 with current = ( ^ _203) };
-    _206 <- ix_61;
-    _205 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 228 35 228 45] Level0.level _206);
+    assume { Resolve5.resolve just_155 };
+    _205 <- borrow_mut ( * trail_2);
+    trail_2 <- { trail_2 with current = ( ^ _205) };
+    _208 <- ix_61;
+    _207 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 228 35 228 45] Level0.level _208);
     goto BB96
   }
   BB96 {
-    _204 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 228 35 228 49] _205 - ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 228 48 228 49] (1 : usize)));
-    _202 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 228 20 228 50] Restrict0.restrict _203 _204);
+    _206 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 228 35 228 49] _207 - ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 228 48 228 49] (1 : usize)));
+    _204 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 228 20 228 50] Restrict0.restrict _205 _206);
     goto BB97
   }
   BB97 {
-    _208 <- borrow_mut ( * trail_2);
-    trail_2 <- { trail_2 with current = ( ^ _208) };
-    _209 <- Cdsat_Trail_Assignment_Type.assignment_term a_76;
+    _210 <- borrow_mut ( * trail_2);
+    trail_2 <- { trail_2 with current = ( ^ _210) };
+    _211 <- Cdsat_Trail_Assignment_Type.assignment_term a_76;
     a_76 <- (let Cdsat_Trail_Assignment_Type.C_Assignment a b c d = a_76 in Cdsat_Trail_Assignment_Type.C_Assignment (any Cdsat_Trail_Term_Type.t_term) b c d);
-    _211 <- Cdsat_Trail_Assignment_Type.assignment_val a_76;
-    _210 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 229 47 229 61] Negate0.negate _211);
+    _213 <- Cdsat_Trail_Assignment_Type.assignment_val a_76;
+    _212 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 229 47 229 61] Negate0.negate _213);
     goto BB98
   }
   BB98 {
-    _207 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 229 20 229 62] AddDecision0.add_decision _208 _209 _210);
+    _209 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 229 20 229 62] AddDecision0.add_decision _210 _211 _212);
     goto BB99
   }
   BB99 {
@@ -9878,54 +9881,54 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     goto BB128
   }
   BB100 {
-    _189 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 233 16 233 112] Cdsat_Trail_Assignment_Type.assignment_reason j_183 = Cdsat_Trail_Reason_Type.C_Decision -> IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (IndexLogic0.index_logic ( * trail_2) jix_182) };
-    _212 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 234 16 234 106] Cdsat_Trail_Assignment_Type.assignment_reason j_183 = Cdsat_Trail_Reason_Type.C_Input -> IsInput0.is_input (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (IndexLogic0.index_logic ( * trail_2) jix_182) };
+    _191 <- ();
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 233 16 233 112] Cdsat_Trail_Assignment_Type.assignment_reason j_185 = Cdsat_Trail_Reason_Type.C_Decision -> IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (IndexLogic0.index_logic ( * trail_2) jix_184) };
     _214 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 235 16 235 131] (exists v : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global) . Cdsat_Trail_Assignment_Type.assignment_reason j_183 = Cdsat_Trail_Reason_Type.C_Justified v) -> IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (IndexLogic0.index_logic ( * trail_2) jix_182) };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 234 16 234 106] Cdsat_Trail_Assignment_Type.assignment_reason j_185 = Cdsat_Trail_Reason_Type.C_Input -> IsInput0.is_input (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (IndexLogic0.index_logic ( * trail_2) jix_184) };
     _216 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 237 30 241 17] not (LevelLog0.level_log jix_182 = LevelLog0.level_log ix_61 /\ not IsBool1.is_bool (ShallowModel3.shallow_model (Cdsat_Trail_Assignment_Type.assignment_val j_183)) /\ IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (TermValue0.term_value j_183)) };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 235 16 235 131] (exists v : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global) . Cdsat_Trail_Assignment_Type.assignment_reason j_185 = Cdsat_Trail_Reason_Type.C_Justified v) -> IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail_2))) (IndexLogic0.index_logic ( * trail_2) jix_184) };
     _218 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 242 16 242 130] IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (TermValue0.term_value j_183) /\ not IsBool1.is_bool (Cdsat_Trail_AssignmentDeepModel_Type.assignmentdeepmodel_val (ShallowModel4.shallow_model j_183)) -> LevelLog0.level_log jix_182 < LevelLog0.level_log ix_61 };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 237 30 241 17] not (LevelLog0.level_log jix_184 = LevelLog0.level_log ix_61 /\ not IsBool1.is_bool (ShallowModel3.shallow_model (Cdsat_Trail_Assignment_Type.assignment_val j_185)) /\ IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (TermValue0.term_value j_185)) };
     _220 <- ();
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 242 16 242 130] IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner abs_cflct_11)) (TermValue0.term_value j_185) /\ not IsBool1.is_bool (Cdsat_Trail_AssignmentDeepModel_Type.assignmentdeepmodel_val (ShallowModel4.shallow_model j_185)) -> LevelLog0.level_log jix_184 < LevelLog0.level_log ix_61 };
+    _222 <- ();
     _25 <- ();
     goto BB77
   }
   BB101 {
-    _223 <- ();
-    old_c_225 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 260 49 260 77] Ghost.new (Ghost.inner abs_cflct_11));
+    _225 <- ();
+    old_c_227 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 260 49 260 77] Ghost.new (Ghost.inner abs_cflct_11));
     goto BB102
   }
   BB102 {
-    _227 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 261 24 261 69] Ghost.new (Resolvef0.resolvef (Ghost.inner abs_cflct_11) (TermValue0.term_value a_76)));
+    _229 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 261 24 261 69] Ghost.new (Resolvef0.resolvef (Ghost.inner abs_cflct_11) (TermValue0.term_value a_76)));
     goto BB103
   }
   BB103 {
-    abs_cflct_11 <- _227;
-    _227 <- any Ghost.ghost_ty (Cdsat_Theory_Conflict_Type.t_conflict);
-    old_heap_229 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 263 48 263 63] Ghost.new heap_10);
+    abs_cflct_11 <- _229;
+    _229 <- any Ghost.ghost_ty (Cdsat_Theory_Conflict_Type.t_conflict);
+    old_heap_231 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 263 48 263 63] Ghost.new heap_10);
     goto BB104
   }
   BB104 {
     assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 265 26 265 59] LevelLog0.level_log ix_61 <= UIntSize.to_int conflict_level_46 };
-    _231 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 267 12 269 13] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel0.shallow_model just_153) -> Contains3.contains (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) (Seq.get (ShallowModel0.shallow_model just_153) i)) };
+    _233 <- ();
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 267 12 269 13] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel0.shallow_model just_155) -> Contains3.contains (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) (Seq.get (ShallowModel0.shallow_model just_155) i)) };
     goto BB105
   }
   BB105 {
-    _233 <- ();
-    _237 <- just_153;
-    just_153 <- any Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
-    iter_236 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] IntoIter1.into_iter _237);
+    _235 <- ();
+    _239 <- just_155;
+    just_155 <- any Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
+    iter_238 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] IntoIter1.into_iter _239);
     goto BB106
   }
   BB106 {
-    iter_old_238 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Ghost.new iter_236);
+    iter_old_240 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Ghost.new iter_238);
     goto BB107
   }
   BB107 {
-    produced_240 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Ghost.new (Seq.empty ));
+    produced_242 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Ghost.new (Seq.empty ));
     goto BB108
   }
   BB108 {
@@ -9950,54 +9953,54 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     goto BB115
   }
   BB115 {
-    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Invariant1.invariant' iter_236 };
-    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Produces0.produces (Ghost.inner iter_old_238) (Ghost.inner produced_240) iter_236 };
+    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Invariant1.invariant' iter_238 };
+    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Produces0.produces (Ghost.inner iter_old_240) (Ghost.inner produced_242) iter_238 };
     invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains2.contains (ShallowModel1.shallow_model heap_10) ix -> LevelLog0.level_log ix <= UIntSize.to_int conflict_level_46 };
     invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains2.contains (ShallowModel1.shallow_model heap_10) a -> Contains0.contains ( * trail_2) a /\ Contains3.contains (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) a) };
-    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains2.contains (ShallowModel5.shallow_model old_heap_229) ix -> Contains2.contains (ShallowModel1.shallow_model heap_10) ix };
-    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] forall i : int . 0 <= i /\ i < Seq.length (Ghost.inner produced_240) -> Contains2.contains (ShallowModel1.shallow_model heap_10) (Seq.get produced_240 i) };
+    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains2.contains (ShallowModel5.shallow_model old_heap_231) ix -> Contains2.contains (ShallowModel1.shallow_model heap_10) ix };
+    invariant { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] forall i : int . 0 <= i /\ i < Seq.length (Ghost.inner produced_242) -> Contains2.contains (ShallowModel1.shallow_model heap_10) (Seq.get produced_242 i) };
     goto BB116
   }
   BB116 {
-    _250 <- borrow_mut iter_236;
-    iter_236 <-  ^ _250;
-    _249 <- borrow_mut ( * _250);
-    _250 <- { _250 with current = ( ^ _249) };
-    _248 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Next0.next _249);
+    _252 <- borrow_mut iter_238;
+    iter_238 <-  ^ _252;
+    _251 <- borrow_mut ( * _252);
+    _252 <- { _252 with current = ( ^ _251) };
+    _250 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Next0.next _251);
     goto BB117
   }
   BB117 {
-    assume { Resolve1.resolve _250 };
-    switch (_248)
+    assume { Resolve1.resolve _252 };
+    switch (_250)
       | Core_Option_Option_Type.C_None -> goto BB118
       | Core_Option_Option_Type.C_Some _ -> goto BB119
       end
   }
   BB118 {
-    assume { Resolve2.resolve iter_236 };
-    _235 <- ();
+    assume { Resolve2.resolve iter_238 };
+    _237 <- ();
     goto BB123
   }
   BB119 {
     goto BB120
   }
   BB120 {
-    __creusot_proc_iter_elem_252 <- Core_Option_Option_Type.some_0 _248;
-    _253 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Ghost.new (Seq.(++) (Ghost.inner produced_240) (Seq.singleton __creusot_proc_iter_elem_252)));
+    __creusot_proc_iter_elem_254 <- Core_Option_Option_Type.some_0 _250;
+    _255 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 272 12 272 99] Ghost.new (Seq.(++) (Ghost.inner produced_242) (Seq.singleton __creusot_proc_iter_elem_254)));
     goto BB121
   }
   BB121 {
-    produced_240 <- _253;
-    _253 <- any Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
-    a_255 <- __creusot_proc_iter_elem_252;
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 278 30 278 61] LevelLog0.level_log a_255 <= LevelLog0.level_log ix_61 };
-    _256 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 279 16 279 73] Contains3.contains (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) a_255) };
+    produced_242 <- _255;
+    _255 <- any Ghost.ghost_ty (Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex));
+    a_257 <- __creusot_proc_iter_elem_254;
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 278 30 278 61] LevelLog0.level_log a_257 <= LevelLog0.level_log ix_61 };
     _258 <- ();
-    _261 <- borrow_mut heap_10;
-    heap_10 <-  ^ _261;
-    _262 <- a_255;
-    _260 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 280 16 280 30] Insert0.insert _261 _262);
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 279 16 279 73] Contains3.contains (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner abs_cflct_11)) (IndexLogic0.index_logic ( * trail_2) a_257) };
+    _260 <- ();
+    _263 <- borrow_mut heap_10;
+    heap_10 <-  ^ _263;
+    _264 <- a_257;
+    _262 <- ([#"/Users/xavier/Code/cdsat/src/concrete.rs" 280 16 280 30] Insert0.insert _263 _264);
     goto BB122
   }
   BB122 {
@@ -10005,14 +10008,14 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     goto BB115
   }
   BB123 {
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 283 12 283 63] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_225)) (TermValue0.term_value a_76) };
-    _264 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 284 12 284 59] Contains3.contains (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner old_c_225)) (TermValue0.term_value a_76) };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 283 12 283 63] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_227)) (TermValue0.term_value a_76) };
     _266 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 289 12 293 13] let just = Justification1.justification (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_225)) (TermValue0.term_value a_76) in forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains3.contains just a /\ not IsBool1.is_bool (let (_, a) = a in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_225)) a -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_225)) a < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_225)) (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner old_c_225)) };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 284 12 284 59] Contains3.contains (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner old_c_227)) (TermValue0.term_value a_76) };
     _268 <- ();
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 295 26 295 70] Resolve6.resolve (Ghost.inner old_c_225) (TermValue0.term_value a_76) (Ghost.inner abs_cflct_11) };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 289 12 293 13] let just = Justification1.justification (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_227)) (TermValue0.term_value a_76) in forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains3.contains just a /\ not IsBool1.is_bool (let (_, a) = a in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_227)) a -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_227)) a < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 (Ghost.inner old_c_227)) (Cdsat_Theory_Conflict_Type.conflict_1 (Ghost.inner old_c_227)) };
     _270 <- ();
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/concrete.rs" 295 26 295 70] Resolve6.resolve (Ghost.inner old_c_227) (TermValue0.term_value a_76) (Ghost.inner abs_cflct_11) };
+    _272 <- ();
     _25 <- ();
     goto BB124
   }
@@ -10059,12 +10062,12 @@ module Cdsat_Concrete_Impl0_ResolveConflict
   }
   BB154 {
     assume { Resolve3.resolve trail_2 };
-    assume { Resolve5.resolve just_153 };
+    assume { Resolve5.resolve just_155 };
     goto BB19
   }
   BB155 {
     assume { Resolve3.resolve trail_2 };
-    assume { Resolve2.resolve iter_236 };
+    assume { Resolve2.resolve iter_238 };
     goto BB19
   }
   

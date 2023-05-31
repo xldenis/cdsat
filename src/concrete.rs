@@ -157,7 +157,7 @@ impl Solver {
             proof_assert!(rem_level@ <= abs_cflct.level());
             proof_assert!(rem_level@ <= ix.level_log());
             proof_assert!(ix.level_log() == abs_cflct.level());
-
+            proof_assert!(abs_cflct.0.is_decision(a.term_value()) ==> ix.level_log() > rem_level@);
             // Backjump
             if a.is_bool() && ix.level() > rem_level {
                 proof_assert!(trail.contains(ix));
