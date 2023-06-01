@@ -815,6 +815,7 @@ impl Conflict {
     #[requires(forall<j : _> self.0.justification(a).contains(j) ==> !j.1.is_bool() ==> self.0.is_decision(j) ==> self.0.level_of(j) < self.0.set_level(self.1))]
     #[ensures(result.invariant())]
     #[ensures(result.sound())]
+    #[ensures(result.level() == self.level())]
     pub fn resolvef(self, a: (Term, Value)) -> Self {
         let just = self.0.justification(a);
         // Just need to load this
@@ -830,6 +831,7 @@ impl Conflict {
     #[requires(self.0.is_justified(a))]
     #[ensures(result ==> tgt.invariant())]
     #[ensures(result ==> tgt.sound())]
+    #[ensures(result ==> tgt.level() == self.level())]
     pub fn resolve(self, a: (Term, Value), tgt: Self) -> bool {
         let just = self.0.justification(a);
         // Just need to load this

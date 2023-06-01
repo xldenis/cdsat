@@ -4795,7 +4795,7 @@ module Cdsat_Theory_Impl6_Backjump2Pre_Stub
   clone CreusotContracts_Logic_Fset_Impl0_Remove_Stub as Remove0 with
     type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
-  predicate backjump2_pre [#"/Users/xavier/Code/cdsat/src/theory.rs" 872 4 872 56] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value))
+  predicate backjump2_pre [#"/Users/xavier/Code/cdsat/src/theory.rs" 874 4 874 56] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value))
     
 end
 module Cdsat_Theory_Impl6_Backjump2Pre_Interface
@@ -4826,9 +4826,9 @@ module Cdsat_Theory_Impl6_Backjump2Pre_Interface
   clone CreusotContracts_Logic_Fset_Impl0_Remove_Stub as Remove0 with
     type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
-  predicate backjump2_pre [#"/Users/xavier/Code/cdsat/src/theory.rs" 872 4 872 56] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value))
+  predicate backjump2_pre [#"/Users/xavier/Code/cdsat/src/theory.rs" 874 4 874 56] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value))
     
-  axiom backjump2_pre_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . [#"/Users/xavier/Code/cdsat/src/theory.rs" 871 14 871 70] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l) <= LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l
+  axiom backjump2_pre_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . [#"/Users/xavier/Code/cdsat/src/theory.rs" 873 14 873 70] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l) <= LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l
 end
 module Cdsat_Theory_Impl6_Backjump2Pre
   use prelude.Int
@@ -4862,14 +4862,14 @@ module Cdsat_Theory_Impl6_Backjump2Pre
     axiom .
   clone CreusotContracts_Logic_Fset_Impl0_Remove_Stub as Remove0 with
     type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  predicate backjump2_pre [#"/Users/xavier/Code/cdsat/src/theory.rs" 872 4 872 56] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value))
+  predicate backjump2_pre [#"/Users/xavier/Code/cdsat/src/theory.rs" 874 4 874 56] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value))
     
    =
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 870 4 870 16] Invariant0.invariant' self /\ Sound0.sound self /\ Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l /\ IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a) /\ LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l)
-  val backjump2_pre [#"/Users/xavier/Code/cdsat/src/theory.rs" 872 4 872 56] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : bool
+    [#"/Users/xavier/Code/cdsat/src/theory.rs" 872 4 872 16] Invariant0.invariant' self /\ Sound0.sound self /\ Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l /\ IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a) /\ LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l)
+  val backjump2_pre [#"/Users/xavier/Code/cdsat/src/theory.rs" 874 4 874 56] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : bool
     ensures { result = backjump2_pre self l }
     
-  axiom backjump2_pre_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . [#"/Users/xavier/Code/cdsat/src/theory.rs" 871 14 871 70] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l) <= LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l
+  axiom backjump2_pre_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . [#"/Users/xavier/Code/cdsat/src/theory.rs" 873 14 873 70] SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l) <= LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l
 end
 module Cdsat_Theory_Impl4_RestrictSound_Stub
   use prelude.Int
@@ -5467,7 +5467,7 @@ module Cdsat_Theory_Impl6_Backjump2_Stub
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  function backjump2 [#"/Users/xavier/Code/cdsat/src/theory.rs" 888 4 888 54] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Normal_Type.t_normal
+  function backjump2 [#"/Users/xavier/Code/cdsat/src/theory.rs" 890 4 890 54] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Normal_Type.t_normal
     
 end
 module Cdsat_Theory_Impl6_Backjump2_Interface
@@ -5510,9 +5510,9 @@ module Cdsat_Theory_Impl6_Backjump2_Interface
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  function backjump2 [#"/Users/xavier/Code/cdsat/src/theory.rs" 888 4 888 54] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Normal_Type.t_normal
+  function backjump2 [#"/Users/xavier/Code/cdsat/src/theory.rs" 890 4 890 54] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Normal_Type.t_normal
     
-  axiom backjump2_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 879 15 879 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 880 15 880 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 881 4 881 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 882 4 882 47] IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 883 15 883 70] LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 887 4 887 43] Acceptable0.acceptable (Cdsat_Theory_Conflict_Type.conflict_0 self) (let (a, _) = l in a) (let (_, a) = l in a)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 886 4 886 38] Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 (backjump2 self l))) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 885 14 885 28] Sound1.sound (backjump2 self l)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 884 4 884 36] Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 (backjump2 self l)))
+  axiom backjump2_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 881 15 881 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 882 15 882 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 883 4 883 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 884 4 884 47] IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 885 15 885 70] LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 889 4 889 43] Acceptable0.acceptable (Cdsat_Theory_Conflict_Type.conflict_0 self) (let (a, _) = l in a) (let (_, a) = l in a)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 888 4 888 38] Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 (backjump2 self l))) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 887 14 887 28] Sound1.sound (backjump2 self l)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 886 4 886 36] Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 (backjump2 self l)))
 end
 module Cdsat_Theory_Impl6_Backjump2
   use prelude.Int
@@ -5637,19 +5637,19 @@ module Cdsat_Theory_Impl6_Backjump2
     function Level0.level = Level0.level,
     function Len0.len = Len0.len,
     axiom .
-  function backjump2 [#"/Users/xavier/Code/cdsat/src/theory.rs" 888 4 888 54] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Normal_Type.t_normal
+  function backjump2 [#"/Users/xavier/Code/cdsat/src/theory.rs" 890 4 890 54] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Normal_Type.t_normal
     
    =
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 878 4 878 12] let e = Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l in let _ = () in let _ = () in let _ = () in let _ = () in let _ = () in let restricted = Restrict0.restrict (Cdsat_Theory_Conflict_Type.conflict_0 self) (SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) e) in Cdsat_Theory_Normal_Type.C_Normal (Cdsat_Theory_Trail_Type.C_Assign (Cdsat_Theory_Assign_Type.C_Justified e (let (a, _) = l in a) (Negate0.negate (let (_, a) = l in a))) (SetLevel0.set_level restricted e) restricted)
-  val backjump2 [#"/Users/xavier/Code/cdsat/src/theory.rs" 888 4 888 54] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Normal_Type.t_normal
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 879 15 879 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 880 15 880 27] Sound0.sound self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 881 4 881 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 882 4 882 47] IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a)}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 883 15 883 70] LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l)}
+    [#"/Users/xavier/Code/cdsat/src/theory.rs" 880 4 880 12] let e = Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l in let _ = () in let _ = () in let _ = () in let _ = () in let _ = () in let restricted = Restrict0.restrict (Cdsat_Theory_Conflict_Type.conflict_0 self) (SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) e) in Cdsat_Theory_Normal_Type.C_Normal (Cdsat_Theory_Trail_Type.C_Assign (Cdsat_Theory_Assign_Type.C_Justified e (let (a, _) = l in a) (Negate0.negate (let (_, a) = l in a))) (SetLevel0.set_level restricted e) restricted)
+  val backjump2 [#"/Users/xavier/Code/cdsat/src/theory.rs" 890 4 890 54] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Normal_Type.t_normal
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 881 15 881 31] Invariant0.invariant' self}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 882 15 882 27] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 883 4 883 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 884 4 884 47] IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a)}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 885 15 885 70] LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l)}
     ensures { result = backjump2 self l }
     
-  axiom backjump2_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 879 15 879 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 880 15 880 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 881 4 881 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 882 4 882 47] IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 883 15 883 70] LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 887 4 887 43] Acceptable0.acceptable (Cdsat_Theory_Conflict_Type.conflict_0 self) (let (a, _) = l in a) (let (_, a) = l in a)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 886 4 886 38] Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 (backjump2 self l))) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 885 14 885 28] Sound1.sound (backjump2 self l)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 884 4 884 36] Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 (backjump2 self l)))
+  axiom backjump2_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 881 15 881 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 882 15 882 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 883 4 883 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 884 4 884 47] IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 885 15 885 70] LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 889 4 889 43] Acceptable0.acceptable (Cdsat_Theory_Conflict_Type.conflict_0 self) (let (a, _) = l in a) (let (_, a) = l in a)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 888 4 888 38] Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 (backjump2 self l))) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 887 14 887 28] Sound1.sound (backjump2 self l)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 886 4 886 36] Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 (backjump2 self l)))
 end
 module Cdsat_Trail_ReasonDeepModel_Type
   use seq.Seq
@@ -6349,7 +6349,7 @@ module Cdsat_Theory_Impl6_Resolvef_Stub
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
   clone Cdsat_Theory_Impl4_Len_Stub as Len0 with
     axiom .
-  clone Cdsat_Theory_Impl4_Level_Stub as Level0 with
+  clone Cdsat_Theory_Impl4_Level_Stub as Level1 with
     function Len0.len = Len0.len,
     axiom .
   clone Cdsat_Theory_Impl4_InvariantNonneg_Stub as InvariantNonneg0
@@ -6360,9 +6360,11 @@ module Cdsat_Theory_Impl6_Resolvef_Stub
   clone Cdsat_Theory_Impl3_Entails_Stub as Entails0
   clone Cdsat_Theory_Impl4_Sound_Stub as Sound1
   clone Cdsat_Theory_Impl4_Invariant_Stub as Invariant1
+  use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
+  clone Cdsat_Theory_Impl6_Level_Stub as Level0
   clone Cdsat_Theory_Impl4_LevelOf_Stub as LevelOf0 with
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains0 with
@@ -6371,7 +6373,7 @@ module Cdsat_Theory_Impl6_Resolvef_Stub
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
     predicate Contains0.contains = Contains0.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
   clone Cdsat_Theory_Impl4_IsDecision_Stub as IsDecision0
@@ -6385,10 +6387,9 @@ module Cdsat_Theory_Impl6_Resolvef_Stub
     predicate IsInput0.is_input = IsInput0.is_input,
     predicate IsDecision0.is_decision = IsDecision0.is_decision,
     axiom .
-  use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  function resolvef [#"/Users/xavier/Code/cdsat/src/theory.rs" 818 4 818 51] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Conflict_Type.t_conflict
+  function resolvef [#"/Users/xavier/Code/cdsat/src/theory.rs" 819 4 819 51] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Conflict_Type.t_conflict
     
 end
 module Cdsat_Theory_Impl6_Resolvef_Interface
@@ -6396,7 +6397,7 @@ module Cdsat_Theory_Impl6_Resolvef_Interface
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
   clone Cdsat_Theory_Impl4_Len_Stub as Len0 with
     axiom .
-  clone Cdsat_Theory_Impl4_Level_Stub as Level0 with
+  clone Cdsat_Theory_Impl4_Level_Stub as Level1 with
     function Len0.len = Len0.len,
     axiom .
   clone Cdsat_Theory_Impl4_InvariantNonneg_Stub as InvariantNonneg0
@@ -6407,9 +6408,11 @@ module Cdsat_Theory_Impl6_Resolvef_Interface
   clone Cdsat_Theory_Impl3_Entails_Stub as Entails0
   clone Cdsat_Theory_Impl4_Sound_Stub as Sound1
   clone Cdsat_Theory_Impl4_Invariant_Stub as Invariant1
+  use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
+  clone Cdsat_Theory_Impl6_Level_Stub as Level0
   clone Cdsat_Theory_Impl4_LevelOf_Stub as LevelOf0 with
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains0 with
@@ -6418,7 +6421,7 @@ module Cdsat_Theory_Impl6_Resolvef_Interface
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
     predicate Contains0.contains = Contains0.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
   clone Cdsat_Theory_Impl4_IsDecision_Stub as IsDecision0
@@ -6432,12 +6435,11 @@ module Cdsat_Theory_Impl6_Resolvef_Interface
     predicate IsInput0.is_input = IsInput0.is_input,
     predicate IsDecision0.is_decision = IsDecision0.is_decision,
     axiom .
-  use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  function resolvef [#"/Users/xavier/Code/cdsat/src/theory.rs" 818 4 818 51] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Conflict_Type.t_conflict
+  function resolvef [#"/Users/xavier/Code/cdsat/src/theory.rs" 819 4 819 51] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Conflict_Type.t_conflict
     
-  axiom resolvef_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 811 15 811 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 812 15 812 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 813 4 813 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 814 4 814 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 815 4 815 161] forall j : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains (Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) a) j -> not IsBool0.is_bool (let (_, a) = j in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 self) j -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) j < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Conflict_Type.conflict_1 self)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 817 14 817 28] Sound0.sound (resolvef self a)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 816 14 816 32] Invariant0.invariant' (resolvef self a))
+  axiom resolvef_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 811 15 811 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 812 15 812 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 813 4 813 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 814 4 814 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 815 4 815 161] forall j : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains (Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) a) j -> not IsBool0.is_bool (let (_, a) = j in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 self) j -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) j < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Conflict_Type.conflict_1 self)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 818 14 818 44] Level0.level (resolvef self a) = Level0.level self) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 817 14 817 28] Sound0.sound (resolvef self a)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 816 14 816 32] Invariant0.invariant' (resolvef self a))
 end
 module Cdsat_Theory_Impl6_Resolvef
   use prelude.Int
@@ -6459,7 +6461,7 @@ module Cdsat_Theory_Impl6_Resolvef
     axiom .
   clone Cdsat_Theory_Impl4_Len_Stub as Len0 with
     axiom .
-  clone Cdsat_Theory_Impl4_Level_Stub as Level0 with
+  clone Cdsat_Theory_Impl4_Level_Stub as Level1 with
     function Len0.len = Len0.len,
     axiom .
   clone Cdsat_Theory_Impl4_InvariantNonneg_Stub as InvariantNonneg0
@@ -6480,14 +6482,14 @@ module Cdsat_Theory_Impl6_Resolvef
   clone Cdsat_Theory_Impl4_IsDecision_Stub as IsDecision0
   clone Cdsat_Theory_Impl4_LevelOf_Stub as LevelOf0 with
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
   clone Cdsat_Theory_Impl4_SetLevel_Stub as SetLevel0 with
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
     predicate Contains0.contains = Contains0.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
   clone Cdsat_Theory_Impl4_IsJustified_Stub as IsJustified0
@@ -6515,18 +6517,19 @@ module Cdsat_Theory_Impl6_Resolvef
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
-  clone Cdsat_Theory_Impl1_IsBool_Stub as IsBool0
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
+  clone Cdsat_Theory_Impl6_Level_Stub as Level0
+  clone Cdsat_Theory_Impl1_IsBool_Stub as IsBool0
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  function resolvef [#"/Users/xavier/Code/cdsat/src/theory.rs" 818 4 818 51] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Conflict_Type.t_conflict
+  function resolvef [#"/Users/xavier/Code/cdsat/src/theory.rs" 819 4 819 51] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Conflict_Type.t_conflict
     
    =
     [#"/Users/xavier/Code/cdsat/src/theory.rs" 810 4 810 12] let just = Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) a in let _ = JustificationContains0.justification_contains (Cdsat_Theory_Conflict_Type.conflict_0 self) a in let _ = () in Cdsat_Theory_Conflict_Type.C_Conflict (Cdsat_Theory_Conflict_Type.conflict_0 self) (Fset.union (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) a) just)
-  val resolvef [#"/Users/xavier/Code/cdsat/src/theory.rs" 818 4 818 51] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Conflict_Type.t_conflict
+  val resolvef [#"/Users/xavier/Code/cdsat/src/theory.rs" 819 4 819 51] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : Cdsat_Theory_Conflict_Type.t_conflict
     requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 811 15 811 31] Invariant0.invariant' self}
     requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 812 15 812 27] Sound0.sound self}
     requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 813 4 813 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a}
@@ -6534,30 +6537,32 @@ module Cdsat_Theory_Impl6_Resolvef
     requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 815 4 815 161] forall j : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains (Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) a) j -> not IsBool0.is_bool (let (_, a) = j in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 self) j -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) j < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Conflict_Type.conflict_1 self)}
     ensures { result = resolvef self a }
     
-  axiom resolvef_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 811 15 811 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 812 15 812 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 813 4 813 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 814 4 814 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 815 4 815 161] forall j : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains (Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) a) j -> not IsBool0.is_bool (let (_, a) = j in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 self) j -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) j < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Conflict_Type.conflict_1 self)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 817 14 817 28] Sound0.sound (resolvef self a)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 816 14 816 32] Invariant0.invariant' (resolvef self a))
+  axiom resolvef_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 811 15 811 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 812 15 812 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 813 4 813 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 814 4 814 35] Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 815 4 815 161] forall j : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains (Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) a) j -> not IsBool0.is_bool (let (_, a) = j in a) -> IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 self) j -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) j < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Conflict_Type.conflict_1 self)) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 818 14 818 44] Level0.level (resolvef self a) = Level0.level self) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 817 14 817 28] Sound0.sound (resolvef self a)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 816 14 816 32] Invariant0.invariant' (resolvef self a))
 end
 module Cdsat_Theory_Impl6_Resolve_Stub
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
   use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
   use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  clone Cdsat_Theory_Impl4_IsJustified_Stub as IsJustified0
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
+  clone Cdsat_Theory_Impl6_Level_Stub as Level0
+  clone Cdsat_Theory_Impl4_IsJustified_Stub as IsJustified0
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate resolve [#"/Users/xavier/Code/cdsat/src/theory.rs" 833 4 833 61] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Conflict_Type.t_conflict)
+  predicate resolve [#"/Users/xavier/Code/cdsat/src/theory.rs" 835 4 835 61] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Conflict_Type.t_conflict)
     
 end
 module Cdsat_Theory_Impl6_Resolve_Interface
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
   use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
   use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  clone Cdsat_Theory_Impl4_IsJustified_Stub as IsJustified0
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
+  clone Cdsat_Theory_Impl6_Level_Stub as Level0
+  clone Cdsat_Theory_Impl4_IsJustified_Stub as IsJustified0
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate resolve [#"/Users/xavier/Code/cdsat/src/theory.rs" 833 4 833 61] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Conflict_Type.t_conflict)
+  predicate resolve [#"/Users/xavier/Code/cdsat/src/theory.rs" 835 4 835 61] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Conflict_Type.t_conflict)
     
-  axiom resolve_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Conflict_Type.t_conflict . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 828 15 828 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 829 15 829 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 830 4 830 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 832 4 832 38] resolve self a tgt -> Sound0.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 831 4 831 42] resolve self a tgt -> Invariant0.invariant' tgt)
+  axiom resolve_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Conflict_Type.t_conflict . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 829 15 829 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 830 15 830 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 831 4 831 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 834 4 834 54] resolve self a tgt -> Level0.level tgt = Level0.level self) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 833 4 833 38] resolve self a tgt -> Sound0.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 832 4 832 42] resolve self a tgt -> Invariant0.invariant' tgt)
 end
 module Cdsat_Theory_Impl6_Resolve
   use prelude.Int
@@ -6570,7 +6575,7 @@ module Cdsat_Theory_Impl6_Resolve
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
   clone Cdsat_Theory_Impl4_Len_Stub as Len0 with
     axiom .
-  clone Cdsat_Theory_Impl4_Level_Stub as Level0 with
+  clone Cdsat_Theory_Impl4_Level_Stub as Level1 with
     function Len0.len = Len0.len,
     axiom .
   clone Cdsat_Theory_Impl4_InvariantNonneg_Stub as InvariantNonneg0
@@ -6591,7 +6596,7 @@ module Cdsat_Theory_Impl6_Resolve
     type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
   clone Cdsat_Theory_Impl4_LevelOf_Stub as LevelOf0 with
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains0 with
@@ -6600,7 +6605,7 @@ module Cdsat_Theory_Impl6_Resolve
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
     predicate Contains0.contains = Contains0.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
   clone Cdsat_Theory_Impl4_IsDecision_Stub as IsDecision0
@@ -6636,23 +6641,24 @@ module Cdsat_Theory_Impl6_Resolve
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
+    function Level0.level = Level1.level,
     function Len0.len = Len0.len,
     axiom .
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
+  clone Cdsat_Theory_Impl6_Level_Stub as Level0
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate resolve [#"/Users/xavier/Code/cdsat/src/theory.rs" 833 4 833 61] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Conflict_Type.t_conflict)
+  predicate resolve [#"/Users/xavier/Code/cdsat/src/theory.rs" 835 4 835 61] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Conflict_Type.t_conflict)
     
    =
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 827 4 827 16] let just = Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) a in let _ = JustificationContains0.justification_contains (Cdsat_Theory_Conflict_Type.conflict_0 self) a in let _ = () in Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) a /\ (forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains just a /\ not IsBool0.is_bool (let (_, a) = a in a) /\ IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 self) a -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) a < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Conflict_Type.conflict_1 self)) /\ tgt = Cdsat_Theory_Conflict_Type.C_Conflict (Cdsat_Theory_Conflict_Type.conflict_0 self) (Fset.union (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) a) just)
-  val resolve [#"/Users/xavier/Code/cdsat/src/theory.rs" 833 4 833 61] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Conflict_Type.t_conflict) : bool
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 828 15 828 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 829 15 829 27] Sound0.sound self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 830 4 830 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a}
+    [#"/Users/xavier/Code/cdsat/src/theory.rs" 828 4 828 16] let just = Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) a in let _ = JustificationContains0.justification_contains (Cdsat_Theory_Conflict_Type.conflict_0 self) a in let _ = () in Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) a /\ (forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains just a /\ not IsBool0.is_bool (let (_, a) = a in a) /\ IsDecision0.is_decision (Cdsat_Theory_Conflict_Type.conflict_0 self) a -> LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) a < SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Conflict_Type.conflict_1 self)) /\ tgt = Cdsat_Theory_Conflict_Type.C_Conflict (Cdsat_Theory_Conflict_Type.conflict_0 self) (Fset.union (Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) a) just)
+  val resolve [#"/Users/xavier/Code/cdsat/src/theory.rs" 835 4 835 61] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Conflict_Type.t_conflict) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 829 15 829 31] Invariant0.invariant' self}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 830 15 830 27] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 831 4 831 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a}
     ensures { result = resolve self a tgt }
     
-  axiom resolve_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Conflict_Type.t_conflict . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 828 15 828 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 829 15 829 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 830 4 830 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 832 4 832 38] resolve self a tgt -> Sound0.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 831 4 831 42] resolve self a tgt -> Invariant0.invariant' tgt)
+  axiom resolve_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Conflict_Type.t_conflict . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 829 15 829 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 830 15 830 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 831 4 831 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) a) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 834 4 834 54] resolve self a tgt -> Level0.level tgt = Level0.level self) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 833 4 833 38] resolve self a tgt -> Sound0.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 832 4 832 42] resolve self a tgt -> Invariant0.invariant' tgt)
 end
 module Cdsat_Concrete_Impl3_New_Interface
   use set.Fset
@@ -9185,10 +9191,18 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
     function Level0.level = Level2.level,
     function Len0.len = Len0.len
+  clone Cdsat_Theory_Impl6_Level as Level1 with
+    function SetLevel0.set_level = SetLevel0.set_level,
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    predicate Contains0.contains = Contains3.contains,
+    function LevelOf0.level_of = LevelOf0.level_of,
+    function Level0.level = Level2.level,
+    function Len0.len = Len0.len
   clone Cdsat_Theory_Impl6_Resolve as Resolve6 with
     predicate Invariant0.invariant' = Invariant2.invariant',
     predicate Sound0.sound = Sound0.sound,
     predicate IsJustified0.is_justified = IsJustified0.is_justified,
+    function Level0.level = Level1.level,
     function Justification0.justification = Justification1.justification,
     function JustificationContains0.justification_contains = JustificationContains0.justification_contains,
     function ResolveSound0.resolve_sound = ResolveSound0.resolve_sound,
@@ -9207,7 +9221,7 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level2.level,
+    function Level1.level = Level2.level,
     function Len0.len = Len0.len,
     predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
     predicate Satisfies0.satisfies = Satisfies0.satisfies,
@@ -9226,6 +9240,7 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     predicate IsDecision0.is_decision = IsDecision0.is_decision,
     function LevelOf0.level_of = LevelOf0.level_of,
     function SetLevel0.set_level = SetLevel0.set_level,
+    function Level0.level = Level1.level,
     function JustificationContains0.justification_contains = JustificationContains0.justification_contains,
     function ResolveSound0.resolve_sound = ResolveSound0.resolve_sound,
     function Remove0.remove = Remove0.remove,
@@ -9234,7 +9249,7 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     predicate Entails0.entails = Entails0.entails,
     predicate IsInput0.is_input = IsInput0.is_input,
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level2.level,
+    function Level1.level = Level2.level,
     function Len0.len = Len0.len,
     predicate Contains1.contains = Contains4.contains,
     predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
@@ -9476,13 +9491,6 @@ module Cdsat_Concrete_Impl0_ResolveConflict
     function Remove0.remove = Remove1.remove,
     predicate Contains0.contains = Contains2.contains,
     predicate LeLog0.le_log = LeLog0.le_log
-  clone Cdsat_Theory_Impl6_Level as Level1 with
-    function SetLevel0.set_level = SetLevel0.set_level,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains3.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level2.level,
-    function Len0.len = Len0.len
   clone Cdsat_Trail_Impl10_Level_Interface as Level0
   clone Core_Option_Impl0_Unwrap_Interface as Unwrap0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
@@ -12324,7 +12332,7 @@ module Cdsat_Theory_Impl6_Backjump_Stub
   clone Cdsat_Theory_Impl4_Invariant_Stub as Invariant1
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate backjump [#"/Users/xavier/Code/cdsat/src/theory.rs" 850 4 850 64] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
+  predicate backjump [#"/Users/xavier/Code/cdsat/src/theory.rs" 852 4 852 64] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
     
 end
 module Cdsat_Theory_Impl6_Backjump_Interface
@@ -12341,9 +12349,9 @@ module Cdsat_Theory_Impl6_Backjump_Interface
   clone Cdsat_Theory_Impl4_Invariant_Stub as Invariant1
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate backjump [#"/Users/xavier/Code/cdsat/src/theory.rs" 850 4 850 64] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
+  predicate backjump [#"/Users/xavier/Code/cdsat/src/theory.rs" 852 4 852 64] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
     
-  axiom backjump_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 845 15 845 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 846 15 846 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 849 4 849 46] backjump self l tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 848 4 848 38] backjump self l tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 847 4 847 44] backjump self l tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
+  axiom backjump_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 847 15 847 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 848 15 848 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 851 4 851 46] backjump self l tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 850 4 850 38] backjump self l tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 849 4 849 44] backjump self l tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
 end
 module Cdsat_Theory_Impl6_Backjump
   use prelude.Int
@@ -12467,16 +12475,16 @@ module Cdsat_Theory_Impl6_Backjump
     axiom .
   use Cdsat_Theory_Normal_Type as Cdsat_Theory_Normal_Type
   clone Cdsat_Theory_Impl5_Sound_Stub as Sound1
-  predicate backjump [#"/Users/xavier/Code/cdsat/src/theory.rs" 850 4 850 64] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
+  predicate backjump [#"/Users/xavier/Code/cdsat/src/theory.rs" 852 4 852 64] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
     
    =
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 844 4 844 16] let e = Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l in let _ = () in let _ = () in let _ = () in let _ = () in let _ = () in let restricted = Restrict0.restrict (Cdsat_Theory_Conflict_Type.conflict_0 self) (SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) e) in Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l /\ IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a) /\ LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) e /\ Cdsat_Theory_Normal_Type.normal_0 tgt = Cdsat_Theory_Trail_Type.C_Assign (Cdsat_Theory_Assign_Type.C_Justified e (let (a, _) = l in a) (Negate0.negate (let (_, a) = l in a))) (SetLevel0.set_level restricted e) restricted
-  val backjump [#"/Users/xavier/Code/cdsat/src/theory.rs" 850 4 850 64] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal) : bool
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 845 15 845 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 846 15 846 27] Sound0.sound self}
+    [#"/Users/xavier/Code/cdsat/src/theory.rs" 846 4 846 16] let e = Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l in let _ = () in let _ = () in let _ = () in let _ = () in let _ = () in let restricted = Restrict0.restrict (Cdsat_Theory_Conflict_Type.conflict_0 self) (SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) e) in Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) l /\ IsBool0.is_bool (let (_, a) = l in a) /\ IsBool1.is_bool (let (a, _) = l in a) /\ LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l > SetLevel0.set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) e /\ Cdsat_Theory_Normal_Type.normal_0 tgt = Cdsat_Theory_Trail_Type.C_Assign (Cdsat_Theory_Assign_Type.C_Justified e (let (a, _) = l in a) (Negate0.negate (let (_, a) = l in a))) (SetLevel0.set_level restricted e) restricted
+  val backjump [#"/Users/xavier/Code/cdsat/src/theory.rs" 852 4 852 64] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 847 15 847 31] Invariant0.invariant' self}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 848 15 848 27] Sound0.sound self}
     ensures { result = backjump self l tgt }
     
-  axiom backjump_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 845 15 845 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 846 15 846 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 849 4 849 46] backjump self l tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 848 4 848 38] backjump self l tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 847 4 847 44] backjump self l tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
+  axiom backjump_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 847 15 847 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 848 15 848 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 851 4 851 46] backjump self l tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 850 4 850 38] backjump self l tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 849 4 849 44] backjump self l tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
 end
 module Cdsat_Theory_Impl6_UndoClear_Stub
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
@@ -12492,7 +12500,7 @@ module Cdsat_Theory_Impl6_UndoClear_Stub
   clone Cdsat_Theory_Impl4_Invariant_Stub as Invariant1
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate undo_clear [#"/Users/xavier/Code/cdsat/src/theory.rs" 933 4 933 66] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
+  predicate undo_clear [#"/Users/xavier/Code/cdsat/src/theory.rs" 935 4 935 66] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
     
 end
 module Cdsat_Theory_Impl6_UndoClear_Interface
@@ -12509,9 +12517,9 @@ module Cdsat_Theory_Impl6_UndoClear_Interface
   clone Cdsat_Theory_Impl4_Invariant_Stub as Invariant1
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate undo_clear [#"/Users/xavier/Code/cdsat/src/theory.rs" 933 4 933 66] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
+  predicate undo_clear [#"/Users/xavier/Code/cdsat/src/theory.rs" 935 4 935 66] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
     
-  axiom undo_clear_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 928 15 928 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 929 15 929 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 932 4 932 46] undo_clear self a tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 931 4 931 38] undo_clear self a tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 930 4 930 44] undo_clear self a tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
+  axiom undo_clear_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 930 15 930 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 931 15 931 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 934 4 934 46] undo_clear self a tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 933 4 933 38] undo_clear self a tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 932 4 932 44] undo_clear self a tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
 end
 module Cdsat_Theory_Impl6_UndoClear
   use prelude.Int
@@ -12597,16 +12605,16 @@ module Cdsat_Theory_Impl6_UndoClear
   clone Cdsat_Theory_Impl5_Sound_Stub as Sound1
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate undo_clear [#"/Users/xavier/Code/cdsat/src/theory.rs" 933 4 933 66] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
+  predicate undo_clear [#"/Users/xavier/Code/cdsat/src/theory.rs" 935 4 935 66] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
     
    =
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 934 8 940 11] let _ = RestrictSound0.restrict_sound (Cdsat_Theory_Conflict_Type.conflict_0 self) (Level0.level self - 1) in let _ = RestrictIdempotent0.restrict_idempotent (Cdsat_Theory_Conflict_Type.conflict_0 self) 0 (Level0.level self - 1) in let e = Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) a in Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) a /\ not IsBool0.is_bool (let (_, a) = a in a) /\ (exists l : int . l >= 0 /\ Level0.level self > l /\ IsSetLevel0.is_set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) e l) /\ Cdsat_Theory_Normal_Type.normal_0 tgt = Restrict0.restrict (Cdsat_Theory_Conflict_Type.conflict_0 self) (Level0.level self - 1)
-  val undo_clear [#"/Users/xavier/Code/cdsat/src/theory.rs" 933 4 933 66] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal) : bool
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 928 15 928 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 929 15 929 27] Sound0.sound self}
+    [#"/Users/xavier/Code/cdsat/src/theory.rs" 936 8 942 11] let _ = RestrictSound0.restrict_sound (Cdsat_Theory_Conflict_Type.conflict_0 self) (Level0.level self - 1) in let _ = RestrictIdempotent0.restrict_idempotent (Cdsat_Theory_Conflict_Type.conflict_0 self) 0 (Level0.level self - 1) in let e = Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) a in Contains0.contains (Cdsat_Theory_Conflict_Type.conflict_1 self) a /\ not IsBool0.is_bool (let (_, a) = a in a) /\ (exists l : int . l >= 0 /\ Level0.level self > l /\ IsSetLevel0.is_set_level (Cdsat_Theory_Conflict_Type.conflict_0 self) e l) /\ Cdsat_Theory_Normal_Type.normal_0 tgt = Restrict0.restrict (Cdsat_Theory_Conflict_Type.conflict_0 self) (Level0.level self - 1)
+  val undo_clear [#"/Users/xavier/Code/cdsat/src/theory.rs" 935 4 935 66] (self : Cdsat_Theory_Conflict_Type.t_conflict) (a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 930 15 930 31] Invariant0.invariant' self}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 931 15 931 27] Sound0.sound self}
     ensures { result = undo_clear self a tgt }
     
-  axiom undo_clear_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 928 15 928 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 929 15 929 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 932 4 932 46] undo_clear self a tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 931 4 931 38] undo_clear self a tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 930 4 930 44] undo_clear self a tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
+  axiom undo_clear_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 930 15 930 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 931 15 931 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 934 4 934 46] undo_clear self a tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 933 4 933 38] undo_clear self a tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 932 4 932 44] undo_clear self a tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
 end
 module Cdsat_Theory_Impl6_UndoDecide_Stub
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
@@ -12623,7 +12631,7 @@ module Cdsat_Theory_Impl6_UndoDecide_Stub
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate undo_decide [#"/Users/xavier/Code/cdsat/src/theory.rs" 951 4 951 67] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
+  predicate undo_decide [#"/Users/xavier/Code/cdsat/src/theory.rs" 953 4 953 67] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
     
 end
 module Cdsat_Theory_Impl6_UndoDecide_Interface
@@ -12641,9 +12649,9 @@ module Cdsat_Theory_Impl6_UndoDecide_Interface
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate undo_decide [#"/Users/xavier/Code/cdsat/src/theory.rs" 951 4 951 67] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
+  predicate undo_decide [#"/Users/xavier/Code/cdsat/src/theory.rs" 953 4 953 67] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
     
-  axiom undo_decide_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 945 15 945 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 946 15 946 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 947 4 947 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) l) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 950 4 950 46] undo_decide self l tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 949 4 949 38] undo_decide self l tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 948 4 948 44] undo_decide self l tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
+  axiom undo_decide_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 947 15 947 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 948 15 948 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 949 4 949 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) l) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 952 4 952 46] undo_decide self l tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 951 4 951 38] undo_decide self l tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 950 4 950 44] undo_decide self l tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
 end
 module Cdsat_Theory_Impl6_UndoDecide
   use prelude.Int
@@ -12757,17 +12765,17 @@ module Cdsat_Theory_Impl6_UndoDecide
   clone Cdsat_Theory_Impl5_Sound_Stub as Sound1
   clone Cdsat_Theory_Impl6_Sound_Stub as Sound0
   clone Cdsat_Theory_Impl6_Invariant_Stub as Invariant0
-  predicate undo_decide [#"/Users/xavier/Code/cdsat/src/theory.rs" 951 4 951 67] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
+  predicate undo_decide [#"/Users/xavier/Code/cdsat/src/theory.rs" 953 4 953 67] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal)
     
    =
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 944 4 944 16] let _ = () in let _ = () in let _ = () in let _ = () in let just = Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) l in let e = Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l in let restr = Restrict0.restrict (Cdsat_Theory_Conflict_Type.conflict_0 self) (Level0.level self - 1) in IsBool0.is_bool (let (_, a) = l in a) /\ (exists a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains just a /\ not IsBool0.is_bool (let (_, a) = a in a) /\ LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) a = Level0.level self) /\ Level0.level self = LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l /\ Cdsat_Theory_Normal_Type.normal_0 tgt = Cdsat_Theory_Trail_Type.C_Assign (Cdsat_Theory_Assign_Type.C_Decision (let (a, _) = l in a) (Negate0.negate (let (_, a) = l in a))) (Level1.level restr + 1) restr
-  val undo_decide [#"/Users/xavier/Code/cdsat/src/theory.rs" 951 4 951 67] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal) : bool
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 945 15 945 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 946 15 946 27] Sound0.sound self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 947 4 947 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) l}
+    [#"/Users/xavier/Code/cdsat/src/theory.rs" 946 4 946 16] let _ = () in let _ = () in let _ = () in let _ = () in let just = Justification0.justification (Cdsat_Theory_Conflict_Type.conflict_0 self) l in let e = Remove0.remove (Cdsat_Theory_Conflict_Type.conflict_1 self) l in let restr = Restrict0.restrict (Cdsat_Theory_Conflict_Type.conflict_0 self) (Level0.level self - 1) in IsBool0.is_bool (let (_, a) = l in a) /\ (exists a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains just a /\ not IsBool0.is_bool (let (_, a) = a in a) /\ LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) a = Level0.level self) /\ Level0.level self = LevelOf0.level_of (Cdsat_Theory_Conflict_Type.conflict_0 self) l /\ Cdsat_Theory_Normal_Type.normal_0 tgt = Cdsat_Theory_Trail_Type.C_Assign (Cdsat_Theory_Assign_Type.C_Decision (let (a, _) = l in a) (Negate0.negate (let (_, a) = l in a))) (Level1.level restr + 1) restr
+  val undo_decide [#"/Users/xavier/Code/cdsat/src/theory.rs" 953 4 953 67] (self : Cdsat_Theory_Conflict_Type.t_conflict) (l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) (tgt : Cdsat_Theory_Normal_Type.t_normal) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 947 15 947 31] Invariant0.invariant' self}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 948 15 948 27] Sound0.sound self}
+    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 949 4 949 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) l}
     ensures { result = undo_decide self l tgt }
     
-  axiom undo_decide_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 945 15 945 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 946 15 946 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 947 4 947 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) l) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 950 4 950 46] undo_decide self l tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 949 4 949 38] undo_decide self l tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 948 4 948 44] undo_decide self l tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
+  axiom undo_decide_spec : forall self : Cdsat_Theory_Conflict_Type.t_conflict, l : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value), tgt : Cdsat_Theory_Normal_Type.t_normal . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 947 15 947 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 948 15 948 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 949 4 949 39] IsJustified0.is_justified (Cdsat_Theory_Conflict_Type.conflict_0 self) l) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 952 4 952 46] undo_decide self l tgt -> Impls0.impls (Cdsat_Theory_Conflict_Type.conflict_0 self) (Cdsat_Theory_Normal_Type.normal_0 tgt)) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 951 4 951 38] undo_decide self l tgt -> Sound1.sound tgt) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 950 4 950 44] undo_decide self l tgt -> Invariant1.invariant' (Cdsat_Theory_Normal_Type.normal_0 tgt))
 end
 module Cdsat_Main_Interface
   val main [#"/Users/xavier/Code/cdsat/src/main.rs" 28 0 28 9] (_1' : ()) : ()
