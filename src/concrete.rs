@@ -112,14 +112,15 @@ impl Solver {
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
         // eprintln!("conflict!");
         let mut heap: ConflictHeap = ConflictHeap::new();
-        let mut abs_cflct: Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), trail.abstract_justification(conflict.shallow_model()))};
-
+        let old_conflict = ghost! { conflict };
         #[invariant(forall<a : _> produced.contains(a) ==> (heap@).contains(a))]
         #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
         #[invariant(forall<a :_> (heap@).contains(a) ==> produced.contains(a))]
         for a in conflict {
             heap.insert(a);
         }
+        proof_assert!(trail.abstract_justification(old_conflict.shallow_model()) == ix_to_abs(*trail, heap.shallow_model()));
+        let mut abs_cflct: Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
         proof_assert!(forall<a : _> (heap@).contains(a) ==> abs_cflct.1.contains(trail.index_logic(a)));
 
         proof_assert!((heap@) != FSet::EMPTY);
@@ -303,6 +304,7 @@ impl Solver {
     }
 }
 
+// This is the same as `abstract_justification`...
 #[logic]
 #[variant(s.len())]
 #[ensures(forall<ix :_> s.contains(ix) ==> result.contains(t.index_logic(ix)))]
