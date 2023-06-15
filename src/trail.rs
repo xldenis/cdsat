@@ -26,6 +26,7 @@ pub struct Assignment {
 impl creusot_contracts::ShallowModel for Assignment {
     type ShallowModelTy = <Self as DeepModel>::DeepModelTy;
 
+    #[open]
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
@@ -45,6 +46,7 @@ pub enum Reason {
 impl creusot_contracts::ShallowModel for Reason {
     type ShallowModelTy = <Self as DeepModel>::DeepModelTy;
 
+    #[open]
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
@@ -63,6 +65,7 @@ pub enum Sort {
 impl creusot_contracts::ShallowModel for Sort {
     type ShallowModelTy = theory::Sort;
 
+    #[open]
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
@@ -86,7 +89,7 @@ pub enum Term {
 #[cfg(creusot)]
 impl creusot_contracts::ShallowModel for Term {
     type ShallowModelTy = theory::Term;
-
+    #[open]
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
@@ -97,6 +100,7 @@ impl creusot_contracts::ShallowModel for Term {
 impl creusot_contracts::DeepModel for Term {
     type DeepModelTy = theory::Term;
 
+    #[open]
     #[logic]
     fn deep_model(self) -> Self::DeepModelTy {
         match self {
@@ -134,6 +138,7 @@ pub enum Value {
 impl creusot_contracts::ShallowModel for Value {
     type ShallowModelTy = theory::Value;
 
+    #[open]
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
@@ -174,6 +179,7 @@ pub struct TrailIndex(usize, pub usize);
 use ::std::cmp::Ordering;
 use creusot_contracts::OrdLogic;
 impl OrdLogic for TrailIndex {
+    #[open]
     #[logic]
     fn cmp_log(self, rhs: Self) -> Ordering {
         match self.0.cmp_log(rhs.0) {
@@ -184,41 +190,51 @@ impl OrdLogic for TrailIndex {
     }
 
     #[law]
+    #[open(self)]
     #[ensures(x.le_log(y) == (x.cmp_log(y) != Ordering::Greater))]
     fn cmp_le_log(x: Self, y: Self) {}
 
     #[law]
+    #[open(self)]
     #[ensures(x.lt_log(y) == (x.cmp_log(y) == Ordering::Less))]
     fn cmp_lt_log(x: Self, y: Self) {}
+
     #[law]
+    #[open(self)]
     #[ensures(x.ge_log(y) == (x.cmp_log(y) != Ordering::Less))]
     fn cmp_ge_log(x: Self, y: Self) {}
 
     #[law]
+    #[open(self)]
     #[ensures(x.gt_log(y) == (x.cmp_log(y) == Ordering::Greater))]
     fn cmp_gt_log(x: Self, y: Self) {}
 
     #[law]
+    #[open(self)]
     #[ensures(x.cmp_log(x) == Ordering::Equal)]
     fn refl(x: Self) {}
 
     #[law]
+    #[open(self)]
     #[requires(x.cmp_log(y) == o)]
     #[requires(y.cmp_log(z) == o)]
     #[ensures(x.cmp_log(z) == o)]
     fn trans(x: Self, y: Self, z: Self, o: Ordering) {}
 
     #[law]
+    #[open(self)]
     #[requires(x.cmp_log(y) == Ordering::Less)]
     #[ensures(y.cmp_log(x) == Ordering::Greater)]
     fn antisym1(x: Self, y: Self) {}
 
     #[law]
+    #[open(self)]
     #[requires(x.cmp_log(y) == Ordering::Greater)]
     #[ensures(y.cmp_log(x) == Ordering::Less)]
     fn antisym2(x: Self, y: Self) {}
 
     #[law]
+    #[open(self)]
     #[ensures((x == y) == (x.cmp_log(y) == Ordering::Equal))]
     fn eq_cmp(x: Self, y: Self) {}
 }
@@ -227,6 +243,7 @@ impl OrdLogic for TrailIndex {
 impl creusot_contracts::ShallowModel for TrailIndex {
     type ShallowModelTy = Self;
 
+    #[open]
     #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self
@@ -237,6 +254,7 @@ impl creusot_contracts::ShallowModel for TrailIndex {
 impl creusot_contracts::DeepModel for TrailIndex {
     type DeepModelTy = Self;
 
+    #[open]
     #[logic]
     fn deep_model(self) -> Self::DeepModelTy {
         self
@@ -249,6 +267,7 @@ impl TrailIndex {
         self.0
     }
 
+    #[open]
     #[logic]
     pub fn level_log(self) -> Int {
         self.0.shallow_model()
@@ -301,16 +320,19 @@ impl Trail {
         self.assignments.len()
     }
 
+    #[open]
     #[predicate]
     pub fn unsat(self) -> bool {
         self.ghost.unsat()
     }
 
+    #[open]
     #[predicate]
     pub fn sat(self) -> bool {
         self.ghost.sat()
     }
 
+    #[open]
     #[predicate]
     pub fn invariant(self) -> bool {
         pearlite! {
@@ -323,8 +345,9 @@ impl Trail {
         }
     }
 
+    #[open]
     #[predicate]
-    fn justified_is_justified(self) -> bool {
+    pub fn justified_is_justified(self) -> bool {
         pearlite! {
             forall<ix : _> self.contains(ix) ==>
                 match ((self.assignments)@[ix.0@])[ix.1@].reason {
@@ -337,8 +360,9 @@ impl Trail {
         }
     }
 
+    #[open]
     #[predicate]
-    fn abstract_relation(self) -> bool {
+    pub fn abstract_relation(self) -> bool {
         pearlite! {
             (forall<ix : _> self.contains(ix) ==> self.ghost.contains(self.index_logic(ix))) &&
             (forall<ix : _> self.contains(ix) ==> self.ghost.level_of(self.index_logic(ix)) == ix.0@) &&
@@ -346,6 +370,7 @@ impl Trail {
         }
     }
 
+    #[open]
     #[predicate]
     pub fn contains(self, ix: TrailIndex) -> bool {
         pearlite! {
@@ -369,6 +394,7 @@ impl Trail {
     }
 
     #[logic]
+    #[open(self)]
     #[variant(just.len())]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
     #[ensures(result.len() <= just.len())]
@@ -599,6 +625,7 @@ impl Trail {
         max
     }
 
+    #[open]
     #[logic]
     pub fn index_logic(self, ix: TrailIndex) -> (theory::Term, theory::Value) {
         pearlite! {
@@ -664,6 +691,7 @@ impl Index<TrailIndex> for Trail {
 }
 
 impl Assignment {
+    #[open]
     #[logic]
     pub fn term_value(&self) -> (theory::Term, theory::Value) {
         (self.term.shallow_model(), self.val.shallow_model())

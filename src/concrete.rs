@@ -497,6 +497,7 @@ impl creusot_contracts::ShallowModel for ConflictHeap {
     type ShallowModelTy = FSet<TrailIndex>;
 
     #[logic]
+    #[open(self)]
     #[trusted]
     fn shallow_model(self) -> Self::ShallowModelTy {
         absurd
