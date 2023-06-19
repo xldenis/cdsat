@@ -463,11 +463,10 @@ impl Trail {
             Trail::Assign(a, _, tl) => {
                 if a.to_pair() == d {
                     ()
-                }  else {
+                } else {
                     tl.is_input_inv(d)
                 }
             }
-
         }
     }
 
@@ -722,7 +721,6 @@ impl Trail {
                 }
             }
         }
-
     }
 }
 

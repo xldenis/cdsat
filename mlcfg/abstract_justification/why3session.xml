@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Z3" version="4.11.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC5" version="1.0.5" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="3" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="mlcfg">
+<path name=".."/><path name="abstract_justification.mlcfg"/>
+<theory name="Cdsat_Trail_Impl11_AbstractJustification_Impl" proved="true">
+ <goal name="abstract_justification&#39;vc" expl="VC for abstract_justification" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="abstract_justification&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="3"><result status="valid" time="0.01" steps="35"/></proof>
+  </goal>
+  <goal name="abstract_justification&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.62" steps="77285"/></proof>
+  </goal>
+  <goal name="abstract_justification&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.02" steps="134"/></proof>
+  </goal>
+  <goal name="abstract_justification&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.03" steps="306"/></proof>
+  </goal>
+  <goal name="abstract_justification&#39;vc.4" expl="postcondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.03" steps="334"/></proof>
+  </goal>
+  <goal name="abstract_justification&#39;vc.5" expl="postcondition" proved="true">
+  <proof prover="0"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1"><result status="timeout" time="1.00" steps="192427"/></proof>
+  <proof prover="2"><result status="timeout" time="1.00" steps="133969"/></proof>
+  <proof prover="3"><result status="timeout" time="1.00"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="abstract_justification&#39;vc.5.0" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.91" steps="126662"/></proof>
+   <proof prover="3"><result status="timeout" time="1.00"/></proof>
+   </goal>
+   <goal name="abstract_justification&#39;vc.5.1" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.01" steps="16"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl15">
+ <goal name="clone&#39;_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl20">
+ <goal name="clone&#39;_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl25">
+ <goal name="clone&#39;_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl30">
+ <goal name="clone&#39;_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl34">
+ <goal name="clone&#39;_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl42">
+ <goal name="clone&#39;_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl16">
+ <goal name="eq_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl21">
+ <goal name="eq_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl26">
+ <goal name="eq_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl31">
+ <goal name="eq_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl35">
+ <goal name="eq_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl39">
+ <goal name="eq_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl44">
+ <goal name="partial_cmp_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl45">
+ <goal name="cmp_refn">
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl7">
+ <goal name="cmp_le_log_refn">
+ </goal>
+ <goal name="cmp_ge_log_refn">
+ </goal>
+ <goal name="cmp_gt_log_refn">
+ </goal>
+ <goal name="trans_refn">
+ </goal>
+ <goal name="antisym2_refn">
+ </goal>
+ <goal name="cmp_lt_log_refn">
+ </goal>
+ <goal name="eq_cmp_refn">
+ </goal>
+ <goal name="refl_refn">
+ </goal>
+ <goal name="antisym1_refn">
+ </goal>
+</theory>
+</file>
+</why3session>

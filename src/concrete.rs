@@ -109,17 +109,23 @@ impl Solver {
         (forall< m : theory::Model> m.satisfy_set(conflict) ==> false)
     })]
     #[requires(forall<ix : TrailIndex> trail.contains(ix) ==> (ix.1@ == 0) == trail.ghost.is_decision(trail.index_logic(ix)))]
+    #[ensures((^trail).invariant())]
+    #[ensures((*trail).ghost.impls(*(^trail).ghost))]
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
         // eprintln!("conflict!");
         let mut heap: ConflictHeap = ConflictHeap::new();
         let old_conflict = ghost! { conflict };
+        let old_trail = ghost! { trail };
         #[invariant(forall<a : _> produced.contains(a) ==> (heap@).contains(a))]
         #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
         #[invariant(forall<a :_> (heap@).contains(a) ==> produced.contains(a))]
         for a in conflict {
             heap.insert(a);
         }
-        proof_assert!(trail.abstract_justification(old_conflict.shallow_model()) == ix_to_abs(*trail, heap.shallow_model()));
+        proof_assert!(
+            trail.abstract_justification(old_conflict.shallow_model())
+                == ix_to_abs(*trail, heap.shallow_model())
+        );
         let mut abs_cflct: Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
         proof_assert!(forall<a : _> (heap@).contains(a) ==> abs_cflct.1.contains(trail.index_logic(a)));
 
@@ -128,6 +134,7 @@ impl Solver {
         let conflict_level = max_ix.level();
         proof_assert!(exists<ix : _> (heap@).contains(ix) && ix.level_log() > 0);
         proof_assert!(0 < conflict_level@);
+        #[invariant(old_trail.ghost.impls(*trail.ghost))]
         #[invariant(abs_cflct.0 == *trail.ghost)]
         #[invariant(abs_cflct.sound())]
         #[invariant(abs_cflct.invariant())]
@@ -180,7 +187,6 @@ impl Solver {
 
                 proof_assert!(trail.abstract_justification(just@) == abs_cflct.1.remove(a.term_value()));
                 trail.add_justified(just, a.term, a.val.negate());
-
                 return;
             }
 
@@ -196,9 +202,9 @@ impl Solver {
             // thus we should now have that rem_level == level???
 
             proof_assert!(forall<t : theory::Trail, a :_> t.is_decision(a) ==> !t.is_input(a) && !t.is_justified(a));
+
             // It can't be a boolean deceision
             proof_assert!(!(trail.ghost.is_decision(a.term_value()) && (a@.val).is_bool()));
-            // It can't be a boolean deceision
             proof_assert!(!(trail.ghost.is_decision(a.term_value()) && !(a@.val).is_bool()));
             proof_assert!(!trail.ghost.is_decision(a.term_value()));
             // Trivial: Trail has non-zero level so by invariant we can't be input.
@@ -212,9 +218,7 @@ impl Solver {
             let just = trail.justification(ix);
 
             proof_assert!(trail.ghost.justified_is_bool(a.term_value()); true);
-            proof_assert!(trail.ghost.is_justified(a.term_value()) && a.term_value().1.is_bool());
 
-            proof_assert!(forall<i : _> 0 <= i && i < just@.len() ==> trail.contains(just@[i]));
             #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> !trail.index_logic(*produced[i]).1.is_bool() ==>
                     abs_cflct.0.is_decision(trail.index_logic(*produced[i])) ==>
                     abs_cflct.0.level_of(trail.index_logic(*produced[i])) < abs_cflct.0.set_level(abs_cflct.1))]
@@ -253,7 +257,6 @@ impl Solver {
 
             let old_heap: Ghost<ConflictHeap> = ghost! { heap };
 
-
             proof_assert!(
                 forall<i : _ > 0 <= i && i < just@.len() ==> abs_cflct.1.contains(trail.index_logic(just@[i]))
             );
@@ -274,8 +277,6 @@ impl Solver {
         }
     }
 }
-
-
 
 // #[derive(Debug, PartialEq, Eq)]
 pub enum Answer {

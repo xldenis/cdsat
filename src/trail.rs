@@ -108,18 +108,15 @@ impl creusot_contracts::DeepModel for Term {
                 theory::Term::Variable(theory::Var(v.deep_model(), s.deep_model()))
             }
             Term::Value(v) => theory::Term::Value(v.deep_model()),
-            Term::Plus(l, r) => theory::Term::Plus(
-                Box::new((*l).deep_model()),
-                Box::new((*r).deep_model()),
-            ),
-            Term::Eq(l, r) => theory::Term::Eq(
-                Box::new((*l).deep_model()),
-                Box::new((*r).deep_model()),
-            ),
-            Term::Conj(l, r) => theory::Term::Conj(
-                Box::new((*l).deep_model()),
-                Box::new((*r).deep_model()),
-            ),
+            Term::Plus(l, r) => {
+                theory::Term::Plus(Box::new((*l).deep_model()), Box::new((*r).deep_model()))
+            }
+            Term::Eq(l, r) => {
+                theory::Term::Eq(Box::new((*l).deep_model()), Box::new((*r).deep_model()))
+            }
+            Term::Conj(l, r) => {
+                theory::Term::Conj(Box::new((*l).deep_model()), Box::new((*r).deep_model()))
+            }
             _ => theory::Term::Value(theory::Value::Bool(true)),
         }
     }
@@ -406,60 +403,13 @@ impl Trail {
         just: Seq<TrailIndex>,
     ) -> FSet<(theory::Term, theory::Value)> {
         if just.len() > 0 {
-            let set = self.abstract_justification(just.subsequence(1, just.len()));
-            let ix = just[0];
-            let a = self.index_logic(ix);
+            let set = self.abstract_justification(remove(just, just[0]));
+            let a = self.index_logic(just[0]);
             set.insert(a)
         } else {
             FSet::EMPTY
         }
     }
-
-    // #[logic]
-    // #[variant(just.len() - ix)]
-    // #[requires(ix >= 0 && ix <= just.len())]
-    // #[requires(self.invariant())]
-    // #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
-    // #[ensures(result.len() <= just.len() - ix)]
-    // #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
-    // #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> just.contains(ix) && a == self.index_logic(ix))]
-    // #[ensures(forall<i : _> ix <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
-    // pub fn abs_just_inner(
-    //     self,
-    //     just: Seq<TrailIndex>,
-    //     ix: Int,
-    // ) -> FSet<(theory::Term, theory::Value)> {
-    //     if ix < just.len() {
-    //         let set = self.abs_just_inner(just, ix + 1);
-    //         let ix = just[ix];
-    //         let a = self.index_logic(ix);
-    //         set.insert(a)
-    //     } else {
-    //         FSet::EMPTY
-    //     }
-    // }
-
-    // #[logic]
-    // #[variant(just.len())]
-    // #[requires(self.invariant())]
-    // #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
-    // #[ensures(result.len() <= just.len())]
-    // #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> self.contains(ix) && a == self.index_logic(ix))]
-    // #[ensures(forall< a : _> result.contains(a) ==> exists<ix : _> just.contains(ix) && a == self.index_logic(ix))]
-    // #[ensures(forall<i : _> 0 <= i && i < just.len() ==> result.contains(self.index_logic(just[i])))]
-    // pub fn abs_just_inner2(
-    //     self,
-    //     just: Seq<TrailIndex>,
-    // ) -> FSet<(theory::Term, theory::Value)> {
-    //     if just.len() > 0{
-    //         let set = self.abs_just_inner2(just.subsequence(1, just.len()));
-    //         let ix = just[0];
-    //         let a = self.index_logic(ix);
-    //         set.insert(a)
-    //     } else {
-    //         FSet::EMPTY
-    //     }
-    // }
 
     #[logic]
     #[variant(just.len())]
@@ -545,6 +495,7 @@ impl Trail {
     #[requires(forall<i : _> 0 <= i && i < (into_vec@).len() ==> self.contains((into_vec@)[i]))]
     #[requires(self.ghost.acceptable(term@, val@))]
     #[requires(forall<m : theory::Model> m.invariant() ==> m.satisfy_set(self.abstract_justification(into_vec@)) ==> m.satisfies((term@, val@)))]
+    #[ensures(self.ghost.impls(*(^self).ghost))]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
         let level = self.max_level(&into_vec);
         let just: Ghost<FSet<(theory::Term, theory::Value)>> =
@@ -756,25 +707,42 @@ pub(crate) fn ix_to_abs(t: Trail, s: FSet<TrailIndex>) -> FSet<(theory::Term, th
 #[logic]
 #[open(self)]
 #[variant(s.len())]
-#[requires(seq_unique(s))]
+// #[requires(seq_unique(s))]
 #[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
 #[requires(forall<i : _> t.contains(i) ==> s.contains(i))]
 #[ensures(trail.abstract_justification(s) == ix_to_abs(trail, t))]
-pub(crate) fn seq_to_set(trail: Trail, s : Seq<TrailIndex>, t : FSet<TrailIndex>) {
+pub(crate) fn seq_to_set(trail: Trail, s: Seq<TrailIndex>, t: FSet<TrailIndex>) {
     if s == Seq::EMPTY {
         ()
     } else {
         let a = s[0];
-        seq_to_set(trail, s.subsequence(1, s.len()), t.remove(a))
+        seq_to_set(trail, remove(s, a), t.remove(a))
+    }
+}
+
+#[logic]
+#[variant(s.len())]
+#[ensures(forall<t : _> s.contains(t) ==> e != t ==> result.contains(t))]
+#[ensures(forall<t : _> result.contains(t) ==>  s.contains(t))]
+#[ensures(forall<t : _> result.contains(t) ==> t != e)]
+#[ensures(s.contains(e) ==> result.len() < s.len())]
+fn remove<T>(s: Seq<T>, e: T) -> Seq<T> {
+    if s == Seq::EMPTY {
+        Seq::EMPTY
+    } else {
+        if s[s.len() - 1] == e {
+            remove(s.subsequence(0, s.len() - 1), e)
+        } else {
+            remove(s.subsequence(0, s.len() - 1), e).push(s[s.len() - 1])
+        }
     }
 }
 
 #[predicate]
 #[open]
-pub(crate) fn seq_unique<T>(s : Seq<T>) -> bool {
+pub(crate) fn seq_unique<T>(s: Seq<T>) -> bool {
     pearlite! { forall<i : _, j : _> 0 <= i && i <= j && j < s.len() ==> i != j ==> s[i] != s[j] }
 }
-
 
 #[logic]
 #[open(self)]
@@ -805,10 +773,7 @@ pub(crate) fn set_max(s: FSet<TrailIndex>) -> TrailIndex {
 #[requires(forall<i :_> s.contains(i) ==> t.contains(i))]
 #[ensures(!s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == set_max(s).level_log())]
 #[ensures(s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == 0)]
-pub(crate) fn ix_to_abs_level(
-    t: Trail,
-    s: FSet<TrailIndex>,
-)  {
+pub(crate) fn ix_to_abs_level(t: Trail, s: FSet<TrailIndex>) {
     ()
 }
 
@@ -820,5 +785,5 @@ pub(crate) fn ix_to_abs_level(
 #[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
 #[ensures(ix_to_abs(t, s.remove(x)) == ix_to_abs(t, s).remove(t.index_logic(x)))]
 pub(crate) fn ix_to_abs_remove(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
-   ()
+    ()
 }

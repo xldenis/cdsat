@@ -2446,6 +2446,56 @@ module CreusotContracts_Logic_Seq_Impl0_Contains
     ensures { result = contains self e }
     
 end
+module Cdsat_Trail_Remove_Stub
+  type t
+  use seq.Seq
+  use prelude.Int
+  clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains0 with
+    type t = t
+  function remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 778 0 778 41] (s : Seq.seq t) (e : t) : Seq.seq t
+end
+module Cdsat_Trail_Remove_Interface
+  type t
+  use seq.Seq
+  use prelude.Int
+  clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains0 with
+    type t = t
+  function remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 778 0 778 41] (s : Seq.seq t) (e : t) : Seq.seq t
+  val remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 778 0 778 41] (s : Seq.seq t) (e : t) : Seq.seq t
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 774 0 774 73] forall t : t . Contains0.contains s t -> e <> t -> Contains0.contains result t }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 775 0 775 63] forall t : t . Contains0.contains result t -> Contains0.contains s t }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 776 0 776 55] forall t : t . Contains0.contains result t -> t <> e }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 777 0 777 52] Contains0.contains s e -> Seq.length result < Seq.length s }
+    ensures { result = remove s e }
+    
+  axiom remove_spec : forall s : Seq.seq t, e : t . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 777 0 777 52] Contains0.contains s e -> Seq.length (remove s e) < Seq.length s) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 776 0 776 55] forall t : t . Contains0.contains (remove s e) t -> t <> e) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 775 0 775 63] forall t : t . Contains0.contains (remove s e) t -> Contains0.contains s t) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 774 0 774 73] forall t : t . Contains0.contains s t -> e <> t -> Contains0.contains (remove s e) t)
+end
+module Cdsat_Trail_Remove
+  type t
+  use seq.Seq
+  use prelude.Int
+  use seq_ext.SeqExt
+  clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains0 with
+    type t = t
+  function remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 778 0 778 41] (s : Seq.seq t) (e : t) : Seq.seq t
+  val remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 778 0 778 41] (s : Seq.seq t) (e : t) : Seq.seq t
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 774 0 774 73] forall t : t . Contains0.contains s t -> e <> t -> Contains0.contains result t }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 775 0 775 63] forall t : t . Contains0.contains result t -> Contains0.contains s t }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 776 0 776 55] forall t : t . Contains0.contains result t -> t <> e }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 777 0 777 52] Contains0.contains s e -> Seq.length result < Seq.length s }
+    ensures { result = remove s e }
+    
+  axiom def : forall s : Seq.seq t, e : t . remove s e = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 772 0 772 8] if s = Seq.empty  then
+    Seq.empty 
+  else
+    if Seq.get s (Seq.length s - 1) = e then
+      remove (SeqExt.subsequence s 0 (Seq.length s - 1)) e
+    else
+      Seq.snoc (remove (SeqExt.subsequence s 0 (Seq.length s - 1)) e) (Seq.get s (Seq.length s - 1))
+    
+  )
+  axiom remove_spec : forall s : Seq.seq t, e : t . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 777 0 777 52] Contains0.contains s e -> Seq.length (remove s e) < Seq.length s) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 776 0 776 55] forall t : t . Contains0.contains (remove s e) t -> t <> e) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 775 0 775 63] forall t : t . Contains0.contains (remove s e) t -> Contains0.contains s t) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 774 0 774 73] forall t : t . Contains0.contains s t -> e <> t -> Contains0.contains (remove s e) t)
+end
 module CreusotContracts_Logic_Fset_Impl0_Insert_Stub
   type t
   use set.Fset
@@ -2518,15 +2568,18 @@ module Cdsat_Trail_Impl11_AbstractJustification
   use seq.Seq
   use set.Fset
   use prelude.Borrow
-  use seq_ext.SeqExt
   use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
   use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
   clone CreusotContracts_Logic_Fset_Impl0_Insert_Stub as Insert0 with
     type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains2 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_Remove_Stub as Remove0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Contains0.contains = Contains2.contains,
+    axiom .
+  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
   clone Cdsat_Trail_Impl11_IndexLogic_Stub as IndexLogic0
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains1 with
     type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
@@ -2542,7 +2595,7 @@ module Cdsat_Trail_Impl11_AbstractJustification
     ensures { result = abstract_justification self just }
     
   axiom def : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex) . abstract_justification self just = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 396 4 396 12] if Seq.length just > 0 then
-    let set = abstract_justification self (SeqExt.subsequence just 1 (Seq.length just)) in let ix = Seq.get just 0 in let a = IndexLogic0.index_logic self ix in Insert0.insert set a
+    let set = abstract_justification self (Remove0.remove just (Seq.get just 0)) in let a = IndexLogic0.index_logic self (Seq.get just 0) in Insert0.insert set a
   else
     Fset.empty 
   )
@@ -3571,15 +3624,15 @@ module Cdsat_Concrete_Impl1_Extend_Interface
   clone Cdsat_Trail_Impl3_ShallowModel_Stub as ShallowModel0
   use Cdsat_Concrete_ExtendResult_Type as Cdsat_Concrete_ExtendResult_Type
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  val extend [#"/Users/xavier/Code/cdsat/src/concrete.rs" 371 4 371 56] (self : borrowed (Cdsat_Concrete_BoolTheory_Type.t_booltheory)) (tl : borrowed (Cdsat_Trail_Trail_Type.t_trail)) : Cdsat_Concrete_ExtendResult_Type.t_extendresult
-    requires {[#"/Users/xavier/Code/cdsat/src/concrete.rs" 357 4 357 38] Invariant0.invariant' ( * tl)}
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 357 4 357 38] Invariant0.invariant' ( ^ tl) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 358 14 369 5] match (result) with
+  val extend [#"/Users/xavier/Code/cdsat/src/concrete.rs" 337 4 337 56] (self : borrowed (Cdsat_Concrete_BoolTheory_Type.t_booltheory)) (tl : borrowed (Cdsat_Trail_Trail_Type.t_trail)) : Cdsat_Concrete_ExtendResult_Type.t_extendresult
+    requires {[#"/Users/xavier/Code/cdsat/src/concrete.rs" 323 4 323 38] Invariant0.invariant' ( * tl)}
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 323 4 323 38] Invariant0.invariant' ( ^ tl) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 324 14 335 5] match (result) with
       | Cdsat_Concrete_ExtendResult_Type.C_Satisfied -> true
       | Cdsat_Concrete_ExtendResult_Type.C_Decision t v -> Acceptable0.acceptable (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( ^ tl))) (ShallowModel0.shallow_model t) (ShallowModel1.shallow_model v)
       | Cdsat_Concrete_ExtendResult_Type.C_Conflict c -> let conflict = AbstractJustification0.abstract_justification ( ^ tl) (ShallowModel2.shallow_model c) in true
       end }
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 370 4 370 44] Impls0.impls (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * tl))) (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( ^ tl))) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 336 4 336 44] Impls0.impls (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * tl))) (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( ^ tl))) }
     
 end
 module Alloc_Vec_Impl9_Deref_Interface
@@ -3757,16 +3810,16 @@ module Cdsat_Concrete_Impl2_ShallowModel_Stub
   use set.Fset
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   use Cdsat_Concrete_ConflictHeap_Type as Cdsat_Concrete_ConflictHeap_Type
-  function shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 452 4 452 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  function shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 418 4 418 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
     
 end
 module Cdsat_Concrete_Impl2_ShallowModel_Interface
   use set.Fset
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   use Cdsat_Concrete_ConflictHeap_Type as Cdsat_Concrete_ConflictHeap_Type
-  function shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 452 4 452 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  function shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 418 4 418 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
     
-  val shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 452 4 452 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  val shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 418 4 418 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
     ensures { result = shallow_model self }
     
 end
@@ -3774,9 +3827,9 @@ module Cdsat_Concrete_Impl2_ShallowModel
   use set.Fset
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   use Cdsat_Concrete_ConflictHeap_Type as Cdsat_Concrete_ConflictHeap_Type
-  function shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 452 4 452 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  function shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 418 4 418 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
     
-  val shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 452 4 452 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  val shallow_model [#"/Users/xavier/Code/cdsat/src/concrete.rs" 418 4 418 50] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
     ensures { result = shallow_model self }
     
 end
@@ -4083,7 +4136,7 @@ module Cdsat_Trail_IxToAbsRemove_Stub
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone Cdsat_Trail_Impl11_Contains_Stub as Contains0
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  function ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 822 0 822 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+  function ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 841 0 841 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
     
 end
 module Cdsat_Trail_IxToAbsRemove_Interface
@@ -4108,16 +4161,16 @@ module Cdsat_Trail_IxToAbsRemove_Interface
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone Cdsat_Trail_Impl11_Contains_Stub as Contains0
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  function ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 822 0 822 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+  function ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 841 0 841 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
     
-  val ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 822 0 822 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 818 11 818 24] Invariant0.invariant' t}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 819 11 819 24] Contains0.contains t x}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 820 0 820 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains s i -> Contains0.contains t i}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 821 10 821 79] IxToAbs0.ix_to_abs t (Remove0.remove s x) = Remove1.remove (IxToAbs0.ix_to_abs t s) (IndexLogic0.index_logic t x) }
+  val ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 841 0 841 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 837 11 837 24] Invariant0.invariant' t}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 838 11 838 24] Contains0.contains t x}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 839 0 839 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains s i -> Contains0.contains t i}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 840 10 840 79] IxToAbs0.ix_to_abs t (Remove0.remove s x) = Remove1.remove (IxToAbs0.ix_to_abs t s) (IndexLogic0.index_logic t x) }
     ensures { result = ix_to_abs_remove t x s }
     
-  axiom ix_to_abs_remove_spec : forall t : Cdsat_Trail_Trail_Type.t_trail, x : Cdsat_Trail_TrailIndex_Type.t_trailindex, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 818 11 818 24] Invariant0.invariant' t) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 819 11 819 24] Contains0.contains t x) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 820 0 820 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains s i -> Contains0.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 821 10 821 79] IxToAbs0.ix_to_abs t (Remove0.remove s x) = Remove1.remove (IxToAbs0.ix_to_abs t s) (IndexLogic0.index_logic t x))
+  axiom ix_to_abs_remove_spec : forall t : Cdsat_Trail_Trail_Type.t_trail, x : Cdsat_Trail_TrailIndex_Type.t_trailindex, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 837 11 837 24] Invariant0.invariant' t) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 838 11 838 24] Contains0.contains t x) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 839 0 839 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains s i -> Contains0.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 840 10 840 79] IxToAbs0.ix_to_abs t (Remove0.remove s x) = Remove1.remove (IxToAbs0.ix_to_abs t s) (IndexLogic0.index_logic t x))
 end
 module Cdsat_Trail_IxToAbsRemove
   use set.Fset
@@ -4141,17 +4194,17 @@ module Cdsat_Trail_IxToAbsRemove
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone Cdsat_Trail_Impl11_Contains_Stub as Contains0
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  function ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 822 0 822 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+  function ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 841 0 841 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
     
-  val ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 822 0 822 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 818 11 818 24] Invariant0.invariant' t}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 819 11 819 24] Contains0.contains t x}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 820 0 820 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains s i -> Contains0.contains t i}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 821 10 821 79] IxToAbs0.ix_to_abs t (Remove0.remove s x) = Remove1.remove (IxToAbs0.ix_to_abs t s) (IndexLogic0.index_logic t x) }
+  val ix_to_abs_remove [#"/Users/xavier/Code/cdsat/src/trail.rs" 841 0 841 76] (t : Cdsat_Trail_Trail_Type.t_trail) (x : Cdsat_Trail_TrailIndex_Type.t_trailindex) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 837 11 837 24] Invariant0.invariant' t}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 838 11 838 24] Contains0.contains t x}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 839 0 839 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains s i -> Contains0.contains t i}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 840 10 840 79] IxToAbs0.ix_to_abs t (Remove0.remove s x) = Remove1.remove (IxToAbs0.ix_to_abs t s) (IndexLogic0.index_logic t x) }
     ensures { result = ix_to_abs_remove t x s }
     
-  axiom def : forall t : Cdsat_Trail_Trail_Type.t_trail, x : Cdsat_Trail_TrailIndex_Type.t_trailindex, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ix_to_abs_remove t x s = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 823 3 823 5] ())
-  axiom ix_to_abs_remove_spec : forall t : Cdsat_Trail_Trail_Type.t_trail, x : Cdsat_Trail_TrailIndex_Type.t_trailindex, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 818 11 818 24] Invariant0.invariant' t) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 819 11 819 24] Contains0.contains t x) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 820 0 820 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains s i -> Contains0.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 821 10 821 79] IxToAbs0.ix_to_abs t (Remove0.remove s x) = Remove1.remove (IxToAbs0.ix_to_abs t s) (IndexLogic0.index_logic t x))
+  axiom def : forall t : Cdsat_Trail_Trail_Type.t_trail, x : Cdsat_Trail_TrailIndex_Type.t_trailindex, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ix_to_abs_remove t x s = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 842 3 842 5] ())
+  axiom ix_to_abs_remove_spec : forall t : Cdsat_Trail_Trail_Type.t_trail, x : Cdsat_Trail_TrailIndex_Type.t_trailindex, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 837 11 837 24] Invariant0.invariant' t) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 838 11 838 24] Contains0.contains t x) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 839 0 839 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains s i -> Contains0.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 840 10 840 79] IxToAbs0.ix_to_abs t (Remove0.remove s x) = Remove1.remove (IxToAbs0.ix_to_abs t s) (IndexLogic0.index_logic t x))
 end
 module CreusotContracts_Logic_Fset_Impl0_ExtEq_Stub
   type t
@@ -5004,7 +5057,7 @@ module Cdsat_Trail_SetMax_Stub
     type self = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  function set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 785 0 785 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
+  function set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 804 0 804 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
     
 end
 module Cdsat_Trail_SetMax_Interface
@@ -5014,15 +5067,15 @@ module Cdsat_Trail_SetMax_Interface
     type self = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  function set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 785 0 785 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
+  function set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 804 0 804 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
     
-  val set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 785 0 785 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 781 11 781 24] not Fset.is_empty s}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 783 10 783 28] Contains0.contains s result }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 784 0 784 56] forall o : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s o -> LeLog0.le_log o result }
+  val set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 804 0 804 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 800 11 800 24] not Fset.is_empty s}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 802 10 802 28] Contains0.contains s result }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 803 0 803 56] forall o : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s o -> LeLog0.le_log o result }
     ensures { result = set_max s }
     
-  axiom set_max_spec : forall s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 781 11 781 24] not Fset.is_empty s) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 784 0 784 56] forall o : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s o -> LeLog0.le_log o (set_max s)) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 783 10 783 28] Contains0.contains s (set_max s))
+  axiom set_max_spec : forall s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 800 11 800 24] not Fset.is_empty s) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 803 0 803 56] forall o : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s o -> LeLog0.le_log o (set_max s)) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 802 10 802 28] Contains0.contains s (set_max s))
 end
 module Cdsat_Trail_SetMax
   use set.Fset
@@ -5035,20 +5088,20 @@ module Cdsat_Trail_SetMax
     type self = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  function set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 785 0 785 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
+  function set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 804 0 804 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
     
-  val set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 785 0 785 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 781 11 781 24] not Fset.is_empty s}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 783 10 783 28] Contains0.contains s result }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 784 0 784 56] forall o : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s o -> LeLog0.le_log o result }
+  val set_max [#"/Users/xavier/Code/cdsat/src/trail.rs" 804 0 804 56] (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : Cdsat_Trail_TrailIndex_Type.t_trailindex
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 800 11 800 24] not Fset.is_empty s}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 802 10 802 28] Contains0.contains s result }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 803 0 803 56] forall o : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s o -> LeLog0.le_log o result }
     ensures { result = set_max s }
     
-  axiom def : forall s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . set_max s = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 779 0 779 8] let x = Fset.pick s in let s = Remove0.remove s x in if Fset.is_empty s then
+  axiom def : forall s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . set_max s = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 798 0 798 8] let x = Fset.pick s in let s = Remove0.remove s x in if Fset.is_empty s then
     x
   else
     let rec' = set_max s in if GeLog0.ge_log x rec' then x else rec'
   )
-  axiom set_max_spec : forall s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 781 11 781 24] not Fset.is_empty s) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 784 0 784 56] forall o : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s o -> LeLog0.le_log o (set_max s)) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 783 10 783 28] Contains0.contains s (set_max s))
+  axiom set_max_spec : forall s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 800 11 800 24] not Fset.is_empty s) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 803 0 803 56] forall o : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s o -> LeLog0.le_log o (set_max s)) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 802 10 802 28] Contains0.contains s (set_max s))
 end
 module Cdsat_Trail_IxToAbsLevel_Stub
   use set.Fset
@@ -5095,7 +5148,7 @@ module Cdsat_Trail_IxToAbsLevel_Stub
     axiom .
   clone Cdsat_Trail_Impl11_Contains_Stub as Contains1
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  function ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 808 0 811 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+  function ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 827 0 830 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
     
 end
 module Cdsat_Trail_IxToAbsLevel_Interface
@@ -5143,16 +5196,16 @@ module Cdsat_Trail_IxToAbsLevel_Interface
     axiom .
   clone Cdsat_Trail_Impl11_Contains_Stub as Contains1
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  function ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 808 0 811 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+  function ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 827 0 830 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
     
-  val ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 808 0 811 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 803 11 803 24] Invariant0.invariant' t}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 805 0 805 57] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 806 0 806 90] not Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = LevelLog0.level_log (SetMax0.set_max s) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 807 0 807 68] Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = 0 }
+  val ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 827 0 830 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 822 11 822 24] Invariant0.invariant' t}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 824 0 824 57] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 825 0 825 90] not Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = LevelLog0.level_log (SetMax0.set_max s) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 826 0 826 68] Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = 0 }
     ensures { result = ix_to_abs_level t s }
     
-  axiom ix_to_abs_level_spec : forall t : Cdsat_Trail_Trail_Type.t_trail, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 803 11 803 24] Invariant0.invariant' t) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 805 0 805 57] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 807 0 807 68] Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = 0) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 806 0 806 90] not Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = LevelLog0.level_log (SetMax0.set_max s))
+  axiom ix_to_abs_level_spec : forall t : Cdsat_Trail_Trail_Type.t_trail, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 822 11 822 24] Invariant0.invariant' t) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 824 0 824 57] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 826 0 826 68] Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = 0) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 825 0 825 90] not Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = LevelLog0.level_log (SetMax0.set_max s))
 end
 module Cdsat_Trail_IxToAbsLevel
   use set.Fset
@@ -5199,17 +5252,224 @@ module Cdsat_Trail_IxToAbsLevel
     axiom .
   clone Cdsat_Trail_Impl11_Contains_Stub as Contains1
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  function ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 808 0 811 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+  function ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 827 0 830 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
     
-  val ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 808 0 811 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 803 11 803 24] Invariant0.invariant' t}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 805 0 805 57] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 806 0 806 90] not Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = LevelLog0.level_log (SetMax0.set_max s) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 807 0 807 68] Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = 0 }
+  val ix_to_abs_level [#"/Users/xavier/Code/cdsat/src/trail.rs" 827 0 830 1] (t : Cdsat_Trail_Trail_Type.t_trail) (s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 822 11 822 24] Invariant0.invariant' t}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 824 0 824 57] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 825 0 825 90] not Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = LevelLog0.level_log (SetMax0.set_max s) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 826 0 826 68] Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = 0 }
     ensures { result = ix_to_abs_level t s }
     
-  axiom def : forall t : Cdsat_Trail_Trail_Type.t_trail, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ix_to_abs_level t s = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 812 4 812 6] ())
-  axiom ix_to_abs_level_spec : forall t : Cdsat_Trail_Trail_Type.t_trail, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 803 11 803 24] Invariant0.invariant' t) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 805 0 805 57] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 807 0 807 68] Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = 0) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 806 0 806 90] not Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = LevelLog0.level_log (SetMax0.set_max s))
+  axiom def : forall t : Cdsat_Trail_Trail_Type.t_trail, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ix_to_abs_level t s = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 831 4 831 6] ())
+  axiom ix_to_abs_level_spec : forall t : Cdsat_Trail_Trail_Type.t_trail, s : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 822 11 822 24] Invariant0.invariant' t) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 824 0 824 57] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 826 0 826 68] Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = 0) && ([#"/Users/xavier/Code/cdsat/src/trail.rs" 825 0 825 90] not Fset.is_empty s -> SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost t)) (IxToAbs0.ix_to_abs t s) = LevelLog0.level_log (SetMax0.set_max s))
+end
+module Cdsat_Trail_SeqToSet_Stub
+  use seq.Seq
+  use set.Fset
+  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
+  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
+  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
+  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
+  clone Cdsat_Trail_Impl11_IndexLogic_Stub as IndexLogic0
+  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains3 with
+    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
+  clone Cdsat_Trail_Impl11_Contains_Stub as Contains2
+  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains1 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_IxToAbs_Stub as IxToAbs0 with
+    predicate Contains0.contains = Contains1.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains1.contains = Contains3.contains,
+    axiom .
+  clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_Impl11_AbstractJustification_Stub as AbstractJustification0 with
+    predicate Contains0.contains = Contains2.contains,
+    predicate Contains1.contains = Contains3.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains2.contains = Contains0.contains,
+    axiom .
+  function seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    
+end
+module Cdsat_Trail_SeqToSet_Interface
+  use seq.Seq
+  use set.Fset
+  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
+  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
+  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
+  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
+  clone Cdsat_Trail_Impl11_IndexLogic_Stub as IndexLogic0
+  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains3 with
+    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
+  clone Cdsat_Trail_Impl11_Contains_Stub as Contains2
+  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains1 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_IxToAbs_Stub as IxToAbs0 with
+    predicate Contains0.contains = Contains1.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains1.contains = Contains3.contains,
+    axiom .
+  clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_Impl11_AbstractJustification_Stub as AbstractJustification0 with
+    predicate Contains0.contains = Contains2.contains,
+    predicate Contains1.contains = Contains3.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains2.contains = Contains0.contains,
+    axiom .
+  function seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    
+  val seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t }
+    ensures { result = seq_to_set trail s t }
+    
+  axiom seq_to_set_spec : forall trail : Cdsat_Trail_Trail_Type.t_trail, s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t)
+end
+module Cdsat_Trail_SeqToSet
+  use seq.Seq
+  use set.Fset
+  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
+  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
+  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
+  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
+  clone Cdsat_Trail_Impl11_IndexLogic_Stub as IndexLogic0
+  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains3 with
+    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
+  clone Cdsat_Trail_Impl11_Contains_Stub as Contains2
+  clone CreusotContracts_Logic_Fset_Impl0_Remove_Stub as Remove1 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_Remove_Stub as Remove0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Contains0.contains = Contains0.contains,
+    axiom .
+  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains1 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_IxToAbs_Stub as IxToAbs0 with
+    predicate Contains0.contains = Contains1.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains1.contains = Contains3.contains,
+    axiom .
+  clone Cdsat_Trail_Impl11_AbstractJustification_Stub as AbstractJustification0 with
+    predicate Contains0.contains = Contains2.contains,
+    predicate Contains1.contains = Contains3.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains2.contains = Contains0.contains,
+    axiom .
+  function seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    
+  val seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t }
+    ensures { result = seq_to_set trail s t }
+    
+  axiom def : forall trail : Cdsat_Trail_Trail_Type.t_trail, s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . seq_to_set trail s t = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 756 0 756 8] if s = Seq.empty  then
+    ()
+  else
+    let a = Seq.get s 0 in seq_to_set trail (Remove0.remove s a) (Remove1.remove t a)
+  )
+  axiom seq_to_set_spec : forall trail : Cdsat_Trail_Trail_Type.t_trail, s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t)
+end
+module Cdsat_Trail_SeqToSet_Impl
+  use seq.Seq
+  use set.Fset
+  clone CreusotContracts_Std1_Num_Impl10_DeepModel as DeepModel5
+  clone CreusotContracts_Model_Impl4_DeepModel as DeepModel4
+  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
+  use Cdsat_Trail_Sort_Type as Cdsat_Trail_Sort_Type
+  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
+  clone Cdsat_Trail_Impl29_DeepModel as DeepModel3
+  clone CreusotContracts_Std1_Num_Impl16_DeepModel as DeepModel2
+  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
+  use Cdsat_Trail_Value_Type as Cdsat_Trail_Value_Type
+  clone Cdsat_Trail_Impl38_DeepModel as DeepModel1 with
+    function DeepModel0.deep_model = DeepModel4.deep_model,
+    function DeepModel1.deep_model = DeepModel5.deep_model
+  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
+  use Cdsat_Trail_Term_Type as Cdsat_Trail_Term_Type
+  clone Cdsat_Trail_Impl4_DeepModel as DeepModel0 with
+    function DeepModel0.deep_model = DeepModel2.deep_model,
+    function DeepModel1.deep_model = DeepModel3.deep_model,
+    function DeepModel2.deep_model = DeepModel1.deep_model
+  clone Cdsat_Trail_Impl5_ShallowModel as ShallowModel3 with
+    function DeepModel0.deep_model = DeepModel1.deep_model
+  clone Cdsat_Trail_Impl3_ShallowModel as ShallowModel2 with
+    function DeepModel0.deep_model = DeepModel0.deep_model
+  use Cdsat_Trail_Assignment_Type as Cdsat_Trail_Assignment_Type
+  clone Cdsat_Trail_Impl14_TermValue as TermValue0 with
+    function ShallowModel0.shallow_model = ShallowModel2.shallow_model,
+    function ShallowModel1.shallow_model = ShallowModel3.shallow_model
+  use Alloc_Alloc_Global_Type as Alloc_Alloc_Global_Type
+  use Alloc_Vec_Vec_Type as Alloc_Vec_Vec_Type
+  clone Core_Num_Impl11_Max as Max0
+  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel1 with
+    type t = Cdsat_Trail_Assignment_Type.t_assignment,
+    type a = Alloc_Alloc_Global_Type.t_global,
+    val Max0.mAX' = Max0.mAX',
+    axiom .
+  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel0 with
+    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
+    type a = Alloc_Alloc_Global_Type.t_global,
+    val Max0.mAX' = Max0.mAX',
+    axiom .
+  clone CreusotContracts_Logic_Fset_Impl0_Insert as Insert0 with
+    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
+  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
+  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
+  clone Cdsat_Trail_Impl11_IndexLogic as IndexLogic0 with
+    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
+    function ShallowModel1.shallow_model = ShallowModel1.shallow_model,
+    function TermValue0.term_value = TermValue0.term_value,
+    val Max0.mAX' = Max0.mAX'
+  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains3 with
+    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
+  clone Cdsat_Trail_Impl11_Contains as Contains2 with
+    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
+    function ShallowModel1.shallow_model = ShallowModel1.shallow_model,
+    val Max0.mAX' = Max0.mAX'
+  clone CreusotContracts_Logic_Fset_Impl0_Remove as Remove1 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone CreusotContracts_Logic_Seq_Impl0_Contains as Contains0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_Remove as Remove0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Contains0.contains = Contains0.contains,
+    axiom .
+  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains1 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_IxToAbs as IxToAbs0 with
+    predicate Contains0.contains = Contains1.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains1.contains = Contains3.contains,
+    function Remove0.remove = Remove1.remove,
+    function Insert0.insert = Insert0.insert,
+    axiom .
+  clone Cdsat_Trail_Impl11_AbstractJustification as AbstractJustification0 with
+    predicate Contains0.contains = Contains2.contains,
+    predicate Contains1.contains = Contains3.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains2.contains = Contains0.contains,
+    function Remove0.remove = Remove0.remove,
+    function Insert0.insert = Insert0.insert,
+    axiom .
+  let rec ghost function seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t }
+    variant {[#"/Users/xavier/Code/cdsat/src/trail.rs" 758 10 758 17] Seq.length s}
+    
+   = [@vc:do_not_keep_trace] [@vc:sp]
+    [#"/Users/xavier/Code/cdsat/src/trail.rs" 756 0 756 8] if pure {s = Seq.empty } then
+      ()
+    else
+      let a = Seq.get s 0 in let b' = Remove0.remove s a in let c' = Remove1.remove t a in seq_to_set trail b' c'
+    
 end
 module Cdsat_Theory_Impl0_IsBool_Stub
   use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
@@ -7306,8 +7566,8 @@ module Cdsat_Concrete_Impl3_New_Interface
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   use Cdsat_Concrete_ConflictHeap_Type as Cdsat_Concrete_ConflictHeap_Type
   clone Cdsat_Concrete_Impl2_ShallowModel_Stub as ShallowModel0
-  val new [#"/Users/xavier/Code/cdsat/src/concrete.rs" 463 4 463 20] (_1 : ()) : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 462 14 462 36] ShallowModel0.shallow_model result = Fset.empty  }
+  val new [#"/Users/xavier/Code/cdsat/src/concrete.rs" 429 4 429 20] (_1 : ()) : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 428 14 428 36] ShallowModel0.shallow_model result = Fset.empty  }
     
 end
 module CreusotContracts_Std1_Vec_Impl3_IntoIterPre_Stub
@@ -7496,8 +7756,8 @@ module Cdsat_Concrete_Impl3_Insert_Interface
     type t = Cdsat_Concrete_ConflictHeap_Type.t_conflictheap,
     type ShallowModelTy0.shallowModelTy = Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
   clone Cdsat_Concrete_Impl2_ShallowModel_Stub as ShallowModel0
-  val insert [#"/Users/xavier/Code/cdsat/src/concrete.rs" 469 4 469 47] (self : borrowed (Cdsat_Concrete_ConflictHeap_Type.t_conflictheap)) (e : Cdsat_Trail_TrailIndex_Type.t_trailindex) : bool
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 468 14 468 43] ShallowModel0.shallow_model ( ^ self) = Insert0.insert (ShallowModel1.shallow_model self) e }
+  val insert [#"/Users/xavier/Code/cdsat/src/concrete.rs" 435 4 435 47] (self : borrowed (Cdsat_Concrete_ConflictHeap_Type.t_conflictheap)) (e : Cdsat_Trail_TrailIndex_Type.t_trailindex) : bool
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 434 14 434 43] ShallowModel0.shallow_model ( ^ self) = Insert0.insert (ShallowModel1.shallow_model self) e }
     
 end
 module Cdsat_Concrete_Impl3_Last_Interface
@@ -7514,9 +7774,9 @@ module Cdsat_Concrete_Impl3_Last_Interface
     type t = Cdsat_Concrete_ConflictHeap_Type.t_conflictheap,
     type ShallowModelTy0.shallowModelTy = Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
   use Core_Option_Option_Type as Core_Option_Option_Type
-  val last [#"/Users/xavier/Code/cdsat/src/concrete.rs" 479 4 479 41] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 474 4 477 6] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . result = Core_Option_Option_Type.C_Some a -> Contains0.contains (ShallowModel0.shallow_model self) a /\ (forall other : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model self) other -> LeLog0.le_log other a) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 478 14 478 58] (ShallowModel0.shallow_model self = Fset.empty ) = (result = Core_Option_Option_Type.C_None) }
+  val last [#"/Users/xavier/Code/cdsat/src/concrete.rs" 445 4 445 41] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 440 4 443 6] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . result = Core_Option_Option_Type.C_Some a -> Contains0.contains (ShallowModel0.shallow_model self) a /\ (forall other : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model self) other -> LeLog0.le_log other a) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 444 14 444 58] (ShallowModel0.shallow_model self = Fset.empty ) = (result = Core_Option_Option_Type.C_None) }
     
 end
 module Core_Option_Impl0_Unwrap_Interface
@@ -7553,9 +7813,9 @@ module Cdsat_Concrete_Impl3_PopLast_Interface
   clone CreusotContracts_Model_Impl3_ShallowModel_Stub as ShallowModel0 with
     type t = Cdsat_Concrete_ConflictHeap_Type.t_conflictheap,
     type ShallowModelTy0.shallowModelTy = Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-  val pop_last [#"/Users/xavier/Code/cdsat/src/concrete.rs" 489 4 489 48] (self : borrowed (Cdsat_Concrete_ConflictHeap_Type.t_conflictheap)) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 484 14 484 58] (ShallowModel0.shallow_model self = Fset.empty ) = (result = Core_Option_Option_Type.C_None) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 485 4 488 6] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . result = Core_Option_Option_Type.C_Some a -> ShallowModel1.shallow_model ( ^ self) = Remove0.remove (ShallowModel0.shallow_model self) a /\ Contains0.contains (ShallowModel0.shallow_model self) a /\ (forall other : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel1.shallow_model ( ^ self)) other -> LeLog0.le_log other a) }
+  val pop_last [#"/Users/xavier/Code/cdsat/src/concrete.rs" 455 4 455 48] (self : borrowed (Cdsat_Concrete_ConflictHeap_Type.t_conflictheap)) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 450 14 450 58] (ShallowModel0.shallow_model self = Fset.empty ) = (result = Core_Option_Option_Type.C_None) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 451 4 454 6] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . result = Core_Option_Option_Type.C_Some a -> ShallowModel1.shallow_model ( ^ self) = Remove0.remove (ShallowModel0.shallow_model self) a /\ Contains0.contains (ShallowModel0.shallow_model self) a /\ (forall other : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel1.shallow_model ( ^ self)) other -> LeLog0.le_log other a) }
     
 end
 module CreusotContracts_Std1_Slice_SliceIndex_InBounds_Stub
@@ -7834,14 +8094,40 @@ module Cdsat_Trail_Impl14_IsBool_Interface
     ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 705 14 705 45] result = IsBool0.is_bool (ShallowModel0.shallow_model (Cdsat_Trail_Assignment_Type.assignment_val self)) }
     
 end
+module Cdsat_Trail_SeqUnique_Stub
+  type t
+  use seq.Seq
+  predicate seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 793 0 793 47] (s : Seq.seq t)
+end
+module Cdsat_Trail_SeqUnique_Interface
+  type t
+  use seq.Seq
+  predicate seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 793 0 793 47] (s : Seq.seq t)
+  val seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 793 0 793 47] (s : Seq.seq t) : bool
+    ensures { result = seq_unique s }
+    
+end
+module Cdsat_Trail_SeqUnique
+  type t
+  use seq.Seq
+  use prelude.Int
+  predicate seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 793 0 793 47] (s : Seq.seq t) =
+    [#"/Users/xavier/Code/cdsat/src/trail.rs" 794 4 794 98] forall j : int . forall i : int . 0 <= i /\ i <= j /\ j < Seq.length s -> i <> j -> Seq.get s i <> Seq.get s j
+  val seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 793 0 793 47] (s : Seq.seq t) : bool
+    ensures { result = seq_unique s }
+    
+end
 module Cdsat_Concrete_Impl3_IntoVec_Interface
   use prelude.Int
   use seq.Seq
+  use set.Fset
   clone Core_Num_Impl11_Max_Stub as Max0
   use Alloc_Alloc_Global_Type as Alloc_Alloc_Global_Type
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   use Alloc_Vec_Vec_Type as Alloc_Vec_Vec_Type
   use Cdsat_Concrete_ConflictHeap_Type as Cdsat_Concrete_ConflictHeap_Type
+  clone Cdsat_Trail_SeqUnique_Stub as SeqUnique0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains1 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Stub as ShallowModel1 with
@@ -7852,9 +8138,11 @@ module Cdsat_Concrete_Impl3_IntoVec_Interface
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone Cdsat_Concrete_Impl2_ShallowModel_Stub as ShallowModel0
-  val into_vec [#"/Users/xavier/Code/cdsat/src/concrete.rs" 496 4 496 40] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 494 4 494 75] forall e : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model self) e -> Contains1.contains (ShallowModel1.shallow_model result) e }
-    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 495 4 495 94] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel1.shallow_model result) -> Contains0.contains (ShallowModel0.shallow_model self) (Seq.get (ShallowModel1.shallow_model result) i) }
+  val into_vec [#"/Users/xavier/Code/cdsat/src/concrete.rs" 464 4 464 40] (self : Cdsat_Concrete_ConflictHeap_Type.t_conflictheap) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 460 4 460 75] forall e : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model self) e -> Contains1.contains (ShallowModel1.shallow_model result) e }
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 461 4 461 94] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel1.shallow_model result) -> Contains0.contains (ShallowModel0.shallow_model self) (Seq.get (ShallowModel1.shallow_model result) i) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 462 14 462 42] Seq.length (ShallowModel1.shallow_model result) = Fset.cardinal (ShallowModel0.shallow_model self) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 463 14 463 33] SeqUnique0.seq_unique (ShallowModel1.shallow_model result) }
     
 end
 module Cdsat_Theory_Impl4_RestrictFind_Stub
@@ -8538,6 +8826,8 @@ module Cdsat_Trail_Impl11_AddJustified_Interface
   use prelude.Int
   use seq.Seq
   use prelude.Ghost
+  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
+  clone Cdsat_Theory_Impl4_Unsat_Stub as Unsat0
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains2 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
@@ -8547,12 +8837,14 @@ module Cdsat_Trail_Impl11_AddJustified_Interface
   clone Cdsat_Trail_Impl11_IndexLogic_Stub as IndexLogic0
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains1 with
     type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
   clone Core_Num_Impl11_Max_Stub as Max0
   use Cdsat_Trail_Value_Type as Cdsat_Trail_Value_Type
   use Cdsat_Trail_Term_Type as Cdsat_Trail_Term_Type
   use Alloc_Alloc_Global_Type as Alloc_Alloc_Global_Type
   use Alloc_Vec_Vec_Type as Alloc_Vec_Vec_Type
+  clone Cdsat_Theory_Impl4_Impls_Stub as Impls0 with
+    predicate Unsat0.unsat = Unsat0.unsat,
+    axiom .
   use Cdsat_Theory_Model_Type as Cdsat_Theory_Model_Type
   clone Cdsat_Theory_Impl3_Satisfies_Stub as Satisfies0
   clone Cdsat_Theory_Impl3_SatisfySet_Stub as SatisfySet0
@@ -8575,12 +8867,13 @@ module Cdsat_Trail_Impl11_AddJustified_Interface
   clone Cdsat_Trail_Impl5_ShallowModel_Stub as ShallowModel0
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
   val add_justified [#"/Users/xavier/Code/cdsat/src/trail.rs" 548 4 548 93] (self : borrowed (Cdsat_Trail_Trail_Type.t_trail)) (into_vec : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)) (term : Cdsat_Trail_Term_Type.t_term) (val' : Cdsat_Trail_Value_Type.t_value) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 543 4 543 40] Invariant0.invariant' ( * self)}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 544 15 544 31] IsBool0.is_bool (ShallowModel0.shallow_model val')}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 545 4 545 96] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel1.shallow_model into_vec) -> Contains0.contains ( * self) (Seq.get (ShallowModel1.shallow_model into_vec) i)}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 546 4 546 51] Acceptable0.acceptable (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self))) (ShallowModel2.shallow_model term) (ShallowModel0.shallow_model val')}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 547 4 547 145] forall m : Cdsat_Theory_Model_Type.t_model . Invariant1.invariant' m -> SatisfySet0.satisfy_set m (AbstractJustification0.abstract_justification ( * self) (ShallowModel1.shallow_model into_vec)) -> Satisfies0.satisfies m (ShallowModel2.shallow_model term, ShallowModel0.shallow_model val')}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 543 4 543 40] Invariant0.invariant' ( ^ self) }
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 542 4 542 40] Invariant0.invariant' ( * self)}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 543 15 543 31] IsBool0.is_bool (ShallowModel0.shallow_model val')}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 544 4 544 96] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel1.shallow_model into_vec) -> Contains0.contains ( * self) (Seq.get (ShallowModel1.shallow_model into_vec) i)}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 545 4 545 51] Acceptable0.acceptable (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self))) (ShallowModel2.shallow_model term) (ShallowModel0.shallow_model val')}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 546 4 546 145] forall m : Cdsat_Theory_Model_Type.t_model . Invariant1.invariant' m -> SatisfySet0.satisfy_set m (AbstractJustification0.abstract_justification ( * self) (ShallowModel1.shallow_model into_vec)) -> Satisfies0.satisfies m (ShallowModel2.shallow_model term, ShallowModel0.shallow_model val')}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 542 4 542 40] Invariant0.invariant' ( ^ self) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 547 4 547 48] Impls0.impls (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self))) (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( ^ self))) }
     
 end
 module Cdsat_Trail_Impl14_IsFirstOrder_Interface
@@ -8770,12 +9063,12 @@ module Cdsat_Trail_Impl11_Justification_Interface
     val Max0.mAX' = Max0.mAX',
     axiom .
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  val justification [#"/Users/xavier/Code/cdsat/src/trail.rs" 532 4 532 72] (self : Cdsat_Trail_Trail_Type.t_trail) (a : Cdsat_Trail_TrailIndex_Type.t_trailindex) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 527 15 527 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 528 15 528 31] Contains0.contains self a}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 529 4 529 91] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel0.shallow_model result) -> Contains0.contains self (Seq.get (ShallowModel0.shallow_model result) i) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 530 14 530 99] AbstractJustification0.abstract_justification self (ShallowModel0.shallow_model result) = Justification0.justification (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) (IndexLogic0.index_logic self a) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 531 4 531 105] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel0.shallow_model result) -> LevelLog0.level_log (Seq.get (ShallowModel0.shallow_model result) i) <= LevelLog0.level_log a }
+  val justification [#"/Users/xavier/Code/cdsat/src/trail.rs" 531 4 531 72] (self : Cdsat_Trail_Trail_Type.t_trail) (a : Cdsat_Trail_TrailIndex_Type.t_trailindex) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 526 15 526 31] Invariant0.invariant' self}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 527 15 527 31] Contains0.contains self a}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 528 4 528 91] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel0.shallow_model result) -> Contains0.contains self (Seq.get (ShallowModel0.shallow_model result) i) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 529 14 529 99] AbstractJustification0.abstract_justification self (ShallowModel0.shallow_model result) = Justification0.justification (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) (IndexLogic0.index_logic self a) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 530 4 530 105] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel0.shallow_model result) -> LevelLog0.level_log (Seq.get (ShallowModel0.shallow_model result) i) <= LevelLog0.level_log a }
     
 end
 module Core_Slice_Impl0_Iter_Interface
@@ -8925,11 +9218,11 @@ module Cdsat_Trail_Impl11_AddDecision_Interface
   clone Cdsat_Trail_Impl3_ShallowModel_Stub as ShallowModel0
   use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  val add_decision [#"/Users/xavier/Code/cdsat/src/trail.rs" 497 4 497 65] (self : borrowed (Cdsat_Trail_Trail_Type.t_trail)) (term : Cdsat_Trail_Term_Type.t_term) (val' : Cdsat_Trail_Value_Type.t_value) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 492 15 492 31] Invariant0.invariant' ( * self)}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 494 4 494 51] Acceptable0.acceptable (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self))) (ShallowModel0.shallow_model term) (ShallowModel1.shallow_model val')}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 493 14 493 33] Invariant0.invariant' ( ^ self) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 495 4 495 48] Impls0.impls (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self))) (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( ^ self))) }
+  val add_decision [#"/Users/xavier/Code/cdsat/src/trail.rs" 496 4 496 65] (self : borrowed (Cdsat_Trail_Trail_Type.t_trail)) (term : Cdsat_Trail_Term_Type.t_term) (val' : Cdsat_Trail_Value_Type.t_value) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 491 15 491 31] Invariant0.invariant' ( * self)}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 493 4 493 51] Acceptable0.acceptable (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self))) (ShallowModel0.shallow_model term) (ShallowModel1.shallow_model val')}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 492 14 492 33] Invariant0.invariant' ( ^ self) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 494 4 494 48] Impls0.impls (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self))) (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( ^ self))) }
     
 end
 module CreusotContracts_Invariant_Invariant_IsInhabited_Stub
@@ -9181,6 +9474,7 @@ module Cdsat_Concrete_Impl0_ResolveConflict_Interface
   use prelude.Ghost
   use prelude.UIntSize
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
+  clone Cdsat_Theory_Impl4_Unsat_Stub as Unsat0
   clone Cdsat_Theory_Impl4_Len_Stub as Len0 with
     axiom .
   clone Cdsat_Theory_Impl4_Level_Stub as Level0 with
@@ -9203,6 +9497,9 @@ module Cdsat_Concrete_Impl0_ResolveConflict_Interface
   use Alloc_Alloc_Global_Type as Alloc_Alloc_Global_Type
   use Alloc_Vec_Vec_Type as Alloc_Vec_Vec_Type
   use Cdsat_Concrete_Solver_Type as Cdsat_Concrete_Solver_Type
+  clone Cdsat_Theory_Impl4_Impls_Stub as Impls0 with
+    predicate Unsat0.unsat = Unsat0.unsat,
+    axiom .
   clone Cdsat_Theory_Impl4_IsDecision_Stub as IsDecision0
   use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
   clone Cdsat_Trail_Impl11_IndexLogic_Stub as IndexLogic0
@@ -9228,13 +9525,15 @@ module Cdsat_Concrete_Impl0_ResolveConflict_Interface
     val Max0.mAX' = Max0.mAX',
     axiom .
   clone Cdsat_Trail_Impl11_Invariant_Stub as Invariant0
-  val resolve_conflict [#"/Users/xavier/Code/cdsat/src/concrete.rs" 112 4 112 80] (self : borrowed (Cdsat_Concrete_Solver_Type.t_solver)) (trail : borrowed (Cdsat_Trail_Trail_Type.t_trail)) (conflict : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)) : ()
+  val resolve_conflict [#"/Users/xavier/Code/cdsat/src/concrete.rs" 114 4 114 80] (self : borrowed (Cdsat_Concrete_Solver_Type.t_solver)) (trail : borrowed (Cdsat_Trail_Trail_Type.t_trail)) (conflict : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)) : ()
     requires {[#"/Users/xavier/Code/cdsat/src/concrete.rs" 103 4 103 41] Invariant0.invariant' ( * trail)}
     requires {[#"/Users/xavier/Code/cdsat/src/concrete.rs" 104 15 104 36] Seq.length (ShallowModel0.shallow_model conflict) > 0}
     requires {[#"/Users/xavier/Code/cdsat/src/concrete.rs" 105 4 105 99] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel0.shallow_model conflict) -> Contains0.contains ( * trail) (Seq.get (ShallowModel0.shallow_model conflict) i)}
     requires {[#"/Users/xavier/Code/cdsat/src/concrete.rs" 106 4 110 7] let conflict = AbstractJustification0.abstract_justification ( * trail) (ShallowModel0.shallow_model conflict) in SetLevel0.set_level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail))) conflict > 0 /\ (forall m : Cdsat_Theory_Model_Type.t_model . SatisfySet0.satisfy_set m conflict -> false)}
     requires {[#"/Users/xavier/Code/cdsat/src/concrete.rs" 111 4 111 126] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains ( * trail) ix -> (UIntSize.to_int (Cdsat_Trail_TrailIndex_Type.trailindex_1 ix) = 0) = IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail))) (IndexLogic0.index_logic ( * trail) ix)}
     ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 103 4 103 41] Invariant0.invariant' ( ^ trail) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 112 14 112 34] Invariant0.invariant' ( ^ trail) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/concrete.rs" 113 4 113 53] Impls0.impls (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * trail))) (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( ^ trail))) }
     
 end
 module Cdsat_Concrete_Impl0_Solver_Interface
@@ -9277,7 +9576,7 @@ module Cdsat_Concrete_Impl1_Eval_Interface
   use Core_Result_Result_Type as Core_Result_Result_Type
   use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
   use Cdsat_Concrete_BoolTheory_Type as Cdsat_Concrete_BoolTheory_Type
-  val eval [#"/Users/xavier/Code/cdsat/src/concrete.rs" 405 4 405 87] (self : borrowed (Cdsat_Concrete_BoolTheory_Type.t_booltheory)) (tl : Cdsat_Trail_Trail_Type.t_trail) (tm : Cdsat_Trail_Term_Type.t_term) : Core_Result_Result_Type.t_result (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global), Cdsat_Trail_Value_Type.t_value) (Cdsat_Trail_Term_Type.t_term)
+  val eval [#"/Users/xavier/Code/cdsat/src/concrete.rs" 371 4 371 87] (self : borrowed (Cdsat_Concrete_BoolTheory_Type.t_booltheory)) (tl : Cdsat_Trail_Trail_Type.t_trail) (tm : Cdsat_Trail_Term_Type.t_term) : Core_Result_Result_Type.t_result (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global), Cdsat_Trail_Value_Type.t_value) (Cdsat_Trail_Term_Type.t_term)
     
 end
 module Cdsat_Concrete_Impl1_EvalMemo_Interface
@@ -9290,7 +9589,7 @@ module Cdsat_Concrete_Impl1_EvalMemo_Interface
   use Core_Result_Result_Type as Core_Result_Result_Type
   use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
   use Cdsat_Concrete_BoolTheory_Type as Cdsat_Concrete_BoolTheory_Type
-  val eval_memo [#"/Users/xavier/Code/cdsat/src/concrete.rs" 437 4 437 92] (self : borrowed (Cdsat_Concrete_BoolTheory_Type.t_booltheory)) (tl : Cdsat_Trail_Trail_Type.t_trail) (tm : Cdsat_Trail_Term_Type.t_term) : Core_Result_Result_Type.t_result (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global), Cdsat_Trail_Value_Type.t_value) (Cdsat_Trail_Term_Type.t_term)
+  val eval_memo [#"/Users/xavier/Code/cdsat/src/concrete.rs" 403 4 403 92] (self : borrowed (Cdsat_Concrete_BoolTheory_Type.t_booltheory)) (tl : Cdsat_Trail_Trail_Type.t_trail) (tm : Cdsat_Trail_Term_Type.t_term) : Core_Result_Result_Type.t_result (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global), Cdsat_Trail_Value_Type.t_value) (Cdsat_Trail_Term_Type.t_term)
     
 end
 module Alloc_Boxed_Impl14_Eq_Interface
@@ -9763,7 +10062,7 @@ module Cdsat_Trail_Impl11_AbsJustCons_Stub
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains2.contains = Contains2.contains,
     axiom .
-  function abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 469 4 469 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+  function abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 468 4 468 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
     
 end
 module Cdsat_Trail_Impl11_AbsJustCons_Interface
@@ -9787,15 +10086,15 @@ module Cdsat_Trail_Impl11_AbsJustCons_Interface
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains2.contains = Contains2.contains,
     axiom .
-  function abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 469 4 469 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+  function abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 468 4 468 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
     
-  val abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 469 4 469 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 466 15 466 34] Contains0.contains self elem}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 467 4 467 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 468 14 468 144] AbstractJustification0.abstract_justification self (Seq.(++) (Seq.singleton elem) just) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem) }
+  val abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 468 4 468 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 465 15 465 34] Contains0.contains self elem}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 466 4 466 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 467 14 467 144] AbstractJustification0.abstract_justification self (Seq.(++) (Seq.singleton elem) just) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem) }
     ensures { result = abs_just_cons self just elem }
     
-  axiom abs_just_cons_spec : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 466 15 466 34] Contains0.contains self elem) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 467 4 467 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 468 14 468 144] AbstractJustification0.abstract_justification self (Seq.(++) (Seq.singleton elem) just) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem))
+  axiom abs_just_cons_spec : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 465 15 465 34] Contains0.contains self elem) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 466 4 466 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 467 14 467 144] AbstractJustification0.abstract_justification self (Seq.(++) (Seq.singleton elem) just) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem))
 end
 module Cdsat_Trail_Impl11_AbsJustCons
   use prelude.Int
@@ -9818,16 +10117,16 @@ module Cdsat_Trail_Impl11_AbsJustCons
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains2.contains = Contains2.contains,
     axiom .
-  function abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 469 4 469 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+  function abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 468 4 468 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
     
-  val abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 469 4 469 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 466 15 466 34] Contains0.contains self elem}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 467 4 467 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 468 14 468 144] AbstractJustification0.abstract_justification self (Seq.(++) (Seq.singleton elem) just) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem) }
+  val abs_just_cons [#"/Users/xavier/Code/cdsat/src/trail.rs" 468 4 468 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 465 15 465 34] Contains0.contains self elem}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 466 4 466 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 467 14 467 144] AbstractJustification0.abstract_justification self (Seq.(++) (Seq.singleton elem) just) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem) }
     ensures { result = abs_just_cons self just elem }
     
-  axiom def : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . abs_just_cons self just elem = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 470 8 470 10] ())
-  axiom abs_just_cons_spec : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 466 15 466 34] Contains0.contains self elem) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 467 4 467 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 468 14 468 144] AbstractJustification0.abstract_justification self (Seq.(++) (Seq.singleton elem) just) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem))
+  axiom def : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . abs_just_cons self just elem = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 469 8 469 10] ())
+  axiom abs_just_cons_spec : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 465 15 465 34] Contains0.contains self elem) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 466 4 466 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 467 14 467 144] AbstractJustification0.abstract_justification self (Seq.(++) (Seq.singleton elem) just) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem))
 end
 module Cdsat_Trail_Impl11_AbsJustSnoc_Stub
   use prelude.Int
@@ -9850,7 +10149,7 @@ module Cdsat_Trail_Impl11_AbsJustSnoc_Stub
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains2.contains = Contains2.contains,
     axiom .
-  function abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 478 4 478 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+  function abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 477 4 477 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
     
 end
 module Cdsat_Trail_Impl11_AbsJustSnoc_Interface
@@ -9874,15 +10173,15 @@ module Cdsat_Trail_Impl11_AbsJustSnoc_Interface
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains2.contains = Contains2.contains,
     axiom .
-  function abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 478 4 478 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+  function abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 477 4 477 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
     
-  val abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 478 4 478 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 475 15 475 34] Contains0.contains self elem}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 476 4 476 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 477 14 477 126] AbstractJustification0.abstract_justification self (Seq.snoc just elem) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem) }
+  val abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 477 4 477 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 474 15 474 34] Contains0.contains self elem}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 475 4 475 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 476 14 476 126] AbstractJustification0.abstract_justification self (Seq.snoc just elem) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem) }
     ensures { result = abs_just_snoc self just elem }
     
-  axiom abs_just_snoc_spec : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 475 15 475 34] Contains0.contains self elem) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 476 4 476 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 477 14 477 126] AbstractJustification0.abstract_justification self (Seq.snoc just elem) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem))
+  axiom abs_just_snoc_spec : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 474 15 474 34] Contains0.contains self elem) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 475 4 475 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 476 14 476 126] AbstractJustification0.abstract_justification self (Seq.snoc just elem) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem))
 end
 module Cdsat_Trail_Impl11_AbsJustSnoc
   use prelude.Int
@@ -9914,27 +10213,27 @@ module Cdsat_Trail_Impl11_AbsJustSnoc
     predicate Contains1.contains = Contains1.contains,
     predicate Contains2.contains = Contains2.contains,
     axiom .
-  function abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 478 4 478 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+  function abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 477 4 477 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
     
-  val abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 478 4 478 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 475 15 475 34] Contains0.contains self elem}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 476 4 476 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 477 14 477 126] AbstractJustification0.abstract_justification self (Seq.snoc just elem) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem) }
+  val abs_just_snoc [#"/Users/xavier/Code/cdsat/src/trail.rs" 477 4 477 67] (self : Cdsat_Trail_Trail_Type.t_trail) (just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (elem : Cdsat_Trail_TrailIndex_Type.t_trailindex) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 474 15 474 34] Contains0.contains self elem}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 475 4 475 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 476 14 476 126] AbstractJustification0.abstract_justification self (Seq.snoc just elem) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem) }
     ensures { result = abs_just_snoc self just elem }
     
-  axiom def : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . abs_just_snoc self just elem = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 473 4 473 12] if just = Seq.empty  then
+  axiom def : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . abs_just_snoc self just elem = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 472 4 472 12] if just = Seq.empty  then
     ()
   else
     let j = Seq.snoc just elem in let _ = AbsJustCons0.abs_just_cons self (SeqExt.subsequence j 1 (Seq.length j)) (Seq.get j 0) in abs_just_snoc self (SeqExt.subsequence just 1 (Seq.length just)) elem
   )
-  axiom abs_just_snoc_spec : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 475 15 475 34] Contains0.contains self elem) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 476 4 476 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 477 14 477 126] AbstractJustification0.abstract_justification self (Seq.snoc just elem) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem))
+  axiom abs_just_snoc_spec : forall self : Cdsat_Trail_Trail_Type.t_trail, just : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), elem : Cdsat_Trail_TrailIndex_Type.t_trailindex . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 474 15 474 34] Contains0.contains self elem) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 475 4 475 82] forall i : int . 0 <= i /\ i < Seq.length just -> Contains0.contains self (Seq.get just i)) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 476 14 476 126] AbstractJustification0.abstract_justification self (Seq.snoc just elem) = Insert0.insert (AbstractJustification0.abstract_justification self just) (IndexLogic0.index_logic self elem))
 end
 module Cdsat_Trail_Impl11_Level_Interface
   use prelude.Borrow
   use prelude.Int
   use prelude.UIntSize
   use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
-  val level [#"/Users/xavier/Code/cdsat/src/trail.rs" 488 4 488 39] (self : Cdsat_Trail_Trail_Type.t_trail) : usize
+  val level [#"/Users/xavier/Code/cdsat/src/trail.rs" 487 4 487 39] (self : Cdsat_Trail_Trail_Type.t_trail) : usize
 end
 module CreusotContracts_Std1_Vec_Impl4_IntoIterPre_Stub
   type t
@@ -10048,7 +10347,7 @@ module Cdsat_Trail_Impl11_IndexOf_Interface
   use Core_Option_Option_Type as Core_Option_Option_Type
   use Cdsat_Trail_Term_Type as Cdsat_Trail_Term_Type
   use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
-  val index_of [#"/Users/xavier/Code/cdsat/src/trail.rs" 509 4 509 65] (self : Cdsat_Trail_Trail_Type.t_trail) (a : Cdsat_Trail_Term_Type.t_term) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  val index_of [#"/Users/xavier/Code/cdsat/src/trail.rs" 508 4 508 65] (self : Cdsat_Trail_Trail_Type.t_trail) (a : Cdsat_Trail_Term_Type.t_term) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
     
 end
 module Cdsat_Trail_IndexIterator_Type
@@ -10139,240 +10438,6 @@ module Cdsat_Trail_Impl14_Term_Interface
   use Cdsat_Trail_Assignment_Type as Cdsat_Trail_Assignment_Type
   val term [#"/Users/xavier/Code/cdsat/src/trail.rs" 736 4 736 38] (self : Cdsat_Trail_Assignment_Type.t_assignment) : Cdsat_Trail_Term_Type.t_term
     ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 735 14 735 34] result = Cdsat_Trail_Assignment_Type.assignment_term self }
-    
-end
-module Cdsat_Trail_SeqUnique_Stub
-  type t
-  use seq.Seq
-  predicate seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 774 0 774 47] (s : Seq.seq t)
-end
-module Cdsat_Trail_SeqUnique_Interface
-  type t
-  use seq.Seq
-  predicate seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 774 0 774 47] (s : Seq.seq t)
-  val seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 774 0 774 47] (s : Seq.seq t) : bool
-    ensures { result = seq_unique s }
-    
-end
-module Cdsat_Trail_SeqUnique
-  type t
-  use seq.Seq
-  use prelude.Int
-  predicate seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 774 0 774 47] (s : Seq.seq t) =
-    [#"/Users/xavier/Code/cdsat/src/trail.rs" 775 4 775 98] forall j : int . forall i : int . 0 <= i /\ i <= j /\ j < Seq.length s -> i <> j -> Seq.get s i <> Seq.get s j
-  val seq_unique [#"/Users/xavier/Code/cdsat/src/trail.rs" 774 0 774 47] (s : Seq.seq t) : bool
-    ensures { result = seq_unique s }
-    
-end
-module Cdsat_Trail_SeqToSet_Stub
-  use seq.Seq
-  use set.Fset
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
-  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
-  clone Cdsat_Trail_Impl11_IndexLogic_Stub as IndexLogic0
-  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains3 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Trail_Impl11_Contains_Stub as Contains2
-  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains1 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone Cdsat_Trail_IxToAbs_Stub as IxToAbs0 with
-    predicate Contains0.contains = Contains1.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains1.contains = Contains3.contains,
-    axiom .
-  clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone Cdsat_Trail_Impl11_AbstractJustification_Stub as AbstractJustification0 with
-    predicate Contains0.contains = Contains2.contains,
-    predicate Contains1.contains = Contains3.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains2.contains = Contains0.contains,
-    axiom .
-  clone Cdsat_Trail_SeqUnique_Stub as SeqUnique0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  function seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    
-end
-module Cdsat_Trail_SeqToSet_Interface
-  use seq.Seq
-  use set.Fset
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
-  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
-  clone Cdsat_Trail_Impl11_IndexLogic_Stub as IndexLogic0
-  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains3 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Trail_Impl11_Contains_Stub as Contains2
-  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains1 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone Cdsat_Trail_IxToAbs_Stub as IxToAbs0 with
-    predicate Contains0.contains = Contains1.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains1.contains = Contains3.contains,
-    axiom .
-  clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone Cdsat_Trail_Impl11_AbstractJustification_Stub as AbstractJustification0 with
-    predicate Contains0.contains = Contains2.contains,
-    predicate Contains1.contains = Contains3.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains2.contains = Contains0.contains,
-    axiom .
-  clone Cdsat_Trail_SeqUnique_Stub as SeqUnique0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  function seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    
-  val seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 759 11 759 24] SeqUnique0.seq_unique s}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t }
-    ensures { result = seq_to_set trail s t }
-    
-  axiom seq_to_set_spec : forall trail : Cdsat_Trail_Trail_Type.t_trail, s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 759 11 759 24] SeqUnique0.seq_unique s) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t)
-end
-module Cdsat_Trail_SeqToSet
-  use seq.Seq
-  use set.Fset
-  use seq_ext.SeqExt
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
-  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
-  clone Cdsat_Trail_Impl11_IndexLogic_Stub as IndexLogic0
-  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains3 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Trail_Impl11_Contains_Stub as Contains2
-  clone CreusotContracts_Logic_Fset_Impl0_Remove_Stub as Remove0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains1 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone Cdsat_Trail_IxToAbs_Stub as IxToAbs0 with
-    predicate Contains0.contains = Contains1.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains1.contains = Contains3.contains,
-    axiom .
-  clone CreusotContracts_Logic_Seq_Impl0_Contains_Stub as Contains0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone Cdsat_Trail_Impl11_AbstractJustification_Stub as AbstractJustification0 with
-    predicate Contains0.contains = Contains2.contains,
-    predicate Contains1.contains = Contains3.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains2.contains = Contains0.contains,
-    axiom .
-  clone Cdsat_Trail_SeqUnique_Stub as SeqUnique0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  function seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    
-  val seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 759 11 759 24] SeqUnique0.seq_unique s}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t }
-    ensures { result = seq_to_set trail s t }
-    
-  axiom def : forall trail : Cdsat_Trail_Trail_Type.t_trail, s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . seq_to_set trail s t = ([#"/Users/xavier/Code/cdsat/src/trail.rs" 756 0 756 8] if s = Seq.empty  then
-    ()
-  else
-    let a = Seq.get s 0 in seq_to_set trail (SeqExt.subsequence s 1 (Seq.length s)) (Remove0.remove t a)
-  )
-  axiom seq_to_set_spec : forall trail : Cdsat_Trail_Trail_Type.t_trail, s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex), t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex) . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 759 11 759 24] SeqUnique0.seq_unique s) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t)
-end
-module Cdsat_Trail_SeqToSet_Impl
-  use seq.Seq
-  use set.Fset
-  use seq_ext.SeqExt
-  clone CreusotContracts_Std1_Num_Impl10_DeepModel as DeepModel5
-  clone CreusotContracts_Model_Impl4_DeepModel as DeepModel4
-  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
-  use Cdsat_Trail_Sort_Type as Cdsat_Trail_Sort_Type
-  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
-  clone Cdsat_Trail_Impl29_DeepModel as DeepModel3
-  clone CreusotContracts_Std1_Num_Impl16_DeepModel as DeepModel2
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Trail_Value_Type as Cdsat_Trail_Value_Type
-  clone Cdsat_Trail_Impl38_DeepModel as DeepModel1 with
-    function DeepModel0.deep_model = DeepModel4.deep_model,
-    function DeepModel1.deep_model = DeepModel5.deep_model
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  use Cdsat_Trail_Term_Type as Cdsat_Trail_Term_Type
-  clone Cdsat_Trail_Impl4_DeepModel as DeepModel0 with
-    function DeepModel0.deep_model = DeepModel2.deep_model,
-    function DeepModel1.deep_model = DeepModel3.deep_model,
-    function DeepModel2.deep_model = DeepModel1.deep_model
-  clone Cdsat_Trail_Impl5_ShallowModel as ShallowModel3 with
-    function DeepModel0.deep_model = DeepModel1.deep_model
-  clone Cdsat_Trail_Impl3_ShallowModel as ShallowModel2 with
-    function DeepModel0.deep_model = DeepModel0.deep_model
-  use Cdsat_Trail_Assignment_Type as Cdsat_Trail_Assignment_Type
-  clone Cdsat_Trail_Impl14_TermValue as TermValue0 with
-    function ShallowModel0.shallow_model = ShallowModel2.shallow_model,
-    function ShallowModel1.shallow_model = ShallowModel3.shallow_model
-  use Alloc_Alloc_Global_Type as Alloc_Alloc_Global_Type
-  use Alloc_Vec_Vec_Type as Alloc_Vec_Vec_Type
-  clone Core_Num_Impl11_Max as Max0
-  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel1 with
-    type t = Cdsat_Trail_Assignment_Type.t_assignment,
-    type a = Alloc_Alloc_Global_Type.t_global,
-    val Max0.mAX' = Max0.mAX',
-    axiom .
-  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel0 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
-    type a = Alloc_Alloc_Global_Type.t_global,
-    val Max0.mAX' = Max0.mAX',
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Insert as Insert0 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
-  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
-  clone Cdsat_Trail_Impl11_IndexLogic as IndexLogic0 with
-    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
-    function ShallowModel1.shallow_model = ShallowModel1.shallow_model,
-    function TermValue0.term_value = TermValue0.term_value,
-    val Max0.mAX' = Max0.mAX'
-  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains3 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Trail_Impl11_Contains as Contains2 with
-    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
-    function ShallowModel1.shallow_model = ShallowModel1.shallow_model,
-    val Max0.mAX' = Max0.mAX'
-  clone CreusotContracts_Logic_Fset_Impl0_Remove as Remove0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains1 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone Cdsat_Trail_IxToAbs as IxToAbs0 with
-    predicate Contains0.contains = Contains1.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains1.contains = Contains3.contains,
-    function Remove0.remove = Remove0.remove,
-    function Insert0.insert = Insert0.insert,
-    axiom .
-  clone CreusotContracts_Logic_Seq_Impl0_Contains as Contains0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone Cdsat_Trail_Impl11_AbstractJustification as AbstractJustification0 with
-    predicate Contains0.contains = Contains2.contains,
-    predicate Contains1.contains = Contains3.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains2.contains = Contains0.contains,
-    function Insert0.insert = Insert0.insert,
-    axiom .
-  clone Cdsat_Trail_SeqUnique as SeqUnique0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  let rec ghost function seq_to_set [#"/Users/xavier/Code/cdsat/src/trail.rs" 763 0 763 81] (trail : Cdsat_Trail_Trail_Type.t_trail) (s : Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)) (t : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 759 11 759 24] SeqUnique0.seq_unique s}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 760 0 760 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains s i -> Contains1.contains t i}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 761 0 761 58] forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains t i -> Contains0.contains s i}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 762 10 762 64] AbstractJustification0.abstract_justification trail s = IxToAbs0.ix_to_abs trail t }
-    variant {[#"/Users/xavier/Code/cdsat/src/trail.rs" 758 10 758 17] Seq.length s}
-    
-   = [@vc:do_not_keep_trace] [@vc:sp]
-    [#"/Users/xavier/Code/cdsat/src/trail.rs" 756 0 756 8] if pure {s = Seq.empty } then
-      ()
-    else
-      let a = Seq.get s 0 in let c' = Remove0.remove t a in seq_to_set trail (SeqExt.subsequence s 1 (Seq.length s)) c'
     
 end
 module Cdsat_Theory_Impl4_IsSetLevel_Stub

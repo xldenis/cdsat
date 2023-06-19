@@ -8,31 +8,38 @@
 <prover id="3" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="mlcfg">
 <path name=".."/><path name="seq_to_set.mlcfg"/>
-<theory name="Cdsat_Trail_SeqToSet_Impl" proved="true">
- <goal name="seq_to_set&#39;vc" expl="VC for seq_to_set" proved="true">
- <transf name="use_th" proved="true" arg1="seq.FreeMonoid">
-  <goal name="seq_to_set&#39;vc.0" expl="VC for seq_to_set" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="seq_to_set&#39;vc.0.0" expl="variant decrease" proved="true">
-   <proof prover="3"><result status="valid" time="0.01" steps="39"/></proof>
+<theory name="Cdsat_Trail_SeqToSet_Impl">
+ <goal name="seq_to_set&#39;vc" expl="VC for seq_to_set">
+ <transf name="use_th" arg1="seq.FreeMonoid">
+  <goal name="seq_to_set&#39;vc.0" expl="VC for seq_to_set">
+  <transf name="split_vc" >
+   <goal name="seq_to_set&#39;vc.0.0" expl="variant decrease">
+   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="126612"/></proof>
+   <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="90429"/></proof>
+   <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
    </goal>
    <goal name="seq_to_set&#39;vc.0.1" expl="precondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.02" steps="91"/></proof>
+   <proof prover="3"><result status="valid" time="0.02" steps="72"/></proof>
    </goal>
    <goal name="seq_to_set&#39;vc.0.2" expl="precondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.05" steps="947"/></proof>
+   <proof prover="3"><result status="valid" time="0.05" steps="70"/></proof>
    </goal>
-   <goal name="seq_to_set&#39;vc.0.3" expl="precondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.05" steps="875"/></proof>
-   </goal>
-   <goal name="seq_to_set&#39;vc.0.4" expl="postcondition" proved="true">
+   <goal name="seq_to_set&#39;vc.0.3" expl="postcondition" proved="true">
    <transf name="assert" proved="true" arg1="(abstract_justification trail s == ix_to_abs trail t
 )">
-    <goal name="seq_to_set&#39;vc.0.4.0" expl="asserted formula" proved="true">
-    <proof prover="3"><result status="valid" time="0.56" steps="8444"/></proof>
+    <goal name="seq_to_set&#39;vc.0.3.0" expl="asserted formula" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="seq_to_set&#39;vc.0.3.0.0" expl="asserted formula" proved="true">
+     <proof prover="3"><result status="valid" time="0.02" steps="220"/></proof>
+     </goal>
+     <goal name="seq_to_set&#39;vc.0.3.0.1" expl="asserted formula" proved="true">
+     <proof prover="3"><result status="valid" time="0.33" steps="3964"/></proof>
+     </goal>
+    </transf>
     </goal>
-    <goal name="seq_to_set&#39;vc.0.4.1" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.01" steps="27"/></proof>
+    <goal name="seq_to_set&#39;vc.0.3.1" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.01" steps="19"/></proof>
     </goal>
    </transf>
    </goal>
