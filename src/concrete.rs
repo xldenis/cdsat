@@ -161,16 +161,10 @@ impl Solver {
 
             let a = trail[ix].clone();
             proof_assert!(trail.contains(ix));
-            proof_assert!(rem_level@ <= abs_cflct.level());
-            proof_assert!(rem_level@ <= ix.level_log());
-            proof_assert!(ix.level_log() == abs_cflct.level());
             proof_assert!(abs_cflct.0.is_decision(a.term_value()) ==> ix.level_log() > rem_level@);
             // Backjump
             if a.is_bool() && ix.level() > rem_level {
-                proof_assert!(trail.contains(ix));
-                proof_assert!(ix.level_log() == abs_cflct.0.level_of(trail.index_logic(ix)));
                 proof_assert!(trail.index_logic(ix) == a.term_value());
-                proof_assert!(ix_to_abs(*trail, heap@).ext_eq(abs_cflct.1.remove(a.term_value())));
 
                 let just = heap.into_vec();
                 proof_assert!(forall<i : _> 0 <= i && i < just@.len() ==> trail.contains(just@[i]));
@@ -181,24 +175,14 @@ impl Solver {
                 trail.restrict(rem_level);
                 proof_assert!(forall<i : _> 0 <= i && i < just@.len() ==> trail.contains(just@[i]));
                 proof_assert!(rem_level@ < ix.level_log());
-                proof_assert!(abs_cflct.0.set_level(abs_cflct.1.remove(a.term_value())) == rem_level@);
-                proof_assert!(abs_cflct.0.set_level(abs_cflct.1) == ix.level_log());
-                proof_assert!(
-                    abs_cflct.0.set_level(abs_cflct.1.remove(a.term_value())) < ix.level_log()
-                );
                 proof_assert! { abs_cflct.backjump2_pre(a.term_value()) };
                 let n: Ghost<theory::Normal> = ghost! { abs_cflct.backjump2(a.term_value()) };
-                // proof_assert!(n.0.acceptable(a.term_value().0, a.term_value().1));
-                // proof_assert!(trail.index_logic(ix) == a.term_value());
+
                 proof_assert!(trail.abstract_justification(just@) == abs_cflct.1.remove(a.term_value()));
                 trail.add_justified(just, a.term, a.val.negate());
 
                 return;
             }
-
-            // False?
-            // proof_assert!((a@.val).is_bool() ==> !trail.ghost.is_decision(a.term_value()));
-            // if a is a boolean then the rem_level == ix_level which if we have dec < just implies it must be justified.
 
             // If we use an order st dec < just then this is not enough...
 
@@ -247,22 +231,12 @@ impl Solver {
                     return;
                 }
 
-                proof_assert!(j.reason == Reason::Decision ==> trail.ghost.is_decision(trail.index_logic(*jix)));
-                proof_assert!(j.reason == Reason::Input ==> trail.ghost.is_input(trail.index_logic(*jix)));
-                proof_assert!((exists<v:_> j.reason == Reason::Justified(v)) ==> trail.ghost.is_justified(trail.index_logic(*jix)));
-
                 proof_assert!(!(
                     jix.level_log() == ix.level_log() &&
                     !j.val@.is_bool() &&
                     abs_cflct.0.is_decision(j.term_value())
                 ));
-                proof_assert!((abs_cflct.0.is_decision(j.term_value()) && !j@.val.is_bool()) ==> jix.level_log() < ix.level_log());
-
-                // proof_assert!(
-                //     trail.index_logic(*jix).1.is_bool() ||
-                //     !abs_cflct.0.is_decision(trail.index_logic(*jix)) ||
-                //     abs_cflct.0.level_of(trail.index_logic(*jix)) != abs_cflct.0.level_of(trail.index_logic(ix))
-                // );
+                // proof_assert!((abs_cflct.0.is_decision(j.term_value()) && !j@.val.is_bool()) ==> jix.level_log() < ix.level_log());
             }
 
             proof_assert!(
@@ -279,7 +253,6 @@ impl Solver {
 
             let old_heap: Ghost<ConflictHeap> = ghost! { heap };
 
-            proof_assert!(ix.level_log() <= conflict_level@);
 
             proof_assert!(
                 forall<i : _ > 0 <= i && i < just@.len() ==> abs_cflct.1.contains(trail.index_logic(just@[i]))
@@ -296,18 +269,6 @@ impl Solver {
                 proof_assert!(abs_cflct.1.contains(trail.index_logic(a)));
                 heap.insert(a);
             }
-
-            proof_assert!(old_c.0.is_justified(a.term_value()));
-            proof_assert!(old_c.1.contains(a.term_value()));
-
-            // Key missing property
-            //
-            // The reasoning should be that if
-            proof_assert!(let just = old_c.0.justification(a.term_value());
-                forall<a : (theory::Term, theory::Value)> just.contains(a) && !a.1.is_bool() ==>
-                old_c.0.is_decision(a) ==>
-                old_c.0.level_of(a) < old_c.0.set_level(old_c.1)
-            );
 
             proof_assert!((*old_c).resolve(a.term_value(), *abs_cflct));
         }
