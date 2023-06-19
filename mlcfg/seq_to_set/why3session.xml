@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Z3" version="4.11.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC5" version="1.0.5" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="3" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="mlcfg">
+<path name=".."/><path name="seq_to_set.mlcfg"/>
+<theory name="Cdsat_Trail_SeqToSet_Impl" proved="true">
+ <goal name="seq_to_set&#39;vc" expl="VC for seq_to_set" proved="true">
+ <transf name="use_th" proved="true" arg1="seq.FreeMonoid">
+  <goal name="seq_to_set&#39;vc.0" expl="VC for seq_to_set" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="seq_to_set&#39;vc.0.0" expl="variant decrease" proved="true">
+   <proof prover="3"><result status="valid" time="0.01" steps="39"/></proof>
+   </goal>
+   <goal name="seq_to_set&#39;vc.0.1" expl="precondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.02" steps="91"/></proof>
+   </goal>
+   <goal name="seq_to_set&#39;vc.0.2" expl="precondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.05" steps="947"/></proof>
+   </goal>
+   <goal name="seq_to_set&#39;vc.0.3" expl="precondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.05" steps="875"/></proof>
+   </goal>
+   <goal name="seq_to_set&#39;vc.0.4" expl="postcondition" proved="true">
+   <transf name="assert" proved="true" arg1="(abstract_justification trail s == ix_to_abs trail t
+)">
+    <goal name="seq_to_set&#39;vc.0.4.0" expl="asserted formula" proved="true">
+    <proof prover="3"><result status="valid" time="0.56" steps="8444"/></proof>
+    </goal>
+    <goal name="seq_to_set&#39;vc.0.4.1" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.01" steps="27"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl15" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl20" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl25" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl30" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl34" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl42" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl16" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.01" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl21" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl26" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl31" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl35" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl39" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl44">
+ <goal name="partial_cmp_refn">
+ <proof prover="0"><result status="failure" time="0.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="391117"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="302474"/></proof>
+ <proof prover="3"><result status="timeout" time="1.00"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl45">
+ <goal name="cmp_refn">
+ <proof prover="0"><result status="unknown" time="0.01" steps="7107"/></proof>
+ <proof prover="1"><result status="unknown" time="0.02" steps="1587"/></proof>
+ <proof prover="2"><result status="unknown" time="0.03" steps="2679"/></proof>
+ <proof prover="3"><result status="timeout" time="1.00"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl7" proved="true">
+ <goal name="cmp_le_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_ge_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_gt_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="trans_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="antisym2_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_lt_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="eq_cmp_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="refl_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="antisym1_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>

@@ -170,8 +170,16 @@ impl Solver {
                 proof_assert!(trail.contains(ix));
                 proof_assert!(ix.level_log() == abs_cflct.0.level_of(trail.index_logic(ix)));
                 proof_assert!(trail.index_logic(ix) == a.term_value());
-                trail.restrict(rem_level);
+                proof_assert!(ix_to_abs(*trail, heap@).ext_eq(abs_cflct.1.remove(a.term_value())));
+
                 let just = heap.into_vec();
+                proof_assert!(forall<i : _> 0 <= i && i < just@.len() ==> trail.contains(just@[i]));
+                // this part breaks
+                proof_assert!({seq_to_set(*trail, just@, heap@); true });
+                proof_assert!(trail.abstract_justification(just@) == abs_cflct.1.remove(a.term_value()));
+
+                trail.restrict(rem_level);
+                proof_assert!(forall<i : _> 0 <= i && i < just@.len() ==> trail.contains(just@[i]));
                 proof_assert!(rem_level@ < ix.level_log());
                 proof_assert!(abs_cflct.0.set_level(abs_cflct.1.remove(a.term_value())) == rem_level@);
                 proof_assert!(abs_cflct.0.set_level(abs_cflct.1) == ix.level_log());
@@ -180,8 +188,9 @@ impl Solver {
                 );
                 proof_assert! { abs_cflct.backjump2_pre(a.term_value()) };
                 let n: Ghost<theory::Normal> = ghost! { abs_cflct.backjump2(a.term_value()) };
-                proof_assert!(abs_cflct.0.acceptable(a.term_value().0, a.term_value().1));
-
+                // proof_assert!(n.0.acceptable(a.term_value().0, a.term_value().1));
+                // proof_assert!(trail.index_logic(ix) == a.term_value());
+                proof_assert!(trail.abstract_justification(just@) == abs_cflct.1.remove(a.term_value()));
                 trail.add_justified(just, a.term, a.val.negate());
 
                 return;
@@ -226,6 +235,7 @@ impl Solver {
                     abs_cflct.0.is_decision(trail.index_logic(*produced[i])) ==>
                     abs_cflct.0.level_of(trail.index_logic(*produced[i])) < abs_cflct.0.set_level(abs_cflct.1))]
             for jix in just.iter() {
+                proof_assert!(trail.contains(*jix));
                 let j = &trail[*jix]; // should pass
 
                 proof_assert!(jix.level_log() <= ix.level_log());
@@ -304,63 +314,7 @@ impl Solver {
     }
 }
 
-// This is the same as `abstract_justification`...
-#[logic]
-#[variant(s.len())]
-#[ensures(forall<ix :_> s.contains(ix) ==> result.contains(t.index_logic(ix)))]
-#[ensures(forall<a :_> result.contains(a) ==> exists<ix :_> a == t.index_logic(ix) && s.contains(ix))]
-fn ix_to_abs(t: Trail, s: FSet<TrailIndex>) -> FSet<(theory::Term, theory::Value)> {
-    if s == FSet::EMPTY {
-        FSet::EMPTY
-    } else {
-        let a = s.peek();
-        ix_to_abs(t, s.remove(a)).insert(t.index_logic(a))
-    }
-}
 
-#[logic]
-#[requires(!s.is_empty())]
-#[variant(s.len())]
-#[ensures(s.contains(result))]
-#[ensures(forall<o : _> s.contains(o) ==> o <= result )]
-fn set_max(s: FSet<TrailIndex>) -> TrailIndex {
-    let x = s.peek();
-    let s = s.remove(x);
-
-    if s.is_empty() {
-        x
-    } else {
-        let rec = set_max(s);
-        if x >= rec {
-            x
-        } else {
-            rec
-        }
-    }
-}
-
-#[logic]
-#[requires(t.invariant())]
-#[variant(s.len())]
-#[requires(forall<i :_> s.contains(i) ==> t.contains(i))]
-#[ensures(!s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == set_max(s).level_log())]
-#[ensures(s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == 0)]
-fn ix_to_abs_level(
-    t: Trail,
-    s: FSet<TrailIndex>,
-)  {
-    ()
-}
-
-#[logic]
-#[variant(s.len())]
-#[requires(t.invariant())]
-#[requires(t.contains(x))]
-#[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
-#[ensures(ix_to_abs(t, s.remove(x)) == ix_to_abs(t, s).remove(t.index_logic(x)))]
-fn ix_to_abs_remove(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
-   ()
-}
 
 // #[derive(Debug, PartialEq, Eq)]
 pub enum Answer {
@@ -543,6 +497,8 @@ impl ConflictHeap {
     #[trusted]
     #[ensures(forall<e : _> (self@).contains(e) ==> (result@).contains(e))]
     #[ensures(forall<i : _> 0 <= i && i < (result@).len() ==> (self@).contains((result@)[i]))]
+    #[ensures(result@.len() == self@.len())]
+    #[ensures(seq_unique(result@))]
     fn into_vec(self) -> Vec<TrailIndex> {
         // self.0.into_vec()
         self.0.into_iter().collect()

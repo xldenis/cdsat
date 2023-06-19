@@ -737,3 +737,88 @@ impl Assignment {
         &self.term
     }
 }
+
+// This is the same as `abstract_justification`...
+#[logic]
+#[open(self)]
+#[variant(s.len())]
+#[ensures(forall<ix :_> s.contains(ix) ==> result.contains(t.index_logic(ix)))]
+#[ensures(forall<a :_> result.contains(a) ==> exists<ix :_> a == t.index_logic(ix) && s.contains(ix))]
+pub(crate) fn ix_to_abs(t: Trail, s: FSet<TrailIndex>) -> FSet<(theory::Term, theory::Value)> {
+    if s == FSet::EMPTY {
+        FSet::EMPTY
+    } else {
+        let a = s.peek();
+        ix_to_abs(t, s.remove(a)).insert(t.index_logic(a))
+    }
+}
+
+#[logic]
+#[open(self)]
+#[variant(s.len())]
+#[requires(seq_unique(s))]
+#[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
+#[requires(forall<i : _> t.contains(i) ==> s.contains(i))]
+#[ensures(trail.abstract_justification(s) == ix_to_abs(trail, t))]
+pub(crate) fn seq_to_set(trail: Trail, s : Seq<TrailIndex>, t : FSet<TrailIndex>) {
+    if s == Seq::EMPTY {
+        ()
+    } else {
+        let a = s[0];
+        seq_to_set(trail, s.subsequence(1, s.len()), t.remove(a))
+    }
+}
+
+#[predicate]
+#[open]
+pub(crate) fn seq_unique<T>(s : Seq<T>) -> bool {
+    pearlite! { forall<i : _, j : _> 0 <= i && i <= j && j < s.len() ==> i != j ==> s[i] != s[j] }
+}
+
+
+#[logic]
+#[open(self)]
+#[requires(!s.is_empty())]
+#[variant(s.len())]
+#[ensures(s.contains(result))]
+#[ensures(forall<o : _> s.contains(o) ==> o <= result )]
+pub(crate) fn set_max(s: FSet<TrailIndex>) -> TrailIndex {
+    let x = s.peek();
+    let s = s.remove(x);
+
+    if s.is_empty() {
+        x
+    } else {
+        let rec = set_max(s);
+        if x >= rec {
+            x
+        } else {
+            rec
+        }
+    }
+}
+
+#[logic]
+#[open(self)]
+#[requires(t.invariant())]
+#[variant(s.len())]
+#[requires(forall<i :_> s.contains(i) ==> t.contains(i))]
+#[ensures(!s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == set_max(s).level_log())]
+#[ensures(s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == 0)]
+pub(crate) fn ix_to_abs_level(
+    t: Trail,
+    s: FSet<TrailIndex>,
+)  {
+    ()
+}
+
+#[logic]
+#[open(self)]
+#[variant(s.len())]
+#[requires(t.invariant())]
+#[requires(t.contains(x))]
+#[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
+#[ensures(ix_to_abs(t, s.remove(x)) == ix_to_abs(t, s).remove(t.index_logic(x)))]
+pub(crate) fn ix_to_abs_remove(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
+   ()
+}
