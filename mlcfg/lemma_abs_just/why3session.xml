@@ -4,55 +4,24 @@
 <why3session shape_version="6">
 <prover id="0" name="Z3" version="4.11.2" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="1" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="2" name="CVC5" version="1.0.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC5" version="1.0.5" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="3" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="4" name="CVC5" version="1.0.5" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="mlcfg">
-<path name=".."/><path name="ix_to_abs.mlcfg"/>
-<theory name="Cdsat_Trail_IxToAbs_Impl" proved="true">
- <goal name="ix_to_abs&#39;vc" expl="VC for ix_to_abs" proved="true">
- <proof prover="3"><result status="valid" time="0.43" steps="11050"/></proof>
- </goal>
-</theory>
-<theory name="Cdsat_Trail_IxToAbsRemove_Impl" proved="true">
- <goal name="ix_to_abs_remove&#39;vc" expl="VC for ix_to_abs_remove" proved="true">
+<path name=".."/><path name="lemma_abs_just.mlcfg"/>
+<theory name="Cdsat_Trail_Impl11_LemmaAbsJust_Impl" proved="true">
+ <goal name="lemma_abs_just&#39;vc" expl="VC for lemma_abs_just" proved="true">
  <transf name="split_vc" proved="true" >
-  <goal name="ix_to_abs_remove&#39;vc.0" expl="postcondition" proved="true">
-  <transf name="assert" proved="true" arg1="(ix_to_abs t (remove s x) ==&#39; remove1 (ix_to_abs t s) (index_logic t x))">
-   <goal name="ix_to_abs_remove&#39;vc.0.0" expl="asserted formula" proved="true">
-   <proof prover="3"><result status="valid" time="0.24" steps="3573"/></proof>
-   </goal>
-   <goal name="ix_to_abs_remove&#39;vc.0.1" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.02" steps="32"/></proof>
-   </goal>
-  </transf>
+  <goal name="lemma_abs_just&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="3"><result status="valid" time="0.01" steps="68"/></proof>
   </goal>
- </transf>
- </goal>
-</theory>
-<theory name="Cdsat_Trail_IxToAbsLevel_Impl" proved="true">
- <goal name="ix_to_abs_level&#39;vc" expl="VC for ix_to_abs_level" proved="true">
- <transf name="split_vc" proved="true" >
-  <goal name="ix_to_abs_level&#39;vc.0" expl="postcondition" proved="true">
-  <transf name="inline_goal" proved="true" >
-   <goal name="ix_to_abs_level&#39;vc.0.0" expl="postcondition" proved="true">
-   <transf name="split_all_full" proved="true" >
-    <goal name="ix_to_abs_level&#39;vc.0.0.0" expl="postcondition" proved="true">
-    <proof prover="0" timelimit="5" memlimit="2000"><result status="valid" time="1.80" steps="8366812"/></proof>
-    </goal>
-   </transf>
-   </goal>
-  </transf>
+  <goal name="lemma_abs_just&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.01" steps="18"/></proof>
   </goal>
-  <goal name="ix_to_abs_level&#39;vc.1" expl="postcondition" proved="true">
-  <transf name="assert" proved="true" arg1="(cardinal (ix_to_abs t s) = 0)">
-   <goal name="ix_to_abs_level&#39;vc.1.0" expl="asserted formula" proved="true">
-   <proof prover="3"><result status="valid" time="0.03" steps="128"/></proof>
-   </goal>
-   <goal name="ix_to_abs_level&#39;vc.1.1" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.02" steps="74"/></proof>
-   </goal>
-  </transf>
+  <goal name="lemma_abs_just&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.90" steps="135932"/></proof>
+  </goal>
+  <goal name="lemma_abs_just&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.05" steps="471"/></proof>
   </goal>
  </transf>
  </goal>
@@ -64,7 +33,7 @@
 </theory>
 <theory name="Cdsat_Trail_Impl20" proved="true">
  <goal name="clone&#39;_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.01" steps="7"/></proof>
+ <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl25" proved="true">
@@ -89,7 +58,7 @@
 </theory>
 <theory name="Cdsat_Trail_Impl16" proved="true">
  <goal name="eq_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ <proof prover="3"><result status="valid" time="0.01" steps="7"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl21" proved="true">
@@ -120,19 +89,17 @@
 <theory name="Cdsat_Trail_Impl44">
  <goal name="partial_cmp_refn">
  <proof prover="0"><result status="timeout" time="1.00"/></proof>
- <proof prover="1"><result status="timeout" time="1.00" steps="391117"/></proof>
- <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="425077"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="391350"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="305880"/></proof>
  <proof prover="3"><result status="timeout" time="1.00"/></proof>
- <proof prover="4"><result status="timeout" time="1.00" steps="307955"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl45">
  <goal name="cmp_refn">
  <proof prover="0"><result status="unknown" time="0.01" steps="7107"/></proof>
  <proof prover="1"><result status="unknown" time="0.02" steps="1587"/></proof>
- <proof prover="2" obsolete="true"><result status="unknown" time="0.02" steps="2602"/></proof>
+ <proof prover="2"><result status="unknown" time="0.03" steps="2679"/></proof>
  <proof prover="3"><result status="timeout" time="1.00"/></proof>
- <proof prover="4"><result status="unknown" time="0.02" steps="2679"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl7" proved="true">

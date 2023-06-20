@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Z3" version="4.11.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC5" version="1.0.5" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="3" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="mlcfg">
+<path name=".."/><path name="add_justified.mlcfg"/>
+<theory name="Cdsat_Theory_Impl4_AddJustified_Impl" proved="true">
+ <goal name="add_justified&#39;vc" expl="VC for add_justified" proved="true">
+ <proof prover="3"><result status="valid" time="0.37" steps="6065"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl11_AddJustified">
+ <goal name="add_justified&#39;vc" expl="VC for add_justified">
+ <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="171027"/></proof>
+ <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="183950"/></proof>
+ <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+ <transf name="split_vc" >
+  <goal name="add_justified&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.02" steps="36"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.03" steps="58"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.2" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.03" steps="119"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.03" steps="66"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.4" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.03" steps="52"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.5" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.04" steps="86"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.6" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.09" steps="842"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.7" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.06" steps="447"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.04" steps="82"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="193183"/></proof>
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="85380"/></proof>
+  <proof prover="3"><result status="valid" time="0.03" steps="65"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="164782"/></proof>
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="91845"/></proof>
+  <proof prover="3"><result status="valid" time="0.04" steps="87"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.11" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.04" steps="81"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.12" expl="assertion" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="131475"/></proof>
+  <proof prover="2"><result status="valid" time="0.59" steps="80367"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.13" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.06" steps="354"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.14" expl="assertion">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="135021"/></proof>
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="103800"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.15" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.07" steps="401"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.16" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.78" steps="127015"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.17" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.32" steps="3416"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.18" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.20" steps="2823"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.19" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.34" steps="2924"/></proof>
+  </goal>
+  <goal name="add_justified&#39;vc.20" expl="postcondition">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="146412"/></proof>
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="94989"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <transf name="inline_goal" >
+   <goal name="add_justified&#39;vc.20.0" expl="postcondition">
+   <transf name="split_vc" >
+    <goal name="add_justified&#39;vc.20.0.0" expl="postcondition">
+    <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+    <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="124214"/></proof>
+    <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="106564"/></proof>
+    <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+    <transf name="inline_goal" >
+     <goal name="add_justified&#39;vc.20.0.0.0" expl="postcondition">
+     <transf name="split_vc" >
+      <goal name="add_justified&#39;vc.20.0.0.0.0" expl="postcondition" proved="true">
+      <transf name="case" proved="true" arg1="(contains ( * self2) ix)">
+       <goal name="add_justified&#39;vc.20.0.0.0.0.0" expl="true case (postcondition)" proved="true">
+       <proof prover="3"><result status="valid" time="0.26" steps="2706"/></proof>
+       </goal>
+       <goal name="add_justified&#39;vc.20.0.0.0.0.1" expl="false case (postcondition)" proved="true">
+       <proof prover="3"><result status="valid" time="0.24" steps="2512"/></proof>
+       </goal>
+      </transf>
+      </goal>
+      <goal name="add_justified&#39;vc.20.0.0.0.1" expl="postcondition">
+      <transf name="case" arg1="(contains ( * self2) ix)">
+       <goal name="add_justified&#39;vc.20.0.0.0.1.0" expl="true case (postcondition)" proved="true">
+       <proof prover="3"><result status="valid" time="0.32" steps="3335"/></proof>
+       </goal>
+       <goal name="add_justified&#39;vc.20.0.0.0.1.1" expl="false case (postcondition)">
+       <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+       <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="124301"/></proof>
+       <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="139543"/></proof>
+       <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+       <transf name="assert" arg1="(level_of (inner (trail_ghost (^ self2))) (index_logic1 (^ self2) ix) = level)">
+        <goal name="add_justified&#39;vc.20.0.0.0.1.1.0" expl="asserted formula">
+        <proof prover="0"><result status="timeout" time="1.00"/></proof>
+        <proof prover="1"><result status="timeout" time="1.00" steps="127863"/></proof>
+        <proof prover="2"><result status="timeout" time="1.00" steps="141956"/></proof>
+        <proof prover="3"><result status="timeout" time="1.00"/></proof>
+        </goal>
+        <goal name="add_justified&#39;vc.20.0.0.0.1.1.1" expl="false case (postcondition)" proved="true">
+        <proof prover="3"><result status="valid" time="0.21" steps="2305"/></proof>
+        </goal>
+       </transf>
+       </goal>
+      </transf>
+      </goal>
+      <goal name="add_justified&#39;vc.20.0.0.0.2" expl="postcondition">
+      <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+      <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="139281"/></proof>
+      <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="130126"/></proof>
+      <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="add_justified&#39;vc.20.0.1" expl="postcondition" proved="true">
+    <proof prover="3" timelimit="5"><result status="valid" time="0.08" steps="504"/></proof>
+    </goal>
+    <goal name="add_justified&#39;vc.20.0.2" expl="postcondition" proved="true">
+    <proof prover="3" timelimit="5"><result status="valid" time="0.06" steps="180"/></proof>
+    </goal>
+    <goal name="add_justified&#39;vc.20.0.3" expl="postcondition" proved="true">
+    <proof prover="3" timelimit="5"><result status="valid" time="0.08" steps="519"/></proof>
+    </goal>
+    <goal name="add_justified&#39;vc.20.0.4" expl="postcondition" proved="true">
+    <proof prover="3" timelimit="5"><result status="valid" time="0.08" steps="533"/></proof>
+    </goal>
+    <goal name="add_justified&#39;vc.20.0.5" expl="postcondition" proved="true">
+    <proof prover="3" timelimit="5"><result status="valid" time="0.54" steps="5842"/></proof>
+    </goal>
+    <goal name="add_justified&#39;vc.20.0.6" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.31" steps="1224956"/></proof>
+    </goal>
+    <goal name="add_justified&#39;vc.20.0.7" expl="postcondition" proved="true">
+    <transf name="case" proved="true" arg1="(contains ( * self2) ix)">
+     <goal name="add_justified&#39;vc.20.0.7.0" expl="true case (postcondition)" proved="true">
+     <transf name="assert" proved="true" arg1="(is_decision (inner (trail_ghost ( * self2))) (index_logic1 ( * self2) ix) = is_decision (inner (trail_ghost (^ self2))) (index_logic1 (^ self2) ix))">
+      <goal name="add_justified&#39;vc.20.0.7.0.0" expl="asserted formula" proved="true">
+      <proof prover="3"><result status="valid" time="1.77" steps="17734"/></proof>
+      </goal>
+      <goal name="add_justified&#39;vc.20.0.7.0.1" expl="true case (postcondition)" proved="true">
+      <proof prover="2"><result status="valid" time="0.40" steps="63283"/></proof>
+      </goal>
+     </transf>
+     </goal>
+     <goal name="add_justified&#39;vc.20.0.7.1" expl="false case (postcondition)" proved="true">
+     <transf name="assert" proved="true" arg1="(index_logic1 ( ^ self2) ix = ((shallow_model8 term), (shallow_model9 val&#39;)))">
+      <goal name="add_justified&#39;vc.20.0.7.1.0" expl="asserted formula" proved="true">
+      <proof prover="3"><result status="valid" time="0.32" steps="2769"/></proof>
+      </goal>
+      <goal name="add_justified&#39;vc.20.0.7.1.1" expl="false case (postcondition)" proved="true">
+      <transf name="assert" proved="true" arg1="(is_justified (inner (trail_ghost (^ self2))) (index_logic1 (^ self2) ix))">
+       <goal name="add_justified&#39;vc.20.0.7.1.1.0" expl="asserted formula" proved="true">
+       <transf name="inline_goal" proved="true" >
+        <goal name="add_justified&#39;vc.20.0.7.1.1.0.0" expl="asserted formula" proved="true">
+        <transf name="split_vc" proved="true" >
+         <goal name="add_justified&#39;vc.20.0.7.1.1.0.0.0" proved="true">
+         <proof prover="3"><result status="valid" time="0.39" steps="2997"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.7.1.1.0.0.1" proved="true">
+         <proof prover="3"><result status="valid" time="0.06" steps="125"/></proof>
+         </goal>
+        </transf>
+        </goal>
+       </transf>
+       </goal>
+       <goal name="add_justified&#39;vc.20.0.7.1.1.1" expl="false case (postcondition)" proved="true">
+       <transf name="unfold" proved="true" arg1="is_decision" arg2="in" arg3="H">
+        <goal name="add_justified&#39;vc.20.0.7.1.1.1.0" expl="false case (postcondition)" proved="true">
+        <transf name="unfold" proved="true" arg1="is_justified" arg2="in" arg3="h">
+         <goal name="add_justified&#39;vc.20.0.7.1.1.1.0.0" expl="false case (postcondition)" proved="true">
+         <proof prover="2"><result status="valid" time="0.20" steps="41702"/></proof>
+         </goal>
+        </transf>
+        </goal>
+       </transf>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="add_justified&#39;vc.20.0.8" expl="postcondition" proved="true">
+    <transf name="case" proved="true" arg1="(contains ( * self2) i &amp;&amp; contains ( * self2) j )">
+     <goal name="add_justified&#39;vc.20.0.8.0" expl="true case (postcondition)" proved="true">
+     <proof prover="3"><result status="valid" time="0.08" steps="569"/></proof>
+     </goal>
+     <goal name="add_justified&#39;vc.20.0.8.1" expl="false case (postcondition)" proved="true">
+     <proof prover="2"><result status="valid" time="1.58" steps="160406"/></proof>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="add_justified&#39;vc.20.0.9" expl="postcondition">
+    <transf name="inline_goal" >
+     <goal name="add_justified&#39;vc.20.0.9.0" expl="postcondition">
+     <transf name="introduce_premises" >
+      <goal name="add_justified&#39;vc.20.0.9.0.0" expl="postcondition">
+      <transf name="case" arg1="( contains ( * self2) ix)">
+       <goal name="add_justified&#39;vc.20.0.9.0.0.0" expl="true case (postcondition)">
+       <transf name="split_vc" >
+        <goal name="add_justified&#39;vc.20.0.9.0.0.0.0" expl="VC for add_justified" proved="true">
+        <proof prover="2"><result status="valid" time="0.78" steps="106438"/></proof>
+        </goal>
+        <goal name="add_justified&#39;vc.20.0.9.0.0.0.1" expl="VC for add_justified" proved="true">
+        <proof prover="2"><result status="valid" time="0.77" steps="105739"/></proof>
+        </goal>
+        <goal name="add_justified&#39;vc.20.0.9.0.0.0.2" expl="VC for add_justified" proved="true">
+        <transf name="assert" proved="true" arg1="(assignment_reason
+  (index_logic2
+   (index_logic (trail_assignments (^ self2)) (to_int (trailindex_0 ix)))
+   (to_int (trailindex_1 ix))) = assignment_reason
+  (index_logic2
+   (index_logic (trail_assignments ( * self2)) (to_int (trailindex_0 ix)))
+   (to_int (trailindex_1 ix))))">
+         <goal name="add_justified&#39;vc.20.0.9.0.0.0.2.0" expl="asserted formula" proved="true">
+         <proof prover="3"><result status="valid" time="0.15" steps="1456"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.0.2.1" expl="VC for add_justified" proved="true">
+         <proof prover="0"><result status="valid" time="0.06" steps="339596"/></proof>
+         </goal>
+        </transf>
+        </goal>
+        <goal name="add_justified&#39;vc.20.0.9.0.0.0.3" expl="VC for add_justified">
+        <transf name="assert" arg1="(find (inner (trail_ghost (^ self2))) (index_logic1 (^ self2) ix) = find (inner (trail_ghost ( * self2))) (index_logic1 (^ self2) ix))">
+         <goal name="add_justified&#39;vc.20.0.9.0.0.0.3.0" expl="asserted formula" proved="true">
+         <proof prover="3"><result status="valid" time="0.20" steps="1917"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.0.3.1" expl="VC for add_justified">
+         <proof prover="0"><result status="timeout" time="1.62"/></proof>
+         </goal>
+        </transf>
+        </goal>
+        <goal name="add_justified&#39;vc.20.0.9.0.0.0.4" expl="VC for add_justified" proved="true">
+        <transf name="assert" proved="true" arg1="((index_logic1 (^ self2) ix) = (index_logic1 ( * self2) ix))">
+         <goal name="add_justified&#39;vc.20.0.9.0.0.0.4.0" expl="asserted formula" proved="true">
+         <proof prover="3"><result status="valid" time="0.07" steps="201"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.0.4.1" expl="VC for add_justified" proved="true">
+         <proof prover="0"><result status="valid" time="0.13" steps="565988"/></proof>
+         </goal>
+        </transf>
+        </goal>
+        <goal name="add_justified&#39;vc.20.0.9.0.0.0.5" expl="VC for add_justified" proved="true">
+        <proof prover="2" timelimit="5"><result status="valid" time="2.57" steps="291227"/></proof>
+        </goal>
+        <goal name="add_justified&#39;vc.20.0.9.0.0.0.6" expl="VC for add_justified" proved="true">
+        <proof prover="2"><result status="valid" time="0.52" steps="83971"/></proof>
+        </goal>
+        <goal name="add_justified&#39;vc.20.0.9.0.0.0.7" expl="VC for add_justified" proved="true">
+        <transf name="assert" proved="true" arg1="(abstract_justification ( * self2) (shallow_model6 j) = abstract_justification (^ self2) (shallow_model6 j))">
+         <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.0" expl="asserted formula" proved="true">
+         <transf name="instantiate" proved="true" arg1="lemma_abs_just_spec" arg2="( * self2),(^self2),(shallow_model6 j)">
+          <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.0.0" expl="asserted formula" proved="true">
+          <transf name="destruct_rec" proved="true" arg1="Hinst">
+           <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.0.0.0" expl="destruct premise" proved="true">
+           <proof prover="3"><result status="valid" time="0.53" steps="5579"/></proof>
+           </goal>
+           <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.0.0.1" expl="destruct premise" proved="true">
+           <transf name="split_vc" proved="true" >
+            <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.0.0.1.0" expl="destruct premise" proved="true">
+            <transf name="assert" proved="true" arg1="(assignment_reason
+  (index_logic2
+   (index_logic (trail_assignments (^ self2)) (to_int (trailindex_0 ix)))
+   (to_int (trailindex_1 ix))) = assignment_reason
+  (index_logic2
+   (index_logic (trail_assignments ( * self2)) (to_int (trailindex_0 ix)))
+   (to_int (trailindex_1 ix))))">
+             <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.0.0.1.0.0" expl="asserted formula" proved="true">
+             <proof prover="3"><result status="valid" time="0.16" steps="1510"/></proof>
+             </goal>
+             <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.0.0.1.0.1" expl="destruct premise" proved="true">
+             <proof prover="0"><result status="valid" time="0.06" steps="349053"/></proof>
+             </goal>
+            </transf>
+            </goal>
+            <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.0.0.1.1" expl="destruct premise" proved="true">
+            <proof prover="0"><result status="valid" time="0.26" steps="560415"/></proof>
+            </goal>
+           </transf>
+           </goal>
+           <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.0.0.2" expl="asserted formula" proved="true">
+           <proof prover="3"><result status="valid" time="0.06" steps="125"/></proof>
+           </goal>
+          </transf>
+          </goal>
+         </transf>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.1" expl="VC for add_justified" proved="true">
+         <transf name="assert" proved="true" arg1="(justification (inner (trail_ghost ( ^ self2))) (index_logic1 ( ^ self2) ix) = abstract_justification ( ^ self2) (shallow_model6 j))">
+          <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.1.0" expl="asserted formula" proved="true">
+          <transf name="assert" proved="true" arg1="(justification (inner (trail_ghost ( * self2))) (index_logic1 ( * self2) ix) = abstract_justification ( * self2) (shallow_model6 j))">
+           <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.1.0.0" expl="asserted formula" proved="true">
+           <proof prover="2"><result status="valid" time="0.52" steps="76010"/></proof>
+           </goal>
+           <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.1.0.1" expl="asserted formula" proved="true">
+           <proof prover="0"><result status="valid" time="1.17" steps="3235590"/></proof>
+           </goal>
+          </transf>
+          </goal>
+          <goal name="add_justified&#39;vc.20.0.9.0.0.0.7.1.1" expl="VC for add_justified" proved="true">
+          <proof prover="2"><result status="valid" time="0.17" steps="39918"/></proof>
+          <proof prover="3"><result status="valid" time="0.06" steps="127"/></proof>
+          </goal>
+         </transf>
+         </goal>
+        </transf>
+        </goal>
+       </transf>
+       </goal>
+       <goal name="add_justified&#39;vc.20.0.9.0.0.1" expl="false case (postcondition)" proved="true">
+       <transf name="assert" proved="true" arg1="(is_justified (inner (trail_ghost (^ self2))) (index_logic1 (^ self2) ix))">
+        <goal name="add_justified&#39;vc.20.0.9.0.0.1.0" expl="asserted formula" proved="true">
+        <proof prover="3"><result status="valid" time="1.36" steps="14462"/></proof>
+        </goal>
+        <goal name="add_justified&#39;vc.20.0.9.0.0.1.1" expl="false case (postcondition)" proved="true">
+        <transf name="split_vc" proved="true" >
+         <goal name="add_justified&#39;vc.20.0.9.0.0.1.1.0" expl="VC for add_justified" proved="true">
+         <proof prover="3"><result status="valid" time="0.31" steps="1293"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.1.1.1" expl="VC for add_justified" proved="true">
+         <proof prover="2"><result status="valid" time="0.21" steps="41834"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.1.1.2" expl="VC for add_justified" proved="true">
+         <proof prover="3"><result status="valid" time="0.31" steps="1548"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.1.1.3" expl="VC for add_justified" proved="true">
+         <proof prover="2"><result status="valid" time="0.21" steps="41834"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.1.1.4" expl="VC for add_justified" proved="true">
+         <proof prover="3"><result status="valid" time="0.42" steps="4003"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.1.1.5" expl="VC for add_justified" proved="true">
+         <proof prover="3"><result status="valid" time="0.30" steps="1419"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.1.1.6" expl="VC for add_justified" proved="true">
+         <proof prover="3"><result status="valid" time="0.22" steps="1871"/></proof>
+         </goal>
+         <goal name="add_justified&#39;vc.20.0.9.0.0.1.1.7" expl="VC for add_justified" proved="true">
+         <proof prover="3"><result status="valid" time="0.40" steps="2529"/></proof>
+         </goal>
+        </transf>
+        </goal>
+       </transf>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="add_justified&#39;vc.21" expl="postcondition">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="128907"/></proof>
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="115535"/></proof>
+  <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl15" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl20" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl25" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl30" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl34" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl42" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl16" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.01" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl21" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl26" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl31" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl35" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl39" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl44">
+ <goal name="partial_cmp_refn">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="482176"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="302457"/></proof>
+ <proof prover="3"><result status="timeout" time="1.00"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl45">
+ <goal name="cmp_refn">
+ <proof prover="0"><result status="unknown" time="0.01" steps="7107"/></proof>
+ <proof prover="1"><result status="unknown" time="0.02" steps="1587"/></proof>
+ <proof prover="2"><result status="unknown" time="0.03" steps="2679"/></proof>
+ <proof prover="3"><result status="timeout" time="1.00"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl7" proved="true">
+ <goal name="cmp_le_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_ge_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_gt_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="trans_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="antisym2_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_lt_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="eq_cmp_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="refl_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+ <goal name="antisym1_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>

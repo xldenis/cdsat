@@ -326,11 +326,11 @@ impl BoolTheory {
         ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(t@, v@),
         ExtendResult::Conflict(c) => {
             let conflict = (^tl).abstract_justification(c@);
-
+            c@.len() > 0 &&
             // members of conflict area within the trail
-            true
+            (forall<t : _> (c@).contains(t) ==> (^tl).contains(t)) &&
             // (forall<i : _> 0 <= i && i < (c@).len() ==> @(c@)[i] < (@(^tl).assignments).len()) &&
-            // (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
+            (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
         }
     })]
     #[ensures(tl.ghost.impls(*(^tl).ghost))]

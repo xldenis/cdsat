@@ -225,6 +225,7 @@ impl Trail {
     #[requires(self.invariant_nonneg())]
     #[ensures(forall<i : _> s.contains(i) ==> self.level_of(i) <= result)]
     #[ensures(s != FSet::EMPTY ==> exists<i : _> s.contains(i) && self.level_of(i) == result)]
+    #[ensures(s == FSet::EMPTY ==> result == 0)]
     #[ensures(result >= 0)]
     #[ensures(result <= self.level())]
     pub fn set_level(self, s: FSet<(Term, Value)>) -> Int {
@@ -389,6 +390,21 @@ impl Trail {
     }
 
     #[logic]
+    #[open]
+    #[requires(self.invariant())]
+    #[requires(self.acceptable(t, v))]
+    #[requires(forall<m : Model> m.invariant() ==> m.satisfy_set(just) ==> m.satisfies((t, v)))]
+    #[ensures(forall<a : _> self.contains(a) ==> self.find(a) == result.find(a))]
+    #[ensures(result.contains((t,v)))]
+    #[ensures(result.justification((t,v)) == just)]
+    #[ensures(self.invariant())]
+    #[ensures(result.is_justified((t,v)))]
+    #[ensures(result.level_of((t, v)) == result.set_level(just))]
+    pub fn add_justified(self, just: FSet<(Term, Value)>, t : Term, v: Value) -> Self {
+        Trail::Assign(Assign::Justified(just, t, v), self.set_level(just), Box::new(self))
+    }
+
+    #[logic]
     #[open(self)]
     #[ensures(match result {
       Some((a, l)) => a.to_pair() == d,
@@ -427,6 +443,7 @@ impl Trail {
 
     #[predicate]
     #[open]
+    #[why3::attr = "inline:trivial"]
     pub fn is_justified(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Justified(_, _, _), _)) => true,
@@ -436,6 +453,7 @@ impl Trail {
 
     #[predicate]
     #[open]
+    #[why3::attr = "inline:trivial"]
     pub fn is_decision(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Decision(_, _), _)) => true,
@@ -445,6 +463,7 @@ impl Trail {
 
     #[predicate]
     #[open]
+    #[why3::attr = "inline:trivial"]
     pub fn is_input(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Input(_, _), _)) => true,
@@ -518,7 +537,7 @@ impl Trail {
     }
 
     #[logic]
-    #[open(self)]
+    #[open]
     #[ensures(result >= 0)]
     #[ensures(result <= self.len())]
     // #[ensures(self == Trail::Empty || result <= self.len())]
@@ -555,6 +574,31 @@ impl Trail {
                 }
             }
         }
+    }
+
+    #[open]
+    #[predicate]
+    pub fn ext(self, o : Self) -> bool {
+        pearlite! {
+        if self.level() <= o.level() {
+
+            (forall<kv : _> self.contains(kv) ==> self.find(kv) == o.find(kv))
+        } else {
+            (forall<kv : _> o.contains(kv) ==> o.find(kv) == self.find(kv))
+        }
+    }
+    }
+
+
+    #[logic]
+    #[open(self)]
+    #[requires(self.ext(o))]
+    #[requires(self.contains(kv))]
+    #[requires(o.contains(kv))]
+    #[requires(self.is_justified(kv))]
+    #[ensures(self.justification(kv) == o.justification(kv))]
+    pub fn just_stable(self, o : Self, kv: (Term, Value)) {
+
     }
 
     #[logic]
@@ -622,10 +666,10 @@ impl Trail {
     #[requires(self.invariant())]
     #[requires(level >= 0)]
     #[requires(self.restrict(level).contains(d))]
-    #[ensures(self.is_justified(d) ==> self.restrict(level).is_justified(d)) ]
+    #[ensures(self.is_justified(d) == self.restrict(level).is_justified(d)) ]
     #[ensures(self.justification(d) == self.restrict(level).justification(d)) ]
-    #[ensures(self.is_decision(d) ==> self.restrict(level).is_decision(d))]
-    #[ensures(self.is_input(d) ==> self.restrict(level).is_input(d))]
+    #[ensures(self.is_decision(d) == self.restrict(level).is_decision(d))]
+    #[ensures(self.is_input(d) == self.restrict(level).is_input(d))]
     pub fn restrict_kind_unchanged(self, level: Int, d: (Term, Value)) {
         self.restrict_find(level, d);
         match self {

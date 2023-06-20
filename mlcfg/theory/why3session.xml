@@ -21,7 +21,7 @@
 </theory>
 <theory name="Cdsat_Theory_Impl4_Find_Impl" proved="true">
  <goal name="find&#39;vc" expl="VC for find" proved="true">
- <proof prover="5"><result status="valid" time="0.10" steps="2166"/></proof>
+ <proof prover="5"><result status="valid" time="0.10" steps="2175"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_Contains_Impl" proved="true">
@@ -41,7 +41,7 @@
 </theory>
 <theory name="Cdsat_Theory_Impl4_SetLevel_Impl" proved="true">
  <goal name="set_level&#39;vc" expl="VC for set_level" proved="true">
- <proof prover="5"><result status="valid" time="0.17" steps="922"/></proof>
+ <proof prover="5"><result status="valid" time="0.05" steps="763"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl1_Negate_Impl" proved="true">
@@ -56,19 +56,19 @@
 </theory>
 <theory name="Cdsat_Theory_Impl4_Justification_Impl" proved="true">
  <goal name="justification&#39;vc" expl="VC for justification" proved="true">
- <proof prover="5"><result status="valid" time="0.04" steps="985"/></proof>
+ <proof prover="5"><result status="valid" time="0.04" steps="1012"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_CountBounds_Impl" proved="true">
  <goal name="count_bounds&#39;vc" expl="VC for count_bounds" proved="true">
- <proof prover="5"><result status="valid" time="0.04" steps="184"/></proof>
+ <proof prover="5"><result status="valid" time="0.04" steps="230"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_Restrict_Impl" proved="true">
  <goal name="restrict&#39;vc" expl="VC for restrict" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="restrict&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.02" steps="75"/></proof>
+  <proof prover="5"><result status="valid" time="0.02" steps="77"/></proof>
   </goal>
   <goal name="restrict&#39;vc.1" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.02" steps="24"/></proof>
@@ -82,7 +82,7 @@
    <proof prover="5"><result status="valid" time="0.01" steps="24"/></proof>
    </goal>
    <goal name="restrict&#39;vc.3.1" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.55" steps="7273"/></proof>
+   <proof prover="5"><result status="valid" time="0.78" steps="9986"/></proof>
    </goal>
   </transf>
   </goal>
@@ -94,17 +94,17 @@
     <proof prover="5"><result status="valid" time="0.01" steps="29"/></proof>
     </goal>
     <goal name="restrict&#39;vc.4.0.1" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.26" steps="3436"/></proof>
+    <proof prover="5"><result status="valid" time="0.43" steps="5639"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="restrict&#39;vc.4.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="restrict&#39;vc.4.1.0" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.11" steps="29"/></proof>
+    <proof prover="5"><result status="valid" time="0.02" steps="29"/></proof>
     </goal>
     <goal name="restrict&#39;vc.4.1.1" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.02" steps="1303"/></proof>
+    <proof prover="5"><result status="valid" time="0.11" steps="1431"/></proof>
     </goal>
    </transf>
    </goal>
@@ -115,20 +115,20 @@
    <goal name="restrict&#39;vc.5.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="restrict&#39;vc.5.0.0" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.10" steps="27"/></proof>
+    <proof prover="5"><result status="valid" time="0.02" steps="27"/></proof>
     </goal>
     <goal name="restrict&#39;vc.5.0.1" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.02" steps="1071"/></proof>
+    <proof prover="5"><result status="valid" time="0.10" steps="1164"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="restrict&#39;vc.5.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="restrict&#39;vc.5.1.0" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.01" steps="35"/></proof>
+    <proof prover="5"><result status="valid" time="0.01" steps="36"/></proof>
     </goal>
     <goal name="restrict&#39;vc.5.1.1" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.17" steps="3526"/></proof>
+    <proof prover="5"><result status="valid" time="0.17" steps="2546"/></proof>
     </goal>
    </transf>
    </goal>
@@ -138,7 +138,7 @@
     <proof prover="5"><result status="valid" time="0.01" steps="27"/></proof>
     </goal>
     <goal name="restrict&#39;vc.5.2.1" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.16" steps="2274"/></proof>
+    <proof prover="5"><result status="valid" time="0.18" steps="2589"/></proof>
     </goal>
    </transf>
    </goal>
@@ -150,7 +150,7 @@
    <proof prover="5"><result status="valid" time="0.01" steps="26"/></proof>
    </goal>
    <goal name="restrict&#39;vc.6.1" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.37" steps="4711"/></proof>
+   <proof prover="5"><result status="valid" time="0.39" steps="4963"/></proof>
    </goal>
   </transf>
   </goal>
@@ -158,7 +158,7 @@
   <proof prover="5"><result status="valid" time="0.02" steps="30"/></proof>
   </goal>
   <goal name="restrict&#39;vc.8" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.03" steps="70"/></proof>
+  <proof prover="5"><result status="valid" time="0.03" steps="72"/></proof>
   </goal>
   <goal name="restrict&#39;vc.9" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
@@ -166,7 +166,7 @@
    <proof prover="5"><result status="valid" time="0.01" steps="31"/></proof>
    </goal>
    <goal name="restrict&#39;vc.9.1" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.57" steps="7414"/></proof>
+   <proof prover="5"><result status="valid" time="0.78" steps="11197"/></proof>
    </goal>
   </transf>
   </goal>
@@ -176,10 +176,10 @@
   <goal name="restrict&#39;vc.11" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="restrict&#39;vc.11.0" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.03" steps="37"/></proof>
+   <proof prover="5"><result status="valid" time="0.02" steps="37"/></proof>
    </goal>
    <goal name="restrict&#39;vc.11.1" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.02" steps="96"/></proof>
+   <proof prover="5"><result status="valid" time="0.03" steps="97"/></proof>
    </goal>
   </transf>
   </goal>
@@ -188,7 +188,7 @@
 </theory>
 <theory name="Cdsat_Theory_Impl4_Impls_Impl" proved="true">
  <goal name="impls&#39;vc" expl="VC for impls" proved="true">
- <proof prover="5"><result status="valid" time="0.02" steps="34"/></proof>
+ <proof prover="5"><result status="valid" time="0.02" steps="37"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl5_Fail2_Impl" proved="true">
@@ -202,12 +202,13 @@
    <goal name="fail2&#39;vc.1.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="fail2&#39;vc.1.0.0" expl="postcondition" proved="true">
-    <transf name="case" proved="true" arg1="(satisfy_set m just)">
-     <goal name="fail2&#39;vc.1.0.0.0" expl="true case (postcondition)" proved="true">
-     <proof prover="5"><result status="valid" time="0.01" steps="42"/></proof>
-     </goal>
-     <goal name="fail2&#39;vc.1.0.0.1" expl="false case (postcondition)" proved="true">
-     <proof prover="5"><result status="valid" time="0.01" steps="179"/></proof>
+    <transf name="inline_goal" proved="true" >
+     <goal name="fail2&#39;vc.1.0.0.0" expl="postcondition" proved="true">
+     <transf name="split_all_full" proved="true" >
+      <goal name="fail2&#39;vc.1.0.0.0.0" expl="postcondition" proved="true">
+      <proof prover="1"><result status="valid" time="0.30" steps="47174"/></proof>
+      </goal>
+     </transf>
      </goal>
     </transf>
     </goal>
@@ -215,7 +216,14 @@
     <proof prover="5"><result status="valid" time="0.01" steps="28"/></proof>
     </goal>
     <goal name="fail2&#39;vc.1.0.2" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.01" steps="30"/></proof>
+    <transf name="case" proved="true" arg1="(satisfy_set m just)">
+     <goal name="fail2&#39;vc.1.0.2.0" expl="true case (postcondition)" proved="true">
+     <proof prover="5"><result status="valid" time="0.01" steps="30"/></proof>
+     </goal>
+     <goal name="fail2&#39;vc.1.0.2.1" expl="false case (postcondition)" proved="true">
+     <proof prover="5"><result status="valid" time="0.01" steps="30"/></proof>
+     </goal>
+    </transf>
     </goal>
    </transf>
    </goal>
@@ -228,18 +236,18 @@
  <goal name="backjump2_pre&#39;vc" expl="VC for backjump2_pre" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="backjump2_pre&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="47"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="49"/></proof>
   </goal>
   <goal name="backjump2_pre&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="77"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="84"/></proof>
   </goal>
   <goal name="backjump2_pre&#39;vc.2" expl="postcondition" proved="true">
   <transf name="case" proved="true" arg1="(level_of (conflict_0 self) l &lt;= set_level (conflict_0 self)  (conflict_1 self))">
    <goal name="backjump2_pre&#39;vc.2.0" expl="true case (postcondition)" proved="true">
-   <proof prover="5"><result status="valid" time="0.02" steps="106"/></proof>
+   <proof prover="5"><result status="valid" time="0.02" steps="113"/></proof>
    </goal>
    <goal name="backjump2_pre&#39;vc.2.1" expl="false case (postcondition)" proved="true">
-   <proof prover="5"><result status="valid" time="0.02" steps="106"/></proof>
+   <proof prover="5"><result status="valid" time="0.02" steps="113"/></proof>
    </goal>
   </transf>
   </goal>
@@ -248,17 +256,17 @@
 </theory>
 <theory name="Cdsat_Theory_Impl4_RestrictSound_Impl" proved="true">
  <goal name="restrict_sound&#39;vc" expl="VC for restrict_sound" proved="true">
- <proof prover="5"><result status="valid" time="0.04" steps="220"/></proof>
+ <proof prover="5"><result status="valid" time="0.04" steps="239"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_TrailPlausible_Impl" proved="true">
  <goal name="trail_plausible&#39;vc" expl="VC for trail_plausible" proved="true">
- <proof prover="5"><result status="valid" time="0.44" steps="5006"/></proof>
+ <proof prover="5"><result status="valid" time="0.44" steps="5369"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_RestrictIdempotent_Impl" proved="true">
  <goal name="restrict_idempotent&#39;vc" expl="VC for restrict_idempotent" proved="true">
- <proof prover="5"><result status="valid" time="0.10" steps="773"/></proof>
+ <proof prover="5"><result status="valid" time="0.10" steps="962"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl1_NegateInvolutive_Impl" proved="true">
@@ -275,7 +283,7 @@
  <goal name="learn_justified&#39;vc" expl="VC for learn_justified" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="learn_justified&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.03" steps="465"/></proof>
+  <proof prover="5"><result status="valid" time="0.03" steps="491"/></proof>
   </goal>
  </transf>
  </goal>
@@ -284,32 +292,32 @@
  <goal name="backjump2&#39;vc" expl="VC for backjump2" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="backjump2&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="75"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="78"/></proof>
   </goal>
   <goal name="backjump2&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="42"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="43"/></proof>
   </goal>
   <goal name="backjump2&#39;vc.2" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.01" steps="40"/></proof>
   </goal>
   <goal name="backjump2&#39;vc.3" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="63"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="65"/></proof>
   </goal>
   <goal name="backjump2&#39;vc.4" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.01" steps="51"/></proof>
   </goal>
   <goal name="backjump2&#39;vc.5" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.26" steps="40192"/></proof>
+  <proof prover="1"><result status="valid" time="0.26" steps="40516"/></proof>
   </goal>
   <goal name="backjump2&#39;vc.6" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.19" steps="31174"/></proof>
+  <proof prover="1"><result status="valid" time="0.19" steps="31269"/></proof>
   </goal>
   <goal name="backjump2&#39;vc.7" expl="postcondition" proved="true">
   <transf name="inline_goal" proved="true" >
    <goal name="backjump2&#39;vc.7.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="backjump2&#39;vc.7.0.0" expl="postcondition" proved="true">
-    <proof prover="5" timelimit="5"><result status="valid" time="2.76" steps="43721"/></proof>
+    <proof prover="5" timelimit="5"><result status="valid" time="1.16" steps="17043"/></proof>
     </goal>
    </transf>
    </goal>
@@ -322,21 +330,21 @@
  <goal name="is_input_inv&#39;vc" expl="VC for is_input_inv" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="is_input_inv&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="79"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="81"/></proof>
   </goal>
   <goal name="is_input_inv&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.02" steps="204"/></proof>
+  <proof prover="5"><result status="valid" time="0.02" steps="240"/></proof>
   </goal>
   <goal name="is_input_inv&#39;vc.2" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="is_input_inv&#39;vc.2.0" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.01" steps="38"/></proof>
+   <proof prover="5"><result status="valid" time="0.01" steps="39"/></proof>
    </goal>
    <goal name="is_input_inv&#39;vc.2.1" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.04" steps="497"/></proof>
+   <proof prover="5"><result status="valid" time="0.01" steps="813"/></proof>
    </goal>
    <goal name="is_input_inv&#39;vc.2.2" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.01" steps="122"/></proof>
+   <proof prover="5"><result status="valid" time="0.04" steps="130"/></proof>
    </goal>
   </transf>
   </goal>
@@ -362,36 +370,36 @@
  <goal name="justification_contains&#39;vc" expl="VC for justification_contains" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="justification_contains&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="84"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="86"/></proof>
   </goal>
   <goal name="justification_contains&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.02" steps="213"/></proof>
+  <proof prover="5"><result status="valid" time="0.02" steps="249"/></proof>
   </goal>
   <goal name="justification_contains&#39;vc.2" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="justification_contains&#39;vc.2.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="justification_contains&#39;vc.2.0.0" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.01" steps="50"/></proof>
+    <proof prover="5"><result status="valid" time="0.01" steps="52"/></proof>
     </goal>
     <goal name="justification_contains&#39;vc.2.0.1" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.12" steps="2361"/></proof>
+    <proof prover="5"><result status="valid" time="0.04" steps="1671"/></proof>
     </goal>
     <goal name="justification_contains&#39;vc.2.0.2" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.04" steps="499"/></proof>
+    <proof prover="5"><result status="valid" time="0.12" steps="551"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="justification_contains&#39;vc.2.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="justification_contains&#39;vc.2.1.0" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.01" steps="47"/></proof>
+    <proof prover="5"><result status="valid" time="0.01" steps="48"/></proof>
     </goal>
     <goal name="justification_contains&#39;vc.2.1.1" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.22" steps="4112"/></proof>
+    <proof prover="5"><result status="valid" time="0.35" steps="4770"/></proof>
     </goal>
     <goal name="justification_contains&#39;vc.2.1.2" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.03" steps="405"/></proof>
+    <proof prover="5"><result status="valid" time="0.04" steps="468"/></proof>
     </goal>
    </transf>
    </goal>
@@ -400,13 +408,13 @@
   <goal name="justification_contains&#39;vc.3" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="justification_contains&#39;vc.3.0" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.01" steps="47"/></proof>
+   <proof prover="5"><result status="valid" time="0.01" steps="48"/></proof>
    </goal>
    <goal name="justification_contains&#39;vc.3.1" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.98" steps="18307"/></proof>
+   <proof prover="5"><result status="valid" time="0.67" steps="8335"/></proof>
    </goal>
    <goal name="justification_contains&#39;vc.3.2" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.13" steps="2182"/></proof>
+   <proof prover="5"><result status="valid" time="0.15" steps="1909"/></proof>
    </goal>
   </transf>
   </goal>
@@ -441,23 +449,23 @@
    <goal name="resolvef&#39;vc.5.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="resolvef&#39;vc.5.0.0" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.87" steps="14699"/></proof>
+    <proof prover="5"><result status="valid" time="0.29" steps="4476"/></proof>
     </goal>
     <goal name="resolvef&#39;vc.5.0.1" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.01" steps="43"/></proof>
+    <proof prover="5"><result status="valid" time="0.01" steps="44"/></proof>
     </goal>
     <goal name="resolvef&#39;vc.5.0.2" expl="postcondition" proved="true">
-    <proof prover="5"><result status="valid" time="0.02" steps="330"/></proof>
+    <proof prover="5"><result status="valid" time="0.02" steps="339"/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
   </goal>
   <goal name="resolvef&#39;vc.6" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.04" steps="767"/></proof>
+  <proof prover="5"><result status="valid" time="0.04" steps="681"/></proof>
   </goal>
   <goal name="resolvef&#39;vc.7" expl="postcondition" proved="true">
-  <proof prover="5" timelimit="5" memlimit="2000"><result status="valid" time="1.14" steps="15915"/></proof>
+  <proof prover="5" timelimit="5" memlimit="2000"><result status="valid" time="0.19" steps="2574"/></proof>
   </goal>
  </transf>
  </goal>
@@ -481,15 +489,15 @@
   <proof prover="5"><result status="valid" time="0.01" steps="28"/></proof>
   </goal>
   <goal name="resolve&#39;vc.5" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.91" steps="15522"/></proof>
+  <proof prover="5"><result status="valid" time="0.27" steps="3811"/></proof>
   </goal>
   <goal name="resolve&#39;vc.6" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.06" steps="741"/></proof>
+  <proof prover="5"><result status="valid" time="0.06" steps="761"/></proof>
   </goal>
   <goal name="resolve&#39;vc.7" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="resolve&#39;vc.7.0" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.98" steps="15024"/></proof>
+   <proof prover="5"><result status="valid" time="0.19" steps="2677"/></proof>
    </goal>
    <goal name="resolve&#39;vc.7.1" expl="postcondition" proved="true">
    <proof prover="5"><result status="valid" time="0.01" steps="34"/></proof>
@@ -501,22 +509,22 @@
 </theory>
 <theory name="Cdsat_Theory_Impl4_RestrictFind_Impl" proved="true">
  <goal name="restrict_find&#39;vc" expl="VC for restrict_find" proved="true">
- <proof prover="5"><result status="valid" time="0.13" steps="1947"/></proof>
+ <proof prover="5"><result status="valid" time="0.13" steps="2619"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_RestrictKindUnchanged_Impl" proved="true">
  <goal name="restrict_kind_unchanged&#39;vc" expl="VC for restrict_kind_unchanged" proved="true">
- <proof prover="5"><result status="valid" time="0.30" steps="4547"/></proof>
+ <proof prover="5"><result status="valid" time="0.53" steps="8621"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_SetLevelMax_Impl" proved="true">
  <goal name="set_level_max&#39;vc" expl="VC for set_level_max" proved="true">
- <proof prover="5"><result status="valid" time="0.04" steps="192"/></proof>
+ <proof prover="5"><result status="valid" time="0.04" steps="143"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_SetLevelMin_Impl" proved="true">
  <goal name="set_level_min&#39;vc" expl="VC for set_level_min" proved="true">
- <proof prover="5"><result status="valid" time="0.12" steps="2171"/></proof>
+ <proof prover="5"><result status="valid" time="0.12" steps="257"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl4_ContainsInverse_Impl" proved="true">
@@ -526,12 +534,12 @@
 </theory>
 <theory name="Cdsat_Theory_Impl4_RestrictTooBig_Impl" proved="true">
  <goal name="restrict_too_big&#39;vc" expl="VC for restrict_too_big" proved="true">
- <proof prover="5"><result status="valid" time="0.14" steps="392"/></proof>
+ <proof prover="5"><result status="valid" time="0.14" steps="421"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl5_Decide_Impl" proved="true">
  <goal name="decide&#39;vc" expl="VC for decide" proved="true">
- <proof prover="5"><result status="valid" time="0.14" steps="2231"/></proof>
+ <proof prover="5"><result status="valid" time="0.14" steps="2463"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl5_Deduce_Impl" proved="true">
@@ -544,13 +552,13 @@
   <proof prover="5"><result status="valid" time="0.01" steps="32"/></proof>
   </goal>
   <goal name="deduce&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.10" steps="1611"/></proof>
+  <proof prover="5"><result status="valid" time="0.10" steps="2103"/></proof>
   </goal>
   <goal name="deduce&#39;vc.3" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.07" steps="1115"/></proof>
+  <proof prover="5"><result status="valid" time="0.07" steps="1220"/></proof>
   </goal>
   <goal name="deduce&#39;vc.4" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="1.00" steps="14848"/></proof>
+  <proof prover="5"><result status="valid" time="1.00" steps="14481"/></proof>
   </goal>
  </transf>
  </goal>
@@ -565,12 +573,12 @@
   <proof prover="5"><result status="valid" time="0.01" steps="37"/></proof>
   </goal>
   <goal name="fail&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="45"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="46"/></proof>
   </goal>
   <goal name="fail&#39;vc.3" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="fail&#39;vc.3.0" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.38" steps="1100713"/></proof>
+   <proof prover="3"><result status="valid" time="0.60" steps="1970676"/></proof>
    </goal>
    <goal name="fail&#39;vc.3.1" expl="postcondition" proved="true">
    <proof prover="5"><result status="valid" time="0.01" steps="36"/></proof>
@@ -590,58 +598,73 @@
   <proof prover="5"><result status="valid" time="0.01" steps="37"/></proof>
   </goal>
   <goal name="conflict_solve&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.02" steps="234"/></proof>
+  <proof prover="5"><result status="valid" time="0.02" steps="260"/></proof>
   </goal>
   <goal name="conflict_solve&#39;vc.3" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.47" steps="6184"/></proof>
+  <proof prover="5"><result status="valid" time="0.47" steps="4590"/></proof>
   </goal>
   <goal name="conflict_solve&#39;vc.4" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.02" steps="267"/></proof>
+  <proof prover="5"><result status="valid" time="0.02" steps="291"/></proof>
   </goal>
  </transf>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl5_ConflictSolve2_Impl" proved="true">
  <goal name="conflict_solve2&#39;vc" expl="VC for conflict_solve2" proved="true">
- <proof prover="5"><result status="valid" time="0.03" steps="162"/></proof>
+ <proof prover="5"><result status="valid" time="0.03" steps="186"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl6_Backjump_Impl" proved="true">
  <goal name="backjump&#39;vc" expl="VC for backjump" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="backjump&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="38"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="40"/></proof>
   </goal>
   <goal name="backjump&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="36"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="38"/></proof>
   </goal>
   <goal name="backjump&#39;vc.2" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.01" steps="32"/></proof>
   </goal>
   <goal name="backjump&#39;vc.3" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="126"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="133"/></proof>
   </goal>
   <goal name="backjump&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="143"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="151"/></proof>
   </goal>
   <goal name="backjump&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.03" steps="78"/></proof>
+  <proof prover="5"><result status="valid" time="0.03" steps="82"/></proof>
   </goal>
   <goal name="backjump&#39;vc.6" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.01" steps="63"/></proof>
   </goal>
   <goal name="backjump&#39;vc.7" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.41" steps="45746"/></proof>
+  <proof prover="1"><result status="valid" time="0.41" steps="45043"/></proof>
   </goal>
   <goal name="backjump&#39;vc.8" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.17" steps="35889"/></proof>
+  <proof prover="0"><result status="valid" time="0.17" steps="36033"/></proof>
   </goal>
   <goal name="backjump&#39;vc.9" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="backjump&#39;vc.9.0" expl="postcondition" proved="true">
-   <transf name="inline_goal" proved="true" >
+   <transf name="split_vc" proved="true" >
     <goal name="backjump&#39;vc.9.0.0" expl="postcondition" proved="true">
-    <proof prover="5" timelimit="5"><result status="valid" time="3.15" steps="46099"/></proof>
+    <transf name="inline_goal" proved="true" >
+     <goal name="backjump&#39;vc.9.0.0.0" expl="postcondition" proved="true">
+     <transf name="split_all_full" proved="true" >
+      <goal name="backjump&#39;vc.9.0.0.0.0" expl="postcondition" proved="true">
+      <transf name="split_vc" proved="true" >
+       <goal name="backjump&#39;vc.9.0.0.0.0.0" expl="postcondition" proved="true">
+       <proof prover="5" timelimit="5" memlimit="2000"><result status="valid" time="2.00" steps="32446"/></proof>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="backjump&#39;vc.9.0.1" expl="postcondition" proved="true">
+    <proof prover="5"><result status="valid" time="0.01" steps="63"/></proof>
     </goal>
    </transf>
    </goal>
@@ -652,7 +675,11 @@
    <proof prover="5"><result status="valid" time="0.02" steps="47"/></proof>
    </goal>
    <goal name="backjump&#39;vc.9.3" expl="postcondition" proved="true">
-   <proof prover="5"><result status="valid" time="0.02" steps="45"/></proof>
+   <transf name="inline_goal" proved="true" >
+    <goal name="backjump&#39;vc.9.3.0" expl="postcondition" proved="true">
+    <proof prover="5" timelimit="5"><result status="valid" time="0.01" steps="45"/></proof>
+    </goal>
+   </transf>
    </goal>
   </transf>
   </goal>
@@ -661,7 +688,7 @@
 </theory>
 <theory name="Cdsat_Theory_Impl6_UndoClear_Impl" proved="true">
  <goal name="undo_clear&#39;vc" expl="VC for undo_clear" proved="true">
- <proof prover="5"><result status="valid" time="0.06" steps="263"/></proof>
+ <proof prover="5"><result status="valid" time="0.06" steps="282"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Theory_Impl6_UndoDecide_Impl" proved="true">
@@ -683,19 +710,19 @@
   <proof prover="5"><result status="valid" time="0.01" steps="34"/></proof>
   </goal>
   <goal name="undo_decide&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.01" steps="164"/></proof>
+  <proof prover="5"><result status="valid" time="0.01" steps="167"/></proof>
   </goal>
   <goal name="undo_decide&#39;vc.6" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.01" steps="54"/></proof>
   </goal>
   <goal name="undo_decide&#39;vc.7" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="1.30" steps="21339"/></proof>
+  <proof prover="5"><result status="valid" time="1.30" steps="17025"/></proof>
   </goal>
   <goal name="undo_decide&#39;vc.8" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.22" steps="5127"/></proof>
+  <proof prover="5"><result status="valid" time="0.36" steps="5975"/></proof>
   </goal>
   <goal name="undo_decide&#39;vc.9" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="1.80" steps="34146"/></proof>
+  <proof prover="5"><result status="valid" time="1.80" steps="33718"/></proof>
   </goal>
  </transf>
  </goal>
@@ -762,20 +789,20 @@
 </theory>
 <theory name="Cdsat_Trail_Impl44">
  <goal name="partial_cmp_refn">
- <proof prover="0"><result status="timeout" time="1.00" steps="391117"/></proof>
- <proof prover="1"><result status="timeout" time="1.00" steps="302439"/></proof>
- <proof prover="3"><result status="timeout" time="1.00"/></proof>
- <proof prover="4"><result status="timeout" time="1.00" steps="294337"/></proof>
- <proof prover="5"><result status="timeout" time="1.00"/></proof>
+ <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="391117"/></proof>
+ <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="302439"/></proof>
+ <proof prover="3" obsolete="true"><result status="timeout" time="1.00"/></proof>
+ <proof prover="4" obsolete="true"><result status="timeout" time="1.00" steps="294337"/></proof>
+ <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl45">
  <goal name="cmp_refn">
- <proof prover="0"><result status="unknown" time="0.02" steps="1587"/></proof>
- <proof prover="1"><result status="unknown" time="0.03" steps="2679"/></proof>
- <proof prover="3"><result status="unknown" time="0.01" steps="7107"/></proof>
- <proof prover="4"><result status="unknown" time="0.02" steps="2602"/></proof>
- <proof prover="5"><result status="timeout" time="1.00"/></proof>
+ <proof prover="0" obsolete="true"><result status="unknown" time="0.02" steps="1587"/></proof>
+ <proof prover="1" obsolete="true"><result status="unknown" time="0.03" steps="2679"/></proof>
+ <proof prover="3" obsolete="true"><result status="unknown" time="0.01" steps="7107"/></proof>
+ <proof prover="4" obsolete="true"><result status="unknown" time="0.02" steps="2602"/></proof>
+ <proof prover="5" obsolete="true"><result status="timeout" time="1.00"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl7" proved="true">
