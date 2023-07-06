@@ -866,7 +866,7 @@ pub(crate) fn ix_to_abs_insert(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
 #[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
 #[ensures(t.abstract_justification(s.push(x)) == t.abstract_justification(s).insert(t.index_logic(x)) )]
 pub(crate) fn abstract_justification_insert(t: Trail, x: TrailIndex, s: Seq<TrailIndex>) {
-    ()
+    t.abstract_justification(s.push(x));
 }
 
 

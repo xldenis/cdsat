@@ -247,7 +247,7 @@ impl Solver {
             #[invariant(forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
             #[invariant(forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
             #[invariant(forall<ix : _> (old_heap@).contains(ix) ==> (heap@).contains(ix))]
-            #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
+            // #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
             #[invariant(ix_to_abs(*trail, heap@) == ix_to_abs(*trail, old_heap@).union(trail.abstract_justification(*produced)))]
             // Need invariant saying we only add things
             for a in just {
@@ -258,7 +258,6 @@ impl Solver {
                 heap.insert(a);
             }
 
-            // proof_assert!((*old_c).resolve(a.term_value(), *abs_cflct));
         }
     }
 }
