@@ -2,7 +2,6 @@
 // // use creusot_contracts::derive::{PartialEq};
 
 use ::std::collections::BTreeSet;
-use ::std::collections::BinaryHeap;
 
 // use creusot_contracts::*;
 use crate::theory;
@@ -10,7 +9,6 @@ use crate::trail::*;
 use creusot_contracts::logic::*;
 use creusot_contracts::std::*;
 use creusot_contracts::{vec, *};
-use priority_queue::PriorityQueue;
 
 pub struct Solver {
     bool_th: BoolTheory,
@@ -59,11 +57,7 @@ impl Solver {
             #[invariant(old_trail.ghost.impls(*trail.ghost))]
             loop {
                 // println!("{:?}", trail.len());
-                let trail_len = trail.len();
                 let th_res = self.bool_th.extend(trail);
-                if trail_len != trail.len() {
-                    states = TheoryState::Unknown;
-                };
 
                 // eprintln!("boolean said {th_res:?}");
                 match th_res {
@@ -172,7 +166,7 @@ impl Solver {
                 let oheap = ghost! { heap };
                 let just = heap.into_vec();
 
-                ghost!({ seq_to_set(*trail, just.shallow_model(), oheap.shallow_model()) });
+                ghost!(seq_to_set(*trail, just.shallow_model(), oheap.shallow_model()));
 
                 let old = ghost! { trail.abstract_justification(just.shallow_model()) };
                 trail.restrict(rem_level);

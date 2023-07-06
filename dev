@@ -13,6 +13,6 @@ fi
 cargo clean -p cdsat &&
 
 
-cargo creusot $focus --span-mode=absolute --output-file=$output &&
+cargo creusot $focus --span-mode=absolute --output-file=$output  &&
  ./ide $output
 

@@ -379,6 +379,14 @@ impl Trail {
         }
     }
 
+    #[logic]
+    #[requires(self.invariant())]
+    #[requires(self.ghost.is_justified(self.index_logic(ix)))]
+    #[ensures(forall<x : _> self.ghost.justification(self.index_logic(ix)).contains(x) ==> self.ghost.level_of(x) <= ix.level_log())]
+    fn justified_level(self, ix: TrailIndex) {
+        proof_assert!(self.ghost.level_of(self.index_logic(ix)) == ix.level_log());
+    }
+
     #[open]
     #[predicate]
     pub fn abstract_relation(self) -> bool {
