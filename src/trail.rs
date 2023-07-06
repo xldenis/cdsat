@@ -170,8 +170,26 @@ impl Value {
 }
 
 #[cfg_attr(not(creusot), derive(Debug))]
-#[derive(PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub struct TrailIndex(usize, pub usize);
+
+impl PartialOrd for TrailIndex {
+    #[ensures(result == Some(self.cmp_log(*other)))]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for TrailIndex {
+    #[ensures(result == self.cmp_log(*other))]
+    fn cmp(&self, other: &Self) -> Ordering {
+        match self.0.cmp(&other.0) {
+            Ordering::Less => Ordering::Less,
+            Ordering::Greater => Ordering::Greater,
+            Ordering::Equal => self.1.cmp(&other.1),
+        }
+    }
+}
 
 use ::std::cmp::Ordering;
 use creusot_contracts::OrdLogic;
