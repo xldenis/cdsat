@@ -846,3 +846,27 @@ pub(crate) fn ix_to_abs_level(t: Trail, s: FSet<TrailIndex>) {
 pub(crate) fn ix_to_abs_remove(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
     ()
 }
+
+#[logic]
+#[open(self)]
+#[variant(s.len())]
+#[requires(t.invariant())]
+#[requires(t.contains(x))]
+#[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
+#[ensures(ix_to_abs(t, s.insert(x)) == ix_to_abs(t, s).insert(t.index_logic(x)))]
+pub(crate) fn ix_to_abs_insert(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
+    ()
+}
+
+#[logic]
+#[open(self)]
+#[variant(s.len())]
+#[requires(t.invariant())]
+#[requires(t.contains(x))]
+#[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
+#[ensures(t.abstract_justification(s.push(x)) == t.abstract_justification(s).insert(t.index_logic(x)) )]
+pub(crate) fn abstract_justification_insert(t: Trail, x: TrailIndex, s: Seq<TrailIndex>) {
+    ()
+}
+
+

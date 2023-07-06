@@ -128,9 +128,7 @@ impl Solver {
                 == ix_to_abs(*trail, heap.shallow_model())
         );
         let mut abs_cflct: Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
-        // proof_assert!(forall<a : _> (heap@).contains(a) ==> abs_cflct.1.contains(trail.index_logic(a)));
 
-        // proof_assert!((heap@) != FSet::EMPTY);
         let max_ix = *heap.last().unwrap();
         let conflict_level = max_ix.level();
         proof_assert!(exists<ix : _> (heap@).contains(ix) && ix.level_log() > 0);
@@ -154,9 +152,7 @@ impl Solver {
             proof_assert!(ix.level_log() == abs_cflct.level());
             proof_assert!(ix_to_abs_remove(*trail, ix, heap@); true);
             let rem_level = match heap.last() {
-                Some(ix2) => {
-                    ix2.level()
-                }
+                Some(ix2) => ix2.level(),
                 None => 0,
             };
 
@@ -167,8 +163,6 @@ impl Solver {
             proof_assert!(abs_cflct.0.set_level(abs_cflct.1.remove(trail.index_logic(ix))) == rem_level@);
 
             let a = trail[ix].clone();
-            // proof_assert!(trail.contains(ix));
-            // proof_assert!(abs_cflct.0.is_decision(a.term_value()) ==> ix.level_log() > rem_level@);
             // Backjump
             if a.is_bool() && ix.level() > rem_level {
                 proof_assert!(trail.index_logic(ix) == a.term_value());
@@ -178,7 +172,7 @@ impl Solver {
                 let oheap = ghost! { heap };
                 let just = heap.into_vec();
 
-                ghost!({seq_to_set(*trail, just.shallow_model(), oheap.shallow_model()) });
+                ghost!({ seq_to_set(*trail, just.shallow_model(), oheap.shallow_model()) });
 
                 let old = ghost! { trail.abstract_justification(just.shallow_model()) };
                 trail.restrict(rem_level);
@@ -189,33 +183,23 @@ impl Solver {
                 return;
             }
 
-            // If we use an order st dec < just then this is not enough...
-
             // Undo Clear
             if a.is_first_order() && a.is_decision() {
                 trail.restrict(ix.level() - 1);
                 return;
             }
 
-            // Use an order such that decision < justified,
-            // thus we should now have that rem_level == level???
-
             proof_assert!(forall<t : theory::Trail, a :_> t.is_decision(a) ==> !t.is_input(a) && !t.is_justified(a));
             proof_assert!(abs_cflct.0.is_decision(a.term_value()) ==> ix.level_log() > rem_level@);
 
             // It can't be a boolean deceision
-            // proof_assert!(!(trail.ghost.is_decision(a.term_value()) && (a@.val).is_bool()));
-            // proof_assert!(!(trail.ghost.is_decision(a.term_value()) && !(a@.val).is_bool()));
             proof_assert!(!trail.ghost.is_decision(a.term_value()));
             // Trivial: Trail has non-zero level so by invariant we can't be input.
-            //  Proof is blocked due to properties of `find`.
             proof_assert!({
                 trail.ghost.is_input_inv(a.term_value());
                 true
-                // !trail.ghost.is_input(a.term_value())
             });
             proof_assert!(trail.ghost.is_justified(a.term_value()));
-            // proof_assert!()
             let just = trail.justification(ix);
 
             proof_assert!(trail.ghost.justified_is_bool(a.term_value()); true);
@@ -224,26 +208,24 @@ impl Solver {
                     abs_cflct.0.is_decision(trail.index_logic(*produced[i])) ==>
                     abs_cflct.0.level_of(trail.index_logic(*produced[i])) < abs_cflct.0.set_level(abs_cflct.1))]
             for jix in just.iter() {
-                // proof_assert!(trail.contains(*jix));
                 let j = &trail[*jix]; // should pass
-
-                // proof_assert!(jix.level_log() <= ix.level_log());
-                // proof_assert!(abs_cflct.0.level_of(trail.index_logic(*jix)) <= abs_cflct.0.level_of(trail.index_logic(ix)));
-                if jix.level() == ix.level() && j.is_first_order() && j.is_decision() {
-                    // undo decide
-                    trail.restrict(ix.level() - 1);
-                    trail.add_decision(a.term, a.val.negate());
-                    return;
+                proof_assert!(trail.contains(*jix));
+                if j.is_first_order() && j.is_decision() {
+                    if jix.level() == ix.level() {
+                        // undo decide
+                        trail.restrict(ix.level() - 1);
+                        trail.add_decision(a.term, a.val.negate());
+                        return;
+                    } else {
+                        proof_assert!(jix.level_log() < ix.level_log());
+                    }
                 }
 
-                // proof_assert!(!(
-                //     jix.level_log() == ix.level_log() &&
-                //     !j.val@.is_bool() &&
-                //     abs_cflct.0.is_decision(j.term_value())
-                // ));
-                // proof_assert!((abs_cflct.0.is_decision(j.term_value()) && !j@.val.is_bool()) ==> jix.level_log() < ix.level_log());
+                proof_assert!(!trail.index_logic(*jix).1.is_bool() ==>
+                    abs_cflct.0.is_decision(trail.index_logic(*jix)) ==>
+                    abs_cflct.0.level_of(trail.index_logic(*jix)) < abs_cflct.0.set_level(abs_cflct.1)
+                );
             }
-
 
             proof_assert!(
                 let j = trail.abstract_justification(just@);
@@ -266,8 +248,11 @@ impl Solver {
             #[invariant(forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
             #[invariant(forall<ix : _> (old_heap@).contains(ix) ==> (heap@).contains(ix))]
             #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
+            #[invariant(ix_to_abs(*trail, heap@) == ix_to_abs(*trail, old_heap@).union(trail.abstract_justification(*produced)))]
             // Need invariant saying we only add things
             for a in just {
+                ghost!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
+                proof_assert!(abstract_justification_insert(*trail, a, just@) == ());
                 proof_assert!(a.level_log() <= ix.level_log());
                 proof_assert!(abs_cflct.1.contains(trail.index_logic(a)));
                 heap.insert(a);

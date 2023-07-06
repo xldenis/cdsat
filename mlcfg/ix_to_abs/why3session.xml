@@ -11,19 +11,20 @@
 <path name=".."/><path name="ix_to_abs.mlcfg"/>
 <theory name="Cdsat_Trail_IxToAbs_Impl" proved="true">
  <goal name="ix_to_abs&#39;vc" expl="VC for ix_to_abs" proved="true">
- <proof prover="3"><result status="valid" time="0.43" steps="11050"/></proof>
+ <proof prover="3"><result status="valid" time="0.430000" steps="11050"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_IxToAbsRemove_Impl" proved="true">
  <goal name="ix_to_abs_remove&#39;vc" expl="VC for ix_to_abs_remove" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="ix_to_abs_remove&#39;vc.0" expl="postcondition" proved="true">
-  <transf name="assert" proved="true" arg1="(ix_to_abs t (remove s x) ==&#39; remove1 (ix_to_abs t s) (index_logic t x))">
+  <transf name="assert" proved="true" arg1="(ix_to_abs t (remove s x) ==&#39; remove1 (ix_to_abs t s) (index_logic2 t x))
+">
    <goal name="ix_to_abs_remove&#39;vc.0.0" expl="asserted formula" proved="true">
-   <proof prover="3"><result status="valid" time="0.24" steps="3573"/></proof>
+   <proof prover="3"><result status="valid" time="0.377741" steps="5523"/></proof>
    </goal>
    <goal name="ix_to_abs_remove&#39;vc.0.1" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.02" steps="32"/></proof>
+   <proof prover="3"><result status="valid" time="0.028178" steps="36"/></proof>
    </goal>
   </transf>
   </goal>
@@ -38,7 +39,7 @@
    <goal name="ix_to_abs_level&#39;vc.0.0" expl="postcondition" proved="true">
    <transf name="split_all_full" proved="true" >
     <goal name="ix_to_abs_level&#39;vc.0.0.0" expl="postcondition" proved="true">
-    <proof prover="0" timelimit="5" memlimit="2000"><result status="valid" time="1.80" steps="8366812"/></proof>
+    <proof prover="0" timelimit="5" memlimit="2000"><result status="valid" time="0.289265" steps="1260418"/></proof>
     </goal>
    </transf>
    </goal>
@@ -47,10 +48,26 @@
   <goal name="ix_to_abs_level&#39;vc.1" expl="postcondition" proved="true">
   <transf name="assert" proved="true" arg1="(cardinal (ix_to_abs t s) = 0)">
    <goal name="ix_to_abs_level&#39;vc.1.0" expl="asserted formula" proved="true">
-   <proof prover="3"><result status="valid" time="0.03" steps="128"/></proof>
+   <proof prover="3"><result status="valid" time="0.030000" steps="132"/></proof>
    </goal>
    <goal name="ix_to_abs_level&#39;vc.1.1" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.02" steps="74"/></proof>
+   <proof prover="3"><result status="valid" time="0.020000" steps="79"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_IxToAbsInsert_Impl" proved="true">
+ <goal name="ix_to_abs_insert&#39;vc" expl="VC for ix_to_abs_insert" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="ix_to_abs_insert&#39;vc.0" expl="postcondition" proved="true">
+  <transf name="assert" proved="true" arg1="(ix_to_abs t (insert s x) ==&#39; insert1 (ix_to_abs t s) (index_logic2 t x))">
+   <goal name="ix_to_abs_insert&#39;vc.0.0" expl="asserted formula" proved="true">
+   <proof prover="3"><result status="valid" time="0.072670" steps="692"/></proof>
+   </goal>
+   <goal name="ix_to_abs_insert&#39;vc.0.1" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.028259" steps="36"/></proof>
    </goal>
   </transf>
   </goal>
@@ -59,109 +76,109 @@
 </theory>
 <theory name="Cdsat_Trail_Impl15" proved="true">
  <goal name="clone&#39;_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="7"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl20" proved="true">
  <goal name="clone&#39;_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.01" steps="7"/></proof>
+ <proof prover="3"><result status="valid" time="0.010000" steps="7"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl25" proved="true">
  <goal name="clone&#39;_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="0"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="0"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl30" proved="true">
  <goal name="clone&#39;_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl34" proved="true">
  <goal name="clone&#39;_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl42" proved="true">
  <goal name="clone&#39;_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl16" proved="true">
  <goal name="eq_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="7"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl21" proved="true">
  <goal name="eq_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="7"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="7"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl26" proved="true">
  <goal name="eq_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="0"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="0"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl31" proved="true">
  <goal name="eq_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl35" proved="true">
  <goal name="eq_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl39" proved="true">
  <goal name="eq_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl44">
  <goal name="partial_cmp_refn">
- <proof prover="0"><result status="timeout" time="1.00"/></proof>
- <proof prover="1"><result status="timeout" time="1.00" steps="391117"/></proof>
- <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="425077"/></proof>
- <proof prover="3"><result status="timeout" time="1.00"/></proof>
- <proof prover="4"><result status="timeout" time="1.00" steps="307955"/></proof>
+ <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+ <proof prover="1"><result status="timeout" time="1.000000" steps="391117"/></proof>
+ <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="425077"/></proof>
+ <proof prover="3"><result status="timeout" time="1.000000"/></proof>
+ <proof prover="4"><result status="timeout" time="1.000000" steps="307955"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl45">
  <goal name="cmp_refn">
- <proof prover="0"><result status="unknown" time="0.01" steps="7107"/></proof>
- <proof prover="1"><result status="unknown" time="0.02" steps="1587"/></proof>
- <proof prover="2" obsolete="true"><result status="unknown" time="0.02" steps="2602"/></proof>
- <proof prover="3"><result status="timeout" time="1.00"/></proof>
- <proof prover="4"><result status="unknown" time="0.02" steps="2679"/></proof>
+ <proof prover="0"><result status="unknown" time="0.010000" steps="7107"/></proof>
+ <proof prover="1"><result status="unknown" time="0.020000" steps="1587"/></proof>
+ <proof prover="2" obsolete="true"><result status="unknown" time="0.020000" steps="2602"/></proof>
+ <proof prover="3"><result status="timeout" time="1.000000"/></proof>
+ <proof prover="4"><result status="unknown" time="0.020000" steps="2679"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl7" proved="true">
  <goal name="cmp_le_log_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
  <goal name="cmp_ge_log_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
  <goal name="cmp_gt_log_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
  <goal name="trans_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
  <goal name="antisym2_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
  <goal name="cmp_lt_log_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
  <goal name="eq_cmp_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
  <goal name="refl_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
  <goal name="antisym1_refn" proved="true">
- <proof prover="3"><result status="valid" time="0.00" steps="2"/></proof>
+ <proof prover="3"><result status="valid" time="0.000000" steps="2"/></proof>
  </goal>
 </theory>
 </file>
