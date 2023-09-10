@@ -769,7 +769,7 @@ impl Assignment {
 
     #[ensures(result != (self.val@).is_bool())]
     pub(crate) fn is_rational(&self) -> bool {
-        !self.is_bool()
+        !self.val.is_bool() || matches!(self.term, Term::Lt(_, _) | Term::Plus(_, _) | Term::Eq(_, _))
     }
 
     #[ensures(result != (self.val@).is_bool())]

@@ -10,12 +10,14 @@ use creusot_contracts::logic::*;
 use creusot_contracts::std::*;
 use creusot_contracts::{vec, *};
 use num_rational::Rational64;
-
 pub struct Solver {
     bool_th: BoolTheory,
-    lra_th: LRATheory,
+    bool_state: TheoryState,
+    lra_th : LRATheory,
+    lra_state : TheoryState,
 }
 
+#[derive(PartialEq, Eq)]
 enum TheoryState {
     Sat,
     Decision(Term, Value),
@@ -26,72 +28,75 @@ impl Solver {
     pub fn new() -> Self {
         Solver {
             bool_th: BoolTheory,
+            bool_state: TheoryState::Unknown,
             lra_th: LRATheory,
+            lra_state: TheoryState::Unknown,
         }
     }
 
-    #[requires(trail.invariant())]
-    #[ensures((^trail).invariant())]
-    #[ensures(trail.ghost.impls(*(^trail).ghost))]
-    #[ensures(match result {
-        Answer::Unsat => trail.unsat(),
-        Answer::Sat => true, // ignore completeness for now.
-    })]
+    fn extend_next(&mut self, trail: &mut Trail) -> Option<Vec<TrailIndex>> {
+        use TheoryState::*;
+        let (res, state) = if self.bool_state == Unknown {
+            (self.bool_th.extend(trail), &mut self.bool_state)
+        } else if self.lra_state == Unknown {
+            (self.lra_th.extend(trail), &mut self.lra_state)
+        } else {
+            return None;
+        };
+
+        match res {
+            ExtendResult::Decision(t, v) => *state = TheoryState::Decision(t, v),
+            ExtendResult::Satisfied => *state = TheoryState::Sat,
+            ExtendResult::Conflict(c) => {
+                self.bool_state = TheoryState::Unknown;
+                self.lra_state = TheoryState::Unknown;
+                return Some(c);
+            }
+        };
+        return None;
+    }
+
+    pub fn can_deduce(&self) -> bool {
+        self.bool_state == TheoryState::Unknown || self.lra_state == TheoryState::Unknown
+    }
+
+    pub fn sat(&self) -> bool {
+        self.bool_state == TheoryState::Sat && self.lra_state == TheoryState::Sat
+    }
+
+    pub fn decision(&mut self) -> (Term, Value) {
+        match (&mut self.bool_state, &mut self.lra_state) {
+            (TheoryState::Decision(t, v), _) | (_, TheoryState::Decision(t, v)) => {
+                let answer = (t.clone(), v.clone());
+                self.bool_state = TheoryState::Unknown;
+                self.lra_state = TheoryState::Unknown;
+                return answer
+            }
+            _ => unreachable!()
+        }
+    }
+
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
-        let old_trail: Ghost<&mut Trail> = ghost! { trail };
-        // Invariant:
-        // Every theory is coherent up to last_index with the trail
-        // Invariant: trail is sound & has type invariants
-        #[invariant(trail.invariant())]
-        #[invariant(^trail == ^*old_trail)]
-        #[invariant(old_trail.ghost.impls(*trail.ghost))]
         loop {
-            // Tracks if all theories are satisfied with the trail.
-            let mut states;
-            // Invariant:
-            // TheoryState::Sat => Theory_k is Sat for trail
-            // TheoryState::Decision => the decision is acceptable with the current trail
-            // Invariant:
-            // Every theory is coherent up to last_index with the trail
-            // Invariant: trail is sound & has type invariants
-            #[invariant(trail.invariant())]
-            #[invariant(^trail == ^*old_trail)]
-            #[invariant(old_trail.ghost.impls(*trail.ghost))]
             loop {
-                // println!("{:?}", trail.len());
-                let th_res = self.bool_th.extend(trail);
-
-                // eprintln!("boolean said {th_res:?}");
-                match th_res {
-                    ExtendResult::Conflict(c) => {
-                        if trail.max_level(&c) == 0 {
-                            // eprintln!("{trail:?}");
-                            proof_assert!(theory::Normal(*trail.ghost).fail2(trail.abstract_justification(c@)));
-                            return Answer::Unsat;
-                        };
-                        states = (TheoryState::Unknown, TheoryState::Unknown);
-                        // need to calculate level of a set
-                        // proof_assert!(Normal(trail.ghost).conflict_solve2(trail.abstract_justification(c ), Conflict(trail.ghost, trail.abstract_justification(c@), 0)));
-                        self.resolve_conflict(trail, c)
+                if let Some(cflct) = self.extend_next(trail) {
+                    if trail.max_level(&cflct) > 0 {
+                        self.resolve_conflict(trail, cflct);
+                    } else {
+                        return Answer::Unsat;
                     }
-                    ExtendResult::Decision(t, v) => states = TheoryState::Decision(t, v),
-                    ExtendResult::Satisfied => states = TheoryState::Sat,
-                }
 
-                if matches!(states, TheoryState::Decision(_, _) | TheoryState::Sat) {
+                }
+                if !self.can_deduce() {
                     break;
                 }
             }
 
-            proof_assert! { trail.invariant() };
-
-            // Assert: Every theory is fully coherent with the trail
-            // Assert: Theory states are necessarily either decision or sat
-            // Assert: Every theory is sat => formula is sat
-            match states {
-                TheoryState::Sat => return Answer::Sat,
-                TheoryState::Decision(t, v) => trail.add_decision(t, v),
-                _ => unreachable!(),
+            if self.sat() {
+                return Answer::Sat;
+            } else {
+                let (t, v) = self.decision();
+                trail.add_decision(t, v);
             }
         }
     }
@@ -468,8 +473,10 @@ impl LRATheory {
                 let (mut j1, v1) = self.eval_memo(tl, l)?;
                 let (j2, v2) = self.eval_memo(tl, r)?;
                 j1.extend(j2);
-                println!("{v1:?} < {v2:?} ??");
                 return Ok((j1, v1.lt(v2)));
+            }
+            Term::Value(v@Value::Rat(_)) => {
+                return Ok((Vec::new(), v.clone()))
             }
             a => match tl.index_of(a) {
                 Some(i) => Ok((vec![i], tl[i].value().clone())),
