@@ -1,7 +1,9 @@
 use crate::theory::{self, Assign};
 use ::std::ops::Index;
+use ::std::unreachable;
 use creusot_contracts::{logic::*, vec, DeepModel, *};
 use creusot_contracts::{Clone, PartialEq};
+use num_rational::{Rational64};
 // use num_rational::BigRational;
 //
 #[cfg(not(creusot))]
@@ -79,6 +81,7 @@ pub enum Term {
     Value(Value),
     Plus(Box<Term>, Box<Term>),
     Eq(Box<Term>, Box<Term>),
+    Lt(Box<Term>, Box<Term>),
     Conj(Box<Term>, Box<Term>),
     Neg(Box<Term>),
     Disj(Box<Term>, Box<Term>),
@@ -128,7 +131,7 @@ impl creusot_contracts::DeepModel for Term {
 #[DeepModelTy = "theory::Value"]
 pub enum Value {
     Bool(bool),
-    Rat(u64),
+    Rat(Rational64),
 }
 
 #[cfg(creusot)]
@@ -143,11 +146,33 @@ impl creusot_contracts::ShallowModel for Value {
 }
 
 impl Value {
-    #[requires((self@).is_bool())]
+    #[requires(self@.is_bool())]
     pub fn bool(&self) -> bool {
         match self {
             Value::Bool(b) => *b,
             Value::Rat(_) => unreachable!(),
+        }
+    }
+
+    #[requires(self@.is_rational())]
+    #[requires(o@.is_rational())]
+    pub fn lt(self, o: Self) -> Self {
+        match (self, o) {
+            (Value::Rat(a), Value::Rat(b)) => {
+                Value::Bool(a < b)
+            }
+            _ => unreachable!()
+        }
+    }
+
+    #[requires(self@.is_rational())]
+    #[requires(o@.is_rational())]
+    pub fn add(self, o: Self) -> Self {
+        match (self, o) {
+            (Value::Rat(a), Value::Rat(b)) => {
+                Value::Rat(a + b)
+            }
+            _ => unreachable!()
         }
     }
 
@@ -559,11 +584,11 @@ impl Trail {
     #[requires(forall<m : theory::Model> m.invariant() ==> m.satisfy_set(self.abstract_justification(into_vec@)) ==> m.satisfies((term@, val@)))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
-        let old = ghost! { * self };
+        let old : Ghost<Self> = ghost! { * self };
         let level = self.max_level(&into_vec);
 
         proof_assert!(level@ <= self.ghost.level());
-        let xxx = ghost! { into_vec.shallow_model() };
+        let xxx : Ghost<Seq<TrailIndex>> = ghost! { into_vec.shallow_model() };
         let just: Ghost<FSet<(theory::Term, theory::Value)>> =
             ghost! { self.abstract_justification(into_vec.shallow_model()) };
         proof_assert!(self.ghost.set_level(*just) <= self.ghost.level());
@@ -592,7 +617,7 @@ impl Trail {
             let x = self.assignments[level].len();
         proof_assert!(x@ > 0);
         self.assignments[level].push(a);
-        ghost! { old.lemma_abs_just(*self, *xxx) };
+        let _ : Ghost<()> = ghost! { old.lemma_abs_just(*self, *xxx) };
 
         proof_assert!(forall<ix : _> old.contains(ix) ==> self.contains(ix));
         proof_assert!(forall<ix : _> old.contains(ix) ==> old.index_logic(ix) == self.index_logic(ix));
@@ -740,6 +765,11 @@ impl Assignment {
     #[ensures(result == (self.val@).is_bool())]
     pub(crate) fn is_bool(&self) -> bool {
         self.val.is_bool()
+    }
+
+    #[ensures(result != (self.val@).is_bool())]
+    pub(crate) fn is_rational(&self) -> bool {
+        !self.is_bool()
     }
 
     #[ensures(result != (self.val@).is_bool())]

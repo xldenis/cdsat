@@ -9,9 +9,11 @@ use crate::trail::*;
 use creusot_contracts::logic::*;
 use creusot_contracts::std::*;
 use creusot_contracts::{vec, *};
+use num_rational::Rational64;
 
 pub struct Solver {
     bool_th: BoolTheory,
+    lra_th: LRATheory,
 }
 
 enum TheoryState {
@@ -24,6 +26,7 @@ impl Solver {
     pub fn new() -> Self {
         Solver {
             bool_th: BoolTheory,
+            lra_th: LRATheory,
         }
     }
 
@@ -33,7 +36,6 @@ impl Solver {
     #[ensures(match result {
         Answer::Unsat => trail.unsat(),
         Answer::Sat => true, // ignore completeness for now.
-        Answer::Unknown => true,
     })]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
         let old_trail: Ghost<&mut Trail> = ghost! { trail };
@@ -67,7 +69,7 @@ impl Solver {
                             proof_assert!(theory::Normal(*trail.ghost).fail2(trail.abstract_justification(c@)));
                             return Answer::Unsat;
                         };
-                        states = TheoryState::Unknown;
+                        states = (TheoryState::Unknown, TheoryState::Unknown);
                         // need to calculate level of a set
                         // proof_assert!(Normal(trail.ghost).conflict_solve2(trail.abstract_justification(c ), Conflict(trail.ghost, trail.abstract_justification(c@), 0)));
                         self.resolve_conflict(trail, c)
@@ -108,8 +110,8 @@ impl Solver {
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
         // eprintln!("conflict!");
         let mut heap: ConflictHeap = ConflictHeap::new();
-        let old_conflict = ghost! { conflict };
-        let old_trail = ghost! { trail };
+        let old_conflict: Ghost<Vec<TrailIndex>> = ghost! { conflict };
+        let old_trail: Ghost<&mut Trail> = ghost! { trail };
 
         #[invariant(forall<a : _> produced.contains(a) ==> (heap@).contains(a))]
         #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
@@ -161,16 +163,20 @@ impl Solver {
             if a.is_bool() && ix.level() > rem_level {
                 proof_assert!(trail.index_logic(ix) == a.term_value());
                 // Somehow this should provide us the info we need to say that the justification won't change from restriction?
-                let _: Ghost<theory::Normal> = ghost! { abs_cflct.backjump2(a.term_value()) };
+                let _: Ghost<bool> = ghost! { abs_cflct.backjump2(a.term_value()); true };
 
-                let oheap = ghost! { heap };
+                let oheap: Ghost<ConflictHeap> = ghost! { heap };
                 let just = heap.into_vec();
 
-                ghost!(seq_to_set(*trail, just.shallow_model(), oheap.shallow_model()));
+                let _: Ghost<()> = ghost!(seq_to_set(
+                    *trail,
+                    just.shallow_model(),
+                    oheap.shallow_model()
+                ));
 
-                let old = ghost! { trail.abstract_justification(just.shallow_model()) };
+                let old: Ghost<()> = ghost! { trail.abstract_justification(just.shallow_model()) };
                 trail.restrict(rem_level);
-                let new = ghost! { trail.abstract_justification(just.shallow_model()) };
+                let new: Ghost<()> = ghost! { trail.abstract_justification(just.shallow_model()) };
 
                 proof_assert!(new.ext_eq(*old));
                 trail.add_justified(just, a.term, a.val.negate());
@@ -245,13 +251,12 @@ impl Solver {
             #[invariant(ix_to_abs(*trail, heap@) == ix_to_abs(*trail, old_heap@).union(trail.abstract_justification(*produced)))]
             // Need invariant saying we only add things
             for a in just {
-                ghost!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
+                let _: Ghost<()> = ghost!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
                 proof_assert!(abstract_justification_insert(*trail, a, just@) == ());
                 proof_assert!(a.level_log() <= ix.level_log());
                 proof_assert!(abs_cflct.1.contains(trail.index_logic(a)));
                 heap.insert(a);
             }
-
         }
     }
 }
@@ -260,7 +265,6 @@ impl Solver {
 pub enum Answer {
     Sat,
     Unsat,
-    Unknown,
 }
 
 #[cfg_attr(not(creusot), derive(Debug))]
@@ -395,6 +399,91 @@ impl creusot_contracts::ShallowModel for ConflictHeap {
     #[trusted]
     fn shallow_model(self) -> Self::ShallowModelTy {
         absurd
+    }
+}
+
+struct LRATheory;
+
+impl LRATheory {
+    #[trusted]
+    #[maintains((mut tl).invariant())]
+    #[ensures(match result {
+        ExtendResult::Satisfied => true,
+        ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(t@, v@),
+        ExtendResult::Conflict(c) => {
+            let conflict = (^tl).abstract_justification(c@);
+            c@.len() > 0 &&
+            // members of conflict area within the trail
+            (forall<t : _> (c@).contains(t) ==> (^tl).contains(t)) &&
+            // (forall<i : _> 0 <= i && i < (c@).len() ==> @(c@)[i] < (@(^tl).assignments).len()) &&
+            (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
+        }
+    })]
+    #[ensures(tl.ghost.impls(*(^tl).ghost))]
+    fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
+        let mut iter = tl.indices();
+
+        while let Some(ix) = iter.next() {
+            let tl = iter.trail();
+
+            if tl[ix].is_rational() {
+                match self.eval(tl, &tl[ix].term) {
+                    Result::Err(dec) => {
+                        return ExtendResult::Decision(dec, Value::Rat(Rational64::new(0, 1)));
+                    }
+                    Result::Ok((mut subterms, res)) => {
+                        if res != tl[ix].val {
+                            subterms.push(ix);
+                            return ExtendResult::Conflict(subterms);
+                        }
+                    }
+                }
+            }
+        }
+
+        // while i < tl.len() {
+
+        //     i += 1;
+        // }
+
+        return ExtendResult::Satisfied;
+    }
+
+    #[trusted]
+    fn eval(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<TrailIndex>, Value), Term> {
+        match tm {
+            Term::Eq(l, r) => {
+                let (mut j1, v1) = self.eval_memo(tl, l)?;
+                let (j2, v2) = self.eval_memo(tl, r)?;
+                j1.extend(j2);
+                return Ok((j1, Value::Bool(v1 == v2)));
+            }
+            Term::Plus(l, r) => {
+                let (mut j1, v1) = self.eval_memo(tl, l)?;
+                let (j2, v2) = self.eval_memo(tl, r)?;
+                j1.extend(j2);
+                return Ok((j1, v1.add(v2)));
+            }
+            Term::Lt(l, r) => {
+                let (mut j1, v1) = self.eval_memo(tl, l)?;
+                let (j2, v2) = self.eval_memo(tl, r)?;
+                j1.extend(j2);
+                println!("{v1:?} < {v2:?} ??");
+                return Ok((j1, v1.lt(v2)));
+            }
+            a => match tl.index_of(a) {
+                Some(i) => Ok((vec![i], tl[i].value().clone())),
+                None => Err(a.clone()),
+            },
+        }
+    }
+
+    #[trusted]
+    fn eval_memo(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<TrailIndex>, Value), Term> {
+        if let Some(x) = tl.index_of(tm) {
+            return Ok((vec![x], tl[x].val.clone()));
+        }
+        self.eval(tl, tm)
     }
 }
 

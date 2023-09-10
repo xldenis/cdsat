@@ -43,6 +43,8 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use num_rational::Rational64;
+
     use crate::concrete::Solver;
     use crate::trail::{Term, Trail, Value};
 
@@ -52,8 +54,8 @@ mod tests {
         let mut trail = Trail::new(vec![
             (
                 Term::Conj(
-                    box Term::Variable(0, Sort::Boolean),
-                    box Term::Variable(1, Sort::Boolean),
+                    Box::new(Term::Variable(0, Sort::Boolean)),
+                    Box::new(Term::Variable(1, Sort::Boolean)),
                 ),
                 Value::Bool(true),
             ),
@@ -71,8 +73,27 @@ mod tests {
         let mut trail = Trail::new(vec![
             (
                 Term::Conj(
-                    box Term::Neg(box Term::Variable(0, Sort::Boolean)),
-                    box Term::Variable(0, Sort::Boolean),
+                    Box::new(Term::Neg(Box::new(Term::Variable(0, Sort::Boolean)))),
+                    Box::new(Term::Variable(0, Sort::Boolean)),
+                ),
+                Value::Bool(true),
+            ),
+        ]);
+
+        let mut solver = Solver::new();
+
+        let res = solver.solver(&mut trail);
+
+        assert!(matches!(res, Answer::Unsat));
+    }
+
+    #[test]
+    fn a_lt_b() {
+        let mut trail = Trail::new(vec![
+            (
+                Term::Lt(
+                    Box::new(Term::Value(Value::Rat(Rational64::new(5, 1)))),
+                    Box::new(Term::Value(Value::Rat(Rational64::new(5, 1)))),
                 ),
                 Value::Bool(true),
             ),
