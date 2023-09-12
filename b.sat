@@ -1,0 +1,7 @@
+(declare-const x0 Real)
+(declare-const x1 Real)
+
+(assert (< x0 5))
+(assert (< 5 x0))
+
+(check-sat)

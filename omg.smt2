@@ -1,0 +1,7 @@
+(set-logic QF_LRA)
+(declare-const x Real)
+(declare-const y Real)
+(declare-const z Real)
+(assert (< (+ (- (* 2 x)) (- y)) 0))
+(assert (< (+ x y) 0))
+(check-sat)

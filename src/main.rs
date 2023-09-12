@@ -1,6 +1,9 @@
 #![cfg_attr(not(creusot), feature(stmt_expr_attributes, proc_macro_hygiene))]
 #![allow(dead_code, unused_variables)]
+#![feature(never_type, let_chains)]
+
 pub mod concrete;
+pub mod lra;
 pub mod trail;
 
 #[cfg(creusot)]
@@ -8,6 +11,8 @@ pub mod theory;
 
 #[cfg(creusot)]
 pub mod bag;
+
+pub mod term;
 
 #[cfg(not(creusot))]
 pub mod theory {
@@ -19,50 +24,190 @@ pub mod theory {
     pub struct Value;
 }
 
-use concrete::Solver;
-use trail::{Term, Trail, Value};
+use std::{env::args, fs::File, io::BufReader, unimplemented};
 
-use crate::{concrete::Answer, trail::Sort};
+use concrete::Solver;
+use indexmap::IndexMap;
+use num_rational::BigRational;
+use smt2parser::{
+    concrete::{Command, Symbol, SyntaxBuilder},
+    visitors::*,
+    CommandStream,
+};
+use term::{Sort, Term, Value};
+use trail::Trail;
+
+struct TermBuilder;
+
+fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) -> Term {
+    use smt2parser::concrete::{QualIdentifier, Term as PT};
+    match t {
+        PT::Application {
+            qual_identifier,
+            arguments,
+        } => {
+            let mut arguments = arguments
+                .into_iter()
+                .map(|a| term_to_term(vars, a))
+                .collect::<Vec<_>>();
+            let ident = match qual_identifier {
+                QualIdentifier::Simple { identifier } => identifier,
+                QualIdentifier::Sorted { identifier, .. } => identifier,
+            };
+            let ident = match ident {
+                Identifier::Simple { symbol: Symbol(st) } => st,
+                _ => unimplemented!(),
+            };
+
+            let t = match &ident[..] {
+                "+" => Term::plus(arguments.remove(0), arguments.remove(0)),
+                "and" => Term::and(arguments.remove(0), arguments.remove(0)),
+                "or" => Term::or(arguments.remove(0), arguments.remove(0)),
+                "<" => Term::lt(arguments.remove(0), arguments.remove(0)),
+                "=" => Term::eq_(arguments.remove(0), arguments.remove(0)),
+                "*" => {
+                    let Term::Value(Value::Rat(k)) = arguments.remove(0) else {panic!()};
+
+                    Term::times(k.to_integer().try_into().unwrap(), arguments.remove(0))
+                }
+                "-" => {
+                    if arguments.len() == 1{
+                        Term::times(-1, arguments.remove(0))
+                    } else {
+                        Term::plus(arguments.remove(0), Term::times(-1, arguments.remove(0)))
+                    }
+                },
+                _ => unimplemented!()
+            };
+            t
+        }
+        PT::Constant(c) => match c {
+            smt2parser::concrete::Constant::Decimal(br) => Term::Value(Value::Rat(br)),
+            smt2parser::concrete::Constant::Numeral(num) => {
+                Term::Value(Value::Rat(BigRational::new(num.into(), 1.into())))
+            }
+            _ => unimplemented!(),
+        },
+        PT::QualIdentifier(qi) => {
+            if qi.to_string() == "true" {
+                Term::val(Value::true_())
+            } else if qi.to_string() == "false" {
+                Term::val(Value::Bool(false))
+            } else {
+                match qi {
+                    QualIdentifier::Simple { identifier }
+                    | QualIdentifier::Sorted { identifier, .. } => match identifier {
+                        Identifier::Simple { symbol } | Identifier::Indexed { symbol, .. } => {
+                            let pos = vars.get_index_of(&symbol).unwrap();
+                            let sort = vars[&symbol].clone();
+                            Term::var(pos, sort)
+                        }
+                    },
+                }
+            }
+        }
+
+        PT::Let { var_bindings, term } => unimplemented!("let"),
+        PT::Forall { vars, term } => unimplemented!("quantifier"),
+        PT::Exists { vars, term } => unimplemented!("quantifier"),
+        PT::Match { term, cases } => unimplemented!("match"),
+        PT::Attributes { term, attributes } => unimplemented!("attributes"),
+    }
+}
+
+fn to_assign(vars: &mut IndexMap<Symbol, Sort>, c: Command) -> Option<(Term, Value)> {
+    match c {
+        Command::Assert { term } => Some((term_to_term(vars, term), Value::true_())),
+        Command::CheckSat => None,
+        Command::SetLogic { symbol } => {
+            if symbol.0 != "QF_LRA" {
+                unimplemented!()
+            } else {
+                None
+            }
+        }
+        Command::SetInfo { keyword, value } => unimplemented!(),
+        Command::SetOption { keyword, value } => unimplemented!(),
+        Command::DeclareConst { symbol, sort } => {
+            if !vars.contains_key(&symbol) {
+                let s = match sort {
+                    smt2parser::concrete::Sort::Simple { identifier } => {
+                        if identifier.to_string() == "Bool" {
+                            Sort::Boolean
+                        } else if identifier.to_string() == "Real" {
+                            Sort::Rational
+                        } else {
+                            unimplemented!()
+                        }
+                    }
+                    _ => unimplemented!(),
+                };
+                vars.insert(symbol, s);
+            };
+            None
+        }
+        Command::DeclareDatatype { symbol, datatype } => unimplemented!(),
+        Command::DeclareDatatypes { datatypes } => unimplemented!(),
+        Command::DeclareFun {
+            symbol,
+            parameters,
+            sort,
+        } => unimplemented!(),
+        Command::DeclareSort { symbol, arity } => unimplemented!(),
+        Command::DefineFun { sig, term } => unimplemented!(),
+        Command::DefineFunRec { sig, term } => unimplemented!(),
+        Command::DefineFunsRec { funs } => unimplemented!(),
+        Command::DefineSort {
+            symbol,
+            parameters,
+            sort,
+        } => unimplemented!(),
+        Command::Echo { message } => unimplemented!(),
+        Command::Exit => unimplemented!(),
+        Command::GetAssertions => unimplemented!(),
+        Command::GetAssignment => unimplemented!(),
+        Command::GetInfo { flag } => unimplemented!(),
+        Command::GetModel => unimplemented!(),
+        Command::GetOption { keyword } => unimplemented!(),
+        Command::GetProof => unimplemented!(),
+        Command::GetUnsatAssumptions => unimplemented!(),
+        Command::GetUnsatCore => unimplemented!(),
+        Command::GetValue { terms } => unimplemented!(),
+        Command::Pop { level } => unimplemented!(),
+        Command::Push { level } => unimplemented!(),
+        Command::Reset => unimplemented!(),
+        Command::ResetAssertions => unimplemented!(),
+        Command::CheckSatAssuming { literals } => unimplemented!(),
+    }
+}
 
 #[creusot_contracts::trusted]
-fn main() {
-    let mut trail = Trail::new(vec![(
-        Term::Conj(
-            Box::new(Term::Neg(Box::new(Term::Variable(0, Sort::Boolean)))),
-            Box::new(Term::Variable(0, Sort::Boolean)),
-        ),
-        Value::Bool(true),
-    )]);
+fn main() -> std::io::Result<()> {
+    env_logger::init();
+    let mut input = BufReader::new(File::open(args().nth(1).expect("provide an input file"))?);
+    let stream = CommandStream::new(&mut input, SyntaxBuilder, None);
+
+    let commands = stream
+        .collect::<Result<Vec<_>, _>>()
+        .expect("could not parse");
+
+    let mut vars = IndexMap::new();
+    let assignments = commands
+        .into_iter()
+        .filter_map(|c| to_assign(&mut vars, c))
+        .collect::<Vec<_>>();
 
     let mut solver = Solver::new();
 
+    let mut trail = Trail::new(assignments);
     let res = solver.solver(&mut trail);
 
-    assert!(matches!(res, Answer::Unsat));
+    println!("Answer = {res:?}");
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
-
-    impl Term {
-        fn var(ix: usize, sort: Sort) -> Self {
-            Term::Variable(ix, sort)
-        }
-
-        fn val(v: Value) -> Self {
-            Term::Value(v)
-        }
-
-        fn plus(a: Self, b: Self) -> Self {
-            Term::Plus(Box::new(a), Box::new(b))
-        }
-    }
-
-    impl Value {
-        fn rat(a: i64, b: i64) -> Self {
-            Value::Rat(Rational64::new(a, b))
-        }
-    }
     use num_rational::Rational64;
 
     use crate::concrete::Solver;

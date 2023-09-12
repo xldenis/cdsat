@@ -2,19 +2,24 @@
 // // use creusot_contracts::derive::{PartialEq};
 
 use ::std::collections::BTreeSet;
+use ::std::fmt::Write;
 
+use crate::term::Sort;
+use crate::term::Term;
+use crate::term::Value;
 // use creusot_contracts::*;
 use crate::theory;
 use crate::trail::*;
 use creusot_contracts::logic::*;
 use creusot_contracts::std::*;
 use creusot_contracts::{vec, *};
-use num_rational::Rational64;
+use log::info;
+use crate::lra::*;
 pub struct Solver {
     bool_th: BoolTheory,
     bool_state: TheoryState,
-    lra_th : LRATheory,
-    lra_state : TheoryState,
+    lra_th: LRATheory,
+    lra_state: TheoryState,
 }
 
 #[derive(PartialEq, Eq)]
@@ -70,9 +75,9 @@ impl Solver {
                 let answer = (t.clone(), v.clone());
                 self.bool_state = TheoryState::Unknown;
                 self.lra_state = TheoryState::Unknown;
-                return answer
+                return answer;
             }
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 
@@ -85,7 +90,6 @@ impl Solver {
                     } else {
                         return Answer::Unsat;
                     }
-
                 }
                 if !self.can_deduce() {
                     break;
@@ -113,7 +117,12 @@ impl Solver {
     #[ensures((^trail).invariant())]
     #[ensures((*trail).ghost.impls(*(^trail).ghost))]
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
-        // eprintln!("conflict!");
+        let mut s = String::from("conflict ");
+        for i in &conflict {
+            write!(s, "{} <- {} ", &trail[*i].term, &trail[*i].val).unwrap();
+        }
+        info!("{s}");
+
         let mut heap: ConflictHeap = ConflictHeap::new();
         let old_conflict: Ghost<Vec<TrailIndex>> = ghost! { conflict };
         let old_trail: Ghost<&mut Trail> = ghost! { trail };
@@ -239,6 +248,7 @@ impl Solver {
                     abs_cflct.0.level_of(t) < abs_cflct.0.set_level(abs_cflct.1)
             );
 
+            #[allow(unused)]
             abs_cflct = ghost! { abs_cflct.resolvef(a.term_value()) };
 
             let old_heap: Ghost<ConflictHeap> = ghost! { heap };
@@ -266,14 +276,14 @@ impl Solver {
     }
 }
 
-// #[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Answer {
     Sat,
     Unsat,
 }
 
-#[cfg_attr(not(creusot), derive(Debug))]
-enum ExtendResult {
+#[derive(Debug)]
+pub enum ExtendResult {
     Conflict(Vec<TrailIndex>),
     Decision(Term, Value),
     Satisfied,
@@ -330,7 +340,12 @@ impl BoolTheory {
             if tl[ix].is_bool() {
                 match self.eval(tl, &tl[ix].term) {
                     Result::Err(dec) => {
-                        return ExtendResult::Decision(dec, Value::Bool(true));
+                        if dec.sort() == Sort::Boolean {
+                            if dec == Term::Value(Value::Bool(false)) {
+                                panic!()
+                            };
+                            return ExtendResult::Decision(dec, Value::Bool(true));
+                        }
                     }
                     Result::Ok((mut subterms, res)) => {
                         if res != tl[ix].val {
@@ -379,6 +394,7 @@ impl BoolTheory {
                 let (j, v) = self.eval_memo(tl, t)?;
                 Ok((j, v.negate()))
             }
+            Term::Value(v @ Value::Bool(_)) => return Ok((Vec::new(), v.clone())),
             a => match tl.index_of(a) {
                 Some(i) => Ok((vec![i], tl[i].value().clone())),
                 None => Err(a.clone()),
@@ -404,93 +420,6 @@ impl creusot_contracts::ShallowModel for ConflictHeap {
     #[trusted]
     fn shallow_model(self) -> Self::ShallowModelTy {
         absurd
-    }
-}
-
-struct LRATheory;
-
-impl LRATheory {
-    #[trusted]
-    #[maintains((mut tl).invariant())]
-    #[ensures(match result {
-        ExtendResult::Satisfied => true,
-        ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(t@, v@),
-        ExtendResult::Conflict(c) => {
-            let conflict = (^tl).abstract_justification(c@);
-            c@.len() > 0 &&
-            // members of conflict area within the trail
-            (forall<t : _> (c@).contains(t) ==> (^tl).contains(t)) &&
-            // (forall<i : _> 0 <= i && i < (c@).len() ==> @(c@)[i] < (@(^tl).assignments).len()) &&
-            (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
-        }
-    })]
-    #[ensures(tl.ghost.impls(*(^tl).ghost))]
-    fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
-        let mut iter = tl.indices();
-
-        while let Some(ix) = iter.next() {
-            let tl = iter.trail();
-
-            if tl[ix].is_rational() {
-                match self.eval(tl, &tl[ix].term) {
-                    Result::Err(dec) => {
-                        return ExtendResult::Decision(dec, Value::Rat(Rational64::new(0, 1)));
-                    }
-                    Result::Ok((mut subterms, res)) => {
-                        if res != tl[ix].val {
-                            subterms.push(ix);
-                            return ExtendResult::Conflict(subterms);
-                        }
-                    }
-                }
-            }
-        }
-
-        // while i < tl.len() {
-
-        //     i += 1;
-        // }
-
-        return ExtendResult::Satisfied;
-    }
-
-    #[trusted]
-    fn eval(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<TrailIndex>, Value), Term> {
-        match tm {
-            Term::Eq(l, r) => {
-                let (mut j1, v1) = self.eval_memo(tl, l)?;
-                let (j2, v2) = self.eval_memo(tl, r)?;
-                j1.extend(j2);
-                return Ok((j1, Value::Bool(v1 == v2)));
-            }
-            Term::Plus(l, r) => {
-                let (mut j1, v1) = self.eval_memo(tl, l)?;
-                let (j2, v2) = self.eval_memo(tl, r)?;
-                j1.extend(j2);
-                return Ok((j1, v1.add(v2)));
-            }
-            Term::Lt(l, r) => {
-                let (mut j1, v1) = self.eval_memo(tl, l)?;
-                let (j2, v2) = self.eval_memo(tl, r)?;
-                j1.extend(j2);
-                return Ok((j1, v1.lt(v2)));
-            }
-            Term::Value(v@Value::Rat(_)) => {
-                return Ok((Vec::new(), v.clone()))
-            }
-            a => match tl.index_of(a) {
-                Some(i) => Ok((vec![i], tl[i].value().clone())),
-                None => Err(a.clone()),
-            },
-        }
-    }
-
-    #[trusted]
-    fn eval_memo(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<TrailIndex>, Value), Term> {
-        if let Some(x) = tl.index_of(tm) {
-            return Ok((vec![x], tl[x].val.clone()));
-        }
-        self.eval(tl, tm)
     }
 }
 
