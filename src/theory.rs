@@ -11,7 +11,7 @@ pub enum Term {
 
 impl Term {
     #[open]
-    #[logic]
+    #[ghost]
     pub fn sort(self) -> Sort {
         match self {
             Term::Variable(v) => v.1,
@@ -36,7 +36,7 @@ pub enum Sort {
 
 pub struct Var(pub Int, pub Sort);
 
-type Rational = Int;
+pub type Rational = Int;
 
 pub enum Value {
     Bool(bool),
@@ -51,7 +51,7 @@ impl Value {
     }
 
     #[open]
-    #[logic]
+    #[ghost]
     pub fn sort(self) -> Sort {
         match self {
             Value::Bool(_) => Sort::Boolean,
@@ -59,7 +59,7 @@ impl Value {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open]
     #[requires(self.is_bool())]
     #[ensures(result.is_bool())]
@@ -70,7 +70,7 @@ impl Value {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.is_bool())]
     #[ensures(self.negate().negate() == self)]
@@ -95,7 +95,7 @@ impl Assign {
     }
 
     #[open]
-    #[logic]
+    #[ghost]
     pub fn to_pair(self) -> (Term, Value) {
         match self {
             Assign::Decision(t, val) => (t, val),
@@ -129,7 +129,7 @@ impl Model {
     }
 
     #[open]
-    #[logic]
+    #[ghost]
     #[ensures(self.invariant() ==> result.sort() == t.sort())]
     pub fn interp(self, t: Term) -> Value {
         match t {
@@ -165,7 +165,7 @@ impl Model {
         pearlite! { self.invariant() ==> self.satisfy_set(j) ==> self.satisfies(c) }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.satisfy_set(just) ==> self.satisfies(a))]
     #[requires(!self.satisfy_set(cflct))]
@@ -179,7 +179,7 @@ impl Model {
     ) {
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(v.sort() == Sort::Boolean)]
     #[requires(t.sort() == Sort::Boolean)]
@@ -219,7 +219,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[variant(s.len())]
     #[requires(self.invariant_nonneg())]
@@ -244,14 +244,14 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant_nonneg())]
     #[requires(forall<j : _> set.contains(j) ==> self.level_of(j) <= self.level_of(elem))]
     #[ensures(self.set_level(set.insert(elem)) == self.level_of(elem))]
     pub fn set_level_max(self, set: FSet<(Term, Value)>, elem: (Term, Value)) {}
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant_nonneg())]
     #[requires(self.level_of(elem) < self.set_level(set))]
@@ -344,7 +344,7 @@ impl Trail {
     }
 
     // TODO: While loops to ghost code
-    #[logic]
+    #[ghost]
     #[open]
     #[requires(self.invariant_nonneg())]
     #[ensures(result >= 0 && result <= self.level())]
@@ -365,7 +365,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.trail_unique())]
     #[requires(self.contains(d))]
@@ -385,7 +385,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open]
     #[requires(self.invariant())]
     #[requires(self.acceptable(t, v))]
@@ -400,7 +400,7 @@ impl Trail {
         Trail::Assign(Assign::Justified(just, t, v), self.set_level(just), Box::new(self))
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[ensures(match result {
       Some((a, l)) => a.to_pair() == d,
@@ -421,7 +421,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)] // maybe not?
     #[requires(self.invariant())]
     #[requires(self.is_justified(d))]
@@ -467,7 +467,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant())]
     #[requires(self.is_input(d))]
@@ -485,7 +485,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant())]
     #[ensures(result.invariant())]
@@ -513,7 +513,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant())]
     #[requires(level >= 0)]
@@ -532,7 +532,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open]
     #[ensures(result >= 0)]
     #[ensures(result <= self.len())]
@@ -545,7 +545,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[ensures(result >= 0)]
     pub fn len(self) -> Int {
@@ -555,7 +555,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[requires(self.sound())]
     #[requires(self.contains(kv))]
     #[ensures(forall<a : _, l : _> self.find(kv) == Some((a, l)) ==> a.justified_sound())]
@@ -577,15 +577,14 @@ impl Trail {
     pub fn ext(self, o: Self) -> bool {
         pearlite! {
             if self.level() <= o.level() {
-
-                (forall<kv : _> self.contains(kv) ==> self.find(kv) == o.find(kv))
+                forall<kv : _> self.contains(kv) ==> self.find(kv) == o.find(kv)
             } else {
-                (forall<kv : _> o.contains(kv) ==> o.find(kv) == self.find(kv))
+                forall<kv : _> o.contains(kv) ==> o.find(kv) == self.find(kv)
             }
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.ext(o))]
     #[requires(self.contains(kv))]
@@ -594,7 +593,7 @@ impl Trail {
     #[ensures(self.justification(kv) == o.justification(kv))]
     pub fn just_stable(self, o: Self, kv: (Term, Value)) {}
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant())]
     #[requires(self.is_justified(kv))]
@@ -641,7 +640,7 @@ impl Trail {
 
     // Lemmas
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.sound())]
     #[ensures(self.restrict(level).sound())]
@@ -654,7 +653,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant())]
     #[requires(level >= 0)]
@@ -677,7 +676,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant())]
     #[ensures(forall< a: _> self.contains(a) ==> self.level_of(a) <= self.level())]
@@ -690,7 +689,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(level >= 0)]
     #[requires(self.invariant())]
@@ -710,7 +709,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant())]
     #[requires(l1 >= 0 && l2 >= 0)]
@@ -723,7 +722,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant())]
     #[requires(self.contains(d))]
@@ -742,7 +741,7 @@ impl Trail {
         }
     }
 
-    #[logic]
+    #[ghost]
     #[open(self)]
     #[requires(self.invariant_assign())]
     #[requires(self.is_justified(d))]
@@ -901,13 +900,13 @@ impl Conflict {
         pearlite! { self.0.sound() && (forall<m : Model> m.invariant() ==> m.satisfy_set(self.1) ==> false) }
     }
 
-    #[logic]
+    #[ghost]
     #[open]
     pub fn level(self) -> Int {
         self.0.set_level(self.1)
     }
 
-    #[logic]
+    #[ghost]
     #[open]
     #[requires(self.invariant())]
     #[requires(self.sound())]
@@ -920,7 +919,7 @@ impl Conflict {
     }
 
     // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
-    #[logic]
+    #[ghost]
     #[open]
     #[requires(self.invariant())]
     #[requires(self.sound())]
@@ -997,7 +996,7 @@ impl Conflict {
     }
 
     // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m, E⊢¬L, if level_Γ(L) > m, where m = level_Γ(E)
-    #[logic]
+    #[ghost]
     #[open]
     #[requires(self.invariant())]
     #[requires(self.sound())]
@@ -1024,7 +1023,7 @@ impl Conflict {
         ))
     }
 
-    // #[logic]
+    // #[ghost]
     // #[requires(self.invariant())]
     // #[requires(self.sound())]
     // #[requires(self.1.contains(l) && l.1.is_bool())]

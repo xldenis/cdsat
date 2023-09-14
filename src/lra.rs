@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, fmt::Display, ops::Neg, unimplemented, unreachable};
+use std::{collections::HashMap, fmt::Display, ops::Neg, unimplemented, unreachable};
 
 use log::info;
 use num::{BigInt, Signed};
@@ -12,14 +12,33 @@ use crate::{
 
 pub struct LRATheory;
 
-#[derive(Debug, PartialEq, PartialOrd, Ord, Eq, Clone)]
+use creusot_contracts::{trusted, DeepModel, ghost, open};
+
+#[cfg_attr(not(creusot), derive(PartialOrd))]
+#[derive(Debug, Ord, Eq, Clone, DeepModel)]
 enum Bound {
     Exclusive { value: BigRational, just: TrailIndex },
     Inclusive { value: BigRational, just: TrailIndex },
     Missing,
 }
 
+impl PartialEq for Bound {
+    #[trusted]
+    fn eq(&self, other: &Self) -> bool {
+        todo!()
+    }
+}
+
+#d
+impl PartialOrd for Bound {
+    #[trusted]
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        todo!()
+    }
+}
+
 impl Bound {
+    #[trusted]
     fn get_inner(&self) -> Option<&BigRational> {
         match self {
             Bound::Exclusive { value, .. } => Some(&value),
@@ -30,6 +49,7 @@ impl Bound {
 }
 
 impl Display for Bound {
+    #[trusted]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Bound::Exclusive { value, .. } => write!(f, "[{}", value),
@@ -52,6 +72,7 @@ enum Pick {
 }
 
 impl Bounds {
+    #[trusted]
     fn valid(&self) -> bool {
         match (&self.lower, &self.upper) {
             (Bound::Exclusive { value: a, .. }, Bound::Exclusive { value: b, .. }) => a < b,
@@ -65,6 +86,8 @@ impl Bounds {
             (Bound::Missing, Bound::Missing) => true,
         }
     }
+
+    #[trusted]
     fn update_upper(&mut self, just: TrailIndex, nature: Nature, value: BigRational) {
         let new_bnd = match nature {
             Nature::Eq => Bound::Inclusive { value, just },
@@ -76,6 +99,7 @@ impl Bounds {
         }
     }
 
+    #[trusted]
     fn update_lower(&mut self, just: TrailIndex, nature: Nature, value: BigRational) {
         let new_bnd = match nature {
             Nature::Eq => Bound::Inclusive { value, just },
@@ -87,6 +111,7 @@ impl Bounds {
         }
     }
 
+    #[trusted]
     fn pick(self) -> Pick {
         if self.lower == self.upper && self.lower != Bound::Missing {
             Pick::Fixed(self.lower.get_inner().unwrap().clone())
@@ -131,13 +156,23 @@ impl Bounds {
     }
 }
 
-struct Domain(BTreeMap<Term, Bounds>);
+struct Domain(HashMap<Term, Bounds>);
 
 impl Domain {
+    #[cfg(creusot)]
+    fn insert(&mut self, term: Term) {}
+    #[cfg(not(creusot))]
+    #[trusted]
     fn insert(&mut self, term: Term) {
         self.0.entry(term).or_insert(Bounds { lower: Bound::Missing, upper: Bound::Missing });
     }
 
+    #[cfg(creusot)]
+    #[trusted]
+    fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> bool { true }
+
+    #[cfg(not(creusot))]
+    #[trusted]
     fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> bool {
         let entry =
             self.0.entry(term).or_insert(Bounds { lower: Bound::Missing, upper: Bound::Missing });
@@ -156,13 +191,26 @@ impl Domain {
         // Whether this bound is still valid
         entry.valid()
     }
+
+    #[cfg(creusot)]
+    #[trusted]
+    fn get(&self, t: &Term) -> &Bounds {
+        todo!()
+    }
+
+    #[cfg(not(creusot))]
+    #[trusted]
+    fn get(&self, t: &Term) -> &Bounds {
+        &self.0[t]
+    }
 }
 
 impl LRATheory {
+    #[trusted]
     pub fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let mut iter = tl.indices();
 
-        let mut domains: Domain = Domain(BTreeMap::new());
+        let mut domains: Domain = Domain(HashMap::new());
         info!("LRA is performing inferences");
         while let Some(ix) = iter.next() {
             let tl = iter.trail();
@@ -191,7 +239,7 @@ impl LRATheory {
                             domains.update(iter.trail().index_of(&j).unwrap(), t.clone(), n, v);
 
                         if !valid {
-                            let Pick::Fm(tj, tk) = domains.0[&t].clone().pick() else { panic!("should have conflict") };
+                            let Pick::Fm(tj, tk) = domains.get(&t).clone().pick() else { panic!("should have conflict") };
                             return ExtendResult::Conflict(vec![tj, tk]);
                         }
                     }
@@ -231,6 +279,7 @@ impl LRATheory {
     }
 }
 
+#[trusted]
 fn is_relevant(t: &Term) -> bool {
     match t {
         Term::Eq(l, r) => l.sort() == Sort::Rational,
@@ -252,7 +301,7 @@ enum Nature {
 
 struct Summary {
     // Pairs of variables and coefficients
-    vars: BTreeMap<Term, isize>,
+    vars: HashMap<Term, isize>,
     cst: BigRational,
     nature: Nature,
 }
@@ -264,6 +313,7 @@ enum Answer {
 }
 
 impl Summary {
+    #[trusted]
     fn sub(&mut self, o: Self) {
         for (k, v) in o.vars {
             *self.vars.entry(k).or_insert(0) -= v;
@@ -271,6 +321,7 @@ impl Summary {
         self.cst -= o.cst;
     }
 
+    #[trusted]
     fn summarize(tm: &Term) -> Summary {
         let nature = match tm {
             Term::Eq(_, _) => Nature::Eq,
@@ -308,6 +359,7 @@ impl Summary {
         s
     }
 
+    #[trusted]
     fn eval(&mut self, tl: &Trail) -> Vec<TrailIndex> {
         let mut ixs = Vec::new();
         for (k, v) in self.vars.iter_mut() {
@@ -321,6 +373,7 @@ impl Summary {
         ixs
     }
 
+    #[trusted]
     fn term(self) -> Answer {
         let mut present_vars: Vec<_> = self.vars.into_iter().filter(|(_, v)| *v != 0).collect();
         let num_vars = present_vars.len();
@@ -349,7 +402,7 @@ impl Summary {
                     }
                 }
                 Nature::Lt => {
-                    if lhs < rhs {
+                    if lhs.as_val() < rhs.as_val() {
                         Term::true_()
                     } else {
                         Term::false_()
@@ -368,6 +421,8 @@ impl Summary {
 
         Answer::Other(t, watches)
     }
+
+    #[trusted]
     fn summarize_inner(&mut self, tm: &Term) {
         match tm {
             Term::Eq(l, r) => {

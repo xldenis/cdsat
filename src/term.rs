@@ -1,10 +1,14 @@
 use std::{fmt::Display, unreachable};
 
-use creusot_contracts::{ensures, requires, DeepModel};
+use creusot_contracts::{ensures, trusted, open, ghost, logic, requires, DeepModel};
+
 use num_rational::BigRational;
 
-#[cfg_attr(not(creusot), derive(Debug))]
-#[derive(Clone, PartialEq, Eq, DeepModel, Copy, PartialOrd, Ord)]
+#[cfg(creusot)]
+use crate::theory;
+
+// #[cfg_attr(not(creusot), derive(Hash))]
+#[derive(Clone, Debug, PartialEq, Eq, DeepModel, Copy, Hash)]
 #[DeepModelTy = "theory::Sort"]
 pub enum Sort {
     Boolean,
@@ -16,14 +20,14 @@ impl creusot_contracts::ShallowModel for Sort {
     type ShallowModelTy = theory::Sort;
 
     #[open]
-    #[logic]
+    #[ghost]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
     }
 }
 
-#[cfg_attr(not(creusot), derive(Debug))]
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
+// #[cfg_attr(not(creusot), derive(Hash))]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Term {
     Variable(usize, Sort),
     Value(Value),
@@ -115,6 +119,7 @@ impl Term {
 }
 
 impl Display for Term {
+    #[trusted]
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
             Term::Variable(v, Sort::Boolean) => write!(f, "b{}", v),
@@ -133,6 +138,7 @@ impl Display for Term {
 }
 
 impl Display for Value {
+    #[trusted]
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
             Value::Bool(b) => write!(f, "{}", b),
@@ -145,7 +151,7 @@ impl Display for Value {
 impl creusot_contracts::ShallowModel for Term {
     type ShallowModelTy = theory::Term;
     #[open]
-    #[logic]
+    #[ghost]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
     }
@@ -156,7 +162,7 @@ impl creusot_contracts::DeepModel for Term {
     type DeepModelTy = theory::Term;
 
     #[open]
-    #[logic]
+    #[ghost]
     fn deep_model(self) -> Self::DeepModelTy {
         match self {
             Term::Variable(v, s) => {
@@ -177,13 +183,22 @@ impl creusot_contracts::DeepModel for Term {
     }
 }
 
-#[cfg_attr(not(creusot), derive(Debug))]
-#[cfg_attr(not(creusot), derive(Hash))]
-#[derive(Clone, PartialEq, Eq, DeepModel, PartialOrd, Ord)]
-#[DeepModelTy = "theory::Value"]
+#[cfg_attr(not(creusot), derive(Hash, Ord, PartialOrd))]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Value {
     Bool(bool),
     Rat(BigRational),
+}
+
+#[cfg(creusot)]
+impl DeepModel for Value {
+    type DeepModelTy = theory::Value;
+    #[trusted]
+    #[ghost]
+    #[open(self)]
+    fn deep_model(self) -> Self::DeepModelTy {
+       absurd
+    }
 }
 
 #[cfg(creusot)]
@@ -191,7 +206,7 @@ impl creusot_contracts::ShallowModel for Value {
     type ShallowModelTy = theory::Value;
 
     #[open]
-    #[logic]
+    #[ghost]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
     }
@@ -212,8 +227,9 @@ impl Value {
         }
     }
 
-    #[requires(self@.is_rational())]
-    #[requires(o@.is_rational())]
+    #[trusted]
+    // #[requires(self@.is_rational())]
+    // #[requires(o@.is_rational())]
     pub fn lt(self, o: Self) -> Self {
         match (self, o) {
             (Value::Rat(a), Value::Rat(b)) => Value::Bool(a < b),
@@ -221,8 +237,9 @@ impl Value {
         }
     }
 
-    #[requires(self@.is_rational())]
-    #[requires(o@.is_rational())]
+    #[trusted]
+    // #[requires(self@.is_rational())]
+    // #[requires(o@.is_rational())]
     pub fn add(self, o: Self) -> Self {
         match (self, o) {
             (Value::Rat(a), Value::Rat(b)) => Value::Rat(a + b),

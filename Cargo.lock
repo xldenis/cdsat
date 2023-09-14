@@ -208,6 +208,7 @@ version = "0.2.0"
 dependencies = [
  "creusot-contracts-dummy",
  "creusot-contracts-proc",
+ "num-rational",
 ]
 
 [[package]]

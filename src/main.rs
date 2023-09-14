@@ -2,9 +2,28 @@
 #![allow(dead_code, unused_variables)]
 #![feature(never_type, let_chains)]
 
+pub mod bool;
 pub mod concrete;
+
+#[cfg(not(creusot))]
 pub mod lra;
+
 pub mod trail;
+
+#[cfg(creusot)]
+pub mod lra {
+    pub struct LRATheory;
+
+    use crate::concrete::ExtendResult;
+    use crate::trail::Trail;
+    use creusot_contracts::trusted;
+    impl LRATheory {
+        #[trusted]
+        pub fn extend(&mut self, _ : &mut Trail) -> ExtendResult {
+            todo!()
+        }
+    }
+}
 
 #[cfg(creusot)]
 pub mod theory;
@@ -39,6 +58,7 @@ use trail::Trail;
 
 struct TermBuilder;
 
+#[creusot_contracts::trusted]
 fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) -> Term {
     use smt2parser::concrete::{QualIdentifier, Term as PT};
     match t {
@@ -111,6 +131,7 @@ fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) ->
     }
 }
 
+#[creusot_contracts::trusted]
 fn to_assign(vars: &mut IndexMap<Symbol, Sort>, c: Command) -> Option<(Term, Value)> {
     match c {
         Command::Assert { term } => Some((term_to_term(vars, term), Value::true_())),
