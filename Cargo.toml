@@ -16,3 +16,8 @@ rand = "*"
 clap ={ version= "4.4", features = ["derive"]}
 log = "*"
 env_logger = "*"
+
+[build-dependencies]
+syn = {version = "2.0", features = ["visit"] }
+walkdir="*"
+quote="*"
