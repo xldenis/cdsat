@@ -1,6 +1,6 @@
 use std::{fmt::Display, unreachable};
 
-use creusot_contracts::{ensures, trusted, open, ghost, logic, requires, DeepModel};
+use creusot_contracts::{ensures, trusted, open, ghost, logic, requires, DeepModel, PartialEq, Clone};
 
 use num_rational::BigRational;
 
