@@ -1,5 +1,6 @@
 use crate::term::{Term, Value};
 use crate::theory::{self};
+use ::std::fmt::Display;
 use ::std::ops::Index;
 use creusot_contracts::{logic::*, vec, DeepModel, *};
 use creusot_contracts::{Clone, PartialEq};
@@ -21,6 +22,12 @@ pub struct Assignment {
     pub reason: Reason,
     // TODO: Make private
     pub level: usize,
+}
+
+impl Display for Assignment {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(f, "{} <- {}", self.term, self.val)
+    }
 }
 
 #[cfg(creusot)]
@@ -211,7 +218,7 @@ impl Trail {
         Trail {
             assignments,
             level: 0,
-            ghost: ghost! { theory::Trail::Empty },
+            ghost: gh!{ theory::Trail::Empty },
         }
     }
 
@@ -446,16 +453,16 @@ impl Trail {
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
         info!("{{ {:?} }} |- {} <- {}", into_vec, term, val);
         assert_eq!(term.sort(), val.sort());
-        let old: Ghost<Self> = ghost! { * self };
+        let old: Ghost<Self> = gh!{ * self };
         let level = self.max_level(&into_vec);
 
         proof_assert!(level@ <= self.ghost.level());
-        let xxx: Ghost<Seq<TrailIndex>> = ghost! { into_vec.shallow_model() };
+        let xxx: Ghost<Seq<TrailIndex>> = gh!{ into_vec.shallow_model() };
         let just: Ghost<FSet<(theory::Term, theory::Value)>> =
-            ghost! { self.abstract_justification(into_vec.shallow_model()) };
+            gh!{ self.abstract_justification(into_vec.shallow_model()) };
         proof_assert!(self.ghost.set_level(*just) <= self.ghost.level());
         let g: Ghost<theory::Assign> =
-            ghost! { Assign::Justified(*just, term.shallow_model(), val.shallow_model()) };
+            gh!{ Assign::Justified(*just, term.shallow_model(), val.shallow_model()) };
 
         // proof_assert!(forall<i : _> 0 <= i && i < self.ghost.level() ==> exists<tv : _> self.ghost.contains(tv) && self.ghost.level_of(tv) == i);
         proof_assert!(level <= self.level);
@@ -464,7 +471,7 @@ impl Trail {
         proof_assert!(g.justified_sound());
 
         self.ghost =
-            ghost! { self.ghost.add_justified(*just, term.shallow_model(), val.shallow_model())};
+            gh!{ self.ghost.add_justified(*just, term.shallow_model(), val.shallow_model())};
 
         proof_assert!({
             old.ghost
@@ -483,7 +490,7 @@ impl Trail {
         let x = self.assignments[level].len();
         proof_assert!(x@ > 0);
         self.assignments[level].push(a);
-        let _: Ghost<()> = ghost! { old.lemma_abs_just(*self, *xxx) };
+        let _: Ghost<()> = gh!{ old.lemma_abs_just(*self, *xxx) };
 
         proof_assert!(forall<ix : _> old.contains(ix) ==> self.contains(ix));
         proof_assert!(forall<ix : _> old.contains(ix) ==> old.index_logic(ix) == self.index_logic(ix));
@@ -497,7 +504,7 @@ impl Trail {
     #[ensures(forall<ix : TrailIndex> ix.level_log() <= level@ ==> self.contains(ix) ==> (^self).contains(ix))]
     #[ensures(forall<ix : TrailIndex> (^self).contains(ix) ==> self.index_logic(ix) == (^self).index_logic(ix))]
     pub(crate) fn restrict(&mut self, level: usize) {
-        let old: Ghost<&mut Trail> = ghost! { self };
+        let old: Ghost<&mut Trail> = gh!{ self };
 
         #[invariant(forall<i : _> 0 <= i && i <= self.level@ ==> (self.assignments@)[i] == (old.assignments)@[i])]
         #[invariant(self.invariant())]
@@ -509,7 +516,7 @@ impl Trail {
             self.level -= 1;
             proof_assert!(exists<t : _> (self.ghost.restrict_kind_unchanged(self.level.shallow_model(), t) == () || true) );
             proof_assert!((exists<t : _> self.ghost.justification_contains(t) == () || true));
-            self.ghost = ghost! { self.ghost.restrict(self.level.shallow_model()) };
+            self.ghost = gh!{ self.ghost.restrict(self.level.shallow_model()) };
             proof_assert! {
                 forall<ix : _> self.contains(ix) ==> ((self.assignments)@[ix.0@])@[ix.1@] == ((old.assignments)@[ix.0@])@[ix.1@]
             };
@@ -576,7 +583,9 @@ pub struct IndexIterator<'a> {
 impl IndexIterator<'_> {
     #[trusted]
     pub fn add_justified(&mut self, just: Justification, term: Term, value: Value) {
-        self.trail.add_justified(just, term, value)
+        if self.trail.index_of(&term).is_none() {
+            self.trail.add_justified(just, term, value)
+        }
     }
 
     pub fn trail(&self) -> &Trail {

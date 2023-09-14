@@ -117,15 +117,15 @@ impl Solver {
     #[ensures((^trail).invariant())]
     #[ensures((*trail).ghost.impls(*(^trail).ghost))]
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
-        let mut s = String::from("conflict ");
+        let mut s = String::from("resolving conflict ");
         for i in &conflict {
             write!(s, "{} <- {} ", &trail[*i].term, &trail[*i].val).unwrap();
         }
         info!("{s}");
 
         let mut heap: ConflictHeap = ConflictHeap::new();
-        let old_conflict: Ghost<Vec<TrailIndex>> = ghost! { conflict };
-        let old_trail: Ghost<&mut Trail> = ghost! { trail };
+        let old_conflict: Ghost<Vec<TrailIndex>> = gh!{ conflict };
+        let old_trail: Ghost<&mut Trail> = gh!{ trail };
 
         #[invariant(forall<a : _> produced.contains(a) ==> (heap@).contains(a))]
         #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
@@ -137,7 +137,7 @@ impl Solver {
             trail.abstract_justification(old_conflict.shallow_model())
                 == ix_to_abs(*trail, heap.shallow_model())
         );
-        let mut abs_cflct: Ghost<theory::Conflict> = ghost! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
+        let mut abs_cflct: Ghost<theory::Conflict> = gh!{ theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
 
         let max_ix = *heap.last().unwrap();
         let conflict_level = max_ix.level();
@@ -177,20 +177,20 @@ impl Solver {
             if a.is_bool() && ix.level() > rem_level {
                 proof_assert!(trail.index_logic(ix) == a.term_value());
                 // Somehow this should provide us the info we need to say that the justification won't change from restriction?
-                let _: Ghost<bool> = ghost! { abs_cflct.backjump2(a.term_value()); true };
+                let _: Ghost<bool> = gh!{ abs_cflct.backjump2(a.term_value()); true };
 
-                let oheap: Ghost<ConflictHeap> = ghost! { heap };
+                let oheap: Ghost<ConflictHeap> = gh!{ heap };
                 let just = heap.into_vec();
 
-                let _: Ghost<()> = ghost!(seq_to_set(
+                let _: Ghost<()> = gh!(seq_to_set(
                     *trail,
                     just.shallow_model(),
                     oheap.shallow_model()
                 ));
 
-                let old: Ghost<()> = ghost! { trail.abstract_justification(just.shallow_model()) };
+                let old: Ghost<()> = gh!{ trail.abstract_justification(just.shallow_model()) };
                 trail.restrict(rem_level);
-                let new: Ghost<()> = ghost! { trail.abstract_justification(just.shallow_model()) };
+                let new: Ghost<()> = gh!{ trail.abstract_justification(just.shallow_model()) };
 
                 proof_assert!(new.ext_eq(*old));
                 trail.add_justified(just, a.term, a.val.negate());
@@ -249,9 +249,9 @@ impl Solver {
             );
 
             #[allow(unused)]
-            abs_cflct = ghost! { abs_cflct.resolvef(a.term_value()) };
+            abs_cflct = gh!{ abs_cflct.resolvef(a.term_value()) };
 
-            let old_heap: Ghost<ConflictHeap> = ghost! { heap };
+            let old_heap: Ghost<ConflictHeap> = gh!{ heap };
 
             proof_assert!(
                 forall<i : _ > 0 <= i && i < just@.len() ==> abs_cflct.1.contains(trail.index_logic(just@[i]))
@@ -266,7 +266,7 @@ impl Solver {
             #[invariant(ix_to_abs(*trail, heap@) == ix_to_abs(*trail, old_heap@).union(trail.abstract_justification(*produced)))]
             // Need invariant saying we only add things
             for a in just {
-                let _: Ghost<()> = ghost!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
+                let _: Ghost<()> = gh!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
                 proof_assert!(abstract_justification_insert(*trail, a, just@) == ());
                 proof_assert!(a.level_log() <= ix.level_log());
                 proof_assert!(abs_cflct.1.contains(trail.index_logic(a)));
@@ -333,17 +333,19 @@ impl BoolTheory {
     #[ensures(tl.ghost.impls(*(^tl).ghost))]
     fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let mut iter = tl.indices();
-
+        info!("Bool is performing deductions");
         while let Some(ix) = iter.next() {
             let tl = iter.trail();
 
-            if tl[ix].is_bool() {
+            if self.is_relevant(&tl[ix]) {
+                info!("Bool is evaluating {}", &tl[ix]);
                 match self.eval(tl, &tl[ix].term) {
                     Result::Err(dec) => {
                         if dec.sort() == Sort::Boolean {
                             if dec == Term::Value(Value::Bool(false)) {
                                 panic!()
                             };
+                            info!("Bool proposes {dec}");
                             return ExtendResult::Decision(dec, Value::Bool(true));
                         }
                     }
@@ -361,8 +363,24 @@ impl BoolTheory {
 
         //     i += 1;
         // }
-
+        info!("Bool is satisfied");
         return ExtendResult::Satisfied;
+    }
+
+    fn is_relevant(&self, a: &Assignment) -> bool {
+        match &a.term {
+            Term::Variable(_, Sort::Boolean) => true,
+            Term::Value(Value::Bool(_)) => true,
+            Term::Plus(_, _) => false,
+            Term::Times(_, _) => false,
+            Term::Eq(_, r) => r.sort() == Sort::Boolean,
+            Term::Lt(_, _) => false,
+            Term::Conj(_, _) => true,
+            Term::Neg(_) => true,
+            Term::Disj(_, _) => true,
+            Term::Impl(_, _) => true,
+            _ => false,
+        }
     }
 
     // Ensures:
@@ -372,7 +390,7 @@ impl BoolTheory {
     #[trusted]
     fn eval(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<TrailIndex>, Value), Term> {
         match tm {
-            Term::Eq(l, r) => {
+            Term::Eq(l, r) if r.sort() == Sort::Boolean => {
                 let (mut j1, v1) = self.eval_memo(tl, l)?;
                 let (j2, v2) = self.eval_memo(tl, r)?;
                 j1.extend(j2);

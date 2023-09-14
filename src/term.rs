@@ -54,12 +54,71 @@ impl Term {
             Term::Times(_, _) => Sort::Rational,
         }
     }
+
+    pub(crate) fn not(remove: Term) -> Term {
+        Term::Neg(Box::new(remove))
+    }
+
+    pub fn true_() -> Self {
+        Term::Value(Value::Bool(true))
+    }
+
+    pub fn false_() -> Self {
+        Term::Value(Value::Bool(false))
+    }
+
+    pub fn var(ix: usize, sort: Sort) -> Self {
+        Term::Variable(ix, sort)
+    }
+
+    pub fn val(v: Value) -> Self {
+        Term::Value(v)
+    }
+
+    pub fn plus(a: Self, b: Self) -> Self {
+        Term::Plus(Box::new(a), Box::new(b))
+    }
+
+    pub fn times(k : isize, b: Self) -> Self {
+        if k == 0 {
+            Term::val(Value::zero())
+        } else if k == 1 {
+            b
+        } else {
+            Term::Times(k, Box::new(b))
+        }
+    }
+
+    pub fn and(a: Self, b: Self) -> Self {
+        Term::Conj(Box::new(a), Box::new(b))
+    }
+
+    pub fn or(a: Self, b: Self) -> Self {
+        Term::Disj(Box::new(a), Box::new(b))
+    }
+
+    pub fn lt(a: Self, b: Self) -> Self {
+        Term::Lt(Box::new(a), Box::new(b))
+    }
+
+    pub fn eq_(a: Self, b: Self) -> Self {
+        Term::Eq(Box::new(a), Box::new(b))
+    }
+
+    pub(crate) fn as_val(&self) -> Value {
+        if let Term::Value(v) = self {
+            v.clone()
+        } else {
+            panic!()
+        }
+    }
 }
 
 impl Display for Term {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match self {
-            Term::Variable(v, _) => write!(f, "x{}", v),
+            Term::Variable(v, Sort::Boolean) => write!(f, "b{}", v),
+            Term::Variable(v, Sort::Rational) => write!(f, "r{}", v),
             Term::Value(v) => write!(f, "{}", v),
             Term::Plus(l, r) => write!(f, "({} + {})", l, r),
             Term::Eq(l, r) => write!(f, "({} = {})", l, r),
@@ -198,46 +257,6 @@ impl Value {
 
     pub fn zero() -> Self {
         Value::rat(0, 1)
-    }
-}
-
-impl Term {
-    pub fn var(ix: usize, sort: Sort) -> Self {
-        Term::Variable(ix, sort)
-    }
-
-    pub fn val(v: Value) -> Self {
-        Term::Value(v)
-    }
-
-    pub fn plus(a: Self, b: Self) -> Self {
-        Term::Plus(Box::new(a), Box::new(b))
-    }
-
-    pub fn times(k : isize, b: Self) -> Self {
-        if k == 0 {
-            Term::val(Value::zero())
-        } else if k == 1 {
-            b
-        } else {
-            Term::Times(k, Box::new(b))
-        }
-    }
-
-    pub fn and(a: Self, b: Self) -> Self {
-        Term::Conj(Box::new(a), Box::new(b))
-    }
-
-    pub fn or(a: Self, b: Self) -> Self {
-        Term::Disj(Box::new(a), Box::new(b))
-    }
-
-    pub fn lt(a: Self, b: Self) -> Self {
-        Term::Lt(Box::new(a), Box::new(b))
-    }
-
-    pub fn eq_(a: Self, b: Self) -> Self {
-        Term::Eq(Box::new(a), Box::new(b))
     }
 }
 

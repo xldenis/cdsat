@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, ops::Neg, unimplemented, unreachable};
+use std::{collections::BTreeMap, fmt::Display, ops::Neg, unimplemented, unreachable};
 
 use log::info;
 use num::{BigInt, Signed};
@@ -12,7 +12,7 @@ use crate::{
 
 pub struct LRATheory;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, PartialOrd, Ord, Eq, Clone)]
 enum Bound {
     Exclusive { value: BigRational, just: TrailIndex },
     Inclusive { value: BigRational, just: TrailIndex },
@@ -20,16 +20,26 @@ enum Bound {
 }
 
 impl Bound {
-    fn bound(&self) -> Option<&BigRational> {
+    fn get_inner(&self) -> Option<&BigRational> {
         match self {
-            Bound::Exclusive { value, .. } => Some(value),
-            Bound::Inclusive { value, .. } => Some(value),
+            Bound::Exclusive { value, .. } => Some(&value),
+            Bound::Inclusive { value, .. } => Some(&value),
             Bound::Missing => None,
         }
     }
 }
 
-#[derive(Debug)]
+impl Display for Bound {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Bound::Exclusive { value, .. } => write!(f, "[{}", value),
+            Bound::Inclusive { value, .. } => write!(f, "({}", value),
+            Bound::Missing => write!(f, "--",),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 struct Bounds {
     lower: Bound,
     upper: Bound,
@@ -42,12 +52,26 @@ enum Pick {
 }
 
 impl Bounds {
+    fn valid(&self) -> bool {
+        match (&self.lower, &self.upper) {
+            (Bound::Exclusive { value: a, .. }, Bound::Exclusive { value: b, .. }) => a < b,
+            (Bound::Exclusive { value: a, .. }, Bound::Inclusive { value: b, .. }) => a < b,
+            (Bound::Inclusive { value: a, .. }, Bound::Exclusive { value: b, .. }) => a < b,
+            (Bound::Inclusive { value: a, .. }, Bound::Inclusive { value: b, .. }) => a <= b,
+            (Bound::Exclusive { value: a, .. }, Bound::Missing) => true,
+            (Bound::Inclusive { value, .. }, Bound::Missing) => true,
+            (Bound::Missing, Bound::Exclusive { value, .. }) => true,
+            (Bound::Missing, Bound::Inclusive { value, .. }) => true,
+            (Bound::Missing, Bound::Missing) => true,
+        }
+    }
     fn update_upper(&mut self, just: TrailIndex, nature: Nature, value: BigRational) {
         let new_bnd = match nature {
             Nature::Eq => Bound::Inclusive { value, just },
             Nature::Lt => Bound::Exclusive { value, just },
+            _ => unreachable!(),
         };
-        if self.upper.bound() < new_bnd.bound() {
+        if self.upper > new_bnd {
             self.upper = new_bnd;
         }
     }
@@ -56,27 +80,52 @@ impl Bounds {
         let new_bnd = match nature {
             Nature::Eq => Bound::Inclusive { value, just },
             Nature::Lt => Bound::Exclusive { value, just },
+            _ => unreachable!(),
         };
-        if self.lower.bound() > new_bnd.bound() {
+        if self.lower > new_bnd {
             self.lower = new_bnd;
         }
     }
 
-    fn pick(&self) -> Pick {
+    fn pick(self) -> Pick {
         if self.lower == self.upper && self.lower != Bound::Missing {
-            Pick::Fixed(self.lower.bound())
+            Pick::Fixed(self.lower.get_inner().unwrap().clone())
         } else {
             use Bound::*;
             match (self.lower, self.upper) {
-                (Exclusive { value, just }, Exclusive { value: v2, just: j2 }) => todo!(),
-                (Exclusive { value, just }, Inclusive { value: v2, just: j2 }) => todo!(),
-                (Inclusive { value, just }, Exclusive { value: v2, just: j2 }) => todo!(),
-                (Inclusive { value, just }, Inclusive { value: v2, just: j2 }) => todo!(),
-                (Exclusive { value, .. }, Missing) => Pick::Choice(value + 1.into()),
-                (Inclusive { value, .. }, Missing) => Pick::Choice(value + 1.into()),
-                (Missing, Exclusive { value, .. }) => Pick::Choice(value - 1.into()),
-                (Missing, Inclusive { value, .. }) => Pick::Choice(value - 1.into()),
-                (Missing, Missing) => Pick::Choice(BigRational::new(0.into(), 1.into())),
+                (Exclusive { value, just }, Exclusive { value: v2, just: j2 }) => {
+                    if value > v2 {
+                        Pick::Fm(just, j2)
+                    } else {
+                        Pick::Choice((value + v2) / BigInt::from(2))
+                    }
+                }
+                (Exclusive { value, just }, Inclusive { value: v2, just: j2 }) => {
+                    if value > v2 {
+                        Pick::Fm(just, j2)
+                    } else {
+                        Pick::Choice((value + v2) / BigInt::from(2))
+                    }
+                }
+                (Inclusive { value, just }, Exclusive { value: v2, just: j2 }) => {
+                    if value > v2 {
+                        Pick::Fm(just, j2)
+                    } else {
+                        Pick::Choice((value + v2) / BigInt::from(2))
+                    }
+                }
+                (Inclusive { value, just }, Inclusive { value: v2, just: j2 }) => {
+                    if value > v2 {
+                        Pick::Fm(just, j2)
+                    } else {
+                        Pick::Choice((value + v2) / BigInt::from(2))
+                    }
+                }
+                (Exclusive { value, .. }, Missing) => Pick::Choice(value + BigInt::from(1)),
+                (Inclusive { value, .. }, Missing) => Pick::Choice(value + BigInt::from(1)),
+                (Missing, Exclusive { value, .. }) => Pick::Choice(value - BigInt::from(1)),
+                (Missing, Inclusive { value, .. }) => Pick::Choice(value - BigInt::from(1)),
+                (Missing, Missing) => Pick::Choice(BigRational::new(0.into(), BigInt::from(1))),
             }
         }
     }
@@ -89,7 +138,7 @@ impl Domain {
         self.0.entry(term).or_insert(Bounds { lower: Bound::Missing, upper: Bound::Missing });
     }
 
-    fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) {
+    fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> bool {
         let entry =
             self.0.entry(term).or_insert(Bounds { lower: Bound::Missing, upper: Bound::Missing });
 
@@ -103,6 +152,9 @@ impl Domain {
                 entry.update_lower(just, nature, value.neg())
             }
         }
+
+        // Whether this bound is still valid
+        entry.valid()
     }
 }
 
@@ -111,7 +163,7 @@ impl LRATheory {
         let mut iter = tl.indices();
 
         let mut domains: Domain = Domain(BTreeMap::new());
-        // println!("LRA is performing inferences");
+        info!("LRA is performing inferences");
         while let Some(ix) = iter.next() {
             let tl = iter.trail();
 
@@ -119,39 +171,60 @@ impl LRATheory {
                 continue;
             }
 
+            info!("LRA is considering {}", &tl[ix]);
             let mut t = Summary::summarize(&tl[ix].term.clone());
 
-            let used = t.eval(iter.trail());
+            let mut used = t.eval(iter.trail());
+            used.push(ix);
 
             match t.term() {
                 Answer::Unit(t, n, v) => {
                     let j = match n {
                         Nature::Lt => Term::lt(t.clone(), Term::val(Value::Rat(v.clone()))),
                         Nature::Eq => Term::eq_(t.clone(), Term::val(Value::Rat(v.clone()))),
+                        Nature::Term => t.clone(),
                     };
-                    if &j != &tl[ix].term && !used.is_empty() {
-                        let v = tl[ix].val.clone();
-                        iter.add_justified(used, j.clone(), v);
-                    }
+                    if &t != &tl[ix].term {
+                        let val = tl[ix].val.clone();
+                        iter.add_justified(used, j.clone(), val);
+                        let valid =
+                            domains.update(iter.trail().index_of(&j).unwrap(), t.clone(), n, v);
 
-                    domains.update(iter.trail().index_of(&j).unwrap(), t, n, v);
+                        if !valid {
+                            let Pick::Fm(tj, tk) = domains.0[&t].clone().pick() else { panic!("should have conflict") };
+                            return ExtendResult::Conflict(vec![tj, tk]);
+                        }
+                    }
                 }
-                Answer::Other(t, mut watches) => {
-                    if &t != &tl[ix].term && !used.is_empty() {
+                Answer::Val(v) => {
+                    if &v != &tl[ix].val {
+                        return ExtendResult::Conflict(used);
+                    }
+                }
+                Answer::Other(t, watches) => {
+                    if &t != &tl[ix].term {
                         let v = tl[ix].val.clone();
                         iter.add_justified(used, t, v);
                     }
-                    domains.insert(watches.remove(0));
-                    domains.insert(watches.remove(0));
+
+                    watches.into_iter().for_each(|w| {
+                        domains.insert(w);
+                    });
                 }
             };
         }
 
         if domains.0.len() > 0 {
             for (t, bnds) in domains.0 {
-                println!("{:?}", bnds);
+                match bnds.pick() {
+                    Pick::Choice(v) => {
+                        info!("LRA is proposing a choice {t} <- {v}");
+                        return ExtendResult::Decision(t, Value::Rat(v));
+                    }
+                    Pick::Fixed(_) => continue,
+                    Pick::Fm(tj, tk) => todo!(),
+                }
             }
-            panic!()
         }
 
         return ExtendResult::Satisfied;
@@ -170,10 +243,11 @@ fn is_relevant(t: &Term) -> bool {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Nature {
     Eq,
     Lt,
+    Term,
 }
 
 struct Summary {
@@ -186,6 +260,7 @@ struct Summary {
 enum Answer {
     Unit(Term, Nature, BigRational),
     Other(Term, Vec<Term>),
+    Val(Value),
 }
 
 impl Summary {
@@ -200,6 +275,9 @@ impl Summary {
         let nature = match tm {
             Term::Eq(_, _) => Nature::Eq,
             Term::Lt(_, _) => Nature::Lt,
+            Term::Variable(_, _) | Term::Plus(_, _) | Term::Times(_, _) | Term::Value(_) => {
+                Nature::Term
+            }
             _ => unimplemented!(),
         };
         let mut s =
@@ -245,7 +323,8 @@ impl Summary {
 
     fn term(self) -> Answer {
         let mut present_vars: Vec<_> = self.vars.into_iter().filter(|(_, v)| *v != 0).collect();
-        if present_vars.len() == 1 {
+        let num_vars = present_vars.len();
+        if num_vars == 1 {
             let (unit_var, cnt) = present_vars.remove(0);
 
             return Answer::Unit(unit_var, self.nature, -self.cst / BigInt::from(cnt));
@@ -255,18 +334,36 @@ impl Summary {
         let lhs = present_vars
             .into_iter()
             .filter_map(|(v, k)| if k == 0 { None } else { Some(Term::times(k, v)) })
-            .fold(Term::Value(Value::rat(0, 1)), Term::plus);
+            .reduce(Term::plus)
+            .unwrap_or(Term::Value(Value::rat(0, 1)));
 
-        let t = match self.nature {
-            Nature::Eq => Term::Eq(
-                Box::new(lhs),
-                Box::new(Term::val(Value::Rat(self.cst * BigInt::from(-1)))),
-            ),
-            Nature::Lt => Term::Lt(
-                Box::new(lhs),
-                Box::new(Term::val(Value::Rat(self.cst * BigInt::from(-1)))),
-            ),
-            _ => unreachable!(),
+        let rhs = Term::val(Value::Rat(self.cst * BigInt::from(-1)));
+
+        let t = if num_vars == 0 {
+            let v = match self.nature {
+                Nature::Eq => {
+                    if lhs == rhs {
+                        Term::true_()
+                    } else {
+                        Term::false_()
+                    }
+                }
+                Nature::Lt => {
+                    if lhs < rhs {
+                        Term::true_()
+                    } else {
+                        Term::false_()
+                    }
+                }
+                Nature::Term => rhs,
+            };
+            return Answer::Val(v.as_val());
+        } else {
+            match self.nature {
+                Nature::Eq => Term::eq_(lhs, rhs),
+                Nature::Lt => Term::lt(lhs, rhs),
+                Nature::Term => lhs,
+            }
         };
 
         Answer::Other(t, watches)
