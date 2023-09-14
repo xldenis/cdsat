@@ -320,11 +320,7 @@ impl Trail {
                 let ap = a.to_pair();
                 !tl.contains(ap)
                     && tl.trail_unique()
-                    && if ap.1.is_bool() {
-                        !tl.contains((ap.0, ap.1.negate()))
-                    } else {
-                        true
-                    }
+                    && if ap.1.is_bool() { !tl.contains((ap.0, ap.1.negate())) } else { true }
             }
         }
     }
@@ -400,7 +396,7 @@ impl Trail {
     #[ensures(self.invariant())]
     #[ensures(result.is_justified((t,v)))]
     #[ensures(result.level_of((t, v)) == result.set_level(just))]
-    pub fn add_justified(self, just: FSet<(Term, Value)>, t : Term, v: Value) -> Self {
+    pub fn add_justified(self, just: FSet<(Term, Value)>, t: Term, v: Value) -> Self {
         Trail::Assign(Assign::Justified(just, t, v), self.set_level(just), Box::new(self))
     }
 
@@ -578,17 +574,16 @@ impl Trail {
 
     #[open]
     #[predicate]
-    pub fn ext(self, o : Self) -> bool {
+    pub fn ext(self, o: Self) -> bool {
         pearlite! {
-        if self.level() <= o.level() {
+            if self.level() <= o.level() {
 
-            (forall<kv : _> self.contains(kv) ==> self.find(kv) == o.find(kv))
-        } else {
-            (forall<kv : _> o.contains(kv) ==> o.find(kv) == self.find(kv))
+                (forall<kv : _> self.contains(kv) ==> self.find(kv) == o.find(kv))
+            } else {
+                (forall<kv : _> o.contains(kv) ==> o.find(kv) == self.find(kv))
+            }
         }
     }
-    }
-
 
     #[logic]
     #[open(self)]
@@ -597,9 +592,7 @@ impl Trail {
     #[requires(o.contains(kv))]
     #[requires(self.is_justified(kv))]
     #[ensures(self.justification(kv) == o.justification(kv))]
-    pub fn just_stable(self, o : Self, kv: (Term, Value)) {
-
-    }
+    pub fn just_stable(self, o: Self, kv: (Term, Value)) {}
 
     #[logic]
     #[open(self)]
@@ -789,11 +782,7 @@ impl Normal {
     pub fn decide(self, t: Term, val: Value, tgt: Self) -> bool {
         self.0.acceptable(t, val)
             && tgt.0
-                == Trail::Assign(
-                    Assign::Decision(t, val),
-                    self.0.level() + 1,
-                    Box::new(self.0),
-                )
+                == Trail::Assign(Assign::Decision(t, val), self.0.level() + 1, Box::new(self.0))
     }
 
     // Γ ⟶ Γ, J⊢L, if ¬L ∉ Γ and L is l ← 𝔟 for some l ∈ ℬ

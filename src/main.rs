@@ -42,14 +42,9 @@ struct TermBuilder;
 fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) -> Term {
     use smt2parser::concrete::{QualIdentifier, Term as PT};
     match t {
-        PT::Application {
-            qual_identifier,
-            arguments,
-        } => {
-            let mut arguments = arguments
-                .into_iter()
-                .map(|a| term_to_term(vars, a))
-                .collect::<Vec<_>>();
+        PT::Application { qual_identifier, arguments } => {
+            let mut arguments =
+                arguments.into_iter().map(|a| term_to_term(vars, a)).collect::<Vec<_>>();
             let ident = match qual_identifier {
                 QualIdentifier::Simple { identifier } => identifier,
                 QualIdentifier::Sorted { identifier, .. } => identifier,
@@ -71,16 +66,14 @@ fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) ->
                     Term::times(k.to_integer().try_into().unwrap(), arguments.remove(0))
                 }
                 "-" => {
-                    if arguments.len() == 1{
+                    if arguments.len() == 1 {
                         Term::times(-1, arguments.remove(0))
                     } else {
                         Term::plus(arguments.remove(0), Term::times(-1, arguments.remove(0)))
                     }
-                },
-                "not" => {
-                    Term::not(arguments.remove(0))
                 }
-                s => unimplemented!("{s}")
+                "not" => Term::not(arguments.remove(0)),
+                s => unimplemented!("{s}"),
             };
             t
         }
@@ -151,20 +144,12 @@ fn to_assign(vars: &mut IndexMap<Symbol, Sort>, c: Command) -> Option<(Term, Val
         }
         Command::DeclareDatatype { symbol, datatype } => unimplemented!(),
         Command::DeclareDatatypes { datatypes } => unimplemented!(),
-        Command::DeclareFun {
-            symbol,
-            parameters,
-            sort,
-        } => unimplemented!(),
+        Command::DeclareFun { symbol, parameters, sort } => unimplemented!(),
         Command::DeclareSort { symbol, arity } => unimplemented!(),
         Command::DefineFun { sig, term } => unimplemented!(),
         Command::DefineFunRec { sig, term } => unimplemented!(),
         Command::DefineFunsRec { funs } => unimplemented!(),
-        Command::DefineSort {
-            symbol,
-            parameters,
-            sort,
-        } => unimplemented!(),
+        Command::DefineSort { symbol, parameters, sort } => unimplemented!(),
         Command::Echo { message } => unimplemented!(),
         Command::Exit => unimplemented!(),
         Command::GetAssertions => unimplemented!(),
@@ -190,15 +175,11 @@ fn main() -> std::io::Result<()> {
     let mut input = BufReader::new(File::open(args().nth(1).expect("provide an input file"))?);
     let stream = CommandStream::new(&mut input, SyntaxBuilder, None);
 
-    let commands = stream
-        .collect::<Result<Vec<_>, _>>()
-        .expect("could not parse");
+    let commands = stream.collect::<Result<Vec<_>, _>>().expect("could not parse");
 
     let mut vars = IndexMap::new();
-    let assignments = commands
-        .into_iter()
-        .filter_map(|c| to_assign(&mut vars, c))
-        .collect::<Vec<_>>();
+    let assignments =
+        commands.into_iter().filter_map(|c| to_assign(&mut vars, c)).collect::<Vec<_>>();
 
     let mut solver = Solver::new();
 
@@ -213,8 +194,10 @@ fn main() -> std::io::Result<()> {
 mod tests {
     use num_rational::Rational64;
 
-    use crate::concrete::Solver;
-    use crate::trail::{Term, Trail, Value};
+    use crate::{
+        concrete::Solver,
+        trail::{Term, Trail, Value},
+    };
 
     use crate::{concrete::Answer, trail::Sort};
     #[test]
@@ -276,10 +259,7 @@ mod tests {
     fn x_plus_5_lt_10() {
         let mut trail = Trail::new(vec![(
             Term::Lt(
-                Box::new(Term::plus(
-                    Term::var(0, Sort::Rational),
-                    Term::val(Value::rat(5, 1)),
-                )),
+                Box::new(Term::plus(Term::var(0, Sort::Rational), Term::val(Value::rat(5, 1)))),
                 Box::new(Term::val(Value::rat(10, 1))),
             ),
             Value::Bool(true),

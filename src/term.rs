@@ -1,6 +1,6 @@
 use std::{fmt::Display, unreachable};
 
-use creusot_contracts::{DeepModel, requires, ensures};
+use creusot_contracts::{ensures, requires, DeepModel};
 use num_rational::BigRational;
 
 #[cfg_attr(not(creusot), derive(Debug))]
@@ -79,7 +79,7 @@ impl Term {
         Term::Plus(Box::new(a), Box::new(b))
     }
 
-    pub fn times(k : isize, b: Self) -> Self {
+    pub fn times(k: isize, b: Self) -> Self {
         if k == 0 {
             Term::val(Value::zero())
         } else if k == 1 {
@@ -261,10 +261,10 @@ impl Value {
 }
 
 impl Value {
-    pub fn scale(self, k : isize) -> Self {
+    pub fn scale(self, k: isize) -> Self {
         match self {
             Value::Rat(r) => Value::Rat(r * BigRational::new(k.into(), 1.into())),
-            Value::Bool(_) => unreachable!()
+            Value::Bool(_) => unreachable!(),
         }
     }
     pub fn rat(a: i64, b: i64) -> Self {
