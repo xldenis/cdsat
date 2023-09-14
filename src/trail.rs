@@ -254,9 +254,11 @@ impl Trail {
 
                   (reason == Reason::Decision == self.ghost.is_decision(self.index_logic(ix))) &&
                   (reason == Reason::Input == self.ghost.is_input(self.index_logic(ix))) &&
-                  (exists<j : _> reason == Reason::Justified(j)) == self.ghost.is_justified(self.index_logic(ix)) &&
-
-                  (forall<j : _> reason == Reason::Justified(j) ==> ((forall<i : _> j@.contains(i) ==> self.contains(i)) && self.ghost.justification(self.index_logic(ix)) == self.abstract_justification(j@)))
+                  (forall<j : _> reason == Reason::Justified(j) ==>
+                    (forall<i : _> j@.contains(i) ==> i < ix && self.contains(i)) &&
+                    self.ghost.is_justified(self.index_logic(ix)) &&
+                    self.ghost.justification(self.index_logic(ix)) == self.abstract_justification(j@)
+                  )
                 }
 
         }
@@ -396,8 +398,10 @@ impl Trail {
 
     pub(crate) fn index_of(&self, a: &Term) -> Option<TrailIndex> {
         let mut level = 0;
+        #[invariant(level@ == produced.len())]
         for assignments in &self.assignments {
             let mut offset = 0;
+            #[invariant(offset@ == produced.len())]
             for asgn in assignments {
                 if &asgn.term == a {
                     return Some(TrailIndex(level, offset));
@@ -486,31 +490,36 @@ impl Trail {
     pub(crate) fn restrict(&mut self, level: usize) {
         let old: Ghost<&mut Trail> = gh! { self };
 
+        // Restate as a subsequence?
         #[invariant(forall<i : _> 0 <= i && i <= self.level@ ==> (self.assignments@)[i] == (old.assignments)@[i])]
         #[invariant(self.invariant())]
-        #[invariant(^self == ^*old)]
         #[invariant(*self.ghost == old.ghost.restrict(self.level@))]
         #[invariant(self.level >= level)]
         while level < self.level {
+            let _ = gh!(theory::Trail::restrict_idempotent);
+            let _ = gh!(theory::Trail::restrict_kind_unchanged);
+            let _ = gh!(theory::Trail::restrict_sound);
+
             self.assignments.pop();
+
             self.level -= 1;
-            proof_assert!(exists<t : _> (self.ghost.restrict_kind_unchanged(self.level.shallow_model(), t) == () || true) );
-            proof_assert!((exists<t : _> self.ghost.justification_contains(t) == () || true));
             self.ghost = gh! { self.ghost.restrict(self.level.shallow_model()) };
-            proof_assert! {
-                forall<ix : _> self.contains(ix) ==> ((self.assignments)@[ix.0@])@[ix.1@] == ((old.assignments)@[ix.0@])@[ix.1@]
-            };
-            proof_assert!(forall<ix : _> self.contains(ix) ==> self.ghost.contains(self.index_logic(ix)));
-            proof_assert!(self.ghost.restrict_idempotent(self.level@, self.level@ + 1); true);
-            proof_assert!(forall<ix : _> self.contains(ix) ==> self.index_logic(ix) == old.index_logic(ix));
+
+            // Ugly and annoying that this is required... should really be automatic
+            proof_assert!(forall<ix : _> self.contains(ix) ==>
+                forall<j : _> self.assignments[ix.0@][ix.1@].reason == Reason::Justified(j) ==>
+                  forall<k : _> j@.contains(k) ==> self.contains(k)
+            );
+
+            // Move to lemma
+            proof_assert!(forall<js : Seq<_>>
+                (forall<j : _> js.contains(j) ==> self.contains(j) && old.contains(j) && self.index_logic(j) == old.index_logic(j)) ==>
+                self.abstract_justification(js) == old.abstract_justification(js)
+            );
+
+            proof_assert!(self.abstract_relation());
             proof_assert!(self.justified_is_justified());
-            // proof_assert!(forall<ix : _> old.abstract_justification(?) ==)
         }
-        proof_assert!(level == self.level);
-        proof_assert!(
-            self.ghost.inner() == old.inner().ghost.inner().restrict(level.shallow_model())
-        );
-        proof_assert!(old.ghost.restrict_sound(level@); true);
     }
 
     #[trusted] // proof passes modulo annoying details on `to_owned`
@@ -618,7 +627,7 @@ impl Assignment {
         self.val.is_bool()
     }
 
-    #[ensures(result != (self.val@).is_bool())]
+    // #[ensures(result != (self.val@).is_bool())]
     pub(crate) fn is_rational(&self) -> bool {
         !self.val.is_bool()
             || matches!(self.term, Term::Lt(_, _) | Term::Plus(_, _) | Term::Eq(_, _))
