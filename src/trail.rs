@@ -270,9 +270,7 @@ impl Trail {
         pearlite! {
             (forall<ix : _> self.contains(ix) ==> self.ghost.contains(self.index_logic(ix))) &&
             (forall<ix : _> self.contains(ix) ==> self.ghost.level_of(self.index_logic(ix)) == ix.0@) &&
-            (forall<a : _> self.ghost.contains(a) ==>
-              exists<ix : _> self.contains(ix) && ix.level_log() == self.ghost.level_of(a) && self.index_logic(ix) == a
-            )
+            (forall<a : _> self.ghost.contains(a) ==> exists<ix : _> self.contains(ix) && self.index_logic(ix) == a)
         }
     }
 

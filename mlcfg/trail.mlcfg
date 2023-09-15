@@ -1383,33 +1383,6 @@ module Cdsat_Theory_Impl4_LevelOf
     
   axiom level_of_spec : forall self : Cdsat_Theory_Trail_Type.t_trail, d : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 349 15 349 38] InvariantNonneg0.invariant_nonneg self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 350 14 350 51] level_of self d >= 0 /\ level_of self d <= Level0.level self)
 end
-module Cdsat_Trail_Impl8_LevelLog_Stub
-  use prelude.Int
-  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
-  function level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
-    
-end
-module Cdsat_Trail_Impl8_LevelLog_Interface
-  use prelude.Int
-  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
-  function level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
-    
-  val level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
-    ensures { result = level_log self }
-    
-end
-module Cdsat_Trail_Impl8_LevelLog
-  use prelude.Int
-  use prelude.UIntSize
-  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
-  function level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
-    
-   =
-    [#"/Users/xavier/Code/cdsat/src/trail.rs" 178 4 178 12] UIntSize.to_int (Cdsat_Trail_TrailIndex_Type.trailindex_0 self)
-  val level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
-    ensures { result = level_log self }
-    
-end
 module Cdsat_Trail_Impl9_AbstractRelation_Stub
   use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
   predicate abstract_relation [#"/Users/xavier/Code/cdsat/src/trail.rs" 269 4 269 42] (self : Cdsat_Trail_Trail_Type.t_trail)
@@ -1439,8 +1412,6 @@ module Cdsat_Trail_Impl9_AbstractRelation
   use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
   clone Cdsat_Theory_Impl0_Sort_Stub as Sort0
   clone Cdsat_Theory_Impl4_InvariantAssign_Stub as InvariantAssign0
-  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
-  clone Cdsat_Trail_Impl8_LevelLog_Stub as LevelLog0
   clone Cdsat_Theory_Impl4_LevelOf_Stub as LevelOf0 with
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
     function Level0.level = Level0.level,
@@ -1451,13 +1422,14 @@ module Cdsat_Trail_Impl9_AbstractRelation
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
     axiom .
+  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
   clone Cdsat_Trail_Impl9_IndexLogic_Stub as IndexLogic0
   clone Cdsat_Trail_Impl9_Contains_Stub as Contains0
   predicate abstract_relation [#"/Users/xavier/Code/cdsat/src/trail.rs" 269 4 269 42] (self : Cdsat_Trail_Trail_Type.t_trail)
     
    =
-    [#"/Users/xavier/Code/cdsat/src/trail.rs" 271 12 275 13] (forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains self ix -> Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) (IndexLogic0.index_logic self ix)) /\ (forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains self ix -> LevelOf0.level_of (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) (IndexLogic0.index_logic self ix) = UIntSize.to_int (Cdsat_Trail_TrailIndex_Type.trailindex_0 ix)) /\ (forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a -> (exists ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains self ix /\ LevelLog0.level_log ix = LevelOf0.level_of (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a /\ IndexLogic0.index_logic self ix = a))
+    [#"/Users/xavier/Code/cdsat/src/trail.rs" 271 12 275 13] (forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains self ix -> Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) (IndexLogic0.index_logic self ix)) /\ (forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains self ix -> LevelOf0.level_of (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) (IndexLogic0.index_logic self ix) = UIntSize.to_int (Cdsat_Trail_TrailIndex_Type.trailindex_0 ix)) /\ (forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a -> (exists ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains self ix /\ IndexLogic0.index_logic self ix = a))
   val abstract_relation [#"/Users/xavier/Code/cdsat/src/trail.rs" 269 4 269 42] (self : Cdsat_Trail_Trail_Type.t_trail) : bool
     ensures { result = abstract_relation self }
     
@@ -6128,6 +6100,33 @@ module Cdsat_Theory_Conflict_Type
       | C_Conflict _ a -> a
       end
 end
+module Cdsat_Trail_Impl8_LevelLog_Stub
+  use prelude.Int
+  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
+  function level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
+    
+end
+module Cdsat_Trail_Impl8_LevelLog_Interface
+  use prelude.Int
+  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
+  function level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
+    
+  val level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
+    ensures { result = level_log self }
+    
+end
+module Cdsat_Trail_Impl8_LevelLog
+  use prelude.Int
+  use prelude.UIntSize
+  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
+  function level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
+    
+   =
+    [#"/Users/xavier/Code/cdsat/src/trail.rs" 178 4 178 12] UIntSize.to_int (Cdsat_Trail_TrailIndex_Type.trailindex_0 self)
+  val level_log [#"/Users/xavier/Code/cdsat/src/trail.rs" 179 4 179 33] (self : Cdsat_Trail_TrailIndex_Type.t_trailindex) : int
+    ensures { result = level_log self }
+    
+end
 module Cdsat_Theory_Impl6_Sound_Stub
   use Cdsat_Theory_Conflict_Type as Cdsat_Theory_Conflict_Type
   predicate sound [@inline:trivial] [#"/Users/xavier/Code/cdsat/src/theory.rs" 919 4 919 30] (self : Cdsat_Theory_Conflict_Type.t_conflict)
@@ -6713,7 +6712,6 @@ module Cdsat_Trail_IxToAbsRemove_Impl
     function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
     predicate Inv0.inv = Inv1.inv,
     val Max0.mAX' = Max0.mAX'
-  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
   clone CreusotContracts_Logic_Ops_Impl0_IndexLogic as IndexLogic1 with
     type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
     type a = Alloc_Alloc_Global_Type.t_global,
@@ -6744,7 +6742,6 @@ module Cdsat_Trail_IxToAbsRemove_Impl
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains1.contains = Contains3.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function LevelLog0.level_log = LevelLog0.level_log,
     predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
@@ -7541,19 +7538,18 @@ module Cdsat_Trail_IxToAbsLevel_Impl
     predicate Sound0.sound = Sound0.sound,
     predicate Entails0.entails = Entails0.entails,
     predicate Contains2.contains = Contains2.contains
-  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
   clone Cdsat_Trail_Impl9_AbstractRelation as AbstractRelation0 with
     predicate Contains0.contains = Contains1.contains,
     function IndexLogic0.index_logic = IndexLogic1.index_logic,
     predicate Contains1.contains = Contains3.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function LevelLog0.level_log = LevelLog0.level_log,
     predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
     function Level0.level = Level0.level,
     function Len0.len = Len0.len
+  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
   clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone Cdsat_Trail_SetMax as SetMax0 with
@@ -8856,7 +8852,6 @@ module Cdsat_Trail_IxToAbsInsert_Impl
     function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
     predicate Inv0.inv = Inv1.inv,
     val Max0.mAX' = Max0.mAX'
-  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
   clone CreusotContracts_Logic_Fset_Impl0_Remove as Remove0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone CreusotContracts_Logic_Ops_Impl0_IndexLogic as IndexLogic1 with
@@ -8889,7 +8884,6 @@ module Cdsat_Trail_IxToAbsInsert_Impl
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains1.contains = Contains3.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function LevelLog0.level_log = LevelLog0.level_log,
     predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
@@ -9750,7 +9744,6 @@ module Cdsat_Trail_AbstractJustificationInsert_Impl
     function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
     predicate Inv0.inv = Inv1.inv,
     val Max0.mAX' = Max0.mAX'
-  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
   clone CreusotContracts_Logic_Seq_Impl0_Contains as Contains1 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
@@ -9830,7 +9823,6 @@ module Cdsat_Trail_AbstractJustificationInsert_Impl
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains1.contains = Contains3.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function LevelLog0.level_log = LevelLog0.level_log,
     predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
@@ -12962,19 +12954,18 @@ module Cdsat_Trail_Impl9_Justification
     predicate Sound0.sound = Sound0.sound,
     predicate Entails0.entails = Entails0.entails,
     predicate Contains2.contains = Contains1.contains
-  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
   clone Cdsat_Trail_Impl9_AbstractRelation as AbstractRelation0 with
     predicate Contains0.contains = Contains0.contains,
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains1.contains = Contains2.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function LevelLog0.level_log = LevelLog0.level_log,
     predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
     function Level0.level = Level0.level,
     function Len0.len = Len0.len
+  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
   clone Cdsat_Trail_Impl9_Invariant as Invariant0 with
     predicate AbstractRelation0.abstract_relation = AbstractRelation0.abstract_relation,
     predicate Sound0.sound = Sound0.sound,
@@ -14154,7 +14145,6 @@ module Cdsat_Trail_Impl9_Restrict
     function IndexLogic0.index_logic = IndexLogic2.index_logic,
     predicate Contains1.contains = Contains2.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function LevelLog0.level_log = LevelLog0.level_log,
     predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,
@@ -15636,7 +15626,6 @@ module Cdsat_Trail_Impl9_AddJustified
     function Sort1.sort = Sort1.sort,
     predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
     axiom .
-  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
   clone Cdsat_Theory_Impl4_Ext as Ext0 with
     function Level0.level = Level0.level,
     predicate Contains0.contains = Contains2.contains,
@@ -15918,7 +15907,6 @@ module Cdsat_Trail_Impl9_AddJustified
     function IndexLogic0.index_logic = IndexLogic0.index_logic,
     predicate Contains1.contains = Contains2.contains,
     function LevelOf0.level_of = LevelOf0.level_of,
-    function LevelLog0.level_log = LevelLog0.level_log,
     predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
     function Sort0.sort = Sort0.sort,
     function Sort1.sort = Sort1.sort,

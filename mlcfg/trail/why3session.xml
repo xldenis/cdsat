@@ -170,7 +170,7 @@
   <transf name="assert" proved="true" arg1="(ix_to_abs t (remove s x) ==&#39; remove1 (ix_to_abs t s) (index_logic2 t x))
 ">
    <goal name="ix_to_abs_remove&#39;vc.0.0" expl="asserted formula" proved="true">
-   <proof prover="5"><result status="valid" time="0.233719" steps="4075"/></proof>
+   <proof prover="5"><result status="valid" time="0.390900" steps="6661"/></proof>
    </goal>
    <goal name="ix_to_abs_remove&#39;vc.0.1" expl="postcondition" proved="true">
    <proof prover="5"><result status="valid" time="0.020000" steps="37"/></proof>
@@ -193,14 +193,14 @@
    <goal name="ix_to_abs_level&#39;vc.0.0" expl="postcondition" proved="true">
    <transf name="split_all_full" proved="true" >
     <goal name="ix_to_abs_level&#39;vc.0.0.0" expl="postcondition" proved="true">
-    <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="0.439227" steps="1771893"/></proof>
+    <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="0.874904" steps="3270017"/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
   </goal>
   <goal name="ix_to_abs_level&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.030000" steps="211"/></proof>
+  <proof prover="5"><result status="valid" time="0.030000" steps="200"/></proof>
   </goal>
  </transf>
  </goal>
@@ -211,7 +211,7 @@
   <goal name="ix_to_abs_insert&#39;vc.0" expl="postcondition" proved="true">
   <transf name="assert" proved="true" arg1="( ix_to_abs t (insert s x) ==&#39; insert1 (ix_to_abs t s) (index_logic2 t x))">
    <goal name="ix_to_abs_insert&#39;vc.0.0" expl="asserted formula" proved="true">
-   <proof prover="5"><result status="valid" time="0.074017" steps="660"/></proof>
+   <proof prover="5"><result status="valid" time="0.074017" steps="891"/></proof>
    </goal>
    <goal name="ix_to_abs_insert&#39;vc.0.1" expl="postcondition" proved="true">
    <proof prover="5"><result status="valid" time="0.027801" steps="37"/></proof>
@@ -319,7 +319,7 @@
   <proof prover="5"><result status="valid" time="0.024192" steps="26"/></proof>
   </goal>
   <goal name="abstract_justification_insert&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.031095" steps="159"/></proof>
+  <proof prover="5"><result status="valid" time="0.031095" steps="155"/></proof>
   </goal>
   <goal name="abstract_justification_insert&#39;vc.2" expl="postcondition" proved="true">
   <transf name="inline_goal" proved="true" >
@@ -425,7 +425,7 @@
 </theory>
 <theory name="Cdsat_Trail_Impl9_Justification" proved="true">
  <goal name="justification&#39;vc" expl="VC for justification" proved="true">
- <proof prover="5"><result status="valid" time="0.903313" steps="11452"/></proof>
+ <proof prover="5"><result status="valid" time="0.692686" steps="9209"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Trail_Impl9_Restrict" proved="true">
@@ -435,13 +435,13 @@
   <proof prover="5"><result status="valid" time="0.037659" steps="44"/></proof>
   </goal>
   <goal name="restrict&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="3"><result status="valid" time="0.015708" steps="18655"/></proof>
+  <proof prover="3"><result status="valid" time="0.015708" steps="18602"/></proof>
   </goal>
   <goal name="restrict&#39;vc.2" expl="loop invariant init" proved="true">
   <proof prover="5"><result status="valid" time="0.049804" steps="103"/></proof>
   </goal>
   <goal name="restrict&#39;vc.3" expl="loop invariant init" proved="true">
-  <proof prover="3"><result status="valid" time="0.013556" steps="18553"/></proof>
+  <proof prover="3"><result status="valid" time="0.013556" steps="18508"/></proof>
   </goal>
   <goal name="restrict&#39;vc.4" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.052504" steps="70"/></proof>
@@ -458,7 +458,7 @@
   <goal name="restrict&#39;vc.8" expl="assertion" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="restrict&#39;vc.8.0" expl="assertion" proved="true">
-   <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="2.093348" steps="6512448"/></proof>
+   <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="1.761767" steps="5103580"/></proof>
    </goal>
   </transf>
   </goal>
@@ -466,7 +466,7 @@
   <transf name="assert" proved="true" arg1="(abstract_justification ( * self) js ==
   abstract_justification ( * inner old&#39;) js)">
    <goal name="restrict&#39;vc.9.0" expl="asserted formula" proved="true">
-   <proof prover="5"><result status="valid" time="0.890378" steps="10242"/></proof>
+   <proof prover="5"><result status="valid" time="0.890378" steps="8759"/></proof>
    </goal>
    <goal name="restrict&#39;vc.9.1" expl="assertion" proved="true">
    <proof prover="5"><result status="valid" time="0.073093" steps="134"/></proof>
@@ -478,13 +478,13 @@
    <goal name="restrict&#39;vc.10.0" expl="assertion" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="restrict&#39;vc.10.0.0" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.119120" steps="720010"/></proof>
+    <proof prover="3"><result status="valid" time="0.119120" steps="933323"/></proof>
     </goal>
     <goal name="restrict&#39;vc.10.0.1" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.591568" steps="1904186"/></proof>
+    <proof prover="3"><result status="valid" time="0.133793" steps="709087"/></proof>
     </goal>
     <goal name="restrict&#39;vc.10.0.2" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.293250" steps="1211504"/></proof>
+    <proof prover="3"><result status="valid" time="0.293250" steps="936382"/></proof>
     </goal>
    </transf>
    </goal>
@@ -495,35 +495,35 @@
    <goal name="restrict&#39;vc.11.0" expl="assertion" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="restrict&#39;vc.11.0.0" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.057902" steps="369288"/></proof>
+    <proof prover="3"><result status="valid" time="0.419080" steps="1356418"/></proof>
     </goal>
     <goal name="restrict&#39;vc.11.0.1" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.322494" steps="1140156"/></proof>
+    <proof prover="3"><result status="valid" time="0.487444" steps="1459448"/></proof>
     </goal>
     <goal name="restrict&#39;vc.11.0.2" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.059386" steps="368812"/></proof>
+    <proof prover="3"><result status="valid" time="0.278608" steps="1045701"/></proof>
     </goal>
     <goal name="restrict&#39;vc.11.0.3" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.242802" steps="996652"/></proof>
+    <proof prover="3"><result status="valid" time="0.242802" steps="1043507"/></proof>
     </goal>
     <goal name="restrict&#39;vc.11.0.4" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.182642" steps="1057930"/></proof>
+    <proof prover="3"><result status="valid" time="0.182642" steps="1054903"/></proof>
     </goal>
     <goal name="restrict&#39;vc.11.0.5" expl="assertion" proved="true">
-    <proof prover="5"><result status="valid" time="0.177363" steps="869"/></proof>
+    <proof prover="5"><result status="valid" time="0.177363" steps="870"/></proof>
     </goal>
     <goal name="restrict&#39;vc.11.0.6" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.118389" steps="774459"/></proof>
+    <proof prover="3"><result status="valid" time="0.303096" steps="1108904"/></proof>
     </goal>
     <goal name="restrict&#39;vc.11.0.7" expl="assertion" proved="true">
-    <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="1.229737" steps="4589123"/></proof>
+    <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="2.199535" steps="8018539"/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
   </goal>
   <goal name="restrict&#39;vc.12" expl="loop invariant preservation" proved="true">
-  <proof prover="3"><result status="valid" time="0.175816" steps="1003797"/></proof>
+  <proof prover="3"><result status="valid" time="0.175816" steps="1102166"/></proof>
   </goal>
   <goal name="restrict&#39;vc.13" expl="loop invariant preservation" proved="true">
   <transf name="inline_goal" proved="true" >
@@ -536,50 +536,50 @@
     <proof prover="5"><result status="valid" time="0.090202" steps="283"/></proof>
     </goal>
     <goal name="restrict&#39;vc.13.0.2" expl="loop invariant preservation" proved="true">
-    <proof prover="3"><result status="valid" time="0.051726" steps="317264"/></proof>
+    <proof prover="3"><result status="valid" time="0.051726" steps="316397"/></proof>
     </goal>
     <goal name="restrict&#39;vc.13.0.3" expl="loop invariant preservation" proved="true">
-    <proof prover="3"><result status="valid" time="0.060949" steps="327896"/></proof>
+    <proof prover="3"><result status="valid" time="0.060949" steps="326937"/></proof>
     </goal>
     <goal name="restrict&#39;vc.13.0.4" expl="loop invariant preservation" proved="true">
-    <proof prover="3"><result status="valid" time="0.094257" steps="648317"/></proof>
+    <proof prover="3"><result status="valid" time="0.094257" steps="647365"/></proof>
     </goal>
     <goal name="restrict&#39;vc.13.0.5" expl="loop invariant preservation" proved="true">
-    <proof prover="3"><result status="valid" time="0.063738" steps="402011"/></proof>
+    <proof prover="3"><result status="valid" time="0.063738" steps="401036"/></proof>
     </goal>
     <goal name="restrict&#39;vc.13.0.6" expl="loop invariant preservation" proved="true">
-    <proof prover="3"><result status="valid" time="0.276443" steps="974424"/></proof>
+    <proof prover="3"><result status="valid" time="0.276443" steps="940436"/></proof>
     </goal>
     <goal name="restrict&#39;vc.13.0.7" expl="loop invariant preservation" proved="true">
-    <proof prover="3"><result status="valid" time="0.262239" steps="1010986"/></proof>
+    <proof prover="3"><result status="valid" time="0.262239" steps="1095289"/></proof>
     </goal>
     <goal name="restrict&#39;vc.13.0.8" expl="loop invariant preservation" proved="true">
-    <proof prover="3"><result status="valid" time="0.259437" steps="825048"/></proof>
+    <proof prover="3"><result status="valid" time="0.259437" steps="832981"/></proof>
     </goal>
     <goal name="restrict&#39;vc.13.0.9" expl="loop invariant preservation" proved="true">
-    <proof prover="3"><result status="valid" time="0.016116" steps="21198"/></proof>
+    <proof prover="3"><result status="valid" time="0.016116" steps="21153"/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
   </goal>
   <goal name="restrict&#39;vc.14" expl="loop invariant preservation" proved="true">
-  <proof prover="3"><result status="valid" time="0.062754" steps="329523"/></proof>
+  <proof prover="3"><result status="valid" time="0.062754" steps="328562"/></proof>
   </goal>
   <goal name="restrict&#39;vc.15" expl="loop invariant preservation" proved="true">
   <proof prover="5"><result status="valid" time="0.108887" steps="161"/></proof>
   </goal>
   <goal name="restrict&#39;vc.16" expl="postcondition" proved="true">
-  <proof prover="3"><result status="valid" time="0.044282" steps="258064"/></proof>
+  <proof prover="3"><result status="valid" time="0.044282" steps="257240"/></proof>
   </goal>
   <goal name="restrict&#39;vc.17" expl="postcondition" proved="true">
-  <proof prover="3"><result status="valid" time="0.047472" steps="259320"/></proof>
+  <proof prover="3"><result status="valid" time="0.047472" steps="258495"/></proof>
   </goal>
   <goal name="restrict&#39;vc.18" expl="postcondition" proved="true">
   <proof prover="5"><result status="valid" time="0.075761" steps="333"/></proof>
   </goal>
   <goal name="restrict&#39;vc.19" expl="postcondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.074700" steps="321"/></proof>
+  <proof prover="5"><result status="valid" time="0.074700" steps="322"/></proof>
   </goal>
  </transf>
  </goal>
@@ -610,7 +610,7 @@
   <proof prover="5"><result status="valid" time="0.025289" steps="34"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.045015" steps="297"/></proof>
+  <proof prover="5"><result status="valid" time="0.045015" steps="282"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.3" expl="assertion" proved="true">
   <proof prover="5"><result status="valid" time="0.032888" steps="112"/></proof>
@@ -619,7 +619,7 @@
   <proof prover="5"><result status="valid" time="0.030605" steps="52"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.052500" steps="335"/></proof>
+  <proof prover="5"><result status="valid" time="0.052500" steps="321"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.6" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.034577" steps="64"/></proof>
@@ -634,7 +634,7 @@
   <proof prover="5"><result status="valid" time="0.033119" steps="50"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.10" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.075708" steps="615"/></proof>
+  <proof prover="5"><result status="valid" time="0.075708" steps="610"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.11" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.042657" steps="167"/></proof>
@@ -643,7 +643,7 @@
   <proof prover="5"><result status="valid" time="0.038287" steps="78"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.13" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.115315" steps="1162"/></proof>
+  <proof prover="5"><result status="valid" time="0.115315" steps="1156"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.14" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.033328" steps="58"/></proof>
@@ -655,10 +655,10 @@
   <proof prover="5"><result status="valid" time="0.039502" steps="88"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.17" expl="assertion" proved="true">
-  <proof prover="5"><result status="valid" time="0.251936" steps="2875"/></proof>
+  <proof prover="5"><result status="valid" time="0.251936" steps="2876"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.18" expl="precondition" proved="true">
-  <proof prover="5"><result status="valid" time="0.064561" steps="328"/></proof>
+  <proof prover="5"><result status="valid" time="0.064561" steps="333"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.19" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.049072" steps="113"/></proof>
@@ -670,10 +670,10 @@
   <proof prover="5"><result status="valid" time="0.041763" steps="78"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.22" expl="assertion" proved="true">
-  <proof prover="5" timelimit="5" memlimit="2000"><result status="valid" time="1.901002" steps="26154"/></proof>
+  <proof prover="5" timelimit="5" memlimit="2000"><result status="valid" time="3.032441" steps="42969"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.23" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.121500" steps="666116"/></proof>
+  <proof prover="3"><result status="valid" time="0.121500" steps="718253"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.24" expl="assertion" proved="true">
   <proof prover="5"><result status="valid" time="0.045035" steps="87"/></proof>
@@ -694,60 +694,60 @@
   <proof prover="5"><result status="valid" time="0.057636" steps="162"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.30" expl="assertion" proved="true">
-  <proof prover="5"><result status="valid" time="0.185253" steps="2122"/></proof>
+  <proof prover="5"><result status="valid" time="0.185253" steps="2114"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.31" expl="assertion" proved="true">
-  <proof prover="5"><result status="valid" time="0.176367" steps="1970"/></proof>
+  <proof prover="5"><result status="valid" time="0.176367" steps="1949"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.32" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="add_justified&#39;vc.32.0" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.616776" steps="91229"/></proof>
+   <proof prover="1"><result status="valid" time="0.616776" steps="91595"/></proof>
    </goal>
    <goal name="add_justified&#39;vc.32.1" expl="precondition" proved="true">
    <proof prover="5"><result status="valid" time="0.100995" steps="566"/></proof>
    </goal>
    <goal name="add_justified&#39;vc.32.2" expl="precondition" proved="true">
-   <proof prover="5" timelimit="5" memlimit="2000"><result status="valid" time="2.850199" steps="35047"/></proof>
+   <proof prover="5" timelimit="5" memlimit="2000"><result status="valid" time="2.850199" steps="41768"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="add_justified&#39;vc.33" expl="assertion" proved="true">
-  <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="1.130568" steps="3715795"/></proof>
+  <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="0.378885" steps="1471751"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.34" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.868893" steps="2931951"/></proof>
+  <proof prover="3"><result status="valid" time="1.271065" steps="3672200"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.35" expl="assertion" proved="true">
-  <proof prover="5"><result status="valid" time="0.557101" steps="5809"/></proof>
+  <proof prover="5"><result status="valid" time="0.557101" steps="5258"/></proof>
   </goal>
   <goal name="add_justified&#39;vc.36" expl="assertion" proved="true">
   <transf name="inline_goal" proved="true" >
    <goal name="add_justified&#39;vc.36.0" expl="assertion" proved="true">
    <transf name="split_all_full" proved="true" >
     <goal name="add_justified&#39;vc.36.0.0" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.145722" steps="778928"/></proof>
+    <proof prover="3"><result status="valid" time="0.343989" steps="1203607"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.36.0.1" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.480319" steps="1708468"/></proof>
+    <proof prover="3"><result status="valid" time="0.149005" steps="727439"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.36.0.2" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.156430" steps="778464"/></proof>
+    <proof prover="3"><result status="valid" time="0.334402" steps="1203365"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.36.0.3" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.411912" steps="1577564"/></proof>
+    <proof prover="3"><result status="valid" time="0.145335" steps="727354"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.36.0.4" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.149182" steps="735911"/></proof>
+    <proof prover="3"><result status="valid" time="0.149182" steps="994814"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.36.0.5" expl="assertion" proved="true">
-    <proof prover="1"><result status="valid" time="0.527379" steps="82156"/></proof>
+    <proof prover="1"><result status="valid" time="0.527379" steps="81832"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.36.0.6" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.162926" steps="776853"/></proof>
+    <proof prover="3"><result status="valid" time="0.332912" steps="1220793"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.36.0.7" expl="assertion" proved="true">
-    <proof prover="3"><result status="valid" time="0.213697" steps="934977"/></proof>
+    <proof prover="3"><result status="valid" time="0.213697" steps="848572"/></proof>
     </goal>
    </transf>
    </goal>
@@ -758,15 +758,26 @@
    <goal name="add_justified&#39;vc.37.0" expl="assertion" proved="true">
    <transf name="split_all_full" proved="true" >
     <goal name="add_justified&#39;vc.37.0.0" expl="VC for add_justified" proved="true">
-    <proof prover="3"><result status="valid" time="0.139000" steps="727235"/></proof>
+    <proof prover="3"><result status="valid" time="0.253874" steps="980922"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.37.0.1" expl="VC for add_justified" proved="true">
-    <proof prover="3"><result status="valid" time="0.413811" steps="1625147"/></proof>
+    <transf name="split_vc" proved="true" >
+     <goal name="add_justified&#39;vc.37.0.1.0" expl="VC for add_justified" proved="true">
+     <transf name="case" proved="true" arg1="(ix = new_ix)">
+      <goal name="add_justified&#39;vc.37.0.1.0.0" expl="true case" proved="true">
+      <proof prover="3"><result status="valid" time="0.143657" steps="810904"/></proof>
+      </goal>
+      <goal name="add_justified&#39;vc.37.0.1.0.1" expl="false case" proved="true">
+      <proof prover="5"><result status="valid" time="0.496624" steps="5925"/></proof>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
     </goal>
     <goal name="add_justified&#39;vc.37.0.2" expl="VC for add_justified" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="add_justified&#39;vc.37.0.2.0" expl="VC for add_justified" proved="true">
-     <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="1.125540" steps="4241140"/></proof>
+     <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="0.308446" steps="1161574"/></proof>
      </goal>
     </transf>
     </goal>
@@ -788,22 +799,22 @@
     <proof prover="5"><result status="valid" time="0.078338" steps="188"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.38.0.3" expl="VC for add_justified" proved="true">
-    <proof prover="5"><result status="valid" time="0.113542" steps="682"/></proof>
+    <proof prover="5"><result status="valid" time="0.113542" steps="681"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.38.0.4" expl="VC for add_justified" proved="true">
-    <proof prover="3"><result status="valid" time="0.115239" steps="725735"/></proof>
+    <proof prover="3"><result status="valid" time="0.115239" steps="724710"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.38.0.5" expl="VC for add_justified" proved="true">
-    <proof prover="5"><result status="valid" time="0.519676" steps="6180"/></proof>
+    <proof prover="5"><result status="valid" time="0.519676" steps="4535"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.38.0.6" expl="VC for add_justified" proved="true">
-    <proof prover="3"><result status="valid" time="0.131954" steps="742430"/></proof>
+    <proof prover="3"><result status="valid" time="0.131954" steps="758100"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.38.0.7" expl="VC for add_justified" proved="true">
-    <proof prover="3"><result status="valid" time="0.164553" steps="750468"/></proof>
+    <proof prover="3"><result status="valid" time="0.332497" steps="1420424"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.38.0.8" expl="VC for add_justified" proved="true">
-    <proof prover="1"><result status="valid" time="0.468644" steps="81459"/></proof>
+    <proof prover="1"><result status="valid" time="0.468644" steps="81177"/></proof>
     </goal>
     <goal name="add_justified&#39;vc.38.0.9" expl="VC for add_justified" proved="true">
     <proof prover="5"><result status="valid" time="0.077451" steps="177"/></proof>
