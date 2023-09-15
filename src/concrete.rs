@@ -32,7 +32,23 @@ impl Solver {
         }
     }
 
+    #[ensures(match result {
+        None => true,
+        Some(c) => {
+            let conflict = (^trail).abstract_justification(c@);
+            c@.len() > 0 &&
+            // members of conflict area within the trail
+            (forall<t : _> (c@).contains(t) ==> (^trail).contains(t)) &&
+            // (forall<i : _> 0 <= i && i < (c@).len() ==> @(c@)[i] < (@(^tl).assignments).len()) &&
+            (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
+        }
+    })]
+    #[maintains((mut trail).invariant())]
+    #[requires(self.bool_state == TheoryState::Unknown && self.lra_state == TheoryState::Unknown)]
+    #[ensures((^self).dec_acc(^trail))]
+    #[ensures(trail.ghost.impls(*(^trail).ghost))]
     fn extend_next(&mut self, trail: &mut Trail) -> Option<Vec<TrailIndex>> {
+        let old = gh! { trail };
         use TheoryState::*;
         let (res, state) = if self.bool_state == Unknown {
             (self.bool_th.extend(trail), &mut self.bool_state)
@@ -41,6 +57,9 @@ impl Solver {
         } else {
             return None;
         };
+
+        proof_assert!(trail.invariant());
+        proof_assert!(old.ghost.impls(*trail.ghost));
 
         match res {
             ExtendResult::Decision(t, v) => *state = TheoryState::Decision(t, v),
@@ -54,14 +73,28 @@ impl Solver {
         return None;
     }
 
+    #[predicate]
+
+    fn dec_acc(self, trail: Trail) -> bool {
+        pearlite!{ forall<t :_, v : _>
+            self.bool_state == TheoryState::Decision(t, v) || self.lra_state == TheoryState::Decision(t, v)
+            ==> trail.ghost.acceptable(t@, v@)
+        }
+    }
+
+    #[ensures(result == (self.bool_state == TheoryState::Unknown || self.lra_state == TheoryState::Unknown))]
     pub fn can_deduce(&self) -> bool {
         self.bool_state == TheoryState::Unknown || self.lra_state == TheoryState::Unknown
     }
 
+    #[ensures(result == (self.bool_state == TheoryState::Sat && self.lra_state == TheoryState::Sat))]
     pub fn sat(&self) -> bool {
         self.bool_state == TheoryState::Sat && self.lra_state == TheoryState::Sat
     }
 
+    #[requires(exists<t :_, v : _>
+        self.bool_state == TheoryState::Decision(t, v) || self.lra_state == TheoryState::Decision(t, v))]
+    #[ensures(self.bool_state == TheoryState::Decision(result.0, result.1) || self.lra_state == TheoryState::Decision(result.0, result.1))]
     pub fn decision(&mut self) -> (Term, Value) {
         match (&mut self.bool_state, &mut self.lra_state) {
             (TheoryState::Decision(t, v), _) | (_, TheoryState::Decision(t, v)) => {
@@ -74,24 +107,42 @@ impl Solver {
         }
     }
 
+    #[maintains((mut trail).invariant())]
+    #[ensures(trail.ghost.impls(*(^trail).ghost))]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
+        let old_trail = gh ! { trail};
+        #[invariant(old_trail.ghost.impls(*trail.ghost))]
+        #[invariant(trail.invariant())]
         loop {
-            loop {
+            let iter_trail = gh! { trail };
+            self.bool_state = TheoryState::Unknown;
+            self.lra_state = TheoryState::Unknown;
+            #[invariant(iter_trail.ghost.impls(*trail.ghost))]
+            #[invariant(trail.invariant())]
+            #[invariant(self.dec_acc(*trail))]
+            while self.can_deduce() {
+                self.bool_state = TheoryState::Unknown;
+                self.lra_state = TheoryState::Unknown;
+
                 if let Some(cflct) = self.extend_next(trail) {
                     if trail.max_level(&cflct) > 0 {
                         self.resolve_conflict(trail, cflct);
+                        self.bool_state = TheoryState::Unknown;
+                        self.lra_state = TheoryState::Unknown;
                     } else {
                         return Answer::Unsat;
                     }
                 }
-                if !self.can_deduce() {
-                    break;
-                }
             }
 
+            proof_assert!(self.dec_acc(*trail));
             if self.sat() {
                 return Answer::Sat;
             } else {
+                proof_assert!(self.bool_state == TheoryState::Sat || self.bool_state == TheoryState::Unknown || exists<t :_, v :_> self.bool_state  == TheoryState::Decision(t, v));
+                proof_assert!(self.lra_state == TheoryState::Sat || self.lra_state == TheoryState::Unknown || exists<t :_, v :_> self.lra_state  == TheoryState::Decision(t, v));
+
+                proof_assert!(( exists<t :_, v :_> self.lra_state  == TheoryState::Decision(t, v)) || (exists<t :_, v :_> self.bool_state  == TheoryState::Decision(t, v)));
                 let (t, v) = self.decision();
                 trail.add_decision(t, v);
             }
