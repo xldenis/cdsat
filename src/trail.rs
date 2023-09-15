@@ -1,3 +1,4 @@
+#[allow(unused_imports)]
 use crate::{
     term::{Term, Value},
     theory::{self},
@@ -439,13 +440,13 @@ impl Trail {
         let level = self.max_level(&into_vec);
 
         proof_assert!(level <= self.level);
-        let g_vec = gh! { into_vec };
+        let g_vec : Ghost<()> = gh! { into_vec };
         let just: Ghost<FSet<(theory::Term, theory::Value)>> =
             gh! { self.abstract_justification(into_vec.shallow_model()) };
 
-        let _ = gh! { theory::Normal(*self.ghost).deducef(*just, term.shallow_model(), val.shallow_model()) };
+        let _ : Ghost<()> = gh! { theory::Normal(*self.ghost).deducef(*just, term.shallow_model(), val.shallow_model()) };
 
-        let old = gh! { self };
+        let old : Ghost<()> = gh! { self };
 
         self.ghost =
             gh! { self.ghost.add_justified(*just, term.shallow_model(), val.shallow_model())};
@@ -454,7 +455,7 @@ impl Trail {
           forall<i : TrailIndex> self.contains(i) ==>self.index_logic(i) != (term@, val@)
         );
 
-        let v = gh! { (term.shallow_model(), val.shallow_model())};
+        let v : Ghost<()> = gh! { (term.shallow_model(), val.shallow_model())};
         let a = Assignment { term, val, reason: Reason::Justified(into_vec), level };
         let x = self.assignments[level].len();
         let new_ix = TrailIndex(level, x);
@@ -470,8 +471,8 @@ impl Trail {
         proof_assert!(forall<i : TrailIndex> old.contains(i) ==>
             old.assignments@[i.0@][i.1@].reason == self.assignments@[i.0@][i.1@].reason);
 
-        let _ = gh! { self.abs_just_equiv(**old, g_vec@)};
-        let _ = gh! { theory::Trail::just_stable };
+        let _ : Ghost<()> = gh! { self.abs_just_equiv(**old, g_vec@)};
+        let _ : Ghost<()>  = gh! { theory::Trail::just_stable };
         proof_assert!(
           forall<j : _> old.ghost.contains(j) ==> old.ghost.is_justified(j) ==> old.ghost.justification(j) == self.ghost.justification(j));
         proof_assert!(forall<j : _> old.contains(j) ==> self.contains(j) && old.index_logic(j) == self.index_logic(j));
@@ -503,9 +504,9 @@ impl Trail {
         #[invariant(*self.ghost == old.ghost.restrict(self.level@))]
         #[invariant(self.level >= level)]
         while level < self.level {
-            let _ = gh!(theory::Trail::restrict_idempotent);
-            let _ = gh!(theory::Trail::restrict_kind_unchanged);
-            let _ = gh!(theory::Trail::restrict_sound);
+            let _ : Ghost<()> = gh!(theory::Trail::restrict_idempotent);
+            let _ : Ghost<()> = gh!(theory::Trail::restrict_kind_unchanged);
+            let _ : Ghost<()> = gh!(theory::Trail::restrict_sound);
 
             self.assignments.pop();
 

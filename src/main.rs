@@ -2,6 +2,7 @@
 #![cfg_attr(not(creusot), feature(stmt_expr_attributes, proc_macro_hygiene))]
 #![allow(dead_code, unused_variables)]
 #![feature(never_type, let_chains)]
+#![allow(unused_imports)]
 
 pub mod bool;
 pub mod concrete;

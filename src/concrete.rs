@@ -48,7 +48,7 @@ impl Solver {
     #[ensures((^self).dec_acc(^trail))]
     #[ensures(trail.ghost.impls(*(^trail).ghost))]
     fn extend_next(&mut self, trail: &mut Trail) -> Option<Vec<TrailIndex>> {
-        let old = gh! { trail };
+        let old : Ghost<()> = gh! { trail };
         use TheoryState::*;
         let (res, state) = if self.bool_state == Unknown {
             (self.bool_th.extend(trail), &mut self.bool_state)
@@ -110,19 +110,19 @@ impl Solver {
     #[maintains((mut trail).invariant())]
     #[ensures(trail.ghost.impls(*(^trail).ghost))]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
-        let old_trail = gh ! { trail};
+        let old_trail  : Ghost<()>  = gh ! { trail};
         #[invariant(old_trail.ghost.impls(*trail.ghost))]
         #[invariant(trail.invariant())]
         loop {
-            let iter_trail = gh! { trail };
-            self.bool_state = TheoryState::Unknown;
-            self.lra_state = TheoryState::Unknown;
+            let iter_trail  : Ghost<()>  = gh! { trail };
+            // self.bool_state = TheoryState::Unknown;
+            // self.lra_state = TheoryState::Unknown;
             #[invariant(iter_trail.ghost.impls(*trail.ghost))]
             #[invariant(trail.invariant())]
             #[invariant(self.dec_acc(*trail))]
             while self.can_deduce() {
-                self.bool_state = TheoryState::Unknown;
-                self.lra_state = TheoryState::Unknown;
+                // self.bool_state = TheoryState::Unknown;
+                // self.lra_state = TheoryState::Unknown;
 
                 if let Some(cflct) = self.extend_next(trail) {
                     if trail.max_level(&cflct) > 0 {

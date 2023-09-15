@@ -9,32 +9,15 @@ use crate::{
     term::{Sort, Term, Value},
     trail::{Trail, TrailIndex},
 };
-
 pub struct LRATheory;
 
-use creusot_contracts::{trusted, DeepModel, ghost, open};
+use creusot_contracts::{trusted, DeepModel, ghost, open, ensures, maintains};
 
-#[cfg_attr(not(creusot), derive(PartialOrd))]
-#[derive(Debug, Ord, Eq, Clone, DeepModel)]
+#[derive(Debug, Ord, Eq, Clone, PartialEq, PartialOrd, DeepModel)]
 enum Bound {
     Exclusive { value: BigRational, just: TrailIndex },
     Inclusive { value: BigRational, just: TrailIndex },
     Missing,
-}
-
-impl PartialEq for Bound {
-    #[trusted]
-    fn eq(&self, other: &Self) -> bool {
-        todo!()
-    }
-}
-
-#d
-impl PartialOrd for Bound {
-    #[trusted]
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        todo!()
-    }
 }
 
 impl Bound {

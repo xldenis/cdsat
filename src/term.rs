@@ -183,7 +183,7 @@ impl creusot_contracts::DeepModel for Term {
     }
 }
 
-#[cfg_attr(not(creusot), derive(Hash, Ord, PartialOrd))]
+#[cfg_attr(not(creusot), derive(Ord, PartialOrd))]
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Value {
     Bool(bool),
