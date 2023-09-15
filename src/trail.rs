@@ -264,14 +264,6 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[requires(self.invariant())]
-    #[requires(self.ghost.is_justified(self.index_logic(ix)))]
-    #[ensures(forall<x : _> self.ghost.justification(self.index_logic(ix)).contains(x) ==> self.ghost.level_of(x) <= ix.level_log())]
-    fn justified_level(self, ix: TrailIndex) {
-        // proof_assert!(self.ghost.level_of(self.index_logic(ix)) == ix.level_log());
-    }
-
     #[open]
     #[predicate]
     pub fn abstract_relation(self) -> bool {
@@ -473,34 +465,11 @@ impl Trail {
         proof_assert!(x@ > 0);
 
         self.assignments[level].push(a);
-        // proof_assert!(self.index_logic(new_ix) == *v);
-
-        // proof_assert!(self.assignments@[new_ix.0@][new_ix.1@].reason == Reason::Justified(*g_vec));
-        // proof_assert!(self.ghost.justification(self.index_logic(new_ix)) == *just);
-        // proof_assert!(
-        //   forall<i : TrailIndex, j : TrailIndex> self.contains(i) ==> self.contains(j) ==> i != j ==> self.index_logic(i) != self.index_logic(j)
-        // );
-        // proof_assert!(
-        //   forall<ix : _> self.contains(ix) ==> ix.1@ == 0 == self.ghost.is_decision(self.index_logic(ix))
-        // );
 
         proof_assert!(!old.ghost.contains(self.index_logic(new_ix)));
         proof_assert!(forall<i : TrailIndex> old.contains(i) ==>
             old.assignments@[i.0@][i.1@].reason == self.assignments@[i.0@][i.1@].reason);
-        // proof_assert!(forall<i : _> old.ghost.contains(i) ==> self.ghost.contains(i));
-        // proof_assert!(forall<i : _> old.contains(i) ==> self.contains(i));
-        // proof_assert!(forall<ix : _> old.contains(ix) ==> old.ghost.contains(old.index_logic(ix)));
-        // proof_assert!(forall<i : _> old.contains(i) ==> old.index_logic(i) == self.index_logic(i));
-        // proof_assert!(old.abstract_relation());
 
-        // proof_assert!(forall<i : _> self.contains(i) ==> i == new_ix || old.contains(i));
-        // // proof_assert!(forall<tv : _> self.ghost.contains(tv) ==> tv == self.index_logic(new_ix) || old.ghost.contains(tv));
-        // proof_assert!(forall<i : _> old.ghost.contains(i) ==> old.ghost.level_of(i) == self.ghost.level_of(i));
-        // proof_assert!(self.abstract_relation());
-        //
-
-      // proof_assert!(forall<j : _> self.ghost.contains(j) ==> old.ghost.contains(j) || j == self.index_logic(new_ix));
-       // Move to lemma
         let _ = gh! { self.abs_just_equiv(**old, g_vec@)};
         let _ = gh! { theory::Trail::just_stable };
         proof_assert!(
@@ -508,7 +477,6 @@ impl Trail {
         proof_assert!(forall<j : _> old.contains(j) ==> self.contains(j) && old.index_logic(j) == self.index_logic(j));
         proof_assert!(forall<j : _> self.contains(j) ==> j == new_ix || old.contains(j));
         proof_assert!(self.justified_is_justified());
-
         proof_assert!(self.abstract_relation());
     }
 
@@ -822,5 +790,5 @@ pub(crate) fn ix_to_abs_insert(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
 #[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
 #[ensures(t.abstract_justification(s.push(x)) == t.abstract_justification(s).insert(t.index_logic(x)) )]
 pub(crate) fn abstract_justification_insert(t: Trail, x: TrailIndex, s: Seq<TrailIndex>) {
-    t.abstract_justification(s.push(x));
+    t.abs_just_snoc(s, x)
 }
