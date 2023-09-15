@@ -806,6 +806,23 @@ impl Normal {
                 )
     }
 
+    // Γ ⟶ Γ, J⊢L, if ¬L ∉ Γ and L is l ← 𝔟 for some l ∈ ℬ
+    #[ghost]
+    #[open]
+    #[requires((self.0).invariant())]
+    #[requires(self.sound())]
+    #[requires(v.is_bool())]
+    #[requires(self.0.acceptable(t, v))]
+    #[requires( forall<j : _> just.contains(j) ==> self.0.contains(j))]
+    #[requires(forall<m : Model> m.entails(just, (t, v)))]
+    #[ensures(result.0.invariant())]
+    #[ensures(result.sound())]
+    #[ensures(self.0.impls(result.0))]
+    pub fn deducef(self, just: FSet<(Term, Value)>, t: Term, v: Value) -> Self {
+        self.0.count_bounds();
+        Normal(Trail::Assign(Assign::Justified(just, t, v), self.0.set_level(just), Box::new(self.0)))
+    }
+
     // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0
     #[predicate]
     #[open]
