@@ -388,14 +388,17 @@ impl Trail {
     #[ghost]
     #[open]
     #[requires(self.invariant())]
+    #[requires(forall<a : _> just.contains(a) ==> self.contains(a))]
     #[requires(self.acceptable(t, v))]
+    #[requires(v.sort() == Sort::Boolean)]
     #[requires(forall<m : Model> m.invariant() ==> m.satisfy_set(just) ==> m.satisfies((t, v)))]
     #[ensures(forall<a : _> self.contains(a) ==> self.find(a) == result.find(a))]
     #[ensures(result.contains((t,v)))]
     #[ensures(result.justification((t,v)) == just)]
-    #[ensures(self.invariant())]
+    #[ensures(result.invariant())]
     #[ensures(result.is_justified((t,v)))]
     #[ensures(result.level_of((t, v)) == result.set_level(just))]
+    #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) || a == (t, v))]
     pub fn add_justified(self, just: FSet<(Term, Value)>, t: Term, v: Value) -> Self {
         Trail::Assign(Assign::Justified(just, t, v), self.set_level(just), Box::new(self))
     }
