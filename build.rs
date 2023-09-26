@@ -1,8 +1,9 @@
-// use std::{path, process::Command};
-fn main() {}
+fn main() { }
+
 // use quote::ToTokens;
+// use std::{path, process::Command};
 // use syn::{visit::Visit, visit_mut::VisitMut, *};
-// use
+
 // fn main() -> std::io::Result<()> {
 //     println!("cargo:rerun-if-changed=src/");
 //     println!("cargo:rerun-if-changed=build.rs");
@@ -61,10 +62,11 @@ fn main() {}
 
 //     fn visit_file_mut(&mut self, i: &mut File) {
 //         i.items.retain_mut(|item| match item {
-//             Item::Fn(f) => !f
-//                 .attrs
-//                 .iter()
-//                 .any(|attr| attr.path().is_ident("predicate") || attr.path().is_ident("logic")),
+//             Item::Fn(f) => !f.attrs.iter().any(|attr| {
+//                 attr.path().is_ident("predicate")
+//                     || attr.path().is_ident("logic")
+//                     || attr.path().is_ident("ghost")
+//             }),
 //             _ => true,
 //         });
 //         visit_mut::visit_file_mut(self, i)
@@ -72,10 +74,11 @@ fn main() {}
 
 //     fn visit_item_impl_mut(&mut self, i: &mut ItemImpl) {
 //         i.items.retain_mut(|item| match item {
-//             ImplItem::Fn(f) => !f
-//                 .attrs
-//                 .iter()
-//                 .any(|attr| attr.path().is_ident("predicate") || attr.path().is_ident("logic")),
+//             ImplItem::Fn(f) => !f.attrs.iter().any(|attr| {
+//                 attr.path().is_ident("predicate")
+//                     || attr.path().is_ident("logic")
+//                     || attr.path().is_ident("ghost")
+//             }),
 //             _ => true,
 //         });
 //         visit_mut::visit_item_impl_mut(self, i)
@@ -111,6 +114,7 @@ fn main() {}
 //                         true
 //                     }
 //                 }
+//                 Expr::Macro(mac) => !mac.mac.path.is_ident("gh"),
 //                 _ => true,
 //             },
 //             Stmt::Local(l) => {
@@ -124,7 +128,7 @@ fn main() {}
 //                     true
 //                 }
 //             }
-//             Stmt::Macro(mac) => !mac.mac.path.is_ident("proof_assert"),
+//             Stmt::Macro(mac) => !mac.mac.path.is_ident("proof_assert") || !mac.mac.path.is_ident("gh"),
 //             _ => true,
 //         });
 

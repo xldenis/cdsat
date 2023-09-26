@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Display, ops::Neg, unimplemented, unreachable};
+use std::{collections::HashMap, eprintln, fmt::Display, ops::Neg, unimplemented, unreachable};
 
 use log::info;
 use num::{BigInt, Signed};
@@ -11,7 +11,7 @@ use crate::{
 };
 pub struct LRATheory;
 
-use creusot_contracts::{trusted, DeepModel, ghost, open, ensures, maintains};
+use creusot_contracts::{ensures, ghost, maintains, open, trusted, DeepModel};
 
 #[derive(Debug, Ord, Eq, Clone, PartialEq, PartialOrd, DeepModel)]
 enum Bound {
@@ -152,7 +152,9 @@ impl Domain {
 
     #[cfg(creusot)]
     #[trusted]
-    fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> bool { true }
+    fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> bool {
+        true
+    }
 
     #[cfg(not(creusot))]
     #[trusted]
@@ -160,6 +162,7 @@ impl Domain {
         let entry =
             self.0.entry(term).or_insert(Bounds { lower: Bound::Missing, upper: Bound::Missing });
 
+        info!("bounds were now {} , {}", entry.lower, entry.upper);
         if nature == Nature::Eq {
             entry.update_upper(just, nature, value.clone());
             entry.update_lower(just, nature, value);
@@ -171,6 +174,7 @@ impl Domain {
             }
         }
 
+        info!("bounds are now {} , {}", entry.lower, entry.upper);
         // Whether this bound is still valid
         entry.valid()
     }
@@ -229,20 +233,25 @@ impl LRATheory {
                         Nature::Eq => Term::eq_(t.clone(), Term::val(Value::Rat(v.clone()))),
                         Nature::Term => t.clone(),
                     };
+                    // eprintln!("{j} <- {}", &tl[ix].val);
                     if &t != &tl[ix].term {
                         let val = tl[ix].val.clone();
-                        iter.add_justified(used, j.clone(), val);
-                        let valid =
-                            domains.update(iter.trail().index_of(&j).unwrap(), t.clone(), n, v);
+                        iter.add_justified(used, j.clone(), val.clone());
 
-                        if !valid {
-                            let Pick::Fm(tj, tk) = domains.get(&t).clone().pick() else { panic!("should have conflict") };
-                            return ExtendResult::Conflict(vec![tj, tk]);
+                        if val == Value::true_() {
+                            let valid =
+                                domains.update(iter.trail().index_of(&j).unwrap(), t.clone(), n, v);
+
+                            if !valid {
+                                let Pick::Fm(tj, tk) = domains.get(&t).clone().pick() else { panic!("should have conflict") };
+                                return ExtendResult::Conflict(vec![tj, tk]);
+                            }
                         }
                     }
                 }
                 Answer::Val(v) => {
                     if &v != &tl[ix].val {
+                        // eprintln!("CONFLICT 2");
                         return ExtendResult::Conflict(used);
                     }
                 }
