@@ -1,6 +1,8 @@
 use std::{fmt::Display, unreachable};
 
-use creusot_contracts::{ensures, trusted, open, ghost, logic, requires, DeepModel, PartialEq, Clone};
+use creusot_contracts::{
+    ensures, ghost, logic, open, requires, trusted, Clone, DeepModel, PartialEq,
+};
 
 use num_rational::BigRational;
 
@@ -197,7 +199,7 @@ impl DeepModel for Value {
     #[ghost]
     #[open(self)]
     fn deep_model(self) -> Self::DeepModelTy {
-       absurd
+        absurd
     }
 }
 

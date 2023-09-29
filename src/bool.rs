@@ -1,13 +1,13 @@
 use creusot_contracts::{vec, *};
 use log::info;
 
+#[cfg(creusot)]
+use crate::theory;
 use crate::{
     concrete::ExtendResult,
     term::{Sort, Term, Value},
     trail::{Assignment, Trail, TrailIndex},
 };
-#[cfg(creusot)]
-use crate::theory;
 
 pub struct BoolTheory;
 
@@ -15,7 +15,7 @@ impl BoolTheory {
     // Extend the trail with 1 or more deductions, or backtrack to a non-conflicting state
     // Returns `Fail` if we encounter a conflict at level 0
     // Return Satisfied if the trail is satisfactory to us
-    #[trusted]
+    // #[trusted]
     #[maintains((mut tl).invariant())]
     #[ensures(match result {
         ExtendResult::Satisfied => true,
@@ -66,7 +66,7 @@ impl BoolTheory {
         return ExtendResult::Satisfied;
     }
 
-    #[trusted]
+    // #[trusted]
     fn is_relevant(&self, a: &Assignment) -> bool {
         match &a.term {
             Term::Variable(_, Sort::Boolean) => true,
@@ -87,29 +87,53 @@ impl BoolTheory {
     //  - Free Var list is non-empty, all not on trail
     //  - If ok: there is a justified entailment between the justification and tm <- value?
     // #[ensures(forall<just : _, val: _> result == Ok((just, val)) ==> forall<m : _> m.satisfy_set(just@) ==> m.satisfies((tm@, val@)))]
-    #[trusted]
+    // #[trusted]
     fn eval(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<TrailIndex>, Value), Term> {
+        if let Some(x) = tl.index_of(tm) {
+            return Ok((vec![x], tl[x].val.clone()));
+        };
         match tm {
             Term::Eq(l, r) if r.sort() == Sort::Boolean => {
-                let (mut j1, v1) = self.eval_memo(tl, l)?;
-                let (j2, v2) = self.eval_memo(tl, r)?;
+                let (mut j1, v1) = match self.eval(tl, l) {
+                    Ok(x) => x,
+                    Err(e) => return Err(e),
+                };
+                let (j2, v2) = match self.eval(tl, r) {
+                    Ok(x) => x,
+                    Err(e) => return Err(e),
+                };
                 j1.extend(j2);
                 return Ok((j1, Value::Bool(v1 == v2)));
             }
             Term::Conj(l, r) => {
-                let (mut j1, v1) = self.eval_memo(tl, l)?;
-                let (j2, v2) = self.eval_memo(tl, r)?;
+                let (mut j1, v1) = match self.eval(tl, l) {
+                    Ok(x) => x,
+                    Err(e) => return Err(e),
+                };
+                let (j2, v2) = match self.eval(tl, r) {
+                    Ok(x) => x,
+                    Err(e) => return Err(e),
+                };
                 j1.extend(j2);
                 return Ok((j1, Value::Bool(v1.bool() && v2.bool())));
             }
             Term::Disj(l, r) => {
-                let (mut j1, v1) = self.eval_memo(tl, l)?;
-                let (j2, v2) = self.eval_memo(tl, r)?;
+                let (mut j1, v1) = match self.eval(tl, l) {
+                    Ok(x) => x,
+                    Err(e) => return Err(e),
+                };
+                let (j2, v2) = match self.eval(tl, r) {
+                    Ok(x) => x,
+                    Err(e) => return Err(e),
+                };
                 j1.extend(j2);
                 return Ok((j1, Value::Bool(v1.bool() || v2.bool())));
             }
             Term::Neg(t) => {
-                let (j, v) = self.eval_memo(tl, t)?;
+                let (j, v) = match self.eval(tl, t) {
+                    Ok(x) => x,
+                    Err(e) => return Err(e),
+                };
                 Ok((j, v.negate()))
             }
             Term::Value(v @ Value::Bool(_)) => return Ok((Vec::new(), v.clone())),
@@ -118,13 +142,5 @@ impl BoolTheory {
                 None => Err(a.clone()),
             },
         }
-    }
-
-    #[trusted]
-    fn eval_memo(&mut self, tl: &Trail, tm: &Term) -> Result<(Vec<TrailIndex>, Value), Term> {
-        if let Some(x) = tl.index_of(tm) {
-            return Ok((vec![x], tl[x].val.clone()));
-        }
-        self.eval(tl, tm)
     }
 }

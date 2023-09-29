@@ -12,6 +12,7 @@ struct Generator {
     bool_vars: usize,
 }
 
+#[cfg(not(creusot))]
 #[derive(Parser, Debug)]
 struct Args {
     #[arg(long, default_value_t = 10)]
@@ -27,6 +28,7 @@ struct Args {
 // Generate an SMTLIB term of up to the given depth and sort
 // The allowed operators are `and`, `or`, `=`, `<`, and `plus`.
 // Variables are named x0, x1, ..., xn, their sort is stored at the corresponding index in the vector `vars`
+#[cfg(not(creusot))]
 fn generate_term(vars: &Generator, depth: usize, sort: Sort) -> String {
     let mut rng = thread_rng();
     if depth == 0 {
@@ -99,6 +101,7 @@ fn generate_term(vars: &Generator, depth: usize, sort: Sort) -> String {
     }
 }
 
+#[cfg(not(creusot))]
 fn generate_var(vars: &Generator, sort: Sort) -> String {
     let mut rng = thread_rng();
 
@@ -108,6 +111,7 @@ fn generate_var(vars: &Generator, sort: Sort) -> String {
     }
 }
 
+#[cfg(not(creusot))]
 fn generate_const(sort: Sort) -> String {
     let mut rng = thread_rng();
     if sort == Sort::Bool {
@@ -121,6 +125,10 @@ fn generate_const(sort: Sort) -> String {
     }
 }
 
+#[cfg(creusot)]
+fn main() {}
+
+#[cfg(not(creusot))]
 fn main() {
     let args = Args::parse();
     // Generate random SMTLIB instances from QF_LRA

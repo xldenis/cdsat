@@ -8,6 +8,9 @@ use crate::term::{Term, Value};
 use crate::{bool::*, lra::*, theory, trail::*};
 use creusot_contracts::{logic::*, std::*, PartialEq, *};
 use log::info;
+
+use crate::ghost::Ghost;
+
 pub struct Solver {
     bool_th: BoolTheory,
     bool_state: TheoryState,
@@ -48,7 +51,7 @@ impl Solver {
     #[ensures((^self).dec_acc(^trail))]
     #[ensures(trail.ghost.impls(*(^trail).ghost))]
     fn extend_next(&mut self, trail: &mut Trail) -> Option<Vec<TrailIndex>> {
-        let old: Ghost<_> = gh! { trail };
+        let old: Ghost![_] = gh! { trail };
         use TheoryState::*;
         let (res, state) = if self.bool_state == Unknown {
             (self.bool_th.extend(trail), &mut self.bool_state)
@@ -110,11 +113,11 @@ impl Solver {
     #[maintains((mut trail).invariant())]
     #[ensures(trail.ghost.impls(*(^trail).ghost))]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
-        let old_trail: Ghost<_> = gh! { trail};
+        let old_trail: Ghost![_] = gh! { trail};
         #[invariant(old_trail.ghost.impls(*trail.ghost))]
         #[invariant(trail.invariant())]
         loop {
-            let iter_trail: Ghost<_> = gh! { trail };
+            let iter_trail: Ghost![_] = gh! { trail };
             // self.bool_state = TheoryState::Unknown;
             // self.lra_state = TheoryState::Unknown;
             #[invariant(iter_trail.ghost.impls(*trail.ghost))]
@@ -169,8 +172,8 @@ impl Solver {
         // info!("{s}");
 
         let mut heap: ConflictHeap = ConflictHeap::new();
-        let old_conflict: Ghost<Vec<TrailIndex>> = gh! { conflict };
-        let old_trail: Ghost<&mut Trail> = gh! { trail };
+        let old_conflict: Ghost![Vec<TrailIndex>] = gh! { conflict };
+        let old_trail: Ghost![&mut Trail] = gh! { trail };
 
         #[invariant(forall<a : _> produced.contains(a) ==> (heap@).contains(a))]
         #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
@@ -182,7 +185,7 @@ impl Solver {
             trail.abstract_justification(old_conflict.shallow_model())
                 == ix_to_abs(*trail, heap.shallow_model())
         );
-        let mut abs_cflct: Ghost<theory::Conflict> =
+        let mut abs_cflct: Ghost![theory::Conflict] =
             gh! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
 
         let max_ix = *heap.last().unwrap();
@@ -223,18 +226,18 @@ impl Solver {
             if a.is_bool() && ix.level() > rem_level {
                 proof_assert!(trail.index_logic(ix) == a.term_value());
                 // Somehow this should provide us the info we need to say that the justification won't change from restriction?
-                let _: Ghost<bool> = gh! { abs_cflct.backjump2(a.term_value()); true };
+                let _: Ghost![bool] = gh! { abs_cflct.backjump2(a.term_value()); true };
 
-                let oheap: Ghost<ConflictHeap> = gh! { heap };
+                let oheap: Ghost![ConflictHeap] = gh! { heap };
                 let just = heap.into_vec();
 
-                let _: Ghost<()> =
+                let _: Ghost![()] =
                     gh!(seq_to_set(*trail, just.shallow_model(), oheap.shallow_model()));
 
-                let old: Ghost<FSet<(theory::Term, theory::Value)>> =
+                let old: Ghost![FSet<(theory::Term, theory::Value)>] =
                     gh! { trail.abstract_justification(just.shallow_model()) };
                 trail.restrict(rem_level);
-                let new: Ghost<FSet<(theory::Term, theory::Value)>> =
+                let new: Ghost![FSet<(theory::Term, theory::Value)>] =
                     gh! { trail.abstract_justification(just.shallow_model()) };
 
                 proof_assert!(new.ext_eq(*old));
@@ -301,13 +304,12 @@ impl Solver {
             #[allow(unused)]
             abs_cflct = gh! { abs_cflct.resolvef(a.term_value()) };
 
-            let old_heap: Ghost<ConflictHeap> = gh! { heap };
+            let old_heap: Ghost![ConflictHeap] = gh! { heap };
 
             proof_assert!(
                 forall<i : _ > 0 <= i && i < just@.len() ==> abs_cflct.1.contains(trail.index_logic(just@[i]))
             );
             proof_assert!(ix_to_abs(*trail, heap.shallow_model()).union(trail.abstract_justification(just@)) == abs_cflct.1);
-
 
             // let mut s = String::from("resolve ");
             // for i in &just {
@@ -323,7 +325,7 @@ impl Solver {
             #[invariant(ix_to_abs(*trail, heap@) == ix_to_abs(*trail, old_heap@).union(trail.abstract_justification(*produced)))]
             // Need invariant saying we only add things
             for a in just {
-                let _: Ghost<()> = gh!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
+                let _: Ghost![()] = gh!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
                 proof_assert!(abstract_justification_insert(*trail, a, just@) == ());
                 proof_assert!(a.level_log() <= ix.level_log());
                 proof_assert!(abs_cflct.1.contains(trail.index_logic(a)));

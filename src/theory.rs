@@ -823,7 +823,11 @@ impl Normal {
     #[ensures(self.0.impls(result.0))]
     pub fn deducef(self, just: FSet<(Term, Value)>, t: Term, v: Value) -> Self {
         self.0.count_bounds();
-        Normal(Trail::Assign(Assign::Justified(just, t, v), self.0.set_level(just), Box::new(self.0)))
+        Normal(Trail::Assign(
+            Assign::Justified(just, t, v),
+            self.0.set_level(just),
+            Box::new(self.0),
+        ))
     }
 
     // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0

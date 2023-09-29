@@ -7,6 +7,9 @@
 pub mod bool;
 pub mod concrete;
 
+#[macro_use]
+pub mod ghost;
+
 #[cfg(not(creusot))]
 pub mod lra;
 
@@ -16,12 +19,11 @@ pub mod trail;
 pub mod lra {
     pub struct LRATheory;
 
-    use crate::concrete::ExtendResult;
-    use crate::trail::Trail;
+    use crate::{concrete::ExtendResult, trail::Trail};
     use creusot_contracts::trusted;
     impl LRATheory {
         #[trusted]
-        pub fn extend(&mut self, _ : &mut Trail) -> ExtendResult {
+        pub fn extend(&mut self, _: &mut Trail) -> ExtendResult {
             todo!()
         }
     }
