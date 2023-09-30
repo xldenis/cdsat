@@ -3,9 +3,16 @@
 use creusot_contracts::trusted;
 use quote::ToTokens;
 use std::{path, process::Command};
-use syn::{visit_mut::VisitMut, *};
+use syn::*;
 
+#[cfg(creusot)]
 #[trusted]
+fn main() {
+    println!("cargo:rerun-if-changed=src/");
+    println!("cargo:rerun-if-changed=build.rs");
+}
+
+#[cfg(not(creusot))]
 fn main() -> std::io::Result<()> {
     println!("cargo:rerun-if-changed=src/");
     println!("cargo:rerun-if-changed=build.rs");
@@ -43,122 +50,131 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-struct Strip;
+#[cfg(not(creusot))]
+use builder::*;
 
-#[trusted]
-fn spec_attribute(attr: &Attribute) -> bool {
-    attr.path().is_ident("variant")
-        || attr.path().is_ident("requires")
-        || attr.path().is_ident("ensures")
-        || attr.path().is_ident("trusted")
-        || attr.path().is_ident("maintains")
-}
+#[cfg(not(creusot))]
+mod builder {
+    use creusot_contracts::trusted;
+    use syn::{visit_mut::VisitMut, *};
 
-#[trusted]
-fn loop_attribute(attr: &Attribute) -> bool {
-    attr.path().is_ident("variant") || attr.path().is_ident("invariant")
-}
+    struct Strip;
 
-impl VisitMut for Strip {
     #[trusted]
-    fn visit_item_fn_mut(&mut self, i: &mut ItemFn) {
-        i.attrs.retain(|attr| !spec_attribute(attr));
-
-        visit_mut::visit_item_fn_mut(self, i);
+    fn spec_attribute(attr: &Attribute) -> bool {
+        attr.path().is_ident("variant")
+            || attr.path().is_ident("requires")
+            || attr.path().is_ident("ensures")
+            || attr.path().is_ident("trusted")
+            || attr.path().is_ident("maintains")
     }
 
     #[trusted]
-    fn visit_impl_item_fn_mut(&mut self, i: &mut ImplItemFn) {
-        i.attrs.retain(|attr| !spec_attribute(attr));
-
-        visit_mut::visit_impl_item_fn_mut(self, i);
+    fn loop_attribute(attr: &Attribute) -> bool {
+        attr.path().is_ident("variant") || attr.path().is_ident("invariant")
     }
 
-    #[trusted]
-    fn visit_file_mut(&mut self, i: &mut File) {
-        i.items.retain_mut(|item| match item {
-            Item::Fn(f) => !f.attrs.iter().any(|attr| {
-                attr.path().is_ident("predicate")
-                    || attr.path().is_ident("logic")
-                    || attr.path().is_ident("ghost")
-            }),
-            _ => true,
-        });
-        visit_mut::visit_file_mut(self, i)
-    }
+    impl VisitMut for Strip {
+        #[trusted]
+        fn visit_item_fn_mut(&mut self, i: &mut ItemFn) {
+            i.attrs.retain(|attr| !spec_attribute(attr));
 
-    #[trusted]
-    fn visit_item_impl_mut(&mut self, i: &mut ItemImpl) {
-        i.items.retain_mut(|item| match item {
-            ImplItem::Fn(f) => !f.attrs.iter().any(|attr| {
-                attr.path().is_ident("predicate")
-                    || attr.path().is_ident("logic")
-                    || attr.path().is_ident("ghost")
-            }),
-            _ => true,
-        });
-        visit_mut::visit_item_impl_mut(self, i)
-    }
+            visit_mut::visit_item_fn_mut(self, i);
+        }
 
-    #[trusted]
-    fn visit_expr_while_mut(&mut self, i: &mut ExprWhile) {
-        i.attrs.retain(|attr| !loop_attribute(attr));
+        #[trusted]
+        fn visit_impl_item_fn_mut(&mut self, i: &mut ImplItemFn) {
+            i.attrs.retain(|attr| !spec_attribute(attr));
 
-        visit_mut::visit_expr_while_mut(self, i);
-    }
+            visit_mut::visit_impl_item_fn_mut(self, i);
+        }
 
-    #[trusted]
-    fn visit_expr_for_loop_mut(&mut self, i: &mut ExprForLoop) {
-        i.attrs.retain(|attr| !loop_attribute(attr));
-
-        visit_mut::visit_expr_for_loop_mut(self, i);
-    }
-    #[trusted]
-    fn visit_expr_loop_mut(&mut self, i: &mut ExprLoop) {
-        i.attrs.retain(|attr| !loop_attribute(attr));
-
-        visit_mut::visit_expr_loop_mut(self, i);
-    }
-
-    #[trusted]
-    fn visit_block_mut(&mut self, i: &mut Block) {
-        // strip out any calls to `proof_assert!`
-        // and any calls to `gh!` in assignments or variable declarations
-        i.stmts.retain_mut(|stmt| match stmt {
-            Stmt::Expr(expr, _) => match expr {
-                Expr::Assign(a) => {
-                    if let Expr::Macro(mac) = &*a.right {
-                        !mac.mac.path.is_ident("gh")
-                    } else {
-                        true
-                    }
-                }
-                Expr::Macro(mac) => !mac.mac.path.is_ident("gh"),
+        #[trusted]
+        fn visit_file_mut(&mut self, i: &mut File) {
+            i.items.retain_mut(|item| match item {
+                Item::Fn(f) => !f.attrs.iter().any(|attr| {
+                    attr.path().is_ident("predicate")
+                        || attr.path().is_ident("logic")
+                        || attr.path().is_ident("ghost")
+                }),
                 _ => true,
-            },
-            Stmt::Local(l) => {
-                if let Some(init) = &mut l.init {
-                    if let Expr::Macro(mac) = &*init.expr {
-                        !mac.mac.path.is_ident("gh")
+            });
+            visit_mut::visit_file_mut(self, i)
+        }
+
+        #[trusted]
+        fn visit_item_impl_mut(&mut self, i: &mut ItemImpl) {
+            i.items.retain_mut(|item| match item {
+                ImplItem::Fn(f) => !f.attrs.iter().any(|attr| {
+                    attr.path().is_ident("predicate")
+                        || attr.path().is_ident("logic")
+                        || attr.path().is_ident("ghost")
+                }),
+                _ => true,
+            });
+            visit_mut::visit_item_impl_mut(self, i)
+        }
+
+        #[trusted]
+        fn visit_expr_while_mut(&mut self, i: &mut ExprWhile) {
+            i.attrs.retain(|attr| !loop_attribute(attr));
+
+            visit_mut::visit_expr_while_mut(self, i);
+        }
+
+        #[trusted]
+        fn visit_expr_for_loop_mut(&mut self, i: &mut ExprForLoop) {
+            i.attrs.retain(|attr| !loop_attribute(attr));
+
+            visit_mut::visit_expr_for_loop_mut(self, i);
+        }
+        #[trusted]
+        fn visit_expr_loop_mut(&mut self, i: &mut ExprLoop) {
+            i.attrs.retain(|attr| !loop_attribute(attr));
+
+            visit_mut::visit_expr_loop_mut(self, i);
+        }
+
+        #[trusted]
+        fn visit_block_mut(&mut self, i: &mut Block) {
+            // strip out any calls to `proof_assert!`
+            // and any calls to `gh!` in assignments or variable declarations
+            i.stmts.retain_mut(|stmt| match stmt {
+                Stmt::Expr(expr, _) => match expr {
+                    Expr::Assign(a) => {
+                        if let Expr::Macro(mac) = &*a.right {
+                            !mac.mac.path.is_ident("gh")
+                        } else {
+                            true
+                        }
+                    }
+                    Expr::Macro(mac) => !mac.mac.path.is_ident("gh"),
+                    _ => true,
+                },
+                Stmt::Local(l) => {
+                    if let Some(init) = &mut l.init {
+                        if let Expr::Macro(mac) = &*init.expr {
+                            !mac.mac.path.is_ident("gh")
+                        } else {
+                            true
+                        }
                     } else {
                         true
                     }
-                } else {
-                    true
                 }
-            }
-            Stmt::Macro(mac) => {
-                !mac.mac.path.is_ident("proof_assert") || !mac.mac.path.is_ident("gh")
-            }
-            _ => true,
-        });
+                Stmt::Macro(mac) => {
+                    !mac.mac.path.is_ident("proof_assert") || !mac.mac.path.is_ident("gh")
+                }
+                _ => true,
+            });
 
-        visit_mut::visit_block_mut(self, i);
+            visit_mut::visit_block_mut(self, i);
+        }
     }
-}
 
-#[trusted]
-fn strip_file(f: &mut File) {
-    // Remove any items that have the `#[predicate]` or `#[ghost]`  attribute
-    Strip.visit_file_mut(f)
+    #[trusted]
+    fn strip_file(f: &mut File) {
+        // Remove any items that have the `#[predicate]` or `#[ghost]`  attribute
+        Strip.visit_file_mut(f)
+    }
 }

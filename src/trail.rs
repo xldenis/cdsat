@@ -243,6 +243,7 @@ impl Trail {
             // && pearlite! { forall<l : _> 0 <= l && l < (self.assignments@).len() ==> (@(self.assignments@)[l]).unique() }
             && pearlite! { forall<i : TrailIndex, j : TrailIndex> self.contains(i) ==> self.contains(j) ==> i != j ==> self.index_logic(i) != self.index_logic(j) }
             && self.justified_is_justified()
+            && (forall< ix : _> self.contains(ix) ==> self[ix].0.well_sorted())
         }
     }
 
@@ -351,6 +352,16 @@ impl Trail {
     }
 
     #[ghost]
+    #[open(self)]
+    #[variant(just.len())]
+    #[requires(forall<i : _> 0 <= i && i < just2.len() ==> self.contains(just2[i]))]
+    #[requires(forall<ix : _> just.contains(ix) ==> just2.contains(ix))]
+    #[ensures(forall<tv : _> self.abstract_justification(just).contains(tv) ==> self.abstract_justification(just2).contains(tv))]
+    pub fn abs_just_extend(self, just: Seq<TrailIndex>, just2: Seq<TrailIndex>) {
+
+    }
+
+    #[ghost]
     #[variant(just.len())]
     #[requires(self.contains(elem))]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
@@ -391,6 +402,10 @@ impl Trail {
         self.assignments.push(vec![assign]);
     }
 
+    #[ensures(match result {
+        Some(x) => self.contains(x) && self.index_logic(x).0 == a@,
+        None => forall<ix : _> self.contains(ix) ==> self[ix].0 != a@
+    })]
     pub(crate) fn index_of(&self, a: &Term) -> Option<TrailIndex> {
         let mut level = 0;
         #[invariant(level@ == produced.len())]
@@ -433,7 +448,7 @@ impl Trail {
     #[requires((val@).is_bool())]
     #[requires(forall<i : _> into_vec@.contains(i) ==> self.contains(i))]
     #[requires(self.ghost.acceptable(term@, val@))]
-    #[requires(forall<m : theory::Model> m.invariant() ==> m.satisfy_set(self.abstract_justification(into_vec@)) ==> m.satisfies((term@, val@)))]
+    #[requires(forall<m : theory::Model>  m.satisfy_set(self.abstract_justification(into_vec@)) ==> m.satisfies((term@, val@)))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
         // info!("{{ {:?} }} |- {} <- {}", into_vec, term, val);
@@ -562,6 +577,7 @@ impl Trail {
         }
     }
 
+    #[ensures(result.trail == self)]
     pub(crate) fn indices(&mut self) -> IndexIterator<'_> {
         IndexIterator { trail: self, cur_ix: TrailIndex(0, 0) }
     }
@@ -570,8 +586,17 @@ impl Trail {
 /// Offers an iterator over all indices in the trail, while allowing new justified decisions to be added
 ///
 pub struct IndexIterator<'a> {
-    trail: &'a mut Trail,
+    pub(crate) trail: &'a mut Trail,
     cur_ix: TrailIndex,
+}
+
+#[trusted]
+impl<'a> creusot_contracts::Resolve for IndexIterator<'a> {
+    #[open]
+    #[predicate]
+    fn resolve(self) -> bool {
+        self.trail.resolve()
+    }
 }
 
 impl IndexIterator<'_> {
@@ -582,12 +607,18 @@ impl IndexIterator<'_> {
         }
     }
 
+    #[ensures(*result == *self.trail)]
     pub fn trail(&self) -> &Trail {
         &self.trail
     }
 
     // Not an actual iterator impl because it crashes...
     #[trusted]
+    #[ensures((^self).trail == (*self).trail )]
+    #[ensures(match result {
+        Some(ix) => self.trail.contains(ix),
+        None => true,
+    })]
     pub fn next(&mut self) -> Option<TrailIndex> {
         if self.cur_ix.0 >= self.trail.assignments.len() {
             return None;

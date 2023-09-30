@@ -1,5 +1,6 @@
 #![cfg_attr(not(creusot), feature(register_tool), register_tool(creusot))]
 #![cfg_attr(not(creusot), feature(stmt_expr_attributes, proc_macro_hygiene))]
+#![feature(min_specialization)]
 #![allow(dead_code, unused_variables)]
 #![feature(never_type, let_chains)]
 #![allow(unused_imports)]

@@ -45,6 +45,7 @@ pub enum Term {
 }
 
 impl Term {
+    #[ensures(result@ == self@.sort())]
     pub(crate) fn sort(&self) -> Sort {
         match self {
             Term::Variable(_, s) => *s,
@@ -166,6 +167,7 @@ impl creusot_contracts::DeepModel for Term {
     #[open]
     #[ghost]
     fn deep_model(self) -> Self::DeepModelTy {
+        use creusot_contracts::num_rational::Real;
         match self {
             Term::Variable(v, s) => {
                 theory::Term::Variable(theory::Var(v.deep_model(), s.deep_model()))
@@ -180,7 +182,22 @@ impl creusot_contracts::DeepModel for Term {
             Term::Conj(l, r) => {
                 theory::Term::Conj(Box::new((*l).deep_model()), Box::new((*r).deep_model()))
             }
-            _ => theory::Term::Value(theory::Value::Bool(true)),
+            Term::Disj(l, r) => {
+                theory::Term::Disj(Box::new((*l).deep_model()), Box::new((*r).deep_model()))
+            }
+            Term::Neg(t) => theory::Term::Neg(Box::new((*t).deep_model())),
+            Term::Impl(l, r) => theory::Term::Disj(
+                Box::new(theory::Term::Neg(Box::new((*l).deep_model()))),
+                Box::new((*r).deep_model()),
+            ),
+            // WRONG
+            Term::Times(l, r) => {
+                theory::Term::Plus(Box::new(theory::Term::Value(theory::Value::Rat(Real::from_int(l.deep_model())))), Box::new((*r).deep_model()))
+            }
+            Term::Lt(l, r) => {
+                theory::Term::Eq(Box::new((*l).deep_model()), Box::new((*r).deep_model()))
+            }
+            // _ => theory::Term::Value(theory::Value::Bool(true)),
         }
     }
 }
@@ -195,11 +212,13 @@ pub enum Value {
 #[cfg(creusot)]
 impl DeepModel for Value {
     type DeepModelTy = theory::Value;
-    #[trusted]
     #[ghost]
-    #[open(self)]
+    #[open]
     fn deep_model(self) -> Self::DeepModelTy {
-        absurd
+        match self {
+            crate::Value::Bool(b) => theory::Value::Bool(b),
+            crate::Value::Rat(br) => theory::Value::Rat(br.deep_model()),
+        }
     }
 }
 
@@ -215,13 +234,16 @@ impl creusot_contracts::ShallowModel for Value {
 }
 
 impl Value {
+    #[ensures(result@ == self@.sort())]
     pub fn sort(&self) -> Sort {
         match self {
             Value::Bool(_) => Sort::Boolean,
             Value::Rat(_) => Sort::Rational,
         }
     }
+
     #[requires(self@.is_bool())]
+    #[ensures(*self == Value::Bool(result))]
     pub fn bool(&self) -> bool {
         match self {
             Value::Bool(b) => *b,

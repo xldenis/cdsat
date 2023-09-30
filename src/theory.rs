@@ -1,11 +1,14 @@
-use creusot_contracts::{logic::*, *};
-
+use creusot_contracts::{logic::*, *, invariant::Invariant};
+use creusot_contracts::num_rational::Real;
 pub enum Term {
     Variable(Var),
     Value(Value),
     Plus(Box<Term>, Box<Term>),
     Eq(Box<Term>, Box<Term>),
     Conj(Box<Term>, Box<Term>),
+    Disj(Box<Term>, Box<Term>),
+    Neg(Box<Term>),
+
     // TODO: complete others
 }
 
@@ -19,6 +22,37 @@ impl Term {
             Term::Plus(_, _) => Sort::Rational,
             Term::Eq(_, _) => Sort::Boolean,
             Term::Conj(_, _) => Sort::Boolean,
+            Term::Neg(_) => Sort::Boolean,
+            Term::Disj(_, _) => Sort::Boolean,
+        }
+    }
+
+    #[open]
+    #[ghost]
+    pub fn well_sorted(self) -> bool {
+        match self {
+            Term::Variable(v) => true,
+            Term::Value(v) => true,
+            Term::Plus(l, r) => {
+                l.well_sorted()
+                    && r.well_sorted()
+                    && l.sort() == r.sort()
+                    && r.sort() == Sort::Rational
+            }
+            Term::Eq(l, r) => l.well_sorted() && r.well_sorted() && l.sort() == r.sort(),
+            Term::Conj(l, r) => {
+                l.well_sorted()
+                    && r.well_sorted()
+                    && l.sort() == r.sort()
+                    && r.sort() == Sort::Boolean
+            }
+            Term::Disj(l, r) => {
+                l.well_sorted()
+                    && r.well_sorted()
+                    && l.sort() == r.sort()
+                    && r.sort() == Sort::Boolean
+            }
+            Term::Neg(t) => t.well_sorted() && t.sort() == Sort::Boolean
         }
     }
 
@@ -36,7 +70,7 @@ pub enum Sort {
 
 pub struct Var(pub Int, pub Sort);
 
-pub type Rational = Int;
+pub type Rational = Real;
 
 pub enum Value {
     Bool(bool),
@@ -109,7 +143,7 @@ impl Assign {
     pub fn justified_sound(self) -> bool {
         match self {
             Assign::Justified(just, t, val) => pearlite! {
-              forall<m : Model> m.invariant() ==> m.satisfy_set(just) ==> m.satisfies((t, val))
+              forall<m : Model> m.satisfy_set(just) ==> m.satisfies((t, val))
             },
             _ => true,
         }
@@ -118,16 +152,18 @@ impl Assign {
 
 pub struct Model(Mapping<Var, Value>);
 
-impl Model {
-    // Models are 'well-sorted'
+impl Invariant for Model {
     #[open]
     #[predicate]
-    pub fn invariant(self) -> bool {
+    fn invariant(self) -> bool {
         pearlite! {
             forall<k : _, v : _> self.0.get(k) == v ==> k.1 == v.sort()
         }
     }
 
+}
+
+impl Model {
     #[open]
     #[ghost]
     #[ensures(self.invariant() ==> result.sort() == t.sort())]
@@ -136,14 +172,22 @@ impl Model {
             Term::Variable(v) => self.0.get(v),
             Term::Value(v) => v,
             Term::Plus(l, r) => match (self.interp(*l), self.interp(*r)) {
-                (Value::Rat(r1), Value::Rat(r2)) => Value::Rat(r1 + r2), // TODO: Define Rationals
-                _ => Value::Rat(-1),
+                (Value::Rat(r1), Value::Rat(r2)) => Value::Rat(r1), // TODO: FIx
+                _ => Value::Rat(Real::from_int(-1)),
             },
             Term::Conj(l, r) => match (self.interp(*l), self.interp(*r)) {
-                (Value::Bool(b1), Value::Bool(b2)) => Value::Bool(b1 && b2), // TODO: Define Rationals
+                (Value::Bool(b1), Value::Bool(b2)) => Value::Bool(b1 && b2),
+                _ => Value::Bool(false),
+            },
+            Term::Disj(l, r) => match (self.interp(*l), self.interp(*r)) {
+                (Value::Bool(b1), Value::Bool(b2)) => Value::Bool(b1 || b2),
                 _ => Value::Bool(false),
             },
             Term::Eq(l, r) => Value::Bool(self.interp(*l) == self.interp(*r)),
+            Term::Neg(t) => match self.interp(*t) {
+                Value::Bool(b) => Value::Bool(!b),
+                _ => Value::Bool(false),
+            }
         }
     }
 
@@ -191,6 +235,22 @@ impl Model {
             _ => (),
         }
     }
+
+    #[ghost]
+    #[open(self)]
+    #[requires(self.satisfies((t, v)))]
+    #[requires(self.satisfies((t, w)))]
+    #[requires(v != w)]
+    #[ensures(false)]
+    pub fn consistent(self, t : Term, v : Value, w: Value) {}
+
+
+    #[ghost]
+    #[open(self)]
+    #[requires(forall<ix : _> set1.contains(ix) ==> set2.contains(ix))]
+    #[requires(self.satisfy_set(set1))]
+    #[ensures(self.satisfy_set(set2))]
+    pub fn subset(self, other: Self, set1 : FSet<(Term, Value)>, set2 : FSet<(Term, Value)>) {}
 }
 
 pub enum Trail {
@@ -391,7 +451,7 @@ impl Trail {
     #[requires(forall<a : _> just.contains(a) ==> self.contains(a))]
     #[requires(self.acceptable(t, v))]
     #[requires(v.sort() == Sort::Boolean)]
-    #[requires(forall<m : Model> m.invariant() ==> m.satisfy_set(just) ==> m.satisfies((t, v)))]
+    #[requires(forall<m : Model> m.satisfy_set(just) ==> m.satisfies((t, v)))]
     #[ensures(forall<a : _> self.contains(a) ==> self.find(a) == result.find(a))]
     #[ensures(result.contains((t,v)))]
     #[ensures(result.justification((t,v)) == just)]
@@ -625,7 +685,7 @@ impl Trail {
     #[open]
     // #[ensures(self.restrict(0).unsat() ==> result)]
     pub fn unsat(self) -> bool {
-        pearlite! { forall<m : Model> m.invariant() ==> self.restrict(0).satisfied_by(m) ==> false }
+        pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> false }
     }
 
     #[open]
@@ -638,7 +698,7 @@ impl Trail {
     #[open]
     #[ensures(result ==> rhs.unsat() ==> self.unsat())]
     pub fn impls(self, rhs: Self) -> bool {
-        pearlite! { forall<m : Model> m.invariant() ==> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
+        pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
     }
 
     // Lemmas
@@ -836,7 +896,7 @@ impl Normal {
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[requires(just.2.is_bool())]
-    #[requires(  forall<m : Model> m.invariant() ==> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2)))]
+    #[requires(  forall<m : Model> m.satisfy_set(just.0) ==> m.satisfies((just.1, just.2)))]
     #[ensures(result ==> self.0.unsat())]
     pub fn fail(self, just: (FSet<(Term, Value)>, Term, Value)) -> bool {
         pearlite! { {
@@ -882,7 +942,7 @@ impl Normal {
           self.0.contains(not_l) &&
           (forall<j : _> just.0.contains(j) ==> self.0.contains(j) ) &&
           !self.0.contains((just.1, just.2)) &&
-          (forall<m : Model> m.invariant() ==> m.entails(just.0, (just.1, just.2))) &&
+          (forall<m : Model> m.entails(just.0, (just.1, just.2))) &&
 
           self.0.set_level(conflict) > 0 &&
           tgt == Conflict(self.0, conflict)
@@ -921,7 +981,7 @@ impl Conflict {
     #[open]
     #[why3::attr = "inline:trivial"]
     pub fn sound(self) -> bool {
-        pearlite! { self.0.sound() && (forall<m : Model> m.invariant() ==> m.satisfy_set(self.1) ==> false) }
+        pearlite! { self.0.sound() && (forall<m : Model> m.satisfy_set(self.1) ==> false) }
     }
 
     #[ghost]
@@ -936,7 +996,7 @@ impl Conflict {
     #[requires(self.sound())]
     #[requires(self.1.contains(ass))]
     #[requires(ass.0.is_bool() && ass.1.is_bool())]
-    #[ensures(forall<m : Model> m.invariant() ==> m.satisfy_set(self.1.remove(ass)) ==> m.satisfies((ass.0, ass.1.negate())))]
+    #[ensures(forall<m : Model> m.satisfy_set(self.1.remove(ass)) ==> m.satisfies((ass.0, ass.1.negate())))]
     pub fn learn_justified(self, ass: (Term, Value)) {
         let _ = Model::lemma;
         // Model(Mapping::cst(Value::Bool(false))).lemma(ass.0, ass.1);
