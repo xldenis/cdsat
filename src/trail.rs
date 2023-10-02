@@ -358,7 +358,8 @@ impl Trail {
     #[requires(forall<ix : _> just.contains(ix) ==> just2.contains(ix))]
     #[ensures(forall<tv : _> self.abstract_justification(just).contains(tv) ==> self.abstract_justification(just2).contains(tv))]
     pub fn abs_just_extend(self, just: Seq<TrailIndex>, just2: Seq<TrailIndex>) {
-
+        proof_assert!(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]));
+        proof_assert!(forall<i : _> 0 <= i && i < just2.len() ==> self.contains(just2[i]));
     }
 
     #[ghost]
@@ -408,13 +409,19 @@ impl Trail {
     })]
     pub(crate) fn index_of(&self, a: &Term) -> Option<TrailIndex> {
         let mut level = 0;
+        #[invariant(forall<ix : TrailIndex > 0 <= ix.0@ && ix.0@ < produced.len() ==> self.contains(ix) ==> self[ix].0 != a@)]
         #[invariant(level@ == produced.len())]
         for assignments in &self.assignments {
             let mut offset = 0;
             #[invariant(offset@ == produced.len())]
+            #[invariant(forall<ix : TrailIndex > ix.0 == level ==> ix.1 < offset ==> self.contains(ix) ==> self[ix].0 != a@)]
             for asgn in assignments {
+                let ix = TrailIndex(level, offset);
+                proof_assert!(self.contains(ix));
                 if &asgn.term == a {
-                    return Some(TrailIndex(level, offset));
+                    proof_assert!(self[ix].0 == asgn.term@);
+                    proof_assert!(asgn.term@ == a@);
+                    return Some(ix);
                 }
                 offset += 1;
             }
@@ -613,7 +620,6 @@ impl IndexIterator<'_> {
     }
 
     // Not an actual iterator impl because it crashes...
-    #[trusted]
     #[ensures((^self).trail == (*self).trail )]
     #[ensures(match result {
         Some(ix) => self.trail.contains(ix),
