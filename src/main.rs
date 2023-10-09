@@ -97,6 +97,8 @@ fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) ->
                         Term::plus(arguments.remove(0), Term::times(-1, arguments.remove(0)))
                     }
                 }
+                ">=" => Term::geq(arguments.remove(0), arguments.remove(0)),
+                "<=" => Term::leq(arguments.remove(0), arguments.remove(0)),
                 "not" => Term::not(arguments.remove(0)),
                 s => unimplemented!("{s}"),
             };

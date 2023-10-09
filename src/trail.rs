@@ -189,6 +189,7 @@ pub struct Trail {
     pub assignments: Vec<Vec<Assignment>>,
     pub level: usize,
     pub ghost: Ghost![theory::Trail],
+    pub num_assign: usize,
 }
 
 #[cfg(not(creusot))]
@@ -211,7 +212,7 @@ impl Trail {
         let mut assignments = Vec::new();
         assignments.insert(0, input);
 
-        Trail { assignments, level: 0, ghost: gh! { theory::Trail::Empty } }
+        Trail { assignments, level: 0, ghost: gh! { theory::Trail::Empty }, num_assign: 0 }
     }
 
     #[ensures(result@ == (self.assignments@).len())]
@@ -396,11 +397,12 @@ impl Trail {
     #[ensures(self.ghost.impls(*(^self).ghost))]
     #[trusted] // for arithmetic
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
-        // info!("? {term} <- {val}");
+        info!("? {term} <- {val}");
         self.assignments.len();
         self.level += 1;
         let assign = Assignment { term, val, reason: Reason::Decision, level: self.level };
         self.assignments.push(vec![assign]);
+        self.num_assign += 1;
     }
 
     #[ensures(match result {
@@ -458,7 +460,7 @@ impl Trail {
     #[requires(forall<m : theory::Model>  m.satisfy_set(self.abstract_justification(into_vec@)) ==> m.satisfies((term@, val@)))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
-        // info!("{{ {:?} }} |- {} <- {}", into_vec, term, val);
+        info!("{{ {:?} }} |- {} <- {}", into_vec, term, val);
         let level = self.max_level(&into_vec);
 
         proof_assert!(level <= self.level);
@@ -488,6 +490,7 @@ impl Trail {
         proof_assert!(x@ > 0);
 
         self.assignments[level].push(a);
+        self.num_assign += 1;
 
         proof_assert!(!old.ghost.contains(self.index_logic(new_ix)));
         proof_assert!(forall<i : TrailIndex> old.contains(i) ==>

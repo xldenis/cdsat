@@ -104,6 +104,17 @@ impl Term {
         Term::Disj(Box::new(a), Box::new(b))
     }
 
+    pub fn leq(a: Self, b: Self) -> Self {
+        Term::Disj(
+            Box::new(Term::Lt(Box::new(a.clone()), Box::new(b.clone()))),
+            Box::new(Term::Eq(Box::new(a), Box::new(b))),
+        )
+    }
+
+    pub fn geq(a: Self, b: Self) -> Self {
+        Term::leq(b, a)
+    }
+
     pub fn lt(a: Self, b: Self) -> Self {
         Term::Lt(Box::new(a), Box::new(b))
     }
@@ -191,13 +202,13 @@ impl creusot_contracts::DeepModel for Term {
                 Box::new((*r).deep_model()),
             ),
             // WRONG
-            Term::Times(l, r) => {
-                theory::Term::Plus(Box::new(theory::Term::Value(theory::Value::Rat(Real::from_int(l.deep_model())))), Box::new((*r).deep_model()))
-            }
+            Term::Times(l, r) => theory::Term::Plus(
+                Box::new(theory::Term::Value(theory::Value::Rat(Real::from_int(l.deep_model())))),
+                Box::new((*r).deep_model()),
+            ),
             Term::Lt(l, r) => {
                 theory::Term::Eq(Box::new((*l).deep_model()), Box::new((*r).deep_model()))
-            }
-            // _ => theory::Term::Value(theory::Value::Bool(true)),
+            } // _ => theory::Term::Value(theory::Value::Bool(true)),
         }
     }
 }

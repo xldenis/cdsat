@@ -1,6 +1,6 @@
 use std::{collections::HashMap, eprintln, fmt::Display, ops::Neg, unimplemented, unreachable};
 
-use log::info;
+use log::{info, trace};
 use num::{BigInt, Signed};
 use num_rational::BigRational;
 
@@ -13,10 +13,17 @@ pub struct LRATheory;
 
 use creusot_contracts::{ensures, ghost, maintains, open, trusted, DeepModel};
 
-#[derive(Debug, Ord, Eq, Clone, PartialEq, PartialOrd, DeepModel)]
+#[derive(Debug, Default, Ord, Eq, Clone, PartialEq, PartialOrd, DeepModel)]
 enum Bound {
-    Exclusive { value: BigRational, just: TrailIndex },
-    Inclusive { value: BigRational, just: TrailIndex },
+    Exclusive {
+        value: BigRational,
+        just: TrailIndex,
+    },
+    Inclusive {
+        value: BigRational,
+        just: TrailIndex,
+    },
+    #[default]
     Missing,
 }
 
@@ -35,17 +42,35 @@ impl Display for Bound {
     #[trusted]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Bound::Exclusive { value, .. } => write!(f, "[{}", value),
-            Bound::Inclusive { value, .. } => write!(f, "({}", value),
+            Bound::Exclusive { value, .. } => write!(f, "({}", value),
+            Bound::Inclusive { value, .. } => write!(f, "[{}", value),
             Bound::Missing => write!(f, "--",),
         }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 struct Bounds {
     lower: Bound,
     upper: Bound,
+    excluded: HashMap<BigRational, TrailIndex>,
+}
+
+impl Display for Bounds {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.lower {
+            Bound::Exclusive { value, .. } => write!(f, "({}", value)?,
+            Bound::Inclusive { value, .. } => write!(f, "[{}", value)?,
+            Bound::Missing => write!(f, "--",)?,
+        };
+        write!(f, " , ")?;
+        match &self.upper {
+            Bound::Exclusive { value, .. } => write!(f, "{})", value)?,
+            Bound::Inclusive { value, .. } => write!(f, "{}]", value)?,
+            Bound::Missing => write!(f, "--",)?,
+        };
+        Ok(())
+    }
 }
 
 enum Pick {
@@ -75,10 +100,33 @@ impl Bounds {
         let new_bnd = match nature {
             Nature::Eq => Bound::Inclusive { value, just },
             Nature::Lt => Bound::Exclusive { value, just },
+            Nature::Le => Bound::Inclusive { value, just },
+            Nature::Ge => Bound::Inclusive { value, just },
+            Nature::Gt => Bound::Exclusive { value, just },
             _ => unreachable!(),
         };
-        if self.upper > new_bnd {
-            self.upper = new_bnd;
+        use Bound::*;
+        match (&self.upper, &new_bnd) {
+            (Bound::Missing, _) => self.upper = new_bnd,
+            (
+                Exclusive { value, .. },
+                Exclusive { value: value2, .. } | Inclusive { value: value2, .. },
+            ) => {
+                if value2 < value {
+                    self.upper = new_bnd
+                };
+            }
+            (Inclusive { value, .. }, Inclusive { value: value2, .. }) => {
+                if value2 < value {
+                    self.upper = new_bnd
+                };
+            }
+            (Inclusive { value, .. }, Exclusive { value: value2, .. }) => {
+                if value2 <= value {
+                    self.upper = new_bnd
+                };
+            }
+            (_, Missing) => {}
         }
     }
 
@@ -87,11 +135,38 @@ impl Bounds {
         let new_bnd = match nature {
             Nature::Eq => Bound::Inclusive { value, just },
             Nature::Lt => Bound::Exclusive { value, just },
+            Nature::Le => Bound::Inclusive { value, just },
+            Nature::Ge => Bound::Inclusive { value, just },
+            Nature::Gt => Bound::Exclusive { value, just },
             _ => unreachable!(),
         };
-        if self.lower > new_bnd {
-            self.lower = new_bnd;
+        use Bound::*;
+        match (&self.lower, &new_bnd) {
+            (Bound::Missing, _) => self.lower = new_bnd,
+            (
+                Exclusive { value, .. },
+                Exclusive { value: value2, .. } | Inclusive { value: value2, .. },
+            ) => {
+                if value < value2 {
+                    self.lower = new_bnd
+                };
+            }
+            (Inclusive { value, .. }, Inclusive { value: value2, .. }) => {
+                if value < value2 {
+                    self.lower = new_bnd
+                };
+            }
+            (Inclusive { value, .. }, Exclusive { value: value2, .. }) => {
+                if value <= value2 {
+                    self.lower = new_bnd
+                };
+            }
+            (_, Missing) => {}
         }
+    }
+
+    fn exclude(&mut self, just: TrailIndex, value: BigRational) {
+        self.excluded.entry(value).or_insert(just);
     }
 
     #[trusted]
@@ -109,14 +184,14 @@ impl Bounds {
                     }
                 }
                 (Exclusive { value, just }, Inclusive { value: v2, just: j2 }) => {
-                    if value > v2 {
+                    if value >= v2 {
                         Pick::Fm(just, j2)
                     } else {
                         Pick::Choice((value + v2) / BigInt::from(2))
                     }
                 }
                 (Inclusive { value, just }, Exclusive { value: v2, just: j2 }) => {
-                    if value > v2 {
+                    if value >= v2 {
                         Pick::Fm(just, j2)
                     } else {
                         Pick::Choice((value + v2) / BigInt::from(2))
@@ -147,7 +222,7 @@ impl Domain {
     #[cfg(not(creusot))]
     #[trusted]
     fn insert(&mut self, term: Term) {
-        self.0.entry(term).or_insert(Bounds { lower: Bound::Missing, upper: Bound::Missing });
+        self.0.entry(term).or_default();
     }
 
     #[cfg(creusot)]
@@ -159,22 +234,34 @@ impl Domain {
     #[cfg(not(creusot))]
     #[trusted]
     fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> bool {
-        let entry =
-            self.0.entry(term).or_insert(Bounds { lower: Bound::Missing, upper: Bound::Missing });
+        let entry = self.0.entry(term).or_default();
 
-        info!("bounds were now {} , {}", entry.lower, entry.upper);
-        if nature == Nature::Eq {
-            entry.update_upper(just, nature, value.clone());
-            entry.update_lower(just, nature, value);
-        } else {
-            if value.is_positive() {
-                entry.update_upper(just, nature, value)
-            } else {
-                entry.update_lower(just, nature, value.neg())
+        trace!("bounds were {}", entry);
+        match nature {
+            Nature::Neq => todo!(),
+            Nature::Eq => {
+                entry.update_upper(just, nature, value.clone());
+                entry.update_lower(just, nature, value);
             }
-        }
+            Nature::Lt | Nature::Le => {
+                // if value.is_negative() {
+                    entry.update_upper(just, nature, value)
+                // } else {
+                    // entry.update_lower(just, nature, value.neg())
+                // }
+            }
+            Nature::Gt | Nature::Ge => {
+                // eprintln!("updating {entry} {nature:?} {value}");
+                if !value.is_negative() {
+                    entry.update_lower(just, nature, value)
+                } else {
+                    entry.update_upper(just, nature, value.neg())
+                }
+            }
+            Nature::Term => todo!(),
+        };
 
-        info!("bounds are now {} , {}", entry.lower, entry.upper);
+        trace!("bounds are now {}", entry);
         // Whether this bound is still valid
         entry.valid()
     }
@@ -212,7 +299,7 @@ impl LRATheory {
         let mut iter = tl.indices();
 
         let mut domains: Domain = Domain(HashMap::new());
-        info!("LRA is performing inferences");
+        trace!("LRA is performing inferences");
         while let Some(ix) = iter.next() {
             let tl = iter.trail();
 
@@ -220,46 +307,66 @@ impl LRATheory {
                 continue;
             }
 
-            info!("LRA is considering {}", &tl[ix]);
+            trace!("LRA is considering {ix:?}, {}", &tl[ix]);
             let mut t = Summary::summarize(&tl[ix].term.clone());
 
             let mut used = t.eval(iter.trail());
             used.push(ix);
 
-            match t.term() {
-                Answer::Unit(t, n, v) => {
-                    let j = match n {
-                        Nature::Lt => Term::lt(t.clone(), Term::val(Value::Rat(v.clone()))),
-                        Nature::Eq => Term::eq_(t.clone(), Term::val(Value::Rat(v.clone()))),
-                        Nature::Term => t.clone(),
-                    };
+            let ans = t.term();
+            // info!("Eval said {:?}", ans);
+
+            match ans {
+                Answer::Unit(t, mut n, v) => {
+                    // let j = match n {
+                    //     Nature::Lt => Term::lt(t.clone(), Term::val(Value::Rat(v.clone()))),
+                    //     Nature::Eq => Term::eq_(t.clone(), Term::val(Value::Rat(v.clone()))),
+                    //     Nature::Term => t.clone(),
+                    //     Nature::Neq =>
+                    // };
                     // eprintln!("{j} <- {}", &tl[ix].val);
-                    if &t != &tl[ix].term {
-                        let val = tl[ix].val.clone();
-                        iter.add_justified(used, j.clone(), val.clone());
+                    // make it return the conflcit instead of a bool
+                    // if v == tl[ix].val {
+                    if tl[ix].val != Value::true_() {
+                        n = n.negate();
+                    };
 
-                        if val == Value::true_() {
-                            let valid =
-                                domains.update(iter.trail().index_of(&j).unwrap(), t.clone(), n, v);
+                    trace!("updating bounds of {t} {n:?} {v}");
+                    let valid = domains.update(ix, t.clone(), n, v);
+                    if !valid {
+                        let Pick::Fm(tj, tk) = domains.get(&t).clone().pick() else { panic!("should have conflict") };
+                        info!(
+                            "Found FM conflict in {} explained by {} and {}",
+                            tl[ix], tl[tj], tl[tk]
+                        );
+                        return ExtendResult::Conflict(vec![tj, tk]);
+                    };
+                    // }
 
-                            if !valid {
-                                let Pick::Fm(tj, tk) = domains.get(&t).clone().pick() else { panic!("should have conflict") };
-                                return ExtendResult::Conflict(vec![tj, tk]);
-                            }
-                        }
-                    }
+                    // if &t != &tl[ix].term {
+                    //     let val = tl[ix].val.clone();
+                    //     iter.add_justified(used, j.clone(), val.clone());
+
+                    //     if val == Value::true_() {
+                    //         let valid =
+                    //             domains.update(iter.trail().index_of(&j).unwrap(), t.clone(), n, v);
+
+                    //         if !valid {
+                    //         }
+                    //     }
+                    // }
                 }
                 Answer::Val(v) => {
                     if &v != &tl[ix].val {
-                        // eprintln!("CONFLICT 2");
+                        trace!("failed normalization of {} expected {} got {}", tl[ix].term, tl[ix].val, v);
                         return ExtendResult::Conflict(used);
                     }
                 }
                 Answer::Other(t, watches) => {
-                    if &t != &tl[ix].term {
-                        let v = tl[ix].val.clone();
-                        iter.add_justified(used, t, v);
-                    }
+                    // if &t != &tl[ix].term {
+                    //     let v = tl[ix].val.clone();
+                    //     iter.add_justified(used, t, v);
+                    // }
 
                     watches.into_iter().for_each(|w| {
                         domains.insert(w);
@@ -281,6 +388,8 @@ impl LRATheory {
             }
         }
 
+        info!("LRA is satisifed");
+
         return ExtendResult::Satisfied;
     }
 }
@@ -300,11 +409,31 @@ fn is_relevant(t: &Term) -> bool {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Nature {
+    Neq,
     Eq,
     Lt,
+    Le,
+    Gt,
+    Ge,
     Term,
 }
 
+impl Nature {
+    // "Negate" the head of this clause ie < -> >=, but do nothing for Term
+    fn negate(self) -> Self {
+        match self {
+            Nature::Neq => Nature::Eq,
+            Nature::Eq => Nature::Neq,
+            Nature::Lt => Nature::Ge,
+            Nature::Le => Nature::Gt,
+            Nature::Gt => Nature::Le,
+            Nature::Ge => Nature::Lt,
+            Nature::Term => Nature::Term,
+        }
+    }
+}
+
+#[derive(Debug)]
 struct Summary {
     // Pairs of variables and coefficients
     vars: HashMap<Term, isize>,
@@ -312,6 +441,7 @@ struct Summary {
     nature: Nature,
 }
 
+#[derive(Debug)]
 enum Answer {
     Unit(Term, Nature, BigRational),
     Other(Term, Vec<Term>),
@@ -341,26 +471,26 @@ impl Summary {
             Summary { vars: Default::default(), cst: BigRational::new(0.into(), 1.into()), nature };
         match tm {
             Term::Eq(l, r) => {
-                s.summarize_inner(l);
+                s.summarize_inner(1, l);
                 let mut rs = Summary {
                     vars: Default::default(),
                     cst: BigRational::new(0.into(), 1.into()),
                     nature,
                 };
-                rs.summarize_inner(r);
+                rs.summarize_inner(1, r);
                 s.sub(rs);
             }
             Term::Lt(l, r) => {
-                s.summarize_inner(l);
+                s.summarize_inner(1, l);
                 let mut rs = Summary {
                     vars: Default::default(),
                     cst: BigRational::new(0.into(), 1.into()),
                     nature,
                 };
-                rs.summarize_inner(r);
+                rs.summarize_inner(1, r);
                 s.sub(rs);
             }
-            t => s.summarize_inner(t),
+            t => s.summarize_inner(1, t),
         }
         s
     }
@@ -381,12 +511,15 @@ impl Summary {
 
     #[trusted]
     fn term(self) -> Answer {
+        eprintln!("{self:?}");
         let mut present_vars: Vec<_> = self.vars.into_iter().filter(|(_, v)| *v != 0).collect();
         let num_vars = present_vars.len();
         if num_vars == 1 {
             let (unit_var, cnt) = present_vars.remove(0);
-
-            return Answer::Unit(unit_var, self.nature, -self.cst / BigInt::from(cnt));
+            use Nature::*;
+            // Flip sign of inequalities
+            let nature = if cnt < 0 && matches!(self.nature, Lt | Le | Gt | Ge) { self.nature.negate() } else { self.nature };
+            return Answer::Unit(unit_var, nature, -self.cst / BigInt::from(cnt));
         }
 
         let watches = present_vars.iter().take(2).map(|(t, _)| t.clone()).collect();
@@ -396,50 +529,54 @@ impl Summary {
             .reduce(Term::plus)
             .unwrap_or(Term::Value(Value::rat(0, 1)));
 
-        let rhs = Term::val(Value::Rat(self.cst * BigInt::from(-1)));
 
-        let t = if num_vars == 0 {
-            let v = match self.nature {
-                Nature::Eq => {
-                    if lhs == rhs {
-                        Term::true_()
-                    } else {
-                        Term::false_()
-                    }
-                }
-                Nature::Lt => {
-                    if lhs.as_val() < rhs.as_val() {
-                        Term::true_()
-                    } else {
-                        Term::false_()
-                    }
-                }
-                Nature::Term => rhs,
+        let rhs = if let Nature::Term = self.nature {
+            Term::val(Value::Rat(self.cst))
+        } else {
+             Term::val(Value::Rat(self.cst * BigInt::from(-1)))
+        };
+
+        if num_vars == 0 {
+            let v_bool = match self.nature {
+                Nature::Eq => lhs == rhs,
+                Nature::Neq => lhs != rhs,
+                Nature::Lt => lhs.as_val() < rhs.as_val(),
+                Nature::Term => return Answer::Val(rhs.as_val()),
+                Nature::Le => lhs.as_val() <= rhs.as_val(),
+                Nature::Gt => lhs.as_val() > rhs.as_val(),
+                Nature::Ge => lhs.as_val() >= rhs.as_val(),
             };
+
+            let v = if v_bool { Term::true_() } else { Term::false_() };
             return Answer::Val(v.as_val());
         } else {
-            match self.nature {
+            let t = match self.nature {
                 Nature::Eq => Term::eq_(lhs, rhs),
                 Nature::Lt => Term::lt(lhs, rhs),
                 Nature::Term => lhs,
-            }
+                Nature::Neq => todo!(),
+                Nature::Le => todo!(),
+                Nature::Gt => todo!(),
+                Nature::Ge => todo!(),
+            };
+            return  Answer::Other(t, watches)
+
         };
 
-        Answer::Other(t, watches)
     }
 
     #[trusted]
-    fn summarize_inner(&mut self, tm: &Term) {
+    fn summarize_inner(&mut self, scale: isize, tm: &Term) {
         match tm {
             Term::Eq(l, r) => {
                 unreachable!();
             }
             Term::Plus(l, r) => {
-                self.summarize_inner(l);
-                self.summarize_inner(r);
+                self.summarize_inner(scale, l);
+                self.summarize_inner(scale, r);
             }
             Term::Times(k, r) => {
-                *self.vars.entry((&**r).clone()).or_insert(0) += k;
+                self.summarize_inner(scale * k, r);
             }
             Term::Lt(l, r) => {
                 unreachable!()
@@ -448,7 +585,7 @@ impl Summary {
                 self.cst += r;
             }
             a => {
-                *self.vars.entry(tm.clone()).or_insert(0) += 1;
+                *self.vars.entry(tm.clone()).or_insert(0) += scale;
             }
         };
     }

@@ -1,5 +1,4 @@
-use creusot_contracts::{logic::*, *, invariant::Invariant};
-use creusot_contracts::num_rational::Real;
+use creusot_contracts::{invariant::Invariant, logic::*, num_rational::Real, *};
 pub enum Term {
     Variable(Var),
     Value(Value),
@@ -8,7 +7,6 @@ pub enum Term {
     Conj(Box<Term>, Box<Term>),
     Disj(Box<Term>, Box<Term>),
     Neg(Box<Term>),
-
     // TODO: complete others
 }
 
@@ -52,7 +50,7 @@ impl Term {
                     && l.sort() == r.sort()
                     && r.sort() == Sort::Boolean
             }
-            Term::Neg(t) => t.well_sorted() && t.sort() == Sort::Boolean
+            Term::Neg(t) => t.well_sorted() && t.sort() == Sort::Boolean,
         }
     }
 
@@ -160,7 +158,6 @@ impl Invariant for Model {
             forall<k : _, v : _> self.0.get(k) == v ==> k.1 == v.sort()
         }
     }
-
 }
 
 impl Model {
@@ -187,7 +184,7 @@ impl Model {
             Term::Neg(t) => match self.interp(*t) {
                 Value::Bool(b) => Value::Bool(!b),
                 _ => Value::Bool(false),
-            }
+            },
         }
     }
 
@@ -242,15 +239,14 @@ impl Model {
     #[requires(self.satisfies((t, w)))]
     #[requires(v != w)]
     #[ensures(false)]
-    pub fn consistent(self, t : Term, v : Value, w: Value) {}
-
+    pub fn consistent(self, t: Term, v: Value, w: Value) {}
 
     #[ghost]
     #[open(self)]
     #[requires(forall<ix : _> set1.contains(ix) ==> set2.contains(ix))]
     #[requires(self.satisfy_set(set1))]
     #[ensures(self.satisfy_set(set2))]
-    pub fn subset(self, other: Self, set1 : FSet<(Term, Value)>, set2 : FSet<(Term, Value)>) {}
+    pub fn subset(self, other: Self, set1: FSet<(Term, Value)>, set2: FSet<(Term, Value)>) {}
 }
 
 pub enum Trail {

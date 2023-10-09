@@ -173,7 +173,7 @@ mod builder {
     }
 
     #[trusted]
-    fn strip_file(f: &mut File) {
+    pub fn strip_file(f: &mut File) {
         // Remove any items that have the `#[predicate]` or `#[ghost]`  attribute
         Strip.visit_file_mut(f)
     }

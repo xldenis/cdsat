@@ -117,6 +117,10 @@ impl Solver {
         #[invariant(old_trail.ghost.impls(*trail.ghost))]
         #[invariant(trail.invariant())]
         loop {
+            if trail.num_assign > 7 {
+                panic!()
+            }
+
             let iter_trail: Ghost![_] = gh! { trail };
             // self.bool_state = TheoryState::Unknown;
             // self.lra_state = TheoryState::Unknown;
@@ -148,6 +152,7 @@ impl Solver {
 
                 proof_assert!(( exists<t :_, v :_> self.lra_state  == TheoryState::Decision(t, v)) || (exists<t :_, v :_> self.bool_state  == TheoryState::Decision(t, v)));
                 let (t, v) = self.decision();
+                info!("Adding decision {t} <- {v}");
                 trail.add_decision(t, v);
             }
         }
@@ -165,11 +170,11 @@ impl Solver {
     #[ensures((^trail).invariant())]
     #[ensures((*trail).ghost.impls(*(^trail).ghost))]
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
-        // let mut s = String::from("resolving conflict ");
-        // for i in &conflict {
-        //     write!(s, "{} <- {} ", &trail[*i].term, &trail[*i].val).unwrap();
-        // }
-        // info!("{s}");
+        let mut s = String::from("resolving conflict ");
+        for i in &conflict {
+            write!(s, "{} <- {} ", &trail[*i].term, &trail[*i].val).unwrap();
+        }
+        info!("{s}");
 
         let mut heap: ConflictHeap = ConflictHeap::new();
         let old_conflict: Ghost![Vec<TrailIndex>] = gh! { conflict };
@@ -241,7 +246,7 @@ impl Solver {
                     gh! { trail.abstract_justification(just.shallow_model()) };
 
                 proof_assert!(new.ext_eq(*old));
-                // info!("backjump {a}");
+                // info!("backjump {} <- {}", a.term, a.val.negate());
                 trail.add_justified(just, a.term, a.val.negate());
 
                 return;
