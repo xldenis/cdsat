@@ -4,6 +4,7 @@ use creusot_contracts::{
     ensures, ghost, logic, open, requires, trusted, Clone, DeepModel, PartialEq,
 };
 
+use num::{One, Zero};
 use num_rational::BigRational;
 
 #[cfg(creusot)]
@@ -34,7 +35,7 @@ pub enum Term {
     Variable(usize, Sort),
     Value(Value),
     Plus(Box<Term>, Box<Term>),
-    Times(isize, Box<Term>),
+    Times(BigRational, Box<Term>),
     Eq(Box<Term>, Box<Term>),
     Lt(Box<Term>, Box<Term>),
     Conj(Box<Term>, Box<Term>),
@@ -86,10 +87,10 @@ impl Term {
         Term::Plus(Box::new(a), Box::new(b))
     }
 
-    pub fn times(k: isize, b: Self) -> Self {
-        if k == 0 {
+    pub fn times(k: BigRational, b: Self) -> Self {
+        if k.is_zero() {
             Term::val(Value::zero())
-        } else if k == 1 {
+        } else if k.is_one() {
             b
         } else {
             Term::Times(k, Box::new(b))
@@ -305,6 +306,10 @@ impl Value {
 impl Value {
     pub(crate) fn true_() -> Self {
         Value::Bool(true)
+    }
+
+    pub(crate) fn false_() -> Self {
+        Value::Bool(false)
     }
 
     pub fn zero() -> Self {

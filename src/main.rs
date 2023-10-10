@@ -92,9 +92,15 @@ fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) ->
                 }
                 "-" => {
                     if arguments.len() == 1 {
-                        Term::times(-1, arguments.remove(0))
+                        Term::times(BigRational::from_integer((-1).into()), arguments.remove(0))
                     } else {
-                        Term::plus(arguments.remove(0), Term::times(-1, arguments.remove(0)))
+                        Term::plus(
+                            arguments.remove(0),
+                            Term::times(
+                                BigRational::from_integer((-1).into()),
+                                arguments.remove(0),
+                            ),
+                        )
                     }
                 }
                 ">=" => Term::geq(arguments.remove(0), arguments.remove(0)),

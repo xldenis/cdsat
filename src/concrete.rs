@@ -117,10 +117,6 @@ impl Solver {
         #[invariant(old_trail.ghost.impls(*trail.ghost))]
         #[invariant(trail.invariant())]
         loop {
-            if trail.num_assign > 7 {
-                panic!()
-            }
-
             let iter_trail: Ghost![_] = gh! { trail };
             // self.bool_state = TheoryState::Unknown;
             // self.lra_state = TheoryState::Unknown;

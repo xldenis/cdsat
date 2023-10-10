@@ -1,7 +1,7 @@
 use std::{collections::HashMap, eprintln, fmt::Display, ops::Neg, unimplemented, unreachable};
 
 use log::{info, trace};
-use num::{BigInt, Signed};
+use num::{BigInt, One, Signed, Zero};
 use num_rational::BigRational;
 
 use crate::{
@@ -169,6 +169,7 @@ impl Bounds {
         self.excluded.entry(value).or_insert(just);
     }
 
+    // Integrate dis-disequality elimination
     #[trusted]
     fn pick(self) -> Pick {
         if self.lower == self.upper && self.lower != Bound::Missing {
@@ -238,25 +239,27 @@ impl Domain {
 
         trace!("bounds were {}", entry);
         match nature {
-            Nature::Neq => todo!(),
+            Nature::Neq => {
+                entry.excluded.insert(value, just);
+            }
             Nature::Eq => {
                 entry.update_upper(just, nature, value.clone());
                 entry.update_lower(just, nature, value);
             }
             Nature::Lt | Nature::Le => {
                 // if value.is_negative() {
-                    entry.update_upper(just, nature, value)
+                entry.update_upper(just, nature, value)
                 // } else {
-                    // entry.update_lower(just, nature, value.neg())
+                // entry.update_lower(just, nature, value.neg())
                 // }
             }
             Nature::Gt | Nature::Ge => {
                 // eprintln!("updating {entry} {nature:?} {value}");
-                if !value.is_negative() {
-                    entry.update_lower(just, nature, value)
-                } else {
-                    entry.update_upper(just, nature, value.neg())
-                }
+                // if !value.is_negative() {
+                entry.update_lower(just, nature, value)
+                // } else {
+                // entry.update_upper(just, nature, value.neg())
+                // }
             }
             Nature::Term => todo!(),
         };
@@ -318,47 +321,41 @@ impl LRATheory {
 
             match ans {
                 Answer::Unit(t, mut n, v) => {
-                    // let j = match n {
-                    //     Nature::Lt => Term::lt(t.clone(), Term::val(Value::Rat(v.clone()))),
-                    //     Nature::Eq => Term::eq_(t.clone(), Term::val(Value::Rat(v.clone()))),
-                    //     Nature::Term => t.clone(),
-                    //     Nature::Neq =>
-                    // };
-                    // eprintln!("{j} <- {}", &tl[ix].val);
-                    // make it return the conflcit instead of a bool
-                    // if v == tl[ix].val {
                     if tl[ix].val != Value::true_() {
                         n = n.negate();
                     };
 
                     trace!("updating bounds of {t} {n:?} {v}");
-                    let valid = domains.update(ix, t.clone(), n, v);
+                    // make it return the conflcit instead of a bool
+                    let valid = domains.update(ix, t.clone(), n, v.clone());
                     if !valid {
                         let Pick::Fm(tj, tk) = domains.get(&t).clone().pick() else { panic!("should have conflict") };
                         info!(
                             "Found FM conflict in {} explained by {} and {}",
                             tl[ix], tl[tj], tl[tk]
                         );
-                        return ExtendResult::Conflict(vec![tj, tk]);
+                        let resolv = fourier_motzkin_resolvent(&tl[tj].term, &tl[tk].term, &t);
+
+
+
+                        // eprintln!("Conflict occurs between {{ {resolv}, {eval} }}");
+                        iter.add_justified(vec![tj, tk], resolv.clone(), Value::true_());
+                        // iter.add_justified(used, resolv.clone(), Value::false_());
+
+                        let tj = iter.trail().index_of(&resolv).unwrap();
+                        used.push(tj);
+                        // let tk = iter.trail().index_of(&t).unwrap();
+                        return ExtendResult::Conflict(used);
                     };
-                    // }
-
-                    // if &t != &tl[ix].term {
-                    //     let val = tl[ix].val.clone();
-                    //     iter.add_justified(used, j.clone(), val.clone());
-
-                    //     if val == Value::true_() {
-                    //         let valid =
-                    //             domains.update(iter.trail().index_of(&j).unwrap(), t.clone(), n, v);
-
-                    //         if !valid {
-                    //         }
-                    //     }
-                    // }
                 }
                 Answer::Val(v) => {
                     if &v != &tl[ix].val {
-                        trace!("failed normalization of {} expected {} got {}", tl[ix].term, tl[ix].val, v);
+                        trace!(
+                            "failed normalization of {} expected {} got {}",
+                            tl[ix].term,
+                            tl[ix].val,
+                            v
+                        );
                         return ExtendResult::Conflict(used);
                     }
                 }
@@ -436,7 +433,7 @@ impl Nature {
 #[derive(Debug)]
 struct Summary {
     // Pairs of variables and coefficients
-    vars: HashMap<Term, isize>,
+    vars: HashMap<Term, BigRational>,
     cst: BigRational,
     nature: Nature,
 }
@@ -452,7 +449,7 @@ impl Summary {
     #[trusted]
     fn sub(&mut self, o: Self) {
         for (k, v) in o.vars {
-            *self.vars.entry(k).or_insert(0) -= v;
+            *self.vars.entry(k).or_insert_with(|| BigRational::zero()) -= v;
         }
         self.cst -= o.cst;
     }
@@ -467,30 +464,21 @@ impl Summary {
             }
             _ => unimplemented!(),
         };
-        let mut s =
-            Summary { vars: Default::default(), cst: BigRational::new(0.into(), 1.into()), nature };
+        let mut s = Summary { vars: Default::default(), cst: BigRational::zero(), nature };
         match tm {
             Term::Eq(l, r) => {
-                s.summarize_inner(1, l);
-                let mut rs = Summary {
-                    vars: Default::default(),
-                    cst: BigRational::new(0.into(), 1.into()),
-                    nature,
-                };
-                rs.summarize_inner(1, r);
+                s.summarize_inner(BigRational::one(), l);
+                let mut rs = Summary { vars: Default::default(), cst: BigRational::zero(), nature };
+                rs.summarize_inner(BigRational::one(), r);
                 s.sub(rs);
             }
             Term::Lt(l, r) => {
-                s.summarize_inner(1, l);
-                let mut rs = Summary {
-                    vars: Default::default(),
-                    cst: BigRational::new(0.into(), 1.into()),
-                    nature,
-                };
-                rs.summarize_inner(1, r);
+                s.summarize_inner(BigRational::one(), l);
+                let mut rs = Summary { vars: Default::default(), cst: BigRational::zero(), nature };
+                rs.summarize_inner(BigRational::one(), r);
                 s.sub(rs);
             }
-            t => s.summarize_inner(1, t),
+            t => s.summarize_inner(BigRational::one(), t),
         }
         s
     }
@@ -502,8 +490,8 @@ impl Summary {
             if let Some(ix) = tl.index_of(k) {
                 ixs.push(ix);
                 let Value::Rat(r) = &tl[ix].val else { panic!() };
-                self.cst += r * BigInt::from(*v);
-                *v = 0;
+                self.cst += r * v.clone();
+                *v = BigRational::zero();
             }
         }
         ixs
@@ -511,29 +499,32 @@ impl Summary {
 
     #[trusted]
     fn term(self) -> Answer {
-        eprintln!("{self:?}");
-        let mut present_vars: Vec<_> = self.vars.into_iter().filter(|(_, v)| *v != 0).collect();
+        let mut present_vars: Vec<_> =
+            self.vars.into_iter().filter(|(_, v)| !v.is_zero()).collect();
         let num_vars = present_vars.len();
         if num_vars == 1 {
             let (unit_var, cnt) = present_vars.remove(0);
             use Nature::*;
             // Flip sign of inequalities
-            let nature = if cnt < 0 && matches!(self.nature, Lt | Le | Gt | Ge) { self.nature.negate() } else { self.nature };
-            return Answer::Unit(unit_var, nature, -self.cst / BigInt::from(cnt));
+            let nature = if cnt.is_negative() && matches!(self.nature, Lt | Le | Gt | Ge) {
+                self.nature.negate()
+            } else {
+                self.nature
+            };
+            return Answer::Unit(unit_var, nature, -self.cst / cnt);
         }
 
         let watches = present_vars.iter().take(2).map(|(t, _)| t.clone()).collect();
         let lhs = present_vars
             .into_iter()
-            .filter_map(|(v, k)| if k == 0 { None } else { Some(Term::times(k, v)) })
+            .filter_map(|(v, k)| if k.is_zero() { None } else { Some(Term::times(k, v)) })
             .reduce(Term::plus)
             .unwrap_or(Term::Value(Value::rat(0, 1)));
-
 
         let rhs = if let Nature::Term = self.nature {
             Term::val(Value::Rat(self.cst))
         } else {
-             Term::val(Value::Rat(self.cst * BigInt::from(-1)))
+            Term::val(Value::Rat(self.cst * BigInt::from(-1)))
         };
 
         if num_vars == 0 {
@@ -559,20 +550,18 @@ impl Summary {
                 Nature::Gt => todo!(),
                 Nature::Ge => todo!(),
             };
-            return  Answer::Other(t, watches)
-
+            return Answer::Other(t, watches);
         };
-
     }
 
     #[trusted]
-    fn summarize_inner(&mut self, scale: isize, tm: &Term) {
+    fn summarize_inner(&mut self, scale: BigRational, tm: &Term) {
         match tm {
             Term::Eq(l, r) => {
                 unreachable!();
             }
             Term::Plus(l, r) => {
-                self.summarize_inner(scale, l);
+                self.summarize_inner(scale.clone(), l);
                 self.summarize_inner(scale, r);
             }
             Term::Times(k, r) => {
@@ -585,8 +574,82 @@ impl Summary {
                 self.cst += r;
             }
             a => {
-                *self.vars.entry(tm.clone()).or_insert(0) += scale;
+                *self.vars.entry(tm.clone()).or_insert_with(|| BigRational::zero()) += scale;
             }
         };
     }
+
+    // Takes a term looking like -k1*var + k2*t1 + ... + C < 0
+    // turn it into (k2*t1 + ... + C) / k < var
+    // Takes a term and produces the lower bound for `var` (ie: `result < var`)
+    fn lower_bound_for(mut self, var: &Term) -> Term {
+        let mut coef = self.vars.remove(var).unwrap();
+        // Only accept simple bounds
+        assert!(matches!(self.nature, Nature::Lt | Nature::Le | Nature::Eq));
+        // We need the coefficient for the variable we are eliminating to be negative to recover a correct bound
+        assert!(coef.is_negative());
+        // Move `var` to the rhs.
+        coef = coef.neg();
+
+        let bound_vars: Vec<_> = self.vars.into_iter().filter(|(_, v)| !v.is_zero()).collect();
+        let lhs = bound_vars
+            .into_iter()
+            .map(|(v, k)| Term::times(k / coef.clone(), v))
+            .fold(Term::val(Value::Rat(self.cst)), Term::plus);
+
+        lhs
+    }
+
+    // Takes a term looking like -k1*var + k2*t1 + ... + C < 0
+    // turn it into var < (-k2*t1 + -... + -C) / k
+    // Takes a term and produces the lower bound for `var` (ie: `result < var`)
+    fn upper_bound_for(mut self, var: &Term) -> Term {
+        let coef = self.vars.remove(var).unwrap();
+
+        // Only accept simple bounds
+        assert!(matches!(self.nature, Nature::Lt | Nature::Le | Nature::Eq));
+        // We need the coefficient for the variable we are eliminating to be positive to recover a correct bound
+        assert!(coef.is_positive() || matches!(self.nature, Nature::Eq));
+
+        let bound_vars: Vec<_> = self.vars.into_iter().filter(|(_, v)| !v.is_zero()).collect();
+        let lhs = bound_vars
+            .into_iter()
+            .map(|(v, k)| Term::times(-k / coef.clone(), v))
+            .fold(Term::val(Value::Rat(self.cst)), Term::plus);
+
+        lhs
+    }
+}
+
+fn fourier_motzkin_symbol(nat1: Nature, nat2: Nature) -> Nature {
+    use Nature::*;
+    match (nat1, nat2) {
+        (Lt, _) | (_, Lt) => Lt,
+        (Le, _) | (_, Le) => Le,
+        (Eq, Eq) => Eq,
+        _ => unreachable!("Attempted to eliminate variable between non-normal clauses"),
+    }
+}
+
+// Given two terms [term1] and [term2] this seeks to eliminate a third variable [var] (which in general is a term) from them
+fn fourier_motzkin_resolvent(term1: &Term, term2: &Term, var: &Term) -> Term {
+    let s1 = Summary::summarize(&term1);
+    let s2 = Summary::summarize(&term2);
+    let sym = fourier_motzkin_symbol(s1.nature, s2.nature);
+    trace!("eliminating {var} between {term1} and {term2}");
+
+    assert!(s1.vars.contains_key(var));
+    assert!(s2.vars.contains_key(var));
+
+    let lhs = s1.lower_bound_for(var);
+    let rhs = s2.upper_bound_for(var);
+
+    trace!("FM produced {lhs} {sym:?} {rhs}");
+    match sym {
+        Nature::Lt => Term::lt(lhs, rhs),
+        Nature::Le => Term::leq(lhs, rhs),
+        Nature::Eq => Term::eq_(lhs, rhs),
+        _ => unreachable!(),
+    }
+    // let sym = fourier_motzkin_symbol(s1.nature, s2.nature);
 }
