@@ -460,7 +460,15 @@ impl Trail {
     #[requires(forall<m : theory::Model>  m.satisfy_set(self.abstract_justification(into_vec@)) ==> m.satisfies((term@, val@)))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
-        info!("{{ {:?} }} |- {} <- {}", into_vec, term, val);
+        use ::std::fmt::Write;
+        let mut s = String::from("{");
+        for i in &into_vec {
+            write!(s, "{}, ", &self[*i]).unwrap();
+        }
+        s.push('}');
+        info!("{s} |- {term} <- {val}");
+
+
         let level = self.max_level(&into_vec);
 
         proof_assert!(level <= self.level);

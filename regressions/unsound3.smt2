@@ -1,0 +1,5 @@
+(declare-const y16 Real)
+(declare-const y47 Real)
+(assert (= y47 y16))
+(assert (= 3 y47))
+(check-sat)

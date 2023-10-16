@@ -2,7 +2,7 @@
 #![cfg_attr(not(creusot), feature(stmt_expr_attributes, proc_macro_hygiene))]
 #![feature(min_specialization)]
 #![allow(dead_code, unused_variables)]
-#![feature(never_type, let_chains)]
+#![feature(never_type, let_chains, btree_cursors)]
 #![allow(unused_imports)]
 
 pub mod bool;

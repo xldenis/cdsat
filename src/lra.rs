@@ -1,4 +1,8 @@
-use std::{collections::HashMap, eprintln, fmt::Display, ops::Neg, unimplemented, unreachable};
+use std::{
+    assert_ne, collections::BTreeMap, eprintln, fmt::Display, ops::Neg, unimplemented, unreachable,
+};
+
+use indexmap::IndexMap;
 
 use log::{info, trace};
 use num::{BigInt, One, Signed, Zero};
@@ -53,7 +57,7 @@ impl Display for Bound {
 struct Bounds {
     lower: Bound,
     upper: Bound,
-    excluded: HashMap<BigRational, TrailIndex>,
+    excluded: BTreeMap<BigRational, TrailIndex>,
 }
 
 impl Display for Bounds {
@@ -77,6 +81,7 @@ enum Pick {
     Choice(BigRational),
     Fixed(BigRational),
     Fm(TrailIndex, TrailIndex),
+    DisEq(TrailIndex, TrailIndex, TrailIndex),
 }
 
 impl Bounds {
@@ -169,38 +174,40 @@ impl Bounds {
         self.excluded.entry(value).or_insert(just);
     }
 
+    // Provides an in bounds value if the interval is non-empty.
+    // Does not check anything with respect to excluded values.
     // Integrate dis-disequality elimination
     #[trusted]
-    fn pick(self) -> Pick {
-        if self.lower == self.upper && self.lower != Bound::Missing {
-            Pick::Fixed(self.lower.get_inner().unwrap().clone())
+    fn value(lower: &Bound, upper: &Bound) -> Pick {
+        if lower == upper && lower != &Bound::Missing {
+            Pick::Fixed(lower.get_inner().unwrap().clone())
         } else {
             use Bound::*;
-            match (self.lower, self.upper) {
+            match (lower, upper) {
                 (Exclusive { value, just }, Exclusive { value: v2, just: j2 }) => {
                     if value > v2 {
-                        Pick::Fm(just, j2)
+                        Pick::Fm(*just, *j2)
                     } else {
                         Pick::Choice((value + v2) / BigInt::from(2))
                     }
                 }
                 (Exclusive { value, just }, Inclusive { value: v2, just: j2 }) => {
                     if value >= v2 {
-                        Pick::Fm(just, j2)
+                        Pick::Fm(*just, *j2)
                     } else {
                         Pick::Choice((value + v2) / BigInt::from(2))
                     }
                 }
                 (Inclusive { value, just }, Exclusive { value: v2, just: j2 }) => {
                     if value >= v2 {
-                        Pick::Fm(just, j2)
+                        Pick::Fm(*just, *j2)
                     } else {
                         Pick::Choice((value + v2) / BigInt::from(2))
                     }
                 }
                 (Inclusive { value, just }, Inclusive { value: v2, just: j2 }) => {
                     if value > v2 {
-                        Pick::Fm(just, j2)
+                        Pick::Fm(*just, *j2)
                     } else {
                         Pick::Choice((value + v2) / BigInt::from(2))
                     }
@@ -213,9 +220,51 @@ impl Bounds {
             }
         }
     }
+
+    // Integrate dis-disequality elimination
+    #[trusted]
+    fn pick(&self) -> Pick {
+        let p = Self::value(&self.lower, &self.upper);
+        let Pick::Choice(v) = p else {return p };
+
+        if !self.excluded.contains_key(&v) {
+            return Pick::Choice(v);
+        }
+
+        let middle = Bound::Exclusive { just: self.excluded[&v], value: v.clone() };
+        // Attempt to see if there is any other value we could choose:
+
+        let right_ub = if let Some((k, v)) =
+            self.excluded.lower_bound(std::ops::Bound::Excluded(&v)).key_value()
+        {
+            Bound::Exclusive { value: k.clone(), just: *v }
+        } else {
+            self.upper.clone()
+        };
+
+        let right = Self::value(&middle, &right_ub);
+        if let Pick::Choice(v) = right {
+            return Pick::Choice(v);
+        }
+
+        let left_lb = if let Some((k, v)) =
+            self.excluded.upper_bound(std::ops::Bound::Excluded(&v)).key_value()
+        {
+            Bound::Exclusive { value: k.clone(), just: *v }
+        } else {
+            self.lower.clone()
+        };
+        let left = Self::value(&left_lb, &middle);
+        if let Pick::Choice(v) = left {
+            return Pick::Choice(v);
+        }
+
+        todo!()
+        // return Pick::DisEq(_, _, _);
+    }
 }
 
-struct Domain(HashMap<Term, Bounds>);
+struct Domain(IndexMap<Term, Bounds>);
 
 impl Domain {
     #[cfg(creusot)]
@@ -240,7 +289,7 @@ impl Domain {
         trace!("bounds were {}", entry);
         match nature {
             Nature::Neq => {
-                entry.excluded.insert(value, just);
+                entry.exclude(just, value);
             }
             Nature::Eq => {
                 entry.update_upper(just, nature, value.clone());
@@ -301,7 +350,7 @@ impl LRATheory {
     pub fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let mut iter = tl.indices();
 
-        let mut domains: Domain = Domain(HashMap::new());
+        let mut domains: Domain = Domain(IndexMap::new());
         trace!("LRA is performing inferences");
         while let Some(ix) = iter.next() {
             let tl = iter.trail();
@@ -329,23 +378,37 @@ impl LRATheory {
                     // make it return the conflcit instead of a bool
                     let valid = domains.update(ix, t.clone(), n, v.clone());
                     if !valid {
-                        let Pick::Fm(tj, tk) = domains.get(&t).clone().pick() else { panic!("should have conflict") };
-                        info!(
-                            "Found FM conflict in {} explained by {} and {}",
-                            tl[ix], tl[tj], tl[tk]
-                        );
-                        let resolv = fourier_motzkin_resolvent(&tl[tj].term, &tl[tk].term, &t);
+                        match domains.get(&t).clone().pick() {
+                            Pick::Fm(tj, tk) => {
+                                info!(
+                                    "Found FM conflict in {} explained by {} and {}",
+                                    tl[ix], tl[tj], tl[tk]
+                                );
+                                let resolv =
+                                    fourier_motzkin_resolvent(&tl[tj].term, &tl[tk].term, &t);
 
+                                let mut fm_sum = Summary::summarize(&resolv);
+                                let mut fm_eval = fm_sum.eval(&iter.trail());
 
+                                // Uh-oh we already have a value for this FM resolution
+                                if let Some(fm_ix) = iter.trail().index_of(&resolv) {
+                                    assert!(iter.trail()[fm_ix].val != Value::true_());
 
-                        // eprintln!("Conflict occurs between {{ {resolv}, {eval} }}");
-                        iter.add_justified(vec![tj, tk], resolv.clone(), Value::true_());
-                        // iter.add_justified(used, resolv.clone(), Value::false_());
+                                    return ExtendResult::Conflict(vec![fm_ix, tj, tk]);
+                                }
 
-                        let tj = iter.trail().index_of(&resolv).unwrap();
-                        used.push(tj);
-                        // let tk = iter.trail().index_of(&t).unwrap();
-                        return ExtendResult::Conflict(used);
+                                iter.add_justified(vec![tj, tk], resolv.clone(), Value::true_());
+
+                                let tj = iter.trail().index_of(&resolv).unwrap();
+                                fm_eval.push(tj);
+
+                                return ExtendResult::Conflict(fm_eval);
+                            }
+                            Pick::DisEq(ta, tb, tc) => {
+                                panic!("Disequality")
+                            }
+                            _ => panic!("expected conflict")
+                        }
                     };
                 }
                 Answer::Val(v) => {
@@ -381,6 +444,7 @@ impl LRATheory {
                     }
                     Pick::Fixed(_) => continue,
                     Pick::Fm(tj, tk) => todo!(),
+                    Pick::DisEq(_, _, _) => todo!(),
                 }
             }
         }
@@ -433,7 +497,7 @@ impl Nature {
 #[derive(Debug)]
 struct Summary {
     // Pairs of variables and coefficients
-    vars: HashMap<Term, BigRational>,
+    vars: IndexMap<Term, BigRational>,
     cst: BigRational,
     nature: Nature,
 }
@@ -587,7 +651,7 @@ impl Summary {
         // Only accept simple bounds
         assert!(matches!(self.nature, Nature::Lt | Nature::Le | Nature::Eq));
         // We need the coefficient for the variable we are eliminating to be negative to recover a correct bound
-        assert!(coef.is_negative());
+        assert!(coef.is_negative() || matches!(self.nature, Nature::Eq));
         // Move `var` to the rhs.
         coef = coef.neg();
 
@@ -636,7 +700,6 @@ fn fourier_motzkin_resolvent(term1: &Term, term2: &Term, var: &Term) -> Term {
     let s1 = Summary::summarize(&term1);
     let s2 = Summary::summarize(&term2);
     let sym = fourier_motzkin_symbol(s1.nature, s2.nature);
-    trace!("eliminating {var} between {term1} and {term2}");
 
     assert!(s1.vars.contains_key(var));
     assert!(s2.vars.contains_key(var));

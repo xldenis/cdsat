@@ -158,103 +158,6 @@ impl BoolTheory {
         match tm {
             Term::Value(v @ Value::Bool(_)) => return Ok(v.clone()),
             Term::Eq(l, r) if r.sort() == Sort::Boolean => {
-                let v1 = match self.eval_inner2(tl, l, used) {
-                    Ok(x) => x,
-                    Err(e) => return Err(e),
-                };
-                let v2 = match self.eval_inner2(tl, r, used) {
-                    Ok(x) => x,
-                    Err(e) => return Err(e),
-                };
-                proof_assert!(forall<m : theory::Model> m.satisfy_set(tl.abstract_justification((^used)@))
-                    ==> m.satisfies((l@, v1@)) && m.satisfies((r@, v2@)));
-                return Ok(Value::Bool(v1 == v2));
-            }
-            // Term::Eq(_, _) => todo!(),
-            Term::Conj(l, r) => {
-                let v1 = match self.eval_inner2(tl, l, used) {
-                    Ok(x) => x,
-                    Err(e) => return Err(e),
-                };
-                let v2 = match self.eval_inner2(tl, r, used) {
-                    Ok(x) => x,
-                    Err(e) => return Err(e),
-                };
-                proof_assert!(forall<m : theory::Model> m.satisfy_set(tl.abstract_justification((^used)@))
-                    ==> m.satisfies((l@, v1@)) && m.satisfies((r@, v2@)));
-                return Ok(Value::Bool(v1.bool() && v2.bool()));
-            }
-            Term::Neg(t) => match self.eval_inner2(tl, t, used) {
-                Ok(v) => Ok(v.negate()),
-                Err(t) => Err(t),
-            },
-            Term::Disj(l, r) => {
-                let v1 = match self.eval_inner2(tl, l, used) {
-                    Ok(x) => x,
-                    Err(e) => return Err(e),
-                };
-                let v2 = match self.eval_inner2(tl, r, used) {
-                    Ok(x) => x,
-                    Err(e) => return Err(e),
-                };
-                proof_assert!(forall<m : theory::Model> m.satisfy_set(tl.abstract_justification((^used)@))
-                    ==> m.satisfies((l@, v1@)) && m.satisfies((r@, v2@)));
-                return Ok(Value::Bool(v1.bool() || v2.bool()));
-            }
-            Term::Impl(l, r) => {
-                let v1 = match self.eval_inner2(tl, l, used) {
-                    Ok(x) => x,
-                    Err(e) => return Err(e),
-                };
-                let v2 = match self.eval_inner2(tl, r, used) {
-                    Ok(x) => x,
-                    Err(e) => return Err(e),
-                };
-                proof_assert!(forall<m : theory::Model> m.satisfy_set(tl.abstract_justification((^used)@))
-                    ==> m.satisfies((l@, v1@)) && m.satisfies((r@, v2@)));
-                return Ok(Value::Bool(!v1.bool() || v2.bool()));
-            }
-            _ => Err(tm.clone()),
-        }
-    }
-
-    // Ensures:
-    //  - Free Var list is non-empty, all not on trail
-    //  - If ok: there is a justified entailment between the justification and tm <- value?
-    // #[ensures(forall<just : _, val: _> result == Ok((just, val)) ==> forall<m : _> m.satisfy_set(just@) ==> m.satisfies((tm@, val@)))]
-    #[requires(tl.invariant())]
-    #[requires(tm@.well_sorted())]
-    #[requires(tm@.is_bool())]
-    #[requires(forall<ix : _> used@.contains(ix) ==> tl.contains(ix))]
-    #[ensures(match result {
-        Ok(v) => { v@.is_bool()  &&
-            (forall<m : theory::Model>
-                m.satisfy_set(tl.abstract_justification((^used)@)) ==> m.satisfies((tm@, v@)))
-
-        }
-        Err(t) => {  tl.ghost.acceptable(t@, Value::Bool(true)@) }
-    })]
-    #[ensures(forall<ix : _> used@.contains(ix) ==> (^used)@.contains(ix))]
-    #[ensures(forall<ix : _> (^used)@.contains(ix) ==> tl.contains(ix))]
-    fn eval_inner2(
-        &mut self,
-        tl: &Trail,
-        tm: &Term,
-        used: &mut Vec<TrailIndex>,
-    ) -> Result<Value, Term> {
-        if let Some(x) = tl.index_of(tm) {
-            used.push(x);
-            proof_assert!(tl.index_logic(x).0 == tm@);
-            proof_assert!(tl.index_logic(x).1.is_bool());
-            return Ok(tl[x].val.clone());
-        }
-
-        let _: Ghost![_] = gh! {Trail::abs_just_extend};
-        let _: Ghost![_] = gh! { theory::Model::subset};
-
-        match tm {
-            Term::Value(v @ Value::Bool(_)) => return Ok(v.clone()),
-            Term::Eq(l, r) if r.sort() == Sort::Boolean => {
                 let v1 = match self.eval_inner(tl, l, used) {
                     Ok(x) => x,
                     Err(e) => return Err(e),
@@ -311,7 +214,16 @@ impl BoolTheory {
                     ==> m.satisfies((l@, v1@)) && m.satisfies((r@, v2@)));
                 return Ok(Value::Bool(!v1.bool() || v2.bool()));
             }
-            _ => Err(tm.clone()),
+            _ => {
+                if let Some(x) = tl.index_of(tm) {
+                    used.push(x);
+                    proof_assert!(tl.index_logic(x).0 == tm@);
+                    proof_assert!(tl.index_logic(x).1.is_bool());
+                    return Ok(tl[x].val.clone());
+                } else {
+                    Err(tm.clone())
+                }
+            }
         }
     }
 }

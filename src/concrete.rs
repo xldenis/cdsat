@@ -117,6 +117,7 @@ impl Solver {
         #[invariant(old_trail.ghost.impls(*trail.ghost))]
         #[invariant(trail.invariant())]
         loop {
+            // if trail.num_assign > 10 { panic!() }
             let iter_trail: Ghost![_] = gh! { trail };
             // self.bool_state = TheoryState::Unknown;
             // self.lra_state = TheoryState::Unknown;
@@ -166,11 +167,11 @@ impl Solver {
     #[ensures((^trail).invariant())]
     #[ensures((*trail).ghost.impls(*(^trail).ghost))]
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
-        let mut s = String::from("resolving conflict ");
+        let mut s = String::from("");
         for i in &conflict {
             write!(s, "{} <- {} ", &trail[*i].term, &trail[*i].val).unwrap();
         }
-        info!("{s}");
+        info!("resolving conflict {{{s}}}");
 
         let mut heap: ConflictHeap = ConflictHeap::new();
         let old_conflict: Ghost![Vec<TrailIndex>] = gh! { conflict };
@@ -242,6 +243,7 @@ impl Solver {
                     gh! { trail.abstract_justification(just.shallow_model()) };
 
                 proof_assert!(new.ext_eq(*old));
+                info!("backjump");
                 // info!("backjump {} <- {}", a.term, a.val.negate());
                 trail.add_justified(just, a.term, a.val.negate());
 
@@ -251,6 +253,7 @@ impl Solver {
             // Undo Clear
             if a.is_first_order() && a.is_decision() {
                 // info!("undo clear {a}");
+                info!("undo clear");
                 trail.restrict(ix.level() - 1);
                 return;
             }
@@ -280,6 +283,7 @@ impl Solver {
                     if jix.level() == ix.level() {
                         // undo decide
                         // info!("undo decide {a}");
+                        info!("undo decide");
 
                         trail.restrict(ix.level() - 1);
                         trail.add_decision(a.term, a.val.negate());
@@ -301,6 +305,7 @@ impl Solver {
                     abs_cflct.0.is_decision(t) ==>
                     abs_cflct.0.level_of(t) < abs_cflct.0.set_level(abs_cflct.1)
             );
+            info!("resolve");
 
             #[allow(unused)]
             abs_cflct = gh! { abs_cflct.resolvef(a.term_value()) };
