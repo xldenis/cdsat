@@ -110,7 +110,6 @@ impl BoolTheory {
         Ok(v) => { v@.is_bool()  &&
             (forall<m : theory::Model>
                 m.satisfy_set(tl.abstract_justification(result.0@)) ==> m.satisfies((tm@, v@)))
-
         }
         Err(t) => { tl.ghost.acceptable(t@, Value::Bool(true)@) }
     })]

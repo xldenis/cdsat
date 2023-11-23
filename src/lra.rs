@@ -277,13 +277,13 @@ impl Domain {
 
     #[cfg(creusot)]
     #[trusted]
-    fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> bool {
-        true
+    fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> Pick {
+        todo!()
     }
 
     #[cfg(not(creusot))]
     #[trusted]
-    fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> bool {
+    fn update(&mut self, just: TrailIndex, term: Term, nature: Nature, value: BigRational) -> Pick {
         let entry = self.0.entry(term).or_default();
 
         trace!("bounds were {}", entry);
@@ -315,7 +315,7 @@ impl Domain {
 
         trace!("bounds are now {}", entry);
         // Whether this bound is still valid
-        entry.valid()
+        entry.pick()
     }
 
     #[cfg(creusot)]
@@ -360,7 +360,7 @@ impl LRATheory {
             }
 
             trace!("LRA is considering {ix:?}, {}", &tl[ix]);
-            let mut t = Summary::summarize(&tl[ix].term.clone());
+            let mut t = Eval::normalize(&tl[ix].term.clone());
 
             let mut used = t.eval(iter.trail());
             used.push(ix);
@@ -376,40 +376,37 @@ impl LRATheory {
 
                     trace!("updating bounds of {t} {n:?} {v}");
                     // make it return the conflcit instead of a bool
-                    let valid = domains.update(ix, t.clone(), n, v.clone());
-                    if !valid {
-                        match domains.get(&t).clone().pick() {
-                            Pick::Fm(tj, tk) => {
-                                info!(
-                                    "Found FM conflict in {} explained by {} and {}",
-                                    tl[ix], tl[tj], tl[tk]
-                                );
-                                let resolv =
-                                    fourier_motzkin_resolvent(&tl[tj].term, &tl[tk].term, &t);
+                    let pick = domains.update(ix, t.clone(), n, v.clone());
+                    match pick {
+                        Pick::Fm(tj, tk) => {
+                            info!(
+                                "Found FM conflict in {} explained by {} and {}",
+                                tl[ix], tl[tj], tl[tk]
+                            );
+                            let resolv = fourier_motzkin_resolvent(&tl[tj].term, &tl[tk].term, &t);
 
-                                let mut fm_sum = Summary::summarize(&resolv);
-                                let mut fm_eval = fm_sum.eval(&iter.trail());
+                            let mut fm_sum = Eval::normalize(&resolv);
+                            let mut fm_eval = fm_sum.eval(&iter.trail());
 
-                                // Uh-oh we already have a value for this FM resolution
-                                if let Some(fm_ix) = iter.trail().index_of(&resolv) {
-                                    assert!(iter.trail()[fm_ix].val != Value::true_());
+                            // Uh-oh we already have a value for this FM resolution
+                            if let Some(fm_ix) = iter.trail().index_of(&resolv) {
+                                assert!(iter.trail()[fm_ix].val != Value::true_());
 
-                                    return ExtendResult::Conflict(vec![fm_ix, tj, tk]);
-                                }
-
-                                iter.add_justified(vec![tj, tk], resolv.clone(), Value::true_());
-
-                                let tj = iter.trail().index_of(&resolv).unwrap();
-                                fm_eval.push(tj);
-
-                                return ExtendResult::Conflict(fm_eval);
+                                return ExtendResult::Conflict(vec![fm_ix, tj, tk]);
                             }
-                            Pick::DisEq(ta, tb, tc) => {
-                                panic!("Disequality")
-                            }
-                            _ => panic!("expected conflict")
+
+                            iter.add_justified(vec![tj, tk], resolv.clone(), Value::true_());
+
+                            let tj = iter.trail().index_of(&resolv).unwrap();
+                            fm_eval.push(tj);
+
+                            return ExtendResult::Conflict(fm_eval);
                         }
-                    };
+                        Pick::DisEq(ta, tb, tc) => {
+                            panic!("Disequality")
+                        }
+                        _ => {},
+                    }
                 }
                 Answer::Val(v) => {
                     if &v != &tl[ix].val {
@@ -495,7 +492,7 @@ impl Nature {
 }
 
 #[derive(Debug)]
-struct Summary {
+struct Eval {
     // Pairs of variables and coefficients
     vars: IndexMap<Term, BigRational>,
     cst: BigRational,
@@ -509,7 +506,7 @@ enum Answer {
     Val(Value),
 }
 
-impl Summary {
+impl Eval {
     #[trusted]
     fn sub(&mut self, o: Self) {
         for (k, v) in o.vars {
@@ -519,7 +516,7 @@ impl Summary {
     }
 
     #[trusted]
-    fn summarize(tm: &Term) -> Summary {
+    fn normalize(tm: &Term) -> Eval {
         let nature = match tm {
             Term::Eq(_, _) => Nature::Eq,
             Term::Lt(_, _) => Nature::Lt,
@@ -528,21 +525,21 @@ impl Summary {
             }
             _ => unimplemented!(),
         };
-        let mut s = Summary { vars: Default::default(), cst: BigRational::zero(), nature };
+        let mut s = Eval { vars: Default::default(), cst: BigRational::zero(), nature };
         match tm {
             Term::Eq(l, r) => {
-                s.summarize_inner(BigRational::one(), l);
-                let mut rs = Summary { vars: Default::default(), cst: BigRational::zero(), nature };
-                rs.summarize_inner(BigRational::one(), r);
+                s.normalize_inner(BigRational::one(), l);
+                let mut rs = Eval { vars: Default::default(), cst: BigRational::zero(), nature };
+                rs.normalize_inner(BigRational::one(), r);
                 s.sub(rs);
             }
             Term::Lt(l, r) => {
-                s.summarize_inner(BigRational::one(), l);
-                let mut rs = Summary { vars: Default::default(), cst: BigRational::zero(), nature };
-                rs.summarize_inner(BigRational::one(), r);
+                s.normalize_inner(BigRational::one(), l);
+                let mut rs = Eval { vars: Default::default(), cst: BigRational::zero(), nature };
+                rs.normalize_inner(BigRational::one(), r);
                 s.sub(rs);
             }
-            t => s.summarize_inner(BigRational::one(), t),
+            t => s.normalize_inner(BigRational::one(), t),
         }
         s
     }
@@ -619,17 +616,17 @@ impl Summary {
     }
 
     #[trusted]
-    fn summarize_inner(&mut self, scale: BigRational, tm: &Term) {
+    fn normalize_inner(&mut self, scale: BigRational, tm: &Term) {
         match tm {
             Term::Eq(l, r) => {
                 unreachable!();
             }
             Term::Plus(l, r) => {
-                self.summarize_inner(scale.clone(), l);
-                self.summarize_inner(scale, r);
+                self.normalize_inner(scale.clone(), l);
+                self.normalize_inner(scale, r);
             }
             Term::Times(k, r) => {
-                self.summarize_inner(scale * k, r);
+                self.normalize_inner(scale * k, r);
             }
             Term::Lt(l, r) => {
                 unreachable!()
@@ -697,8 +694,8 @@ fn fourier_motzkin_symbol(nat1: Nature, nat2: Nature) -> Nature {
 
 // Given two terms [term1] and [term2] this seeks to eliminate a third variable [var] (which in general is a term) from them
 fn fourier_motzkin_resolvent(term1: &Term, term2: &Term, var: &Term) -> Term {
-    let s1 = Summary::summarize(&term1);
-    let s2 = Summary::summarize(&term2);
+    let s1 = Eval::normalize(&term1);
+    let s2 = Eval::normalize(&term2);
     let sym = fourier_motzkin_symbol(s1.nature, s2.nature);
 
     assert!(s1.vars.contains_key(var));

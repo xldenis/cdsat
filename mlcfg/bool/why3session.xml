@@ -6,7 +6,7 @@
 <prover id="1" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC5" version="1.0.5" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="3" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
-<file format="mlcfg" proved="true">
+<file format="mlcfg">
 <path name=".."/><path name="bool.mlcfg"/>
 <theory name="Cdsat_Bool_Impl0_IsRelevant" proved="true">
  <goal name="is_relevant&#39;vc" expl="VC for is_relevant" proved="true">
@@ -25,9 +25,9 @@
  </transf>
  </goal>
 </theory>
-<theory name="Cdsat_Bool_Impl0_EvalInner" proved="true">
- <goal name="eval_inner&#39;vc" expl="VC for eval_inner" proved="true">
- <transf name="split_vc" proved="true" >
+<theory name="Cdsat_Bool_Impl0_EvalInner">
+ <goal name="eval_inner&#39;vc" expl="VC for eval_inner">
+ <transf name="split_vc" >
   <goal name="eval_inner&#39;vc.0" expl="precondition" proved="true">
   <proof prover="3"><result status="valid" time="0.024863" steps="46"/></proof>
   </goal>
@@ -38,7 +38,7 @@
   <proof prover="3"><result status="valid" time="0.026311" steps="55"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.3" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.052876" steps="573"/></proof>
+  <proof prover="3"><result status="valid" time="0.052876" steps="574"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.4" expl="precondition" proved="true">
   <proof prover="3"><result status="valid" time="0.029600" steps="61"/></proof>
@@ -68,7 +68,7 @@
   <proof prover="3"><result status="valid" time="0.028834" steps="118"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.13" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.507086" steps="9841"/></proof>
+  <proof prover="3"><result status="valid" time="0.507086" steps="9833"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.14" expl="unreachable point" proved="true">
   <proof prover="3"><result status="valid" time="0.025993" steps="119"/></proof>
@@ -107,7 +107,7 @@
   <proof prover="3"><result status="valid" time="0.032348" steps="104"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.26" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.504073" steps="8771"/></proof>
+  <proof prover="3"><result status="valid" time="0.504073" steps="8772"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.27" expl="precondition" proved="true">
   <proof prover="3"><result status="valid" time="0.028591" steps="114"/></proof>
@@ -173,7 +173,7 @@
   <proof prover="3"><result status="valid" time="0.031128" steps="104"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.48" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.554099" steps="8394"/></proof>
+  <proof prover="3"><result status="valid" time="0.554099" steps="8391"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.49" expl="precondition" proved="true">
   <proof prover="3"><result status="valid" time="0.028527" steps="114"/></proof>
@@ -218,7 +218,7 @@
   <proof prover="3"><result status="valid" time="0.032156" steps="104"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.63" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.586912" steps="8661"/></proof>
+  <proof prover="3"><result status="valid" time="0.586912" steps="8660"/></proof>
   </goal>
   <goal name="eval_inner&#39;vc.64" expl="precondition" proved="true">
   <proof prover="3"><result status="valid" time="0.031488" steps="114"/></proof>
@@ -243,43 +243,43 @@
    <goal name="eval_inner&#39;vc.70.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="eval_inner&#39;vc.70.0.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.314799" steps="61847"/></proof>
+    <proof prover="2"><result status="valid" time="0.314799" steps="60218"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.1" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.109315" steps="39031"/></proof>
+    <proof prover="2"><result status="valid" time="0.109315" steps="38992"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.2" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.100311" steps="39405"/></proof>
+    <proof prover="2"><result status="valid" time="0.100311" steps="39366"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.3" expl="postcondition" proved="true">
     <proof prover="3"><result status="valid" time="0.041844" steps="262"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.4" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.096894" steps="39025"/></proof>
+    <proof prover="2"><result status="valid" time="0.096894" steps="38986"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.5" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.098603" steps="39399"/></proof>
+    <proof prover="2"><result status="valid" time="0.098603" steps="39360"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.6" expl="postcondition" proved="true">
     <proof prover="3"><result status="valid" time="0.043051" steps="262"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.7" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.145941" steps="48034"/></proof>
+    <proof prover="2"><result status="valid" time="0.145941" steps="47987"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.8" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.092548" steps="39021"/></proof>
+    <proof prover="2"><result status="valid" time="0.092548" steps="38982"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.9" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.095877" steps="39395"/></proof>
+    <proof prover="2"><result status="valid" time="0.095877" steps="39356"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.10" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.047201" steps="262"/></proof>
+    <proof prover="3"><result status="valid" time="0.047201" steps="261"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.11" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.091148" steps="39157"/></proof>
+    <proof prover="2"><result status="valid" time="0.091148" steps="39118"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.12" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.221809" steps="55741"/></proof>
+    <proof prover="2"><result status="valid" time="0.221809" steps="55694"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.0.13" expl="postcondition" proved="true">
     <proof prover="3"><result status="valid" time="0.035445" steps="49"/></proof>
@@ -291,7 +291,7 @@
     <goal name="eval_inner&#39;vc.70.1.0" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="eval_inner&#39;vc.70.1.0.0" expl="postcondition" proved="true">
-     <proof prover="3"><result status="valid" time="0.150069" steps="2160"/></proof>
+     <proof prover="3"><result status="valid" time="0.150069" steps="2158"/></proof>
      </goal>
      <goal name="eval_inner&#39;vc.70.1.0.1" expl="postcondition" proved="true">
      <proof prover="3"><result status="valid" time="0.032846" steps="153"/></proof>
@@ -299,22 +299,22 @@
     </transf>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.1" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.097581" steps="39060"/></proof>
+    <proof prover="2"><result status="valid" time="0.097581" steps="39021"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.2" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.086545" steps="39434"/></proof>
+    <proof prover="2"><result status="valid" time="0.086545" steps="39395"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.3" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="1.876038" steps="286128"/></proof>
+    <proof prover="2"><result status="valid" time="1.876038" steps="285770"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.4" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.101212" steps="39054"/></proof>
+    <proof prover="2"><result status="valid" time="0.101212" steps="39015"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.5" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.110328" steps="39428"/></proof>
+    <proof prover="2"><result status="valid" time="0.110328" steps="39389"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.6" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="1.001822" steps="214028"/></proof>
+    <proof prover="2"><result status="valid" time="1.001822" steps="213380"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.7" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
@@ -355,19 +355,19 @@
     </transf>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.8" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.116400" steps="39050"/></proof>
+    <proof prover="2"><result status="valid" time="0.116400" steps="39011"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.9" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.097923" steps="39424"/></proof>
+    <proof prover="2"><result status="valid" time="0.097923" steps="39385"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.10" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.359757" steps="79602"/></proof>
+    <proof prover="2"><result status="valid" time="0.359757" steps="79512"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.11" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.096704" steps="39186"/></proof>
+    <proof prover="2"><result status="valid" time="0.096704" steps="39147"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.12" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.383573" steps="82910"/></proof>
+    <proof prover="2"><result status="valid" time="0.383573" steps="82794"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.1.13" expl="postcondition" proved="true">
     <proof prover="3"><result status="valid" time="0.028718" steps="55"/></proof>
@@ -377,59 +377,59 @@
    <goal name="eval_inner&#39;vc.70.2" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="eval_inner&#39;vc.70.2.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.155522" steps="44720"/></proof>
+    <proof prover="2"><result status="valid" time="0.155522" steps="43270"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.1" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.141923" steps="45959"/></proof>
+    <proof prover="2"><result status="valid" time="0.141923" steps="45912"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.2" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.168875" steps="46642"/></proof>
+    <proof prover="2"><result status="valid" time="0.168875" steps="46595"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.3" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.151367" steps="39848"/></proof>
+    <proof prover="2"><result status="valid" time="0.151367" steps="39809"/></proof>
     <proof prover="3"><result status="valid" time="0.039359" steps="56"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.4" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.132504" steps="45941"/></proof>
+    <proof prover="2"><result status="valid" time="0.132504" steps="45894"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.5" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.143804" steps="46624"/></proof>
+    <proof prover="2"><result status="valid" time="0.143804" steps="46577"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.6" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.136153" steps="39842"/></proof>
+    <proof prover="2"><result status="valid" time="0.136153" steps="39803"/></proof>
     <proof prover="3"><result status="valid" time="0.045094" steps="56"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.7" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.141433" steps="45818"/></proof>
+    <proof prover="2"><result status="valid" time="0.141433" steps="45771"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.8" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.140583" steps="45913"/></proof>
+    <proof prover="2"><result status="valid" time="0.140583" steps="45866"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.9" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.142563" steps="46596"/></proof>
+    <proof prover="2"><result status="valid" time="0.142563" steps="46549"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.10" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.141091" steps="39840"/></proof>
+    <proof prover="2"><result status="valid" time="0.141091" steps="39801"/></proof>
     <proof prover="3"><result status="valid" time="0.036070" steps="56"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.11" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.133482" steps="46064"/></proof>
+    <proof prover="2"><result status="valid" time="0.133482" steps="46017"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.12" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.139554" steps="46993"/></proof>
+    <proof prover="2"><result status="valid" time="0.139554" steps="46946"/></proof>
     </goal>
     <goal name="eval_inner&#39;vc.70.2.13" expl="postcondition" proved="true">
     <transf name="inline_goal" proved="true" >
      <goal name="eval_inner&#39;vc.70.2.13.0" expl="postcondition" proved="true">
      <transf name="split_vc" proved="true" >
       <goal name="eval_inner&#39;vc.70.2.13.0.0" expl="postcondition" proved="true">
-      <proof prover="0"><result status="valid" time="0.043916" steps="355674"/></proof>
+      <proof prover="0"><result status="valid" time="0.043916" steps="356979"/></proof>
       </goal>
       <goal name="eval_inner&#39;vc.70.2.13.0.1" expl="postcondition" proved="true">
       <proof prover="3"><result status="valid" time="0.039693" steps="204"/></proof>
       </goal>
       <goal name="eval_inner&#39;vc.70.2.13.0.2" expl="postcondition" proved="true">
-      <proof prover="0"><result status="valid" time="0.046423" steps="356051"/></proof>
+      <proof prover="0"><result status="valid" time="0.046423" steps="357356"/></proof>
       </goal>
      </transf>
      </goal>
@@ -439,58 +439,7 @@
    </goal>
   </transf>
   </goal>
-  <goal name="eval_inner&#39;vc.71" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="eval_inner&#39;vc.71.0" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="eval_inner&#39;vc.71.0.0" expl="postcondition" proved="true">
-    <proof prover="0" timelimit="5" memlimit="2000"><result status="valid" time="2.226946" steps="8071064"/></proof>
-    </goal>
-    <goal name="eval_inner&#39;vc.71.0.1" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.028890" steps="57"/></proof>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.1" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.243319" steps="52745"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.2" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.262322" steps="54221"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.3" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.258799" steps="54895"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.4" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.239226" steps="52819"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.5" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.259053" steps="54295"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.6" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.258414" steps="55038"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.7" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.235922" steps="53035"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.8" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.237579" steps="52785"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.9" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.265937" steps="54261"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.10" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.263549" steps="54931"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.11" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.244330" steps="53224"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.12" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.259786" steps="55256"/></proof>
-   </goal>
-   <goal name="eval_inner&#39;vc.71.13" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.046462" steps="328587"/></proof>
-   </goal>
-  </transf>
+  <goal name="eval_inner&#39;vc.71" expl="postcondition">
   </goal>
   <goal name="eval_inner&#39;vc.72" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
@@ -505,47 +454,47 @@
    </transf>
    </goal>
    <goal name="eval_inner&#39;vc.72.1" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.249221" steps="52848"/></proof>
+   <proof prover="2"><result status="valid" time="0.249221" steps="52801"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.2" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.257170" steps="54381"/></proof>
+   <proof prover="2"><result status="valid" time="0.257170" steps="54334"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.3" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.241074" steps="55055"/></proof>
+   <proof prover="2"><result status="valid" time="0.241074" steps="54998"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.4" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.216843" steps="52922"/></proof>
+   <proof prover="2"><result status="valid" time="0.216843" steps="52875"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.5" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.198280" steps="54455"/></proof>
+   <proof prover="2"><result status="valid" time="0.198280" steps="54408"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.6" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.258524" steps="55198"/></proof>
+   <proof prover="2"><result status="valid" time="0.258524" steps="55141"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.7" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.263517" steps="53138"/></proof>
+   <proof prover="2"><result status="valid" time="0.263517" steps="53091"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.8" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="eval_inner&#39;vc.72.8.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.249054" steps="51666"/></proof>
+    <proof prover="2"><result status="valid" time="0.249054" steps="51619"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="eval_inner&#39;vc.72.9" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.246017" steps="54421"/></proof>
+   <proof prover="2"><result status="valid" time="0.246017" steps="54374"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.10" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.257528" steps="55091"/></proof>
+   <proof prover="2"><result status="valid" time="0.257528" steps="55034"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.11" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.236970" steps="53347"/></proof>
+   <proof prover="2"><result status="valid" time="0.236970" steps="53300"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.12" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.246092" steps="55416"/></proof>
+   <proof prover="2"><result status="valid" time="0.246092" steps="55369"/></proof>
    </goal>
    <goal name="eval_inner&#39;vc.72.13" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.254463" steps="52769"/></proof>
+   <proof prover="2"><result status="valid" time="0.254463" steps="52722"/></proof>
    <proof prover="3"><result status="valid" time="0.036343" steps="122"/></proof>
    </goal>
   </transf>
@@ -626,7 +575,7 @@
   <proof prover="3"><result status="valid" time="0.054442" steps="155"/></proof>
   </goal>
   <goal name="extend&#39;vc.15" expl="assertion" proved="true">
-  <proof prover="1"><result status="valid" time="0.689227" steps="138655"/></proof>
+  <proof prover="1"><result status="valid" time="0.689227" steps="133717"/></proof>
   </goal>
   <goal name="extend&#39;vc.16" expl="unreachable point" proved="true">
   <proof prover="3"><result status="valid" time="0.036598" steps="138"/></proof>
@@ -641,7 +590,7 @@
   <proof prover="3"><result status="valid" time="0.053432" steps="85"/></proof>
   </goal>
   <goal name="extend&#39;vc.20" expl="loop invariant preservation" proved="true">
-  <proof prover="3"><result status="valid" time="0.051577" steps="258"/></proof>
+  <proof prover="3"><result status="valid" time="0.051577" steps="257"/></proof>
   </goal>
   <goal name="extend&#39;vc.21" expl="loop invariant preservation" proved="true">
   <proof prover="3"><result status="valid" time="0.045457" steps="254"/></proof>
@@ -655,12 +604,12 @@
   <goal name="extend&#39;vc.24" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="extend&#39;vc.24.0" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.320627" steps="52828"/></proof>
+   <proof prover="2"><result status="valid" time="0.320627" steps="52781"/></proof>
    </goal>
    <goal name="extend&#39;vc.24.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="extend&#39;vc.24.1.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.277531" steps="65420"/></proof>
+    <proof prover="2"><result status="valid" time="0.277531" steps="63826"/></proof>
     </goal>
    </transf>
    </goal>
@@ -669,15 +618,15 @@
   <goal name="extend&#39;vc.25" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="extend&#39;vc.25.0" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.272029" steps="81120"/></proof>
+   <proof prover="2"><result status="valid" time="0.272029" steps="79526"/></proof>
    </goal>
    <goal name="extend&#39;vc.25.1" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.398934" steps="105541"/></proof>
+   <proof prover="2"><result status="valid" time="0.398934" steps="103287"/></proof>
    </goal>
    <goal name="extend&#39;vc.25.2" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="extend&#39;vc.25.2.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.094464" steps="38983"/></proof>
+    <proof prover="2"><result status="valid" time="0.094464" steps="38944"/></proof>
     </goal>
     <goal name="extend&#39;vc.25.2.1" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
@@ -686,7 +635,7 @@
       <goal name="extend&#39;vc.25.2.1.0.0" expl="postcondition" proved="true">
       <transf name="split_vc" proved="true" >
        <goal name="extend&#39;vc.25.2.1.0.0.0" expl="postcondition" proved="true">
-       <proof prover="3"><result status="valid" time="0.761899" steps="4711"/></proof>
+       <proof prover="3"><result status="valid" time="0.761899" steps="4707"/></proof>
        </goal>
        <goal name="extend&#39;vc.25.2.1.0.0.1" expl="postcondition" proved="true">
        <proof prover="3"><result status="valid" time="0.125889" steps="446"/></proof>
@@ -700,12 +649,12 @@
    </transf>
    </goal>
    <goal name="extend&#39;vc.25.3" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.288433" steps="81203"/></proof>
+   <proof prover="2"><result status="valid" time="0.288433" steps="79609"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="extend&#39;vc.26" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.626952" steps="131633"/></proof>
+  <proof prover="2"><result status="valid" time="0.626952" steps="129080"/></proof>
   </goal>
  </transf>
  </goal>
@@ -941,7 +890,10 @@
 </theory>
 <theory name="Cdsat_Theory_Impl4_JustifiedIsBool_Impl">
  <goal name="justified_is_bool&#39;vc" expl="VC for justified_is_bool">
- <proof prover="3"><result status="valid" time="0.048526" steps="846"/></proof>
+ <proof prover="0"><undone/></proof>
+ <proof prover="1"><undone/></proof>
+ <proof prover="2"><undone/></proof>
+ <proof prover="3"><undone/></proof>
  </goal>
 </theory>
 </file>
