@@ -801,7 +801,7 @@ pub(crate) fn set_max(s: FSet<TrailIndex>) -> TrailIndex {
     }
 }
 
-#[ghost]
+#[logic]
 #[open(self)]
 #[requires(t.invariant())]
 #[variant(s.len())]
@@ -809,7 +809,15 @@ pub(crate) fn set_max(s: FSet<TrailIndex>) -> TrailIndex {
 #[ensures(!s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == set_max(s).level_log())]
 #[ensures(s.is_empty() ==> t.ghost.set_level(ix_to_abs(t, s)) == 0)]
 pub(crate) fn ix_to_abs_level(t: Trail, s: FSet<TrailIndex>) {
-    ()
+    if s.is_empty() {
+        ()
+    } else {
+        let max_elem = set_max(s);
+        let max_asgn = t.index_logic(max_elem);
+        let ghost_set = ix_to_abs(t, s);
+        proof_assert!(forall<i : _> s.contains(i) ==> i.level_log() <= max_elem.level_log());
+        proof_assert!(forall<a : _> ghost_set.contains(a) ==> t.ghost.level_of(a) <= t.ghost.level_of(max_asgn));
+    }
 }
 
 #[ghost]
