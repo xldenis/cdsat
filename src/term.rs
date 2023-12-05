@@ -204,7 +204,7 @@ impl creusot_contracts::DeepModel for Term {
             ),
             // WRONG
             Term::Times(l, r) => theory::Term::Plus(
-                Box::new(theory::Term::Value(theory::Value::Rat(Real::from_int(l.deep_model())))),
+                Box::new(theory::Term::Value(theory::Value::Rat(l.deep_model()))),
                 Box::new((*r).deep_model()),
             ),
             Term::Lt(l, r) => {

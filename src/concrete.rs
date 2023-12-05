@@ -7,7 +7,7 @@ use crate::term::{Term, Value};
 // use creusot_contracts::*;
 use crate::{bool::*, lra::*, theory, trail::*};
 use creusot_contracts::{logic::*, std::*, PartialEq, *};
-use log::info;
+use crate::log::info;
 
 use crate::ghost::Ghost;
 
@@ -277,8 +277,8 @@ impl Solver {
                     abs_cflct.0.is_decision(trail.index_logic(*produced[i])) ==>
                     abs_cflct.0.level_of(trail.index_logic(*produced[i])) < abs_cflct.0.set_level(abs_cflct.1))]
             for jix in just.iter() {
-                let j = &trail[*jix]; // should pass
                 proof_assert!(trail.contains(*jix));
+                let j = &trail[*jix]; // should pass
                 if j.is_first_order() && j.is_decision() {
                     if jix.level() == ix.level() {
                         // undo decide

@@ -7,6 +7,7 @@
 
 pub mod bool;
 pub mod concrete;
+pub mod log;
 
 #[macro_use]
 pub mod ghost;

@@ -1,3 +1,4 @@
+use crate::log::info;
 #[allow(unused_imports)]
 use crate::{
     term::{Term, Value},
@@ -5,7 +6,6 @@ use crate::{
 };
 use ::std::{fmt::Display, ops::Index};
 use creusot_contracts::{logic::*, vec, Clone, DeepModel, PartialEq, *};
-use log::info;
 //
 #[cfg(not(creusot))]
 struct FSet<T>(T);
@@ -452,6 +452,17 @@ impl Trail {
         }
     }
 
+    #[trusted]
+    fn log_justified(&self, just: &[TrailIndex], term: &Term, val: &Value) {
+        use ::std::fmt::Write;
+        let mut s = String::from("{");
+        for i in just {
+            write!(s, "{}, ", &self[*i]).unwrap();
+        }
+        s.push('}');
+        info!("{s} |- {term} <- {val}");
+    }
+
     // Need some sort of theorem here
     #[maintains((mut self).invariant())]
     #[requires((val@).is_bool())]
@@ -460,15 +471,7 @@ impl Trail {
     #[requires(forall<m : theory::Model>  m.satisfy_set(self.abstract_justification(into_vec@)) ==> m.satisfies((term@, val@)))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
     pub(crate) fn add_justified(&mut self, into_vec: Vec<TrailIndex>, term: Term, val: Value) {
-        use ::std::fmt::Write;
-        let mut s = String::from("{");
-        for i in &into_vec {
-            write!(s, "{}, ", &self[*i]).unwrap();
-        }
-        s.push('}');
-        info!("{s} |- {term} <- {val}");
-
-
+        self.log_justified(&into_vec, &term, &val);
         let level = self.max_level(&into_vec);
 
         proof_assert!(level <= self.level);
@@ -570,18 +573,18 @@ impl Trail {
     pub(crate) fn max_level(&self, assignments: &[TrailIndex]) -> usize {
         let mut max = 0;
         #[invariant(true)]
-        #[invariant(self.ghost.set_level(self.abstract_justification(produced.to_owned())) == max@)]
+        #[invariant(self.ghost.set_level(self.abstract_justification(produced.to_owned_seq())) == max@)]
         for ix in assignments {
-            proof_assert!(self.abs_just_snoc(produced.to_owned(), *ix); true);
+            proof_assert!(self.abs_just_snoc(produced.to_owned_seq(), *ix); true);
             proof_assert!(self.abstract_justification(assignments@).insert(self.index_logic(*ix)) == self.abstract_justification((assignments@).push(*ix)));
             proof_assert!((assignments@).contains(*ix));
             proof_assert!(self.contains(*ix));
             proof_assert! { self.ghost.level_of(self.index_logic(*ix)) == ix.0@ };
             if ix.0 >= max {
-                proof_assert!(self.ghost.set_level_max(self.abstract_justification(produced.to_owned()), self.index_logic(*ix)); true);
+                proof_assert!(self.ghost.set_level_max(self.abstract_justification(produced.to_owned_seq()), self.index_logic(*ix)); true);
                 max = ix.0
             } else {
-                proof_assert!(self.ghost.set_level_min(self.abstract_justification(produced.to_owned()), self.index_logic(*ix)); true);
+                proof_assert!(self.ghost.set_level_min(self.abstract_justification(produced.to_owned_seq()), self.index_logic(*ix)); true);
             }
         }
         max

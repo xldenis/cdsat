@@ -1,6 +1,6 @@
 use crate::ghost::Ghost;
 use creusot_contracts::{vec, *};
-use log::{info, trace};
+use crate::log::{info, trace};
 
 #[cfg(creusot)]
 use crate::theory;
@@ -64,7 +64,6 @@ impl BoolTheory {
                 Result::Ok(res) => {
                     if res != assign.val {
                         just.push(ix);
-                        proof_assert!(res@ != assign.val@);
                         let _: Ghost![_] = gh! {crate::trail::abstract_justification_insert};
                         let _: Ghost![_] = gh! { theory::Model::consistent };
 
