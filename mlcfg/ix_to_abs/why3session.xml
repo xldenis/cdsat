@@ -13,16 +13,17 @@
 <theory name="Cdsat_Trail_IxToAbsRemove_Impl" proved="true">
  <goal name="ix_to_abs_remove&#39;vc" expl="VC for ix_to_abs_remove" proved="true">
  <transf name="split_vc" proved="true" >
-  <goal name="ix_to_abs_remove&#39;vc.0" expl="postcondition" proved="true">
-  <transf name="assert" proved="true" arg1="(ix_to_abs t (remove s x) ==&#39; remove1 (ix_to_abs t s) (index_logic2 t x))
-">
-   <goal name="ix_to_abs_remove&#39;vc.0.0" expl="asserted formula" proved="true">
-   <proof prover="3"><result status="valid" time="0.227021" steps="3833"/></proof>
-   </goal>
-   <goal name="ix_to_abs_remove&#39;vc.0.1" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.028178" steps="38"/></proof>
-   </goal>
-  </transf>
+  <goal name="ix_to_abs_remove&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.032312" steps="38"/></proof>
+  </goal>
+  <goal name="ix_to_abs_remove&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.026644" steps="41"/></proof>
+  </goal>
+  <goal name="ix_to_abs_remove&#39;vc.2" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.242867" steps="4679"/></proof>
+  </goal>
+  <goal name="ix_to_abs_remove&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.023070" steps="36"/></proof>
   </goal>
  </transf>
  </goal>
@@ -34,13 +35,13 @@
   <proof prover="3"><result status="valid" time="0.021545" steps="26"/></proof>
   </goal>
   <goal name="ix_to_abs_level&#39;vc.1" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.854679" steps="16872"/></proof>
+  <proof prover="3"><result status="valid" time="0.854679" steps="18494"/></proof>
   </goal>
   <goal name="ix_to_abs_level&#39;vc.2" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.038534" steps="423"/></proof>
+  <proof prover="3"><result status="valid" time="0.038534" steps="447"/></proof>
   </goal>
   <goal name="ix_to_abs_level&#39;vc.3" expl="postcondition" proved="true">
-  <proof prover="3"><result status="valid" time="0.216527" steps="3951"/></proof>
+  <proof prover="3"><result status="valid" time="0.216527" steps="3943"/></proof>
   </goal>
   <goal name="ix_to_abs_level&#39;vc.4" expl="postcondition" proved="true">
   <proof prover="3"><result status="valid" time="0.037509" steps="218"/></proof>
@@ -51,15 +52,17 @@
 <theory name="Cdsat_Trail_IxToAbsInsert_Impl" proved="true">
  <goal name="ix_to_abs_insert&#39;vc" expl="VC for ix_to_abs_insert" proved="true">
  <transf name="split_vc" proved="true" >
-  <goal name="ix_to_abs_insert&#39;vc.0" expl="postcondition" proved="true">
-  <transf name="assert" proved="true" arg1="(ix_to_abs t (insert s x) ==&#39; insert1 (ix_to_abs t s) (index_logic2 t x))">
-   <goal name="ix_to_abs_insert&#39;vc.0.0" expl="asserted formula" proved="true">
-   <proof prover="3"><result status="valid" time="0.072670" steps="994"/></proof>
-   </goal>
-   <goal name="ix_to_abs_insert&#39;vc.0.1" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.028259" steps="38"/></proof>
-   </goal>
-  </transf>
+  <goal name="ix_to_abs_insert&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.032878" steps="37"/></proof>
+  </goal>
+  <goal name="ix_to_abs_insert&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.026858" steps="40"/></proof>
+  </goal>
+  <goal name="ix_to_abs_insert&#39;vc.2" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.059439" steps="684"/></proof>
+  </goal>
+  <goal name="ix_to_abs_insert&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.024332" steps="36"/></proof>
   </goal>
  </transf>
  </goal>

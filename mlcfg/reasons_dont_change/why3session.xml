@@ -9,49 +9,77 @@
 <path name=".."/><path name="reasons_dont_change.mlcfg"/>
 <theory name="Cdsat_Trail_Impl9_ReasonsDontChange_Impl" proved="true">
  <goal name="reasons_dont_change&#39;vc" expl="VC for reasons_dont_change" proved="true">
- <proof prover="0"><undone/></proof>
  <transf name="split_vc" proved="true" >
   <goal name="reasons_dont_change&#39;vc.0" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.038297" steps="151"/></proof>
+  <proof prover="3"><result status="valid" time="0.093284" steps="1249"/></proof>
   </goal>
   <goal name="reasons_dont_change&#39;vc.1" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.184887" steps="2488"/></proof>
+  <proof prover="3"><result status="valid" time="0.136996" steps="2153"/></proof>
   </goal>
   <goal name="reasons_dont_change&#39;vc.2" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.068028" steps="575"/></proof>
+  <transf name="instantiate" proved="true" arg1="restrict_kind_unchanged_spec" arg2="(inner (trail_ghost self)),(to_int (trail_level other)),a">
+   <goal name="reasons_dont_change&#39;vc.2.0" expl="assertion" proved="true">
+   <transf name="destruct_rec" proved="true" arg1="Hinst">
+    <goal name="reasons_dont_change&#39;vc.2.0.0" expl="destruct premise" proved="true">
+    <proof prover="3"><result status="valid" time="0.026905" steps="52"/></proof>
+    </goal>
+    <goal name="reasons_dont_change&#39;vc.2.0.1" expl="destruct premise" proved="true">
+    <proof prover="3"><result status="valid" time="0.032392" steps="52"/></proof>
+    </goal>
+    <goal name="reasons_dont_change&#39;vc.2.0.2" expl="destruct premise" proved="true">
+    <proof prover="3"><result status="valid" time="0.027934" steps="34"/></proof>
+    </goal>
+    <goal name="reasons_dont_change&#39;vc.2.0.3" expl="assertion" proved="true">
+    <proof prover="3"><result status="valid" time="0.137475" steps="2431"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
   </goal>
-  <goal name="reasons_dont_change&#39;vc.3" expl="postcondition" proved="true">
+  <goal name="reasons_dont_change&#39;vc.3" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.140685" steps="2419"/></proof>
+  </goal>
+  <goal name="reasons_dont_change&#39;vc.4" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.037316" steps="59"/></proof>
+  </goal>
+  <goal name="reasons_dont_change&#39;vc.5" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.038297" steps="227"/></proof>
+  </goal>
+  <goal name="reasons_dont_change&#39;vc.6" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.392850" steps="3618"/></proof>
+  </goal>
+  <goal name="reasons_dont_change&#39;vc.7" expl="postcondition" proved="true">
   <transf name="inline_goal" proved="true" >
-   <goal name="reasons_dont_change&#39;vc.3.0" expl="postcondition" proved="true">
+   <goal name="reasons_dont_change&#39;vc.7.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
-    <goal name="reasons_dont_change&#39;vc.3.0.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.178513" steps="42947"/></proof>
+    <goal name="reasons_dont_change&#39;vc.7.0.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.039835" steps="270773"/></proof>
     </goal>
-    <goal name="reasons_dont_change&#39;vc.3.0.1" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.185906" steps="44255"/></proof>
+    <goal name="reasons_dont_change&#39;vc.7.0.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.217810" steps="48263"/></proof>
     </goal>
-    <goal name="reasons_dont_change&#39;vc.3.0.2" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.558146" steps="78765"/></proof>
+    <goal name="reasons_dont_change&#39;vc.7.0.2" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.037413" steps="270012"/></proof>
     </goal>
-    <goal name="reasons_dont_change&#39;vc.3.0.3" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.188855" steps="45199"/></proof>
+    <goal name="reasons_dont_change&#39;vc.7.0.3" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.038971" steps="267975"/></proof>
     </goal>
-    <goal name="reasons_dont_change&#39;vc.3.0.4" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.039851" steps="125"/></proof>
+    <goal name="reasons_dont_change&#39;vc.7.0.4" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.039851" steps="162"/></proof>
     </goal>
-    <goal name="reasons_dont_change&#39;vc.3.0.5" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.039889" steps="125"/></proof>
+    <goal name="reasons_dont_change&#39;vc.7.0.5" expl="postcondition" proved="true">
+    <proof prover="3"><result status="valid" time="0.039889" steps="169"/></proof>
     </goal>
-    <goal name="reasons_dont_change&#39;vc.3.0.6" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.195187" steps="46098"/></proof>
+    <goal name="reasons_dont_change&#39;vc.7.0.6" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.039565" steps="272204"/></proof>
     </goal>
-    <goal name="reasons_dont_change&#39;vc.3.0.7" expl="postcondition" proved="true">
-    <transf name="assert" proved="true" arg1="(justification (inner (trail_ghost other)) (index_logic other ix) == abstract_justification other (shallow_model j))">
-     <goal name="reasons_dont_change&#39;vc.3.0.7.0" expl="asserted formula" proved="true">
-     <proof prover="3"><result status="valid" time="0.914803" steps="12092"/></proof>
+    <goal name="reasons_dont_change&#39;vc.7.0.7" expl="postcondition" proved="true">
+    <transf name="assert" proved="true" arg1="(justification (inner (trail_ghost other)) (index_logic3 other ix) == abstract_justification other (shallow_model j))">
+     <goal name="reasons_dont_change&#39;vc.7.0.7.0" expl="asserted formula" proved="true">
+     <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="1.470534" steps="21189"/></proof>
      </goal>
-     <goal name="reasons_dont_change&#39;vc.3.0.7.1" expl="postcondition" proved="true">
-     <proof prover="3"><result status="valid" time="0.034706" steps="48"/></proof>
+     <goal name="reasons_dont_change&#39;vc.7.0.7.1" expl="postcondition" proved="true">
+     <proof prover="3"><result status="valid" time="0.040524" steps="59"/></proof>
      </goal>
     </transf>
     </goal>

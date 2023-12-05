@@ -525,40 +525,35 @@ impl Trail {
 
     #[logic]
     #[open]
-    pub fn reason(self, ix : TrailIndex) -> Reason {
+    pub fn reason(self, ix: TrailIndex) -> Reason {
         self.assignments[ix.0][ix.1].reason
     }
 
-    // LOL
     #[ghost]
-    #[requires(self.justified_is_justified())]
-    #[requires(self.abstract_relation())]
+    #[requires(self.invariant())]
     #[requires(other.abstract_relation() && other.ghost.invariant())]
+    #[requires(self.ghost.restrict(other.level@) == *other.ghost)]
     #[requires(other.ghost.level() == other.level@)]
-    #[requires(forall<ix : _> self.contains(ix) ==> ix.level_log() <= other.level@ ==> other.contains(ix))]
     #[requires(forall<ix : _> other.contains(ix) ==> self.contains(ix))]
     #[requires(forall<ix :_> other.contains(ix) ==> self.index_logic(ix) == other.index_logic(ix))]
     #[requires(forall<ix : _> other.contains(ix) ==> self.reason(ix) == other.reason(ix))]
-    #[requires(forall<a : _> other.ghost.contains(a) ==>
-        self.ghost.is_justified(a) == other.ghost.is_justified(a))]
-     #[requires(forall<a : _> other.ghost.contains(a) ==>
-        self.ghost.is_decision(a) == other.ghost.is_decision(a))]
-    #[requires(forall<a : _> other.ghost.contains(a) ==>
-        self.ghost.is_input(a) == other.ghost.is_input(a) )]
-    #[requires(forall<a : _> other.ghost.contains(a) ==>
-        self.ghost.justification(a) == other.ghost.justification(a))]
     #[ensures(other.justified_is_justified())]
     fn reasons_dont_change(self, other: Self) {
+        let _ = theory::Trail::restrict_kind_unchanged;
+        proof_assert!(forall<ix : _> self.contains(ix) ==> ix.level_log() <= other.level@ ==> other.contains(ix));
+        proof_assert!(forall<a : _> other.ghost.contains(a) ==>
+            self.ghost.is_justified(a) == other.ghost.is_justified(a));
+        proof_assert!(forall<a : _> other.ghost.contains(a) ==>
+            self.ghost.is_decision(a) == other.ghost.is_decision(a));
+        proof_assert!(forall<a : _> other.ghost.contains(a) ==>
+            self.ghost.is_input(a) == other.ghost.is_input(a) );
+        proof_assert!(forall<a : _> other.ghost.contains(a) ==>
+            self.ghost.justification(a) == other.ghost.justification(a));
         proof_assert!(forall<ix : _> other.contains(ix) ==> ix.level_log() <= other.ghost.level());
         proof_assert!(forall<ix : _, j : _> other.contains(ix) ==>  other.reason(ix) == Reason::Justified(j) ==>
             forall<i : _> j@.contains(i) ==> i < ix && other.contains(i)
         );
-        proof_assert!(forall<ix : _> self.contains(ix) ==> self.reason(ix) == Reason::Decision ==>
-            self.ghost.is_decision(self.index_logic(ix))
-        );
     }
-
-
 
     // #[trusted]
     #[maintains((mut self).invariant())]
@@ -576,7 +571,7 @@ impl Trail {
         #[invariant(self.level >= level)]
         #[invariant(forall<ix : TrailIndex> self.contains(ix) ==> old.index_logic(ix) == self.index_logic(ix))]
         #[invariant(forall<ix : _> self.contains(ix) ==> self.reason(ix) == old.reason(ix))]
-        #[invariant(forall<ix : _> old.contains(ix) ==> ix.level_log() <= self.level@ ==> self.contains(ix))]
+        // #[invariant(forall<ix : _> old.contains(ix) ==> ix.level_log() <= self.level@ ==> self.contains(ix))]
         #[invariant(self.invariant())]
         while level < self.level {
             let _: Ghost![_] = gh!(theory::Trail::restrict_idempotent);
@@ -586,14 +581,13 @@ impl Trail {
             // This is a load bearing `unwrap`. It allows the provers to properly see that `pop` returned `Some` here
             // and use the appropriate specification. They don't want to break the `match` in the postcondition of `pop` otherwise.
             self.assignments.pop().unwrap();
+            proof_assert!(forall<ix : _> self.contains(ix) ==> old.contains(ix));
 
             self.level -= 1;
             self.ghost = gh! { self.ghost.restrict(self.level.shallow_model()) };
 
-            proof_assert!(forall<ix : _> self.contains(ix) ==> old.contains(ix));
             proof_assert!(self.abstract_relation());
             gh!(old.reasons_dont_change(*self));
-            proof_assert!(self.justified_is_justified());
         }
     }
 
@@ -859,7 +853,9 @@ pub(crate) fn ix_to_abs_level(t: Trail, s: FSet<TrailIndex>) {
 #[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
 #[ensures(ix_to_abs(t, s.remove(x)) == ix_to_abs(t, s).remove(t.index_logic(x)))]
 pub(crate) fn ix_to_abs_remove(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
-    ()
+    proof_assert!(
+        ix_to_abs(t, s.remove(x)).ext_eq(ix_to_abs(t, s).remove(t.index_logic(x)))
+    )
 }
 
 #[ghost]
@@ -870,7 +866,7 @@ pub(crate) fn ix_to_abs_remove(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
 #[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
 #[ensures(ix_to_abs(t, s.insert(x)) == ix_to_abs(t, s).insert(t.index_logic(x)))]
 pub(crate) fn ix_to_abs_insert(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
-    ()
+    proof_assert!(ix_to_abs(t, s.insert(x)).ext_eq(ix_to_abs(t, s).insert(t.index_logic(x))));
 }
 
 #[ghost]
