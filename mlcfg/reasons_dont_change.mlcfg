@@ -3580,169 +3580,6 @@ module Cdsat_Theory_Impl5_Restrict
     
   axiom restrict_spec : forall self : Cdsat_Theory_Trail_Type.t_trail, level : int . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 549 15 549 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 551 15 551 25] level >= 0) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 559 14 559 40] Len0.len (restrict self level) <= Len0.len self) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 558 4 558 71] Level0.level self < level -> Level0.level (restrict self level) = Level0.level self) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 557 4 557 65] Level0.level self >= level -> Level0.level (restrict self level) = level) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 556 4 556 77] forall m : Cdsat_Theory_Model_Type.t_model . Inv0.inv m -> SatisfiedBy0.satisfied_by self m -> SatisfiedBy0.satisfied_by (restrict self level) m) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 555 4 555 71] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . not Contains0.contains self a -> not Contains0.contains (restrict self level) a) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 554 4 554 56] level >= Level0.level self -> restrict self level = self) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 553 4 553 142] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains (restrict self level) a -> Contains0.contains self a /\ LevelOf0.level_of (restrict self level) a <= level /\ LevelOf0.level_of (restrict self level) a = LevelOf0.level_of self a) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 552 4 552 141] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains self a -> LevelOf0.level_of self a <= level -> Contains0.contains (restrict self level) a /\ LevelOf0.level_of (restrict self level) a = LevelOf0.level_of self a) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 550 14 550 32] Invariant0.invariant' (restrict self level))
 end
-module Cdsat_Theory_Impl5_Restrict_Impl
-  use prelude.Int
-  clone CreusotContracts_NumRational_Impl1_FromInt_Interface as FromInt0
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  clone CreusotContracts_Logic_Fset_Impl0_Remove as Remove0 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
-  use Cdsat_Theory_Model_Type as Cdsat_Theory_Model_Type
-  clone Cdsat_Theory_Impl1_Sort as Sort1
-  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
-  clone Cdsat_Theory_Impl0_Sort as Sort0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl3_Invariant as Invariant2 with
-    function Sort0.sort = Sort1.sort
-  clone CreusotContracts_Invariant_Inv_Interface as Inv0 with
-    type t = Cdsat_Theory_Model_Type.t_model
-  clone Cdsat_Theory_Impl4_Interp as Interp0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort,
-    function FromInt0.from_int = FromInt0.from_int,
-    axiom .
-  use Cdsat_Theory_Assign_Type as Cdsat_Theory_Assign_Type
-  clone Cdsat_Theory_Impl2_Invariant as Invariant1 with
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_IsBool as IsBool0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_Negate as Negate0 with
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains1 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
-  clone Cdsat_Theory_Impl5_Len as Len0 with
-    axiom .
-  clone Cdsat_Theory_Impl5_Level as Level0 with
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_InvariantAssign as InvariantAssign0 with
-    predicate Invariant0.invariant' = Invariant1.invariant'
-  clone Cdsat_Theory_Impl2_ToPair as ToPair0
-  use prelude.Int
-  clone Cdsat_Theory_Impl5_InvariantNonneg as InvariantNonneg0 with
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len
-  use Core_Option_Option_Type as Core_Option_Option_Type
-  clone Cdsat_Theory_Impl5_Find as Find0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_LevelOf as LevelOf0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Find0.find = Find0.find,
-    function Len0.len = Len0.len,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    axiom .
-  clone Cdsat_Theory_Impl5_SetLevel as SetLevel0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    function Remove0.remove = Remove0.remove,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl4_Satisfies as Satisfies0 with
-    function Interp0.interp = Interp0.interp,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort
-  clone Cdsat_Theory_Model_Type_Inv as Cdsat_Theory_Model_Type_Inv0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    axiom .
-  clone Cdsat_Theory_Impl5_Contains as Contains0 with
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_TrailUnique as TrailUnique0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate Contains0.contains = Contains0.contains,
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    function Negate0.negate = Negate0.negate,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantContains as InvariantContains0 with
-    predicate Contains0.contains = Contains1.contains,
-    predicate Contains1.contains = Contains0.contains,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantLevel as InvariantLevel0 with
-    function Level0.level = Level0.level,
-    function SetLevel0.set_level = SetLevel0.set_level,
-    function Len0.len = Len0.len,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of
-  clone Cdsat_Theory_Impl5_Invariant as Invariant0 with
-    predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
-    predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
-    predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign
-  clone Cdsat_Theory_Impl5_CountBounds as CountBounds0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_SatisfiedBy as SatisfiedBy0 with
-    predicate Contains0.contains = Contains0.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  let rec ghost function restrict [#"/Users/xavier/Code/cdsat/src/theory.rs" 560 4 560 45] (self : Cdsat_Theory_Trail_Type.t_trail) (level : int) : Cdsat_Theory_Trail_Type.t_trail
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 549 15 549 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 551 15 551 25] level >= 0}
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 550 14 550 32] Invariant0.invariant' result }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 552 4 552 141] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains self a -> LevelOf0.level_of self a <= level -> Contains0.contains result a /\ LevelOf0.level_of result a = LevelOf0.level_of self a }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 553 4 553 142] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains0.contains result a -> Contains0.contains self a /\ LevelOf0.level_of result a <= level /\ LevelOf0.level_of result a = LevelOf0.level_of self a }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 554 4 554 56] level >= Level0.level self -> result = self }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 555 4 555 71] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . not Contains0.contains self a -> not Contains0.contains result a }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 556 4 556 77] forall m : Cdsat_Theory_Model_Type.t_model . Inv0.inv m -> SatisfiedBy0.satisfied_by self m -> SatisfiedBy0.satisfied_by result m }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 557 4 557 65] Level0.level self >= level -> Level0.level result = level }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 558 4 558 71] Level0.level self < level -> Level0.level result = Level0.level self }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 559 14 559 40] Len0.len result <= Len0.len self }
-    
-   = [@vc:do_not_keep_trace] [@vc:sp]
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 561 8 572 9] match (self) with
-      | Cdsat_Theory_Trail_Type.C_Empty -> Cdsat_Theory_Trail_Type.C_Empty
-      | Cdsat_Theory_Trail_Type.C_Assign a l tl -> let tl = restrict tl level in let _ = CountBounds0.count_bounds tl in if pure {l <= level} then
-        Cdsat_Theory_Trail_Type.C_Assign a l tl
-      else
-        tl
-      
-      end
-end
 module Cdsat_Theory_Impl5_Unsat_Stub
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
   predicate unsat [#"/Users/xavier/Code/cdsat/src/theory.rs" 683 4 683 30] (self : Cdsat_Theory_Trail_Type.t_trail)
@@ -9188,179 +9025,6 @@ module Cdsat_Theory_Impl5_RestrictSound
     
   axiom restrict_sound_spec : forall self : Cdsat_Theory_Trail_Type.t_trail, level : int . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 704 15 704 27] Sound0.sound self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 705 14 705 42] Sound0.sound (Restrict0.restrict self level))
 end
-module Cdsat_Theory_Impl5_RestrictSound_Impl
-  use prelude.Int
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  clone CreusotContracts_Logic_Fset_Impl0_Remove as Remove0 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone CreusotContracts_NumRational_Impl1_FromInt_Interface as FromInt0
-  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
-  clone Cdsat_Theory_Impl1_Sort as Sort1
-  clone Cdsat_Theory_Impl1_IsBool as IsBool0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_Negate as Negate0 with
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    axiom .
-  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
-  clone Cdsat_Theory_Impl5_Len as Len0 with
-    axiom .
-  use Cdsat_Theory_Assign_Type as Cdsat_Theory_Assign_Type
-  clone Cdsat_Theory_Impl5_Level as Level0 with
-    function Len0.len = Len0.len,
-    axiom .
-  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
-  clone Cdsat_Theory_Impl0_Sort as Sort0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl2_Invariant as Invariant1 with
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantAssign as InvariantAssign0 with
-    predicate Invariant0.invariant' = Invariant1.invariant'
-  clone Cdsat_Theory_Impl2_ToPair as ToPair0
-  use prelude.Int
-  clone Cdsat_Theory_Impl5_InvariantNonneg as InvariantNonneg0 with
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len
-  use Core_Option_Option_Type as Core_Option_Option_Type
-  clone Cdsat_Theory_Impl5_Find as Find0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_LevelOf as LevelOf0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Find0.find = Find0.find,
-    function Len0.len = Len0.len,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains1 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Theory_Impl5_SetLevel as SetLevel0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    function Remove0.remove = Remove0.remove,
-    function Len0.len = Len0.len,
-    axiom .
-  use Cdsat_Theory_Model_Type as Cdsat_Theory_Model_Type
-  clone Cdsat_Theory_Impl3_Invariant as Invariant2 with
-    function Sort0.sort = Sort1.sort
-  clone CreusotContracts_Invariant_Inv_Interface as Inv0 with
-    type t = Cdsat_Theory_Model_Type.t_model
-  clone Cdsat_Theory_Impl4_Interp as Interp0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort,
-    function FromInt0.from_int = FromInt0.from_int,
-    axiom .
-  clone Cdsat_Theory_Model_Type_Inv as Cdsat_Theory_Model_Type_Inv0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    axiom .
-  clone Cdsat_Theory_Impl5_Contains as Contains0 with
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_TrailUnique as TrailUnique0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate Contains0.contains = Contains0.contains,
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    function Negate0.negate = Negate0.negate,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantContains as InvariantContains0 with
-    predicate Contains0.contains = Contains1.contains,
-    predicate Contains1.contains = Contains0.contains,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantLevel as InvariantLevel0 with
-    function Level0.level = Level0.level,
-    function SetLevel0.set_level = SetLevel0.set_level,
-    function Len0.len = Len0.len,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of
-  clone Cdsat_Theory_Impl4_Satisfies as Satisfies0 with
-    function Interp0.interp = Interp0.interp,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort
-  clone Cdsat_Theory_Impl4_SatisfySet as SatisfySet0 with
-    predicate Contains0.contains = Contains1.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies
-  clone Cdsat_Theory_Impl5_Invariant as Invariant0 with
-    predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
-    predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
-    predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign
-  clone Cdsat_Theory_Impl5_CountBounds as CountBounds0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_SatisfiedBy as SatisfiedBy0 with
-    predicate Contains0.contains = Contains0.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl2_JustifiedSound as JustifiedSound0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies
-  clone Cdsat_Theory_Impl5_Restrict as Restrict0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    function CountBounds0.count_bounds = CountBounds0.count_bounds,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    axiom .
-  clone Cdsat_Theory_Impl5_Sound as Sound0 with
-    predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
-  let rec ghost function restrict_sound [#"/Users/xavier/Code/cdsat/src/theory.rs" 706 4 706 43] (self : Cdsat_Theory_Trail_Type.t_trail) (level : int) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 704 15 704 27] Sound0.sound self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 705 14 705 42] Sound0.sound (Restrict0.restrict self level) }
-    
-   = [@vc:do_not_keep_trace] [@vc:sp]
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 707 8 712 9] match (self) with
-      | Cdsat_Theory_Trail_Type.C_Empty -> ()
-      | Cdsat_Theory_Trail_Type.C_Assign a l tl -> let _ = restrict_sound tl level in ()
-      end
-end
 module Cdsat_Theory_Impl5_TrailPlausible_Stub
   use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
   use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
@@ -9609,172 +9273,6 @@ module Cdsat_Theory_Impl5_RestrictIdempotent
     ensures { result = restrict_idempotent self l1 l2 }
     
   axiom restrict_idempotent_spec : forall self : Cdsat_Theory_Trail_Type.t_trail, l1 : int, l2 : int . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 773 15 773 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 774 15 774 33] l1 >= 0 /\ l2 >= 0) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 775 15 775 23] l1 <= l2) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 776 14 776 65] Restrict0.restrict self l1 = Restrict0.restrict (Restrict0.restrict self l2) l1)
-end
-module Cdsat_Theory_Impl5_RestrictIdempotent_Impl
-  use prelude.Int
-  clone CreusotContracts_NumRational_Impl1_FromInt_Interface as FromInt0
-  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  use Cdsat_Theory_Model_Type as Cdsat_Theory_Model_Type
-  clone Cdsat_Theory_Impl1_Sort as Sort1
-  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
-  clone Cdsat_Theory_Impl0_Sort as Sort0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl3_Invariant as Invariant2 with
-    function Sort0.sort = Sort1.sort
-  clone CreusotContracts_Invariant_Inv_Interface as Inv0 with
-    type t = Cdsat_Theory_Model_Type.t_model
-  clone Cdsat_Theory_Impl4_Interp as Interp0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort,
-    function FromInt0.from_int = FromInt0.from_int,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Remove as Remove0 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Theory_Impl4_Satisfies as Satisfies0 with
-    function Interp0.interp = Interp0.interp,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort
-  clone Cdsat_Theory_Model_Type_Inv as Cdsat_Theory_Model_Type_Inv0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    axiom .
-  use prelude.Int
-  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
-  clone Cdsat_Theory_Impl5_Len as Len0 with
-    axiom .
-  use Cdsat_Theory_Assign_Type as Cdsat_Theory_Assign_Type
-  clone Cdsat_Theory_Impl2_Invariant as Invariant1 with
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantAssign as InvariantAssign0 with
-    predicate Invariant0.invariant' = Invariant1.invariant'
-  clone Cdsat_Theory_Impl5_Level as Level0 with
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_InvariantNonneg as InvariantNonneg0 with
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len
-  clone Cdsat_Theory_Impl2_ToPair as ToPair0
-  use Core_Option_Option_Type as Core_Option_Option_Type
-  clone Cdsat_Theory_Impl5_Find as Find0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl1_IsBool as IsBool0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_Negate as Negate0 with
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains1 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Theory_Impl5_LevelOf as LevelOf0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Find0.find = Find0.find,
-    function Len0.len = Len0.len,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    axiom .
-  clone Cdsat_Theory_Impl5_SetLevel as SetLevel0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    function Remove0.remove = Remove0.remove,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_Contains as Contains0 with
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_TrailUnique as TrailUnique0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate Contains0.contains = Contains0.contains,
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    function Negate0.negate = Negate0.negate,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantContains as InvariantContains0 with
-    predicate Contains0.contains = Contains1.contains,
-    predicate Contains1.contains = Contains0.contains,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantLevel as InvariantLevel0 with
-    function Level0.level = Level0.level,
-    function SetLevel0.set_level = SetLevel0.set_level,
-    function Len0.len = Len0.len,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of
-  clone Cdsat_Theory_Impl5_Invariant as Invariant0 with
-    predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
-    predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
-    predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign
-  clone Cdsat_Theory_Impl5_CountBounds as CountBounds0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_SatisfiedBy as SatisfiedBy0 with
-    predicate Contains0.contains = Contains0.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_Restrict as Restrict0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    function CountBounds0.count_bounds = CountBounds0.count_bounds,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    axiom .
-  let rec ghost function restrict_idempotent [#"/Users/xavier/Code/cdsat/src/theory.rs" 777 4 777 54] (self : Cdsat_Theory_Trail_Type.t_trail) (l1 : int) (l2 : int) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 773 15 773 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 774 15 774 33] l1 >= 0 /\ l2 >= 0}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 775 15 775 23] l1 <= l2}
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 776 14 776 65] Restrict0.restrict self l1 = Restrict0.restrict (Restrict0.restrict self l2) l1 }
-    
-   = [@vc:do_not_keep_trace] [@vc:sp]
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 778 8 781 9] match (self) with
-      | Cdsat_Theory_Trail_Type.C_Empty -> ()
-      | Cdsat_Theory_Trail_Type.C_Assign _ _ tl -> restrict_idempotent tl l1 l2
-      end
 end
 module Cdsat_Theory_Impl1_NegateInvolutive_Stub
   use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
@@ -11328,6 +10826,481 @@ module Cdsat_Trail_Impl9_ReasonsDontChange
     
   axiom reasons_dont_change_spec : forall self : Cdsat_Trail_Trail_Type.t_trail, other : Cdsat_Trail_Trail_Type.t_trail . ([#"/Users/xavier/Code/cdsat/src/trail.rs" 534 15 534 44] JustifiedIsJustified0.justified_is_justified self) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 535 15 535 39] AbstractRelation0.abstract_relation self) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 536 4 536 69] AbstractRelation0.abstract_relation other /\ Invariant0.invariant' (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other))) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 537 15 537 50] Level0.level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) = UIntSize.to_int (Cdsat_Trail_Trail_Type.trail_level other)) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 538 4 538 107] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains self ix -> LevelLog0.level_log ix <= UIntSize.to_int (Cdsat_Trail_Trail_Type.trail_level other) -> Contains0.contains other ix) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 539 4 539 72] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains other ix -> Contains0.contains self ix) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 540 4 540 99] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains other ix -> IndexLogic0.index_logic self ix = IndexLogic0.index_logic other ix) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 541 4 541 90] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains other ix -> Reason0.reason self ix = Reason0.reason other ix) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 542 4 543 67] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a -> IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a = IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 544 5 545 65] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a -> IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a = IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 546 4 547 60] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a -> IsInput0.is_input (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a = IsInput0.is_input (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 548 4 549 69] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a -> Justification0.justification (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a = Justification0.justification (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a) -> ([#"/Users/xavier/Code/cdsat/src/trail.rs" 550 14 550 44] JustifiedIsJustified0.justified_is_justified other)
 end
+module Cdsat_Trail_Impl9_ReasonsDontChange_Impl
+  use prelude.Ghost
+  use prelude.UIntSize
+  use prelude.Int
+  use seq.Seq
+  use NumBigint_Bigint_BigInt_Type as NumBigint_Bigint_BigInt_Type
+  use NumRational_Ratio_Type as NumRational_Ratio_Type
+  use Cdsat_Term_Sort_Type as Cdsat_Term_Sort_Type
+  clone CreusotContracts_NumRational_Impl0_DeepModel_Interface as DeepModel4
+  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
+  clone Cdsat_Term_Impl16_DeepModel as DeepModel3
+  clone CreusotContracts_Std1_Num_Impl16_DeepModel as DeepModel2
+  clone CreusotContracts_NumRational_Impl1_FromInt_Interface as FromInt0
+  clone CreusotContracts_Logic_Ord_Impl9_EqCmp_Interface as EqCmp2
+  clone CreusotContracts_Logic_Ord_Impl9_Antisym2_Interface as Antisym22
+  clone CreusotContracts_Logic_Ord_Impl9_Antisym1_Interface as Antisym12
+  use Core_Cmp_Ordering_Type as Core_Cmp_Ordering_Type
+  clone CreusotContracts_Logic_Ord_Impl9_Trans_Interface as Trans2
+  clone CreusotContracts_Logic_Ord_Impl9_Refl_Interface as Refl2
+  clone CreusotContracts_Logic_Ord_Impl9_CmpGtLog_Interface as CmpGtLog2
+  clone CreusotContracts_Logic_Ord_Impl9_CmpGeLog_Interface as CmpGeLog2
+  clone CreusotContracts_Logic_Ord_Impl9_CmpLtLog_Interface as CmpLtLog2
+  clone CreusotContracts_Logic_Ord_Impl9_CmpLeLog_Interface as CmpLeLog2
+  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
+  use Cdsat_Term_Value_Type as Cdsat_Term_Value_Type
+  clone Cdsat_Term_Impl6_DeepModel as DeepModel1 with
+    function DeepModel0.deep_model = DeepModel4.deep_model
+  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
+  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
+  use Cdsat_Term_Term_Type as Cdsat_Term_Term_Type
+  clone Cdsat_Term_Impl5_DeepModel as DeepModel0 with
+    function DeepModel0.deep_model = DeepModel2.deep_model,
+    function DeepModel1.deep_model = DeepModel3.deep_model,
+    function DeepModel2.deep_model = DeepModel1.deep_model,
+    function DeepModel3.deep_model = DeepModel4.deep_model
+  use Cdsat_Theory_Model_Type as Cdsat_Theory_Model_Type
+  clone Cdsat_Theory_Impl1_Sort as Sort1
+  clone Cdsat_Theory_Impl0_Sort as Sort0 with
+    function Sort0.sort = Sort1.sort
+  clone Cdsat_Theory_Impl3_Invariant as Invariant1 with
+    function Sort0.sort = Sort1.sort
+  clone CreusotContracts_Invariant_Inv_Interface as Inv2 with
+    type t = Cdsat_Theory_Model_Type.t_model
+  clone Cdsat_Theory_Impl4_Interp as Interp0 with
+    predicate Inv0.inv = Inv2.inv,
+    predicate Invariant0.invariant' = Invariant1.invariant',
+    function Sort0.sort = Sort1.sort,
+    function Sort1.sort = Sort0.sort,
+    function FromInt0.from_int = FromInt0.from_int,
+    axiom .
+  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
+  clone CreusotContracts_Invariant_Inv_Interface as Inv7 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone TyInv_Trivial as TyInv_Trivial6 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Inv0.inv = Inv7.inv,
+    axiom .
+  clone CreusotContracts_Logic_Ord_Impl9_CmpLog as CmpLog1
+  clone Cdsat_Trail_Impl5_CmpLog as CmpLog0 with
+    function CmpLog0.cmp_log = CmpLog1.cmp_log
+  clone Cdsat_Trail_Impl5_EqCmp as EqCmp1 with
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone Cdsat_Trail_Impl5_Antisym2 as Antisym21 with
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone Cdsat_Trail_Impl5_Antisym1 as Antisym11 with
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone Cdsat_Trail_Impl5_Trans as Trans1 with
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone Cdsat_Trail_Impl5_Refl as Refl1 with
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_GtLog as GtLog0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log
+  clone Cdsat_Trail_Impl5_CmpGtLog as CmpGtLog1 with
+    function GtLog0.gt_log = GtLog0.gt_log,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_GeLog as GeLog0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log
+  clone Cdsat_Trail_Impl5_CmpGeLog as CmpGeLog1 with
+    function GeLog0.ge_log = GeLog0.ge_log,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_LtLog as LtLog0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log
+  clone Cdsat_Trail_Impl5_CmpLtLog as CmpLtLog1 with
+    function LtLog0.lt_log = LtLog0.lt_log,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_LeLog as LeLog0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log
+  clone Cdsat_Trail_Impl5_CmpLeLog as CmpLeLog1 with
+    function LeLog0.le_log = LeLog0.le_log,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone Cdsat_Term_Impl7_ShallowModel as ShallowModel4 with
+    function DeepModel0.deep_model = DeepModel1.deep_model
+  clone Cdsat_Term_Impl4_ShallowModel as ShallowModel3 with
+    function DeepModel0.deep_model = DeepModel0.deep_model
+  use Cdsat_Trail_Assignment_Type as Cdsat_Trail_Assignment_Type
+  use seq.Seq
+  clone CreusotContracts_Invariant_Inv_Interface as Inv6 with
+    type t = Seq.seq (Cdsat_Trail_Assignment_Type.t_assignment)
+  clone TyInv_Trivial as TyInv_Trivial5 with
+    type t = Seq.seq (Cdsat_Trail_Assignment_Type.t_assignment),
+    predicate Inv0.inv = Inv6.inv,
+    axiom .
+  use Alloc_Alloc_Global_Type as Alloc_Alloc_Global_Type
+  use Alloc_Vec_Vec_Type as Alloc_Vec_Vec_Type
+  clone CreusotContracts_Invariant_Inv_Interface as Inv5 with
+    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)
+  clone TyInv_Trivial as TyInv_Trivial4 with
+    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
+    predicate Inv0.inv = Inv5.inv,
+    axiom .
+  clone CreusotContracts_Invariant_Inv_Interface as Inv4 with
+    type t = Seq.seq (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global))
+  clone TyInv_Trivial as TyInv_Trivial3 with
+    type t = Seq.seq (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)),
+    predicate Inv0.inv = Inv4.inv,
+    axiom .
+  clone CreusotContracts_Invariant_Inv_Interface as Inv3 with
+    type t = Alloc_Vec_Vec_Type.t_vec (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)) (Alloc_Alloc_Global_Type.t_global)
+  clone TyInv_Trivial as TyInv_Trivial2 with
+    type t = Alloc_Vec_Vec_Type.t_vec (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)) (Alloc_Alloc_Global_Type.t_global),
+    predicate Inv0.inv = Inv3.inv,
+    axiom .
+  clone Cdsat_Theory_Impl1_IsBool as IsBool0 with
+    function Sort0.sort = Sort1.sort
+  clone Cdsat_Theory_Impl1_Negate as Negate0 with
+    predicate IsBool0.is_bool = IsBool0.is_bool,
+    axiom .
+  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
+  clone Cdsat_Theory_Impl5_Len_Interface as Len0 with
+    axiom .
+  use Cdsat_Theory_Assign_Type as Cdsat_Theory_Assign_Type
+  clone Cdsat_Theory_Impl5_Level as Level0 with
+    function Len0.len = Len0.len,
+    axiom .
+  clone Cdsat_Theory_Impl2_Invariant as Invariant2 with
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort
+  clone Cdsat_Theory_Impl5_InvariantAssign as InvariantAssign0 with
+    predicate Invariant0.invariant' = Invariant2.invariant'
+  clone Cdsat_Theory_Impl2_ToPair as ToPair0
+  use prelude.Int
+  clone Cdsat_Theory_Impl5_InvariantNonneg as InvariantNonneg0 with
+    function Level0.level = Level0.level,
+    function Len0.len = Len0.len
+  use Core_Option_Option_Type as Core_Option_Option_Type
+  clone Cdsat_Theory_Impl5_Find_Interface as Find0 with
+    function ToPair0.to_pair = ToPair0.to_pair,
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    function Level0.level = Level0.level,
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort,
+    function Len0.len = Len0.len,
+    axiom .
+  clone Cdsat_Theory_Impl5_LevelOf as LevelOf0 with
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    function Level0.level = Level0.level,
+    function Find0.find = Find0.find,
+    function Len0.len = Len0.len,
+    function ToPair0.to_pair = ToPair0.to_pair,
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort,
+    axiom .
+  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains3 with
+    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
+  clone Cdsat_Theory_Impl5_SetLevel_Interface as SetLevel0 with
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    predicate Contains0.contains = Contains3.contains,
+    function LevelOf0.level_of = LevelOf0.level_of,
+    function Level0.level = Level0.level,
+    function Len0.len = Len0.len,
+    axiom .
+  clone Cdsat_Theory_Impl4_Satisfies as Satisfies0 with
+    function Interp0.interp = Interp0.interp,
+    predicate Inv0.inv = Inv2.inv,
+    predicate Invariant0.invariant' = Invariant1.invariant',
+    function Sort0.sort = Sort1.sort,
+    function Sort1.sort = Sort0.sort
+  clone Cdsat_Theory_Impl4_SatisfySet as SatisfySet0 with
+    predicate Contains0.contains = Contains3.contains,
+    predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Theory_Model_Type_Inv as Cdsat_Theory_Model_Type_Inv0 with
+    predicate Inv0.inv = Inv2.inv,
+    predicate Invariant0.invariant' = Invariant1.invariant',
+    axiom .
+  clone Cdsat_Theory_Impl2_JustifiedSound as JustifiedSound0 with
+    predicate Inv0.inv = Inv2.inv,
+    predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+    predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone CreusotContracts_Invariant_Inv_Interface as Inv1 with
+    type t = Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  clone TyInv_Trivial as TyInv_Trivial1 with
+    type t = Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex),
+    predicate Inv0.inv = Inv1.inv,
+    axiom .
+  clone CreusotContracts_Invariant_Inv_Interface as Inv0 with
+    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
+  clone TyInv_Trivial as TyInv_Trivial0 with
+    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global),
+    predicate Inv0.inv = Inv0.inv,
+    axiom .
+  clone CreusotContracts_Logic_Fset_Impl0_Insert as Insert0 with
+    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
+  clone CreusotContracts_Logic_Seq_Impl0_Contains as Contains2 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
+  clone Cdsat_Trail_Remove as Remove0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Inv0.inv = Inv1.inv,
+    predicate Inv1.inv = Inv7.inv,
+    predicate Contains0.contains = Contains2.contains,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_EqCmp_Interface as EqCmp0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Inv0.inv = Inv7.inv,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_Antisym2_Interface as Antisym20 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    predicate Inv0.inv = Inv7.inv,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_Antisym1_Interface as Antisym10 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    predicate Inv0.inv = Inv7.inv,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_Trans_Interface as Trans0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    predicate Inv0.inv = Inv7.inv,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_Refl_Interface as Refl0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Inv0.inv = Inv7.inv,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_CmpGtLog_Interface as CmpGtLog0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Inv0.inv = Inv7.inv,
+    function GtLog0.gt_log = GtLog0.gt_log,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_CmpGeLog_Interface as CmpGeLog0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Inv0.inv = Inv7.inv,
+    function GeLog0.ge_log = GeLog0.ge_log,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_CmpLtLog_Interface as CmpLtLog0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Inv0.inv = Inv7.inv,
+    function LtLog0.lt_log = LtLog0.lt_log,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone CreusotContracts_Logic_Ord_OrdLogic_CmpLeLog_Interface as CmpLeLog0 with
+    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    predicate Inv0.inv = Inv7.inv,
+    function LeLog0.le_log = LeLog0.le_log,
+    function CmpLog0.cmp_log = CmpLog0.cmp_log,
+    axiom .
+  clone Core_Num_Impl11_Max as Max0
+  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel2 with
+    type t = Cdsat_Trail_Assignment_Type.t_assignment,
+    type a = Alloc_Alloc_Global_Type.t_global,
+    predicate Inv0.inv = Inv5.inv,
+    val Max0.mAX' = Max0.mAX',
+    predicate Inv1.inv = Inv6.inv,
+    axiom .
+  clone CreusotContracts_Logic_Ops_Impl1_IndexLogic as IndexLogic2 with
+    type t = Cdsat_Trail_Assignment_Type.t_assignment,
+    type a = Alloc_Alloc_Global_Type.t_global,
+    function ShallowModel0.shallow_model = ShallowModel2.shallow_model,
+    predicate Inv0.inv = Inv5.inv,
+    val Max0.mAX' = Max0.mAX',
+    predicate Inv1.inv = Inv6.inv
+  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel1 with
+    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
+    type a = Alloc_Alloc_Global_Type.t_global,
+    predicate Inv0.inv = Inv3.inv,
+    val Max0.mAX' = Max0.mAX',
+    predicate Inv1.inv = Inv4.inv,
+    axiom .
+  clone CreusotContracts_Logic_Ops_Impl1_IndexLogic as IndexLogic1 with
+    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
+    type a = Alloc_Alloc_Global_Type.t_global,
+    function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
+    predicate Inv0.inv = Inv3.inv,
+    val Max0.mAX' = Max0.mAX',
+    predicate Inv1.inv = Inv4.inv
+  clone Cdsat_Trail_Impl12_TermValue as TermValue0 with
+    function ShallowModel0.shallow_model = ShallowModel3.shallow_model,
+    function ShallowModel1.shallow_model = ShallowModel4.shallow_model
+  clone Cdsat_Theory_Impl5_Contains as Contains1 with
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort,
+    function Find0.find = Find0.find,
+    function ToPair0.to_pair = ToPair0.to_pair,
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    function Level0.level = Level0.level,
+    function Len0.len = Len0.len,
+    axiom .
+  clone Cdsat_Theory_Impl5_TrailUnique as TrailUnique0 with
+    function ToPair0.to_pair = ToPair0.to_pair,
+    predicate Contains0.contains = Contains1.contains,
+    predicate IsBool0.is_bool = IsBool0.is_bool,
+    function Negate0.negate = Negate0.negate,
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort
+  clone Cdsat_Theory_Impl5_InvariantContains as InvariantContains0 with
+    predicate Contains0.contains = Contains3.contains,
+    predicate Contains1.contains = Contains1.contains,
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort
+  clone Cdsat_Theory_Impl5_InvariantLevel as InvariantLevel0 with
+    function Level0.level = Level0.level,
+    function SetLevel0.set_level = SetLevel0.set_level,
+    function Len0.len = Len0.len,
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    predicate Contains0.contains = Contains3.contains,
+    function LevelOf0.level_of = LevelOf0.level_of
+  clone Cdsat_Theory_Impl4_Entails as Entails0 with
+    predicate Invariant0.invariant' = Invariant1.invariant',
+    predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
+    predicate Satisfies0.satisfies = Satisfies0.satisfies
+  clone Cdsat_Theory_Impl5_Sound as Sound0 with
+    predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
+  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
+  clone Cdsat_Trail_Impl9_IndexLogic as IndexLogic0 with
+    function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
+    function ShallowModel1.shallow_model = ShallowModel2.shallow_model,
+    function TermValue0.term_value = TermValue0.term_value,
+    predicate Inv0.inv = Inv3.inv,
+    val Max0.mAX' = Max0.mAX',
+    predicate Inv1.inv = Inv4.inv,
+    predicate Inv2.inv = Inv5.inv,
+    predicate Inv3.inv = Inv6.inv
+  clone Cdsat_Trail_Impl9_Contains as Contains0 with
+    function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
+    function ShallowModel1.shallow_model = ShallowModel2.shallow_model,
+    predicate Inv0.inv = Inv3.inv,
+    val Max0.mAX' = Max0.mAX',
+    predicate Inv1.inv = Inv4.inv,
+    predicate Inv2.inv = Inv5.inv,
+    predicate Inv3.inv = Inv6.inv
+  clone Cdsat_Trail_Impl9_AbstractJustification as AbstractJustification0 with
+    predicate Contains0.contains = Contains0.contains,
+    predicate Contains1.contains = Contains3.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains2.contains = Contains2.contains,
+    function Remove0.remove = Remove0.remove,
+    function Insert0.insert = Insert0.insert,
+    predicate Inv0.inv = Inv1.inv,
+    predicate Inv1.inv = Inv7.inv,
+    axiom .
+  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    type a = Alloc_Alloc_Global_Type.t_global,
+    predicate Inv0.inv = Inv0.inv,
+    val Max0.mAX' = Max0.mAX',
+    predicate Inv1.inv = Inv1.inv,
+    axiom .
+  use Cdsat_Trail_Reason_Type as Cdsat_Trail_Reason_Type
+  clone Cdsat_Theory_Impl5_IsDecision as IsDecision0 with
+    function Find0.find = Find0.find,
+    function ToPair0.to_pair = ToPair0.to_pair,
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    function Level0.level = Level0.level,
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort,
+    function Len0.len = Len0.len
+  clone Cdsat_Theory_Impl5_IsInput as IsInput0 with
+    function Find0.find = Find0.find,
+    function ToPair0.to_pair = ToPair0.to_pair,
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    function Level0.level = Level0.level,
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort,
+    function Len0.len = Len0.len
+  clone Cdsat_Theory_Impl5_IsJustified as IsJustified0 with
+    function Find0.find = Find0.find,
+    function ToPair0.to_pair = ToPair0.to_pair,
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    function Level0.level = Level0.level,
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort,
+    function Len0.len = Len0.len
+  clone Cdsat_Theory_Impl5_Invariant as Invariant0 with
+    predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
+    predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
+    predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique,
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign
+  clone Cdsat_Theory_Impl5_Justification_Interface as Justification0 with
+    predicate Invariant0.invariant' = Invariant0.invariant',
+    predicate IsJustified0.is_justified = IsJustified0.is_justified,
+    predicate Sound0.sound = Sound0.sound,
+    predicate Inv0.inv = Inv2.inv,
+    predicate Entails0.entails = Entails0.entails,
+    predicate IsInput0.is_input = IsInput0.is_input,
+    predicate IsDecision0.is_decision = IsDecision0.is_decision,
+    axiom .
+  clone Cdsat_Trail_Impl9_Reason as Reason0 with
+    function IndexLogic0.index_logic = IndexLogic1.index_logic,
+    function IndexLogic1.index_logic = IndexLogic2.index_logic
+  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
+  clone Cdsat_Trail_Impl9_AbstractRelation as AbstractRelation0 with
+    predicate Contains0.contains = Contains0.contains,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate Contains1.contains = Contains1.contains,
+    function LevelOf0.level_of = LevelOf0.level_of,
+    function LevelLog0.level_log = LevelLog0.level_log,
+    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
+    function Sort0.sort = Sort0.sort,
+    function Sort1.sort = Sort1.sort,
+    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
+    function Level0.level = Level0.level,
+    function Len0.len = Len0.len
+  clone Cdsat_Trail_Impl9_JustifiedIsJustified as JustifiedIsJustified0 with
+    predicate Contains0.contains = Contains0.contains,
+    function Reason0.reason = Reason0.reason,
+    function IndexLogic0.index_logic = IndexLogic0.index_logic,
+    predicate IsDecision0.is_decision = IsDecision0.is_decision,
+    predicate IsInput0.is_input = IsInput0.is_input,
+    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
+    predicate Contains1.contains = Contains2.contains,
+    function LtLog0.lt_log = LtLog0.lt_log,
+    predicate IsJustified0.is_justified = IsJustified0.is_justified,
+    function Justification0.justification = Justification0.justification,
+    function AbstractJustification0.abstract_justification = AbstractJustification0.abstract_justification,
+    predicate Inv0.inv = Inv0.inv,
+    val Max0.mAX' = Max0.mAX',
+    predicate Inv1.inv = Inv1.inv,
+    predicate Invariant0.invariant' = Invariant0.invariant',
+    predicate Sound0.sound = Sound0.sound,
+    predicate Inv2.inv = Inv2.inv,
+    predicate Entails0.entails = Entails0.entails,
+    predicate Contains2.contains = Contains3.contains
+  let rec ghost function reasons_dont_change [#"/Users/xavier/Code/cdsat/src/trail.rs" 551 4 551 45] (self : Cdsat_Trail_Trail_Type.t_trail) (other : Cdsat_Trail_Trail_Type.t_trail) : ()
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 534 15 534 44] JustifiedIsJustified0.justified_is_justified self}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 535 15 535 39] AbstractRelation0.abstract_relation self}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 536 4 536 69] AbstractRelation0.abstract_relation other /\ Invariant0.invariant' (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other))}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 537 15 537 50] Level0.level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) = UIntSize.to_int (Cdsat_Trail_Trail_Type.trail_level other)}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 538 4 538 107] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains self ix -> LevelLog0.level_log ix <= UIntSize.to_int (Cdsat_Trail_Trail_Type.trail_level other) -> Contains0.contains other ix}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 539 4 539 72] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains other ix -> Contains0.contains self ix}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 540 4 540 99] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains other ix -> IndexLogic0.index_logic self ix = IndexLogic0.index_logic other ix}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 541 4 541 90] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains other ix -> Reason0.reason self ix = Reason0.reason other ix}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 542 4 543 67] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a -> IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a = IsJustified0.is_justified (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 544 5 545 65] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a -> IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a = IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 546 4 547 60] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a -> IsInput0.is_input (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a = IsInput0.is_input (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a}
+    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 548 4 549 69] forall a : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . Contains1.contains (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a -> Justification0.justification (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) a = Justification0.justification (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other)) a}
+    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 550 14 550 44] JustifiedIsJustified0.justified_is_justified other }
+    
+   = [@vc:do_not_keep_trace] [@vc:sp]
+    [#"/Users/xavier/Code/cdsat/src/trail.rs" 533 4 533 12] let _ = let _ = let a = pure {forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains other ix -> LevelLog0.level_log ix <= Level0.level (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost other))} in assert {a} in () in let _ = let _ = let a = pure {forall j : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global) . forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains other ix -> Reason0.reason other ix = Cdsat_Trail_Reason_Type.C_Justified j -> (forall i : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains2.contains (ShallowModel0.shallow_model j) i -> LtLog0.lt_log i ix /\ Contains0.contains other i)} in assert {a} in () in let _ = let _ = let a = pure {forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains self ix -> Reason0.reason self ix = Cdsat_Trail_Reason_Type.C_Decision -> IsDecision0.is_decision (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost self)) (IndexLogic0.index_logic self ix)} in assert {a} in () in ()
+end
 module Cdsat_Theory_Impl5_RestrictFind_Stub
   use prelude.Int
   use prelude.Int
@@ -11525,176 +11498,6 @@ module Cdsat_Theory_Impl5_RestrictFind
     ensures { result = restrict_find self level d }
     
   axiom restrict_find_spec : forall self : Cdsat_Theory_Trail_Type.t_trail, level : int, d : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 577 15 577 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 578 15 578 25] level >= 0) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 579 15 579 47] Contains0.contains (Restrict0.restrict self level) d) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 580 14 580 58] Find0.find (Restrict0.restrict self level) d = Find0.find self d)
-end
-module Cdsat_Theory_Impl5_RestrictFind_Impl
-  use prelude.Int
-  clone CreusotContracts_NumRational_Impl1_FromInt_Interface as FromInt0
-  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  use Cdsat_Theory_Model_Type as Cdsat_Theory_Model_Type
-  clone Cdsat_Theory_Impl1_Sort as Sort1
-  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
-  clone Cdsat_Theory_Impl0_Sort as Sort0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl3_Invariant as Invariant2 with
-    function Sort0.sort = Sort1.sort
-  clone CreusotContracts_Invariant_Inv_Interface as Inv0 with
-    type t = Cdsat_Theory_Model_Type.t_model
-  clone Cdsat_Theory_Impl4_Interp as Interp0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort,
-    function FromInt0.from_int = FromInt0.from_int,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Remove as Remove0 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Theory_Impl4_Satisfies as Satisfies0 with
-    function Interp0.interp = Interp0.interp,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort
-  clone Cdsat_Theory_Model_Type_Inv as Cdsat_Theory_Model_Type_Inv0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    axiom .
-  use Cdsat_Theory_Assign_Type as Cdsat_Theory_Assign_Type
-  clone Cdsat_Theory_Impl2_Invariant as Invariant1 with
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_IsBool as IsBool0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_Negate as Negate0 with
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains1 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
-  clone Cdsat_Theory_Impl5_Len as Len0 with
-    axiom .
-  clone Cdsat_Theory_Impl5_Level as Level0 with
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_InvariantAssign as InvariantAssign0 with
-    predicate Invariant0.invariant' = Invariant1.invariant'
-  clone Cdsat_Theory_Impl2_ToPair as ToPair0
-  use prelude.Int
-  clone Cdsat_Theory_Impl5_InvariantNonneg as InvariantNonneg0 with
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len
-  use Core_Option_Option_Type as Core_Option_Option_Type
-  clone Cdsat_Theory_Impl5_Find as Find0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_LevelOf as LevelOf0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Find0.find = Find0.find,
-    function Len0.len = Len0.len,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    axiom .
-  clone Cdsat_Theory_Impl5_SetLevel as SetLevel0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    function Remove0.remove = Remove0.remove,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_Contains as Contains0 with
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_TrailUnique as TrailUnique0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate Contains0.contains = Contains0.contains,
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    function Negate0.negate = Negate0.negate,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantContains as InvariantContains0 with
-    predicate Contains0.contains = Contains1.contains,
-    predicate Contains1.contains = Contains0.contains,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantLevel as InvariantLevel0 with
-    function Level0.level = Level0.level,
-    function SetLevel0.set_level = SetLevel0.set_level,
-    function Len0.len = Len0.len,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of
-  clone Cdsat_Theory_Impl5_Invariant as Invariant0 with
-    predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
-    predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
-    predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign
-  clone Cdsat_Theory_Impl5_CountBounds as CountBounds0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_SatisfiedBy as SatisfiedBy0 with
-    predicate Contains0.contains = Contains0.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_Restrict as Restrict0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    function CountBounds0.count_bounds = CountBounds0.count_bounds,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    axiom .
-  let rec ghost function restrict_find [#"/Users/xavier/Code/cdsat/src/theory.rs" 581 4 581 60] (self : Cdsat_Theory_Trail_Type.t_trail) (level : int) (d : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 577 15 577 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 578 15 578 25] level >= 0}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 579 15 579 47] Contains0.contains (Restrict0.restrict self level) d}
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 580 14 580 58] Find0.find (Restrict0.restrict self level) d = Find0.find self d }
-    
-   = [@vc:do_not_keep_trace] [@vc:sp]
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 582 8 591 9] match (self) with
-      | Cdsat_Theory_Trail_Type.C_Empty -> ()
-      | Cdsat_Theory_Trail_Type.C_Assign a _ tl -> if let a = ToPair0.to_pair a in pure {a = d} then
-        ()
-      else
-        restrict_find tl level d
-      
-      end
 end
 module Cdsat_Theory_Impl5_RestrictKindUnchanged_Stub
   use prelude.Int
@@ -11936,268 +11739,6 @@ module Cdsat_Theory_Impl5_RestrictKindUnchanged
     
   axiom restrict_kind_unchanged_spec : forall self : Cdsat_Theory_Trail_Type.t_trail, level : int, d : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 717 15 717 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 718 15 718 25] level >= 0) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 719 15 719 47] Contains0.contains (Restrict0.restrict self level) d) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 723 14 723 66] IsInput0.is_input self d = IsInput0.is_input (Restrict0.restrict self level) d) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 722 14 722 72] IsDecision0.is_decision self d = IsDecision0.is_decision (Restrict0.restrict self level) d) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 721 14 721 76] Justification0.justification self d = Justification0.justification (Restrict0.restrict self level) d) && ([#"/Users/xavier/Code/cdsat/src/theory.rs" 720 14 720 74] IsJustified0.is_justified self d = IsJustified0.is_justified (Restrict0.restrict self level) d)
 end
-module Cdsat_Theory_Impl5_RestrictKindUnchanged_Impl
-  use prelude.Int
-  clone CreusotContracts_NumRational_Impl1_FromInt_Interface as FromInt0
-  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  use Cdsat_Theory_Model_Type as Cdsat_Theory_Model_Type
-  clone Cdsat_Theory_Impl1_Sort as Sort1
-  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
-  clone Cdsat_Theory_Impl0_Sort as Sort0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl3_Invariant as Invariant2 with
-    function Sort0.sort = Sort1.sort
-  clone CreusotContracts_Invariant_Inv_Interface as Inv0 with
-    type t = Cdsat_Theory_Model_Type.t_model
-  clone Cdsat_Theory_Impl4_Interp as Interp0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort,
-    function FromInt0.from_int = FromInt0.from_int,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Remove as Remove0 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Theory_Impl4_Satisfies as Satisfies0 with
-    function Interp0.interp = Interp0.interp,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort
-  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains1 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Theory_Impl4_SatisfySet as SatisfySet0 with
-    predicate Contains0.contains = Contains1.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies
-  clone Cdsat_Theory_Model_Type_Inv as Cdsat_Theory_Model_Type_Inv0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    axiom .
-  use Cdsat_Theory_Assign_Type as Cdsat_Theory_Assign_Type
-  clone Cdsat_Theory_Impl2_Invariant as Invariant1 with
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_IsBool as IsBool0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_Negate as Negate0 with
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    axiom .
-  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
-  clone Cdsat_Theory_Impl5_Len as Len0 with
-    axiom .
-  clone Cdsat_Theory_Impl5_Level as Level0 with
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_InvariantAssign as InvariantAssign0 with
-    predicate Invariant0.invariant' = Invariant1.invariant'
-  clone Cdsat_Theory_Impl2_ToPair as ToPair0
-  use prelude.Int
-  clone Cdsat_Theory_Impl5_InvariantNonneg as InvariantNonneg0 with
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len
-  use Core_Option_Option_Type as Core_Option_Option_Type
-  clone Cdsat_Theory_Impl5_Find as Find0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_LevelOf as LevelOf0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Find0.find = Find0.find,
-    function Len0.len = Len0.len,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    axiom .
-  clone Cdsat_Theory_Impl5_SetLevel as SetLevel0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    function Remove0.remove = Remove0.remove,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl2_JustifiedSound as JustifiedSound0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies
-  clone Cdsat_Theory_Impl5_Contains as Contains0 with
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_Sound as Sound0 with
-    predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
-  clone Cdsat_Theory_Impl5_FindJustified as FindJustified0 with
-    predicate Sound0.sound = Sound0.sound,
-    predicate Contains0.contains = Contains0.contains,
-    function Find0.find = Find0.find,
-    predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl4_Entails as Entails0 with
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies
-  clone Cdsat_Theory_Impl5_TrailUnique as TrailUnique0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate Contains0.contains = Contains0.contains,
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    function Negate0.negate = Negate0.negate,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantContains as InvariantContains0 with
-    predicate Contains0.contains = Contains1.contains,
-    predicate Contains1.contains = Contains0.contains,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantLevel as InvariantLevel0 with
-    function Level0.level = Level0.level,
-    function SetLevel0.set_level = SetLevel0.set_level,
-    function Len0.len = Len0.len,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of
-  clone Cdsat_Theory_Impl5_Invariant as Invariant0 with
-    predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
-    predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
-    predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign
-  clone Cdsat_Theory_Impl5_CountBounds as CountBounds0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_SatisfiedBy as SatisfiedBy0 with
-    predicate Contains0.contains = Contains0.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_Restrict as Restrict0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    function CountBounds0.count_bounds = CountBounds0.count_bounds,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    axiom .
-  clone Cdsat_Theory_Impl5_RestrictFind as RestrictFind0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    function Restrict0.restrict = Restrict0.restrict,
-    predicate Contains0.contains = Contains0.contains,
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    axiom .
-  clone Cdsat_Theory_Impl5_IsInput as IsInput0 with
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len
-  clone Cdsat_Theory_Impl5_IsDecision as IsDecision0 with
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len
-  clone Cdsat_Theory_Impl5_IsJustified as IsJustified0 with
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len
-  clone Cdsat_Theory_Impl5_Justification as Justification0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate IsJustified0.is_justified = IsJustified0.is_justified,
-    predicate Sound0.sound = Sound0.sound,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Entails0.entails = Entails0.entails,
-    predicate IsInput0.is_input = IsInput0.is_input,
-    predicate IsDecision0.is_decision = IsDecision0.is_decision,
-    function FindJustified0.find_justified = FindJustified0.find_justified,
-    function Find0.find = Find0.find,
-    predicate Contains0.contains = Contains0.contains,
-    predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  let rec ghost function restrict_kind_unchanged [#"/Users/xavier/Code/cdsat/src/theory.rs" 724 4 724 70] (self : Cdsat_Theory_Trail_Type.t_trail) (level : int) (d : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 717 15 717 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 718 15 718 25] level >= 0}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 719 15 719 47] Contains0.contains (Restrict0.restrict self level) d}
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 720 14 720 74] IsJustified0.is_justified self d = IsJustified0.is_justified (Restrict0.restrict self level) d }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 721 14 721 76] Justification0.justification self d = Justification0.justification (Restrict0.restrict self level) d }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 722 14 722 72] IsDecision0.is_decision self d = IsDecision0.is_decision (Restrict0.restrict self level) d }
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 723 14 723 66] IsInput0.is_input self d = IsInput0.is_input (Restrict0.restrict self level) d }
-    
-   = [@vc:do_not_keep_trace] [@vc:sp]
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 725 8 725 36] let _ = RestrictFind0.restrict_find self level d in match (self) with
-      | Cdsat_Theory_Trail_Type.C_Empty -> ()
-      | Cdsat_Theory_Trail_Type.C_Assign a _ tl -> if let a = ToPair0.to_pair a in pure {a = d} then
-        ()
-      else
-        let _ = restrict_kind_unchanged tl level d in ()
-      
-      end
-end
 module Alloc_Vec_Impl1_Pop_Interface
   type t
   type a
@@ -12296,735 +11837,6 @@ module Cdsat_Trail_Impl9_Restrict_Interface
     ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 568 4 568 111] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . LevelLog0.level_log ix <= UIntSize.to_int level -> Contains0.contains ( * self) ix -> Contains0.contains ( ^ self) ix }
     ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 569 4 569 112] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains ( ^ self) ix -> IndexLogic0.index_logic ( * self) ix = IndexLogic0.index_logic ( ^ self) ix }
     
-end
-module Cdsat_Trail_Impl9_Restrict
-  use prelude.Ghost
-  use prelude.Borrow
-  use prelude.UIntSize
-  use prelude.Int
-  use seq.Seq
-  clone CreusotContracts_Logic_Ord_Impl9_EqCmp_Interface as EqCmp2
-  clone CreusotContracts_Logic_Ord_Impl9_Antisym2_Interface as Antisym22
-  clone CreusotContracts_Logic_Ord_Impl9_Antisym1_Interface as Antisym12
-  use Core_Cmp_Ordering_Type as Core_Cmp_Ordering_Type
-  clone CreusotContracts_Logic_Ord_Impl9_Trans_Interface as Trans2
-  clone CreusotContracts_Logic_Ord_Impl9_Refl_Interface as Refl2
-  clone CreusotContracts_Logic_Ord_Impl9_CmpGtLog_Interface as CmpGtLog2
-  clone CreusotContracts_Logic_Ord_Impl9_CmpGeLog_Interface as CmpGeLog2
-  clone CreusotContracts_Logic_Ord_Impl9_CmpLtLog_Interface as CmpLtLog2
-  clone CreusotContracts_Logic_Ord_Impl9_CmpLeLog_Interface as CmpLeLog2
-  use NumBigint_Bigint_BigInt_Type as NumBigint_Bigint_BigInt_Type
-  use NumRational_Ratio_Type as NumRational_Ratio_Type
-  use Cdsat_Term_Sort_Type as Cdsat_Term_Sort_Type
-  clone CreusotContracts_NumRational_Impl0_DeepModel_Interface as DeepModel4
-  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
-  clone Cdsat_Term_Impl16_DeepModel as DeepModel3
-  clone CreusotContracts_Std1_Num_Impl16_DeepModel as DeepModel2
-  clone CreusotContracts_NumRational_Impl1_FromInt_Interface as FromInt0
-  use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
-  clone CreusotContracts_Invariant_Inv_Interface as Inv9 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone TyInv_Trivial as TyInv_Trivial8 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    predicate Inv0.inv = Inv9.inv,
-    axiom .
-  clone CreusotContracts_Logic_Ord_Impl9_CmpLog as CmpLog1
-  clone Cdsat_Trail_Impl5_CmpLog as CmpLog0 with
-    function CmpLog0.cmp_log = CmpLog1.cmp_log
-  clone Cdsat_Trail_Impl5_EqCmp as EqCmp1 with
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone Cdsat_Trail_Impl5_Antisym2 as Antisym21 with
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone Cdsat_Trail_Impl5_Antisym1 as Antisym11 with
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone Cdsat_Trail_Impl5_Trans as Trans1 with
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone Cdsat_Trail_Impl5_Refl as Refl1 with
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_GtLog as GtLog0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log
-  clone Cdsat_Trail_Impl5_CmpGtLog as CmpGtLog1 with
-    function GtLog0.gt_log = GtLog0.gt_log,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_GeLog as GeLog0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log
-  clone Cdsat_Trail_Impl5_CmpGeLog as CmpGeLog1 with
-    function GeLog0.ge_log = GeLog0.ge_log,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_LtLog as LtLog0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log
-  clone Cdsat_Trail_Impl5_CmpLtLog as CmpLtLog1 with
-    function LtLog0.lt_log = LtLog0.lt_log,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_LeLog as LeLog0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log
-  clone Cdsat_Trail_Impl5_CmpLeLog as CmpLeLog1 with
-    function LeLog0.le_log = LeLog0.le_log,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Term_Value_Type as Cdsat_Term_Value_Type
-  clone Cdsat_Term_Impl6_DeepModel as DeepModel1 with
-    function DeepModel0.deep_model = DeepModel4.deep_model
-  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  use Cdsat_Term_Term_Type as Cdsat_Term_Term_Type
-  clone Cdsat_Term_Impl5_DeepModel as DeepModel0 with
-    function DeepModel0.deep_model = DeepModel2.deep_model,
-    function DeepModel1.deep_model = DeepModel3.deep_model,
-    function DeepModel2.deep_model = DeepModel1.deep_model,
-    function DeepModel3.deep_model = DeepModel4.deep_model
-  use Cdsat_Theory_Model_Type as Cdsat_Theory_Model_Type
-  clone Cdsat_Theory_Impl1_Sort as Sort1
-  clone Cdsat_Theory_Impl0_Sort as Sort0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl3_Invariant as Invariant3 with
-    function Sort0.sort = Sort1.sort
-  clone CreusotContracts_Invariant_Inv_Interface as Inv0 with
-    type t = Cdsat_Theory_Model_Type.t_model
-  clone Cdsat_Theory_Impl4_Interp as Interp0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant3.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort,
-    function FromInt0.from_int = FromInt0.from_int,
-    axiom .
-  clone Cdsat_Theory_Impl1_IsBool as IsBool0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_Negate as Negate0 with
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    axiom .
-  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
-  clone Cdsat_Theory_Impl5_Len_Interface as Len0 with
-    axiom .
-  use Cdsat_Theory_Assign_Type as Cdsat_Theory_Assign_Type
-  clone Cdsat_Theory_Impl5_Level as Level0 with
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl2_Invariant as Invariant2 with
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantAssign as InvariantAssign0 with
-    predicate Invariant0.invariant' = Invariant2.invariant'
-  clone Cdsat_Theory_Impl2_ToPair as ToPair0
-  use prelude.Int
-  clone Cdsat_Theory_Impl5_InvariantNonneg as InvariantNonneg0 with
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len
-  use Core_Option_Option_Type as Core_Option_Option_Type
-  clone Cdsat_Theory_Impl5_Find_Interface as Find0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_LevelOf as LevelOf0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Find0.find = Find0.find,
-    function Len0.len = Len0.len,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains3 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Theory_Impl5_SetLevel_Interface as SetLevel0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains3.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Insert as Insert0 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  use seq.Seq
-  clone CreusotContracts_Logic_Seq_Impl0_Contains as Contains2 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
-  clone CreusotContracts_Invariant_Inv_Interface as Inv8 with
-    type t = Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-  clone Cdsat_Trail_Remove as Remove0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    predicate Inv0.inv = Inv8.inv,
-    predicate Inv1.inv = Inv9.inv,
-    predicate Contains0.contains = Contains2.contains,
-    axiom .
-  clone TyInv_Trivial as TyInv_Trivial7 with
-    type t = Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex),
-    predicate Inv0.inv = Inv8.inv,
-    axiom .
-  use Alloc_Alloc_Global_Type as Alloc_Alloc_Global_Type
-  use Alloc_Vec_Vec_Type as Alloc_Vec_Vec_Type
-  clone CreusotContracts_Invariant_Inv_Interface as Inv7 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
-  clone TyInv_Trivial as TyInv_Trivial6 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global),
-    predicate Inv0.inv = Inv7.inv,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_EqCmp_Interface as EqCmp0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    predicate Inv0.inv = Inv9.inv,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_Antisym2_Interface as Antisym20 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    predicate Inv0.inv = Inv9.inv,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_Antisym1_Interface as Antisym10 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    predicate Inv0.inv = Inv9.inv,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_Trans_Interface as Trans0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    predicate Inv0.inv = Inv9.inv,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_Refl_Interface as Refl0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    predicate Inv0.inv = Inv9.inv,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_CmpGtLog_Interface as CmpGtLog0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    predicate Inv0.inv = Inv9.inv,
-    function GtLog0.gt_log = GtLog0.gt_log,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_CmpGeLog_Interface as CmpGeLog0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    predicate Inv0.inv = Inv9.inv,
-    function GeLog0.ge_log = GeLog0.ge_log,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_CmpLtLog_Interface as CmpLtLog0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    predicate Inv0.inv = Inv9.inv,
-    function LtLog0.lt_log = LtLog0.lt_log,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  clone CreusotContracts_Logic_Ord_OrdLogic_CmpLeLog_Interface as CmpLeLog0 with
-    type self = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    predicate Inv0.inv = Inv9.inv,
-    function LeLog0.le_log = LeLog0.le_log,
-    function CmpLog0.cmp_log = CmpLog0.cmp_log,
-    axiom .
-  use Cdsat_Trail_Assignment_Type as Cdsat_Trail_Assignment_Type
-  clone CreusotContracts_Invariant_Inv_Interface as Inv6 with
-    type t = Core_Option_Option_Type.t_option (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global))
-  clone TyInv_Trivial as TyInv_Trivial5 with
-    type t = Core_Option_Option_Type.t_option (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)),
-    predicate Inv0.inv = Inv6.inv,
-    axiom .
-  clone CreusotContracts_Invariant_Inv_Interface as Inv5 with
-    type t = borrowed (Alloc_Vec_Vec_Type.t_vec (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)) (Alloc_Alloc_Global_Type.t_global))
-  clone TyInv_Trivial as TyInv_Trivial4 with
-    type t = borrowed (Alloc_Vec_Vec_Type.t_vec (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)) (Alloc_Alloc_Global_Type.t_global)),
-    predicate Inv0.inv = Inv5.inv,
-    axiom .
-  clone Cdsat_Theory_Impl4_Satisfies as Satisfies0 with
-    function Interp0.interp = Interp0.interp,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant3.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort
-  clone Cdsat_Theory_Impl4_SatisfySet as SatisfySet0 with
-    predicate Contains0.contains = Contains3.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies
-  clone Cdsat_Theory_Impl2_JustifiedSound as JustifiedSound0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies
-  clone Cdsat_Term_Impl7_ShallowModel as ShallowModel5 with
-    function DeepModel0.deep_model = DeepModel1.deep_model
-  clone Cdsat_Term_Impl4_ShallowModel as ShallowModel4 with
-    function DeepModel0.deep_model = DeepModel0.deep_model
-  clone CreusotContracts_Invariant_Inv_Interface as Inv4 with
-    type t = Seq.seq (Cdsat_Trail_Assignment_Type.t_assignment)
-  clone TyInv_Trivial as TyInv_Trivial3 with
-    type t = Seq.seq (Cdsat_Trail_Assignment_Type.t_assignment),
-    predicate Inv0.inv = Inv4.inv,
-    axiom .
-  clone CreusotContracts_Invariant_Inv_Interface as Inv3 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)
-  clone TyInv_Trivial as TyInv_Trivial2 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
-    predicate Inv0.inv = Inv3.inv,
-    axiom .
-  clone CreusotContracts_Invariant_Inv_Interface as Inv2 with
-    type t = Seq.seq (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global))
-  clone TyInv_Trivial as TyInv_Trivial1 with
-    type t = Seq.seq (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)),
-    predicate Inv0.inv = Inv2.inv,
-    axiom .
-  clone CreusotContracts_Invariant_Inv_Interface as Inv1 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)) (Alloc_Alloc_Global_Type.t_global)
-  clone TyInv_Trivial as TyInv_Trivial0 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)) (Alloc_Alloc_Global_Type.t_global),
-    predicate Inv0.inv = Inv1.inv,
-    axiom .
-  clone Cdsat_Theory_Model_Type_Inv as Cdsat_Theory_Model_Type_Inv0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant3.invariant',
-    axiom .
-  clone Cdsat_Theory_Impl5_Contains as Contains1 with
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_TrailUnique as TrailUnique0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate Contains0.contains = Contains1.contains,
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    function Negate0.negate = Negate0.negate,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantContains as InvariantContains0 with
-    predicate Contains0.contains = Contains3.contains,
-    predicate Contains1.contains = Contains1.contains,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantLevel as InvariantLevel0 with
-    function Level0.level = Level0.level,
-    function SetLevel0.set_level = SetLevel0.set_level,
-    function Len0.len = Len0.len,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains3.contains,
-    function LevelOf0.level_of = LevelOf0.level_of
-  use Cdsat_Trail_Trail_Type as Cdsat_Trail_Trail_Type
-  clone Core_Num_Impl11_Max as Max0
-  clone Cdsat_Trail_Impl12_TermValue as TermValue0 with
-    function ShallowModel0.shallow_model = ShallowModel4.shallow_model,
-    function ShallowModel1.shallow_model = ShallowModel5.shallow_model
-  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel1 with
-    type t = Cdsat_Trail_Assignment_Type.t_assignment,
-    type a = Alloc_Alloc_Global_Type.t_global,
-    predicate Inv0.inv = Inv3.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv4.inv,
-    axiom .
-  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel0 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
-    type a = Alloc_Alloc_Global_Type.t_global,
-    predicate Inv0.inv = Inv1.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv2.inv,
-    axiom .
-  clone Cdsat_Trail_Impl9_IndexLogic as IndexLogic0 with
-    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
-    function ShallowModel1.shallow_model = ShallowModel1.shallow_model,
-    function TermValue0.term_value = TermValue0.term_value,
-    predicate Inv0.inv = Inv1.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv2.inv,
-    predicate Inv2.inv = Inv3.inv,
-    predicate Inv3.inv = Inv4.inv
-  clone Cdsat_Trail_Impl9_Contains as Contains0 with
-    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
-    function ShallowModel1.shallow_model = ShallowModel1.shallow_model,
-    predicate Inv0.inv = Inv1.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv2.inv,
-    predicate Inv2.inv = Inv3.inv,
-    predicate Inv3.inv = Inv4.inv
-  clone Cdsat_Trail_Impl9_AbstractJustification as AbstractJustification0 with
-    predicate Contains0.contains = Contains0.contains,
-    predicate Contains1.contains = Contains3.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains2.contains = Contains2.contains,
-    function Remove0.remove = Remove0.remove,
-    function Insert0.insert = Insert0.insert,
-    predicate Inv0.inv = Inv8.inv,
-    predicate Inv1.inv = Inv9.inv,
-    axiom .
-  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel3 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    type a = Alloc_Alloc_Global_Type.t_global,
-    predicate Inv0.inv = Inv7.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv8.inv,
-    axiom .
-  clone CreusotContracts_Resolve_Impl2_Resolve as Resolve2 with
-    type t = Cdsat_Trail_Assignment_Type.t_assignment
-  clone CreusotContracts_Logic_Ops_Impl0_IndexLogic as IndexLogic4 with
-    type t = Cdsat_Trail_Assignment_Type.t_assignment,
-    type a = Alloc_Alloc_Global_Type.t_global,
-    function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
-    predicate Inv0.inv = Inv3.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv4.inv
-  clone CreusotContracts_Model_Impl7_ShallowModel as ShallowModel2 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)) (Alloc_Alloc_Global_Type.t_global),
-    type ShallowModelTy0.shallowModelTy = Seq.seq (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)),
-    function ShallowModel0.shallow_model = ShallowModel0.shallow_model
-  clone Cdsat_Theory_Impl4_Entails as Entails0 with
-    predicate Invariant0.invariant' = Invariant3.invariant',
-    predicate SatisfySet0.satisfy_set = SatisfySet0.satisfy_set,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies
-  clone Cdsat_Theory_Impl5_IsInput as IsInput0 with
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len
-  clone Cdsat_Theory_Impl5_IsDecision as IsDecision0 with
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len
-  clone Cdsat_Theory_Impl5_Sound as Sound0 with
-    predicate JustifiedSound0.justified_sound = JustifiedSound0.justified_sound
-  clone Cdsat_Theory_Impl5_IsJustified as IsJustified0 with
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len
-  clone Cdsat_Theory_Impl5_Invariant as Invariant1 with
-    predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
-    predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
-    predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign
-  clone Cdsat_Theory_Impl5_Justification_Interface as Justification0 with
-    predicate Invariant0.invariant' = Invariant1.invariant',
-    predicate IsJustified0.is_justified = IsJustified0.is_justified,
-    predicate Sound0.sound = Sound0.sound,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Entails0.entails = Entails0.entails,
-    predicate IsInput0.is_input = IsInput0.is_input,
-    predicate IsDecision0.is_decision = IsDecision0.is_decision,
-    axiom .
-  clone Cdsat_Theory_Impl0_WellSorted as WellSorted0 with
-    function Sort0.sort = Sort0.sort
-  clone CreusotContracts_Logic_Ops_Impl0_IndexLogic as IndexLogic3 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
-    type a = Alloc_Alloc_Global_Type.t_global,
-    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
-    predicate Inv0.inv = Inv1.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv2.inv
-  clone CreusotContracts_Logic_Ops_Impl1_IndexLogic as IndexLogic2 with
-    type t = Cdsat_Trail_Assignment_Type.t_assignment,
-    type a = Alloc_Alloc_Global_Type.t_global,
-    function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
-    predicate Inv0.inv = Inv3.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv4.inv
-  clone CreusotContracts_Logic_Ops_Impl1_IndexLogic as IndexLogic1 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
-    type a = Alloc_Alloc_Global_Type.t_global,
-    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
-    predicate Inv0.inv = Inv1.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv2.inv
-  use Cdsat_Trail_Reason_Type as Cdsat_Trail_Reason_Type
-  clone Cdsat_Theory_Impl5_SatisfiedBy as SatisfiedBy0 with
-    predicate Contains0.contains = Contains1.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Trail_Impl9_Reason as Reason0 with
-    function IndexLogic0.index_logic = IndexLogic1.index_logic,
-    function IndexLogic1.index_logic = IndexLogic2.index_logic
-  clone Cdsat_Trail_Impl9_JustifiedIsJustified as JustifiedIsJustified0 with
-    predicate Contains0.contains = Contains0.contains,
-    function Reason0.reason = Reason0.reason,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate IsDecision0.is_decision = IsDecision0.is_decision,
-    predicate IsInput0.is_input = IsInput0.is_input,
-    function ShallowModel0.shallow_model = ShallowModel3.shallow_model,
-    predicate Contains1.contains = Contains2.contains,
-    function LtLog0.lt_log = LtLog0.lt_log,
-    predicate IsJustified0.is_justified = IsJustified0.is_justified,
-    function Justification0.justification = Justification0.justification,
-    function AbstractJustification0.abstract_justification = AbstractJustification0.abstract_justification,
-    predicate Inv0.inv = Inv7.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv8.inv,
-    predicate Invariant0.invariant' = Invariant1.invariant',
-    predicate Sound0.sound = Sound0.sound,
-    predicate Inv2.inv = Inv0.inv,
-    predicate Entails0.entails = Entails0.entails,
-    predicate Contains2.contains = Contains3.contains
-  clone Cdsat_Trail_Impl8_LevelLog as LevelLog0
-  clone Cdsat_Trail_Impl9_AbstractRelation as AbstractRelation0 with
-    predicate Contains0.contains = Contains0.contains,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    predicate Contains1.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function LevelLog0.level_log = LevelLog0.level_log,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len
-  clone Cdsat_Trail_Impl9_ReasonsDontChange as ReasonsDontChange0 with
-    predicate JustifiedIsJustified0.justified_is_justified = JustifiedIsJustified0.justified_is_justified,
-    predicate AbstractRelation0.abstract_relation = AbstractRelation0.abstract_relation,
-    predicate Invariant0.invariant' = Invariant1.invariant',
-    function Level0.level = Level0.level,
-    predicate Contains0.contains = Contains0.contains,
-    function LevelLog0.level_log = LevelLog0.level_log,
-    function IndexLogic0.index_logic = IndexLogic0.index_logic,
-    function Reason0.reason = Reason0.reason,
-    predicate Contains1.contains = Contains1.contains,
-    predicate IsJustified0.is_justified = IsJustified0.is_justified,
-    predicate IsDecision0.is_decision = IsDecision0.is_decision,
-    predicate IsInput0.is_input = IsInput0.is_input,
-    function Justification0.justification = Justification0.justification,
-    function ShallowModel0.shallow_model = ShallowModel3.shallow_model,
-    predicate Contains2.contains = Contains2.contains,
-    function LtLog0.lt_log = LtLog0.lt_log,
-    function Len0.len = Len0.len,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate Sound0.sound = Sound0.sound,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Entails0.entails = Entails0.entails,
-    predicate Inv1.inv = Inv7.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv2.inv = Inv8.inv,
-    axiom .
-  clone CreusotContracts_Std1_Vec_Impl10_Resolve as Resolve1 with
-    type t = Cdsat_Trail_Assignment_Type.t_assignment,
-    function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
-    function IndexLogic0.index_logic = IndexLogic4.index_logic,
-    predicate Resolve0.resolve = Resolve2.resolve,
-    predicate Inv0.inv = Inv3.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv4.inv
-  clone Core_Option_Impl0_Unwrap_Interface as Unwrap0 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
-    predicate Inv0.inv = Inv6.inv,
-    predicate Inv1.inv = Inv3.inv
-  clone Alloc_Vec_Impl1_Pop_Interface as Pop0 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global),
-    type a = Alloc_Alloc_Global_Type.t_global,
-    predicate Inv0.inv = Inv5.inv,
-    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
-    function ShallowModel1.shallow_model = ShallowModel2.shallow_model,
-    predicate Inv1.inv = Inv6.inv,
-    predicate Inv2.inv = Inv1.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv3.inv = Inv2.inv
-  clone Cdsat_Theory_Impl5_Restrict_Interface as Restrict0 with
-    predicate Invariant0.invariant' = Invariant1.invariant',
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    axiom .
-  clone Cdsat_Theory_Impl5_RestrictSound_Interface as RestrictSound0 with
-    predicate Sound0.sound = Sound0.sound,
-    function Restrict0.restrict = Restrict0.restrict,
-    predicate Invariant0.invariant' = Invariant1.invariant',
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    axiom .
-  clone Cdsat_Theory_Impl5_RestrictKindUnchanged_Interface as RestrictKindUnchanged0 with
-    predicate Invariant0.invariant' = Invariant1.invariant',
-    function Restrict0.restrict = Restrict0.restrict,
-    predicate Contains0.contains = Contains1.contains,
-    predicate IsJustified0.is_justified = IsJustified0.is_justified,
-    function Justification0.justification = Justification0.justification,
-    predicate IsDecision0.is_decision = IsDecision0.is_decision,
-    predicate IsInput0.is_input = IsInput0.is_input,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Sound0.sound = Sound0.sound,
-    predicate Entails0.entails = Entails0.entails,
-    axiom .
-  clone Cdsat_Theory_Impl5_RestrictIdempotent_Interface as RestrictIdempotent0 with
-    predicate Invariant0.invariant' = Invariant1.invariant',
-    function Restrict0.restrict = Restrict0.restrict,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    axiom .
-  clone CreusotContracts_Resolve_Impl1_Resolve as Resolve0 with
-    type t = Cdsat_Trail_Trail_Type.t_trail
-  clone Cdsat_Trail_Impl9_Invariant as Invariant0 with
-    predicate AbstractRelation0.abstract_relation = AbstractRelation0.abstract_relation,
-    predicate Sound0.sound = Sound0.sound,
-    predicate Invariant0.invariant' = Invariant1.invariant',
-    function Level0.level = Level0.level,
-    function ShallowModel0.shallow_model = ShallowModel0.shallow_model,
-    function IndexLogic0.index_logic = IndexLogic3.index_logic,
-    function ShallowModel1.shallow_model = ShallowModel1.shallow_model,
-    predicate Contains0.contains = Contains0.contains,
-    function IndexLogic1.index_logic = IndexLogic0.index_logic,
-    predicate IsDecision0.is_decision = IsDecision0.is_decision,
-    predicate JustifiedIsJustified0.justified_is_justified = JustifiedIsJustified0.justified_is_justified,
-    function WellSorted0.well_sorted = WellSorted0.well_sorted,
-    function Len0.len = Len0.len,
-    predicate Inv0.inv = Inv1.inv,
-    val Max0.mAX' = Max0.mAX',
-    predicate Inv1.inv = Inv2.inv,
-    predicate Inv2.inv = Inv3.inv,
-    predicate Inv3.inv = Inv4.inv
-  let rec cfg restrict [#"/Users/xavier/Code/cdsat/src/trail.rs" 570 4 570 51] [@cfg:stackify] [@cfg:subregion_analysis] (self : borrowed (Cdsat_Trail_Trail_Type.t_trail)) (level : usize) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 564 4 564 40] Invariant0.invariant' ( * self)}
-    requires {[#"/Users/xavier/Code/cdsat/src/trail.rs" 565 15 565 36] UIntSize.to_int level <= UIntSize.to_int (Cdsat_Trail_Trail_Type.trail_level ( * self))}
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 564 4 564 40] Invariant0.invariant' ( ^ self) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 566 14 566 59] Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( ^ self)) = Restrict0.restrict (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self))) (UIntSize.to_int level) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 568 4 568 111] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . LevelLog0.level_log ix <= UIntSize.to_int level -> Contains0.contains ( * self) ix -> Contains0.contains ( ^ self) ix }
-    ensures { [#"/Users/xavier/Code/cdsat/src/trail.rs" 569 4 569 112] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains ( ^ self) ix -> IndexLogic0.index_logic ( * self) ix = IndexLogic0.index_logic ( ^ self) ix }
-    
-   = [@vc:do_not_keep_trace] [@vc:sp]
-  var _0 : ();
-  var self : borrowed (Cdsat_Trail_Trail_Type.t_trail) = self;
-  var level : usize = level;
-  var old' : Ghost.ghost_ty (borrowed (Cdsat_Trail_Trail_Type.t_trail));
-  var _21 : Ghost.ghost_ty ();
-  var _23 : Ghost.ghost_ty ();
-  var _25 : Ghost.ghost_ty ();
-  var _27 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global);
-  var _28 : Core_Option_Option_Type.t_option (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global));
-  var _29 : borrowed (Alloc_Vec_Vec_Type.t_vec (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)) (Alloc_Alloc_Global_Type.t_global));
-  var _30 : Ghost.ghost_ty (Cdsat_Theory_Trail_Type.t_trail);
-  var _36 : Ghost.ghost_ty ();
-  {
-    goto BB0
-  }
-  BB0 {
-    old' <- ([#"/Users/xavier/Code/cdsat/src/trail.rs" 571 38 571 50] Ghost.new self);
-    goto BB1
-  }
-  BB1 {
-    goto BB2
-  }
-  BB2 {
-    invariant { [#"/Users/xavier/Code/cdsat/src/trail.rs" 575 20 575 66] Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self)) = Restrict0.restrict (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * Ghost.inner old'))) (UIntSize.to_int (Cdsat_Trail_Trail_Type.trail_level ( * self))) };
-    invariant { [#"/Users/xavier/Code/cdsat/src/trail.rs" 576 20 576 39] Cdsat_Trail_Trail_Type.trail_level ( * self) >= level };
-    invariant { [#"/Users/xavier/Code/cdsat/src/trail.rs" 575 8 575 68] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains ( * self) ix -> IndexLogic0.index_logic ( * Ghost.inner old') ix = IndexLogic0.index_logic ( * self) ix };
-    invariant { [#"/Users/xavier/Code/cdsat/src/trail.rs" 575 8 575 68] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains ( * self) ix -> Reason0.reason ( * self) ix = Reason0.reason ( * Ghost.inner old') ix };
-    invariant { [#"/Users/xavier/Code/cdsat/src/trail.rs" 575 8 575 68] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains ( * Ghost.inner old') ix -> LevelLog0.level_log ix <= UIntSize.to_int (Cdsat_Trail_Trail_Type.trail_level ( * self)) -> Contains0.contains ( * self) ix };
-    invariant { [#"/Users/xavier/Code/cdsat/src/trail.rs" 580 20 580 36] Invariant0.invariant' ( * self) };
-    goto BB3
-  }
-  BB3 {
-    switch ([#"/Users/xavier/Code/cdsat/src/trail.rs" 581 14 581 32] level < Cdsat_Trail_Trail_Type.trail_level ( * self))
-      | False -> goto BB13
-      | True -> goto BB4
-      end
-  }
-  BB4 {
-    _21 <- ([#"/Users/xavier/Code/cdsat/src/trail.rs" 582 31 582 70] Ghost.new ());
-    goto BB5
-  }
-  BB5 {
-    _23 <- ([#"/Users/xavier/Code/cdsat/src/trail.rs" 583 31 583 74] Ghost.new ());
-    goto BB6
-  }
-  BB6 {
-    _25 <- ([#"/Users/xavier/Code/cdsat/src/trail.rs" 584 31 584 65] Ghost.new ());
-    goto BB7
-  }
-  BB7 {
-    _29 <- Borrow.borrow_mut (Cdsat_Trail_Trail_Type.trail_assignments ( * self));
-    self <- { self with current = (let Cdsat_Trail_Trail_Type.C_Trail a b c d =  * self in Cdsat_Trail_Trail_Type.C_Trail ( ^ _29) b c d) };
-    _28 <- ([#"/Users/xavier/Code/cdsat/src/trail.rs" 588 12 588 34] Pop0.pop _29);
-    _29 <- any borrowed (Alloc_Vec_Vec_Type.t_vec (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global)) (Alloc_Alloc_Global_Type.t_global));
-    goto BB8
-  }
-  BB8 {
-    _27 <- ([#"/Users/xavier/Code/cdsat/src/trail.rs" 588 12 588 43] Unwrap0.unwrap _28);
-    _28 <- any Core_Option_Option_Type.t_option (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_Assignment_Type.t_assignment) (Alloc_Alloc_Global_Type.t_global));
-    goto BB9
-  }
-  BB9 {
-    assume { Resolve1.resolve _27 };
-    goto BB10
-  }
-  BB10 {
-    self <- { self with current = (let Cdsat_Trail_Trail_Type.C_Trail a b c d =  * self in Cdsat_Trail_Trail_Type.C_Trail a ([#"/Users/xavier/Code/cdsat/src/trail.rs" 590 12 590 27] Cdsat_Trail_Trail_Type.trail_level ( * self) - ([#"/Users/xavier/Code/cdsat/src/trail.rs" 590 26 590 27] (1 : usize))) c d) };
-    _30 <- ([#"/Users/xavier/Code/cdsat/src/trail.rs" 591 25 591 80] Ghost.new (Restrict0.restrict (Ghost.inner (Cdsat_Trail_Trail_Type.trail_ghost ( * self))) (UIntSize.to_int (Cdsat_Trail_Trail_Type.trail_level ( * self)))));
-    goto BB11
-  }
-  BB11 {
-    self <- { self with current = (let Cdsat_Trail_Trail_Type.C_Trail a b c d =  * self in Cdsat_Trail_Trail_Type.C_Trail a b _30 d) };
-    _30 <- any Ghost.ghost_ty (Cdsat_Theory_Trail_Type.t_trail);
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/trail.rs" 593 12 593 80] forall ix : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains ( * self) ix -> Contains0.contains ( * Ghost.inner old') ix };
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/trail.rs" 594 26 594 50] AbstractRelation0.abstract_relation ( * self) };
-    _36 <- ([#"/Users/xavier/Code/cdsat/src/trail.rs" 595 12 595 47] Ghost.new (ReasonsDontChange0.reasons_dont_change ( * Ghost.inner old') ( * self)));
-    goto BB12
-  }
-  BB12 {
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/trail.rs" 596 26 596 55] JustifiedIsJustified0.justified_is_justified ( * self) };
-    goto BB2
-  }
-  BB13 {
-    assume { Resolve0.resolve self };
-    _0 <- ();
-    return _0
-  }
-  
 end
 module Cdsat_Trail_SeqUnique_Stub
   type t
@@ -15691,177 +14503,6 @@ module Cdsat_Theory_Impl5_RestrictTooBig
     ensures { result = restrict_too_big self level d }
     
   axiom restrict_too_big_spec : forall self : Cdsat_Theory_Trail_Type.t_trail, level : int, d : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value) . ([#"/Users/xavier/Code/cdsat/src/theory.rs" 753 15 753 25] level >= 0) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 754 15 754 31] Invariant0.invariant' self) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 755 15 755 31] Contains0.contains self d) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 756 15 756 39] level < LevelOf0.level_of self d) -> ([#"/Users/xavier/Code/cdsat/src/theory.rs" 757 14 757 47] not Contains0.contains (Restrict0.restrict self level) d)
-end
-module Cdsat_Theory_Impl5_RestrictTooBig_Impl
-  use prelude.Int
-  clone CreusotContracts_NumRational_Impl1_FromInt_Interface as FromInt0
-  use Cdsat_Theory_Sort_Type as Cdsat_Theory_Sort_Type
-  use Cdsat_Theory_Value_Type as Cdsat_Theory_Value_Type
-  use Cdsat_Theory_Term_Type as Cdsat_Theory_Term_Type
-  use Cdsat_Theory_Model_Type as Cdsat_Theory_Model_Type
-  clone Cdsat_Theory_Impl1_Sort as Sort1
-  use Cdsat_Theory_Var_Type as Cdsat_Theory_Var_Type
-  clone Cdsat_Theory_Impl0_Sort as Sort0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl3_Invariant as Invariant2 with
-    function Sort0.sort = Sort1.sort
-  clone CreusotContracts_Invariant_Inv_Interface as Inv0 with
-    type t = Cdsat_Theory_Model_Type.t_model
-  clone Cdsat_Theory_Impl4_Interp as Interp0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort,
-    function FromInt0.from_int = FromInt0.from_int,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Remove as Remove0 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  clone Cdsat_Theory_Impl4_Satisfies as Satisfies0 with
-    function Interp0.interp = Interp0.interp,
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    function Sort0.sort = Sort1.sort,
-    function Sort1.sort = Sort0.sort
-  clone Cdsat_Theory_Model_Type_Inv as Cdsat_Theory_Model_Type_Inv0 with
-    predicate Inv0.inv = Inv0.inv,
-    predicate Invariant0.invariant' = Invariant2.invariant',
-    axiom .
-  use Cdsat_Theory_Assign_Type as Cdsat_Theory_Assign_Type
-  clone Cdsat_Theory_Impl2_Invariant as Invariant1 with
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_IsBool as IsBool0 with
-    function Sort0.sort = Sort1.sort
-  clone Cdsat_Theory_Impl1_Negate as Negate0 with
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    axiom .
-  clone CreusotContracts_Logic_Fset_Impl0_Contains as Contains1 with
-    type t = (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)
-  use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type
-  clone Cdsat_Theory_Impl5_Len as Len0 with
-    axiom .
-  clone Cdsat_Theory_Impl5_Level as Level0 with
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_InvariantAssign as InvariantAssign0 with
-    predicate Invariant0.invariant' = Invariant1.invariant'
-  clone Cdsat_Theory_Impl2_ToPair as ToPair0
-  use prelude.Int
-  clone Cdsat_Theory_Impl5_InvariantNonneg as InvariantNonneg0 with
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len
-  use Core_Option_Option_Type as Core_Option_Option_Type
-  clone Cdsat_Theory_Impl5_Find as Find0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_LevelOf as LevelOf0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Find0.find = Find0.find,
-    function Len0.len = Len0.len,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    axiom .
-  clone Cdsat_Theory_Impl5_SetLevel as SetLevel0 with
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    function Remove0.remove = Remove0.remove,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_Contains as Contains0 with
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    function Find0.find = Find0.find,
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Level0.level = Level0.level,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_TrailUnique as TrailUnique0 with
-    function ToPair0.to_pair = ToPair0.to_pair,
-    predicate Contains0.contains = Contains0.contains,
-    predicate IsBool0.is_bool = IsBool0.is_bool,
-    function Negate0.negate = Negate0.negate,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantContains as InvariantContains0 with
-    predicate Contains0.contains = Contains1.contains,
-    predicate Contains1.contains = Contains0.contains,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_InvariantLevel as InvariantLevel0 with
-    function Level0.level = Level0.level,
-    function SetLevel0.set_level = SetLevel0.set_level,
-    function Len0.len = Len0.len,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate Contains0.contains = Contains1.contains,
-    function LevelOf0.level_of = LevelOf0.level_of
-  clone Cdsat_Theory_Impl5_Invariant as Invariant0 with
-    predicate InvariantLevel0.invariant_level = InvariantLevel0.invariant_level,
-    predicate InvariantContains0.invariant_contains = InvariantContains0.invariant_contains,
-    predicate TrailUnique0.trail_unique = TrailUnique0.trail_unique,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign
-  clone Cdsat_Theory_Impl5_CountBounds as CountBounds0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    function Len0.len = Len0.len,
-    axiom .
-  clone Cdsat_Theory_Impl5_SatisfiedBy as SatisfiedBy0 with
-    predicate Contains0.contains = Contains0.contains,
-    predicate Satisfies0.satisfies = Satisfies0.satisfies,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort
-  clone Cdsat_Theory_Impl5_Restrict as Restrict0 with
-    predicate Invariant0.invariant' = Invariant0.invariant',
-    predicate Contains0.contains = Contains0.contains,
-    function LevelOf0.level_of = LevelOf0.level_of,
-    function Level0.level = Level0.level,
-    predicate Inv0.inv = Inv0.inv,
-    predicate SatisfiedBy0.satisfied_by = SatisfiedBy0.satisfied_by,
-    function Len0.len = Len0.len,
-    function CountBounds0.count_bounds = CountBounds0.count_bounds,
-    predicate InvariantAssign0.invariant_assign = InvariantAssign0.invariant_assign,
-    function Sort0.sort = Sort0.sort,
-    function Sort1.sort = Sort1.sort,
-    predicate InvariantNonneg0.invariant_nonneg = InvariantNonneg0.invariant_nonneg,
-    axiom .
-  let rec ghost function restrict_too_big [#"/Users/xavier/Code/cdsat/src/theory.rs" 758 4 758 63] (self : Cdsat_Theory_Trail_Type.t_trail) (level : int) (d : (Cdsat_Theory_Term_Type.t_term, Cdsat_Theory_Value_Type.t_value)) : ()
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 753 15 753 25] level >= 0}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 754 15 754 31] Invariant0.invariant' self}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 755 15 755 31] Contains0.contains self d}
-    requires {[#"/Users/xavier/Code/cdsat/src/theory.rs" 756 15 756 39] level < LevelOf0.level_of self d}
-    ensures { [#"/Users/xavier/Code/cdsat/src/theory.rs" 757 14 757 47] not Contains0.contains (Restrict0.restrict self level) d }
-    
-   = [@vc:do_not_keep_trace] [@vc:sp]
-    [#"/Users/xavier/Code/cdsat/src/theory.rs" 759 8 768 9] match (self) with
-      | Cdsat_Theory_Trail_Type.C_Empty -> ()
-      | Cdsat_Theory_Trail_Type.C_Assign a l tl -> if let a = ToPair0.to_pair a in pure {a = d} then
-        ()
-      else
-        let _ = restrict_too_big tl level d in ()
-      
-      end
 end
 module Cdsat_Theory_Impl6_Decide_Stub
   use Cdsat_Theory_Trail_Type as Cdsat_Theory_Trail_Type

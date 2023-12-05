@@ -253,8 +253,7 @@ impl Trail {
     pub fn justified_is_justified(self) -> bool {
         pearlite! {
             forall<ix : _> self.contains(ix) ==>
-                { let reason = self.assignments[ix.0@][ix.1@].reason;
-
+                { let reason = self.reason(ix);
                   (reason == Reason::Decision == self.ghost.is_decision(self.index_logic(ix))) &&
                   (reason == Reason::Input == self.ghost.is_input(self.index_logic(ix))) &&
                   (forall<j : _> reason == Reason::Justified(j) ==>
@@ -524,6 +523,43 @@ impl Trail {
         ()
     }
 
+    #[logic]
+    #[open]
+    pub fn reason(self, ix : TrailIndex) -> Reason {
+        self.assignments[ix.0][ix.1].reason
+    }
+
+    // LOL
+    #[ghost]
+    #[requires(self.justified_is_justified())]
+    #[requires(self.abstract_relation())]
+    #[requires(other.abstract_relation() && other.ghost.invariant())]
+    #[requires(other.ghost.level() == other.level@)]
+    #[requires(forall<ix : _> self.contains(ix) ==> ix.level_log() <= other.level@ ==> other.contains(ix))]
+    #[requires(forall<ix : _> other.contains(ix) ==> self.contains(ix))]
+    #[requires(forall<ix :_> other.contains(ix) ==> self.index_logic(ix) == other.index_logic(ix))]
+    #[requires(forall<ix : _> other.contains(ix) ==> self.reason(ix) == other.reason(ix))]
+    #[requires(forall<a : _> other.ghost.contains(a) ==>
+        self.ghost.is_justified(a) == other.ghost.is_justified(a))]
+     #[requires(forall<a : _> other.ghost.contains(a) ==>
+        self.ghost.is_decision(a) == other.ghost.is_decision(a))]
+    #[requires(forall<a : _> other.ghost.contains(a) ==>
+        self.ghost.is_input(a) == other.ghost.is_input(a) )]
+    #[requires(forall<a : _> other.ghost.contains(a) ==>
+        self.ghost.justification(a) == other.ghost.justification(a))]
+    #[ensures(other.justified_is_justified())]
+    fn reasons_dont_change(self, other: Self) {
+        proof_assert!(forall<ix : _> other.contains(ix) ==> ix.level_log() <= other.ghost.level());
+        proof_assert!(forall<ix : _, j : _> other.contains(ix) ==>  other.reason(ix) == Reason::Justified(j) ==>
+            forall<i : _> j@.contains(i) ==> i < ix && other.contains(i)
+        );
+        proof_assert!(forall<ix : _> self.contains(ix) ==> self.reason(ix) == Reason::Decision ==>
+            self.ghost.is_decision(self.index_logic(ix))
+        );
+    }
+
+
+
     // #[trusted]
     #[maintains((mut self).invariant())]
     #[requires(level@ <= self.level@)]
@@ -535,33 +571,28 @@ impl Trail {
         let old: Ghost![&mut Trail] = gh! { self };
 
         // Restate as a subsequence?
-        #[invariant(forall<i : _> 0 <= i && i <= self.level@ ==> (self.assignments@)[i] == (old.assignments)@[i])]
-        #[invariant(self.invariant())]
+        // #[invariant(forall<i : _> 0 <= i && i <= self.level@ ==> (self.assignments@)[i] == (old.assignments)@[i])]
         #[invariant(*self.ghost == old.ghost.restrict(self.level@))]
         #[invariant(self.level >= level)]
+        #[invariant(forall<ix : TrailIndex> self.contains(ix) ==> old.index_logic(ix) == self.index_logic(ix))]
+        #[invariant(forall<ix : _> self.contains(ix) ==> self.reason(ix) == old.reason(ix))]
+        #[invariant(forall<ix : _> old.contains(ix) ==> ix.level_log() <= self.level@ ==> self.contains(ix))]
+        #[invariant(self.invariant())]
         while level < self.level {
             let _: Ghost![_] = gh!(theory::Trail::restrict_idempotent);
             let _: Ghost![_] = gh!(theory::Trail::restrict_kind_unchanged);
             let _: Ghost![_] = gh!(theory::Trail::restrict_sound);
 
-            self.assignments.pop();
+            // This is a load bearing `unwrap`. It allows the provers to properly see that `pop` returned `Some` here
+            // and use the appropriate specification. They don't want to break the `match` in the postcondition of `pop` otherwise.
+            self.assignments.pop().unwrap();
 
             self.level -= 1;
             self.ghost = gh! { self.ghost.restrict(self.level.shallow_model()) };
 
-            // Ugly and annoying that this is required... should really be automatic
-            proof_assert!(forall<ix : _> self.contains(ix) ==>
-                forall<j : _> self.assignments[ix.0@][ix.1@].reason == Reason::Justified(j) ==>
-                  forall<k : _> j@.contains(k) ==> self.contains(k)
-            );
-
-            // Move to lemma
-            proof_assert!(forall<js : Seq<_>>
-                (forall<j : _> js.contains(j) ==> self.contains(j) && old.contains(j) && self.index_logic(j) == old.index_logic(j)) ==>
-                self.abstract_justification(js) == old.abstract_justification(js)
-            );
-
+            proof_assert!(forall<ix : _> self.contains(ix) ==> old.contains(ix));
             proof_assert!(self.abstract_relation());
+            gh!(old.reasons_dont_change(*self));
             proof_assert!(self.justified_is_justified());
         }
     }
