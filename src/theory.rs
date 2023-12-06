@@ -461,7 +461,7 @@ impl Trail {
     }
 
     #[ghost]
-    #[open(self)]
+    #[open]
     #[ensures(match result {
       Some((a, l)) => a.to_pair() == d,
       _ => true,
@@ -843,6 +843,24 @@ impl Normal {
             && tgt.0
                 == Trail::Assign(Assign::Decision(t, val), self.0.level() + 1, Box::new(self.0))
     }
+
+    // Γ ⟶ Γ,?A if A is an acceptable 𝒯ₖ-assignment for ℐₖ in Γ_𝒯ₖ for 1 ≤ k ≤ n
+    #[ghost]
+    #[open]
+    #[requires((self.0).invariant())]
+    #[requires(self.sound())]
+    #[requires(self.0.acceptable(t, val))]
+    #[ensures(result.0.invariant())]
+    #[ensures(result.sound())]
+    #[ensures(self.0.impls(result.0))]
+    #[ensures(forall<a : _> result.0.contains(a) ==> self.0.contains(a) || a == (t, val))]
+    #[ensures(forall<a : _> self.0.contains(a) ==> result.0.contains(a))]
+    #[ensures(result.0.contains((t, val)))]
+    #[ensures(forall<a : _> self.0.justification(a) == result.0.justification(a))]
+    pub fn decidef(self, t: Term, val: Value,) -> Self {
+       Normal(Trail::Assign(Assign::Decision(t, val), self.0.level() + 1, Box::new(self.0)))
+    }
+
 
     // Γ ⟶ Γ, J⊢L, if ¬L ∉ Γ and L is l ← 𝔟 for some l ∈ ℬ
     #[predicate]

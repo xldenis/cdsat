@@ -257,12 +257,18 @@ impl Trail {
                   (reason == Reason::Decision == self.ghost.is_decision(self.index_logic(ix))) &&
                   (reason == Reason::Input == self.ghost.is_input(self.index_logic(ix))) &&
                   (forall<j : _> reason == Reason::Justified(j) ==>
-                    (forall<i : _> j@.contains(i) ==> i < ix && self.contains(i)) &&
-                    self.ghost.is_justified(self.index_logic(ix)) &&
-                    self.ghost.justification(self.index_logic(ix)) == self.abstract_justification(j@)
-                  )
+                    self.justified_correct(ix, j))
                 }
 
+        }
+    }
+    #[open]
+    #[predicate]
+    pub fn justified_correct(self, ix: TrailIndex, j: Vec<TrailIndex>) -> bool {
+        pearlite!{
+            (forall<i : _> j@.contains(i) ==> i < ix && self.contains(i)) &&
+            self.ghost.is_justified(self.index_logic(ix)) &&
+            self.ghost.justification(self.index_logic(ix)) == self.abstract_justification(j@)
         }
     }
 
@@ -390,18 +396,30 @@ impl Trail {
         self.level
     }
 
+    #[requires(term@.well_sorted())]
     #[requires(self.invariant())]
     #[ensures((^self).invariant())]
     #[requires(self.ghost.acceptable(term@, val@))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
-    #[trusted] // for arithmetic
+    // #[trusted] // for arithmetic
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         info!("? {term} <- {val}");
+        let old = gh! { * self };
         self.assignments.len();
         self.level += 1;
+        let kv = gh! { (term.shallow_model(), val.shallow_model())};
+        self.ghost = gh! { theory::Normal(*self.ghost).decidef(term@, val@).0};
         let assign = Assignment { term, val, reason: Reason::Decision, level: self.level };
         self.assignments.push(vec![assign]);
-        self.num_assign += 1;
+        proof_assert!(forall<ix : _> old.contains(ix) ==> self.reason(ix) == old.reason(ix));
+        proof_assert!(forall<ix : _> old.contains(ix) ==> old.index_logic(ix) == self.index_logic(ix));
+        gh! { Self::abs_just_equiv };
+        let new_ix = TrailIndex(self.level, 0);
+        proof_assert!(self[new_ix] == *kv);
+        let _: Ghost![_] = gh! { theory::Trail::just_stable };
+        proof_assert!(self.abstract_relation());
+        proof_assert!(self.justified_is_justified());
+        // self.num_assign += 1;
     }
 
     #[ensures(match result {
