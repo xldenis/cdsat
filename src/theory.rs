@@ -303,7 +303,8 @@ impl Trail {
     #[ghost]
     #[open(self)]
     #[requires(self.invariant_nonneg())]
-    #[requires(forall<j : _> set.contains(j) ==> self.level_of(j) <= self.level_of(elem))]
+    #[requires(self.set_level(set) <= self.level_of(elem))]
+    // #[requires(forall<j : _> set.contains(j) ==> self.level_of(j) <= self.level_of(elem))]
     #[ensures(self.set_level(set.insert(elem)) == self.level_of(elem))]
     pub fn set_level_max(self, set: FSet<(Term, Value)>, elem: (Term, Value)) {}
 

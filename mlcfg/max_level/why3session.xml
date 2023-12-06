@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Z3" version="4.11.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC5" version="1.0.5" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="3" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="mlcfg" proved="true">
+<path name=".."/><path name="max_level.mlcfg"/>
+<theory name="Cdsat_Trail_Impl9_MaxLevel" proved="true">
+ <goal name="max_level&#39;vc" expl="VC for max_level" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="max_level&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.029228" steps="30"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.033193" steps="37"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.2" expl="loop invariant init" proved="true">
+  <proof prover="3"><result status="valid" time="0.032849" steps="40"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.3" expl="loop invariant init" proved="true">
+  <proof prover="3"><result status="valid" time="0.038301" steps="99"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.4" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.021051" steps="64366"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.5" expl="loop invariant init" proved="true">
+  <proof prover="3"><result status="valid" time="0.051629" steps="351"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.6" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.076418" steps="658"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.7" expl="postcondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.035915" steps="75"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.8" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.387022" steps="4593"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.098116" steps="927"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.120529" steps="1174"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.306241" steps="3540"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.12" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.039801" steps="110"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.13" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.447978" steps="4949"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.14" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.057288" steps="367"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.15" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.034379" steps="88"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.16" expl="assertion" proved="true">
+  <proof prover="3"><result status="valid" time="0.033843" steps="82"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.17" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.054532" steps="359"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.18" expl="precondition" proved="true">
+  <proof prover="3"><result status="valid" time="0.841659" steps="10273"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.19" expl="assertion" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="max_level&#39;vc.19.0" expl="assertion" proved="true">
+   <proof prover="3"><result status="valid" time="0.617848" steps="7327"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="max_level&#39;vc.20" expl="loop invariant preservation" proved="true">
+  <proof prover="3"><result status="valid" time="0.039151" steps="84"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.21" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.352450" steps="60067"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.22" expl="loop invariant preservation" proved="true">
+  <proof prover="3"><result status="valid" time="0.039746" steps="85"/></proof>
+  </goal>
+  <goal name="max_level&#39;vc.23" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.221384" steps="53294"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Concrete_Impl3" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.009589" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Concrete_Impl8" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005273" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl14" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.011212" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl19" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.008811" steps="7"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl24" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.006744" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl13" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005169" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl21" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.008738" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl27" proved="true">
+ <goal name="eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.007722" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Concrete_Impl5" proved="true">
+ <goal name="assert_receiver_is_total_eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005461" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Concrete_Impl10" proved="true">
+ <goal name="assert_receiver_is_total_eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005469" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl16" proved="true">
+ <goal name="assert_receiver_is_total_eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005269" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl21" proved="true">
+ <goal name="assert_receiver_is_total_eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005240" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl26" proved="true">
+ <goal name="assert_receiver_is_total_eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.006537" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl15" proved="true">
+ <goal name="assert_receiver_is_total_eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005826" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl23" proved="true">
+ <goal name="assert_receiver_is_total_eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005695" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl29" proved="true">
+ <goal name="assert_receiver_is_total_eq_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005448" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Concrete_Impl7" proved="true">
+ <goal name="fmt_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005265" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Concrete_Impl12" proved="true">
+ <goal name="fmt_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005222" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl23" proved="true">
+ <goal name="fmt_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005064" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl12" proved="true">
+ <goal name="fmt_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005290" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl20" proved="true">
+ <goal name="fmt_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005525" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl26" proved="true">
+ <goal name="fmt_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005220" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl13" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.009917" steps="12"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl18" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.007431" steps="12"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl27" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.007211" steps="8"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl11" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005410" steps="6"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl19" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.009811" steps="8"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl25" proved="true">
+ <goal name="clone&#39;_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.007845" steps="8"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl0" proved="true">
+ <goal name="fmt_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005034" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl2" proved="true">
+ <goal name="fmt_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005200" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl3" proved="true">
+ <goal name="fmt_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005134" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl3" proved="true">
+ <goal name="partial_cmp_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.007026" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl4" proved="true">
+ <goal name="cmp_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.006961" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl5" proved="true">
+ <goal name="cmp_lt_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.006898" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_ge_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.006669" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_gt_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.006832" steps="2"/></proof>
+ </goal>
+ <goal name="cmp_le_log_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.006757" steps="2"/></proof>
+ </goal>
+ <goal name="antisym2_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.007152" steps="8"/></proof>
+ </goal>
+ <goal name="trans_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.007185" steps="12"/></proof>
+ </goal>
+ <goal name="eq_cmp_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.006562" steps="2"/></proof>
+ </goal>
+ <goal name="antisym1_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.007156" steps="8"/></proof>
+ </goal>
+ <goal name="refl_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.006814" steps="2"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Trail_Impl11" proved="true">
+ <goal name="index_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005206" steps="0"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl18" proved="true">
+ <goal name="hash_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.005395" steps="4"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl24" proved="true">
+ <goal name="hash_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.009104" steps="6"/></proof>
+ </goal>
+</theory>
+<theory name="Cdsat_Term_Impl30" proved="true">
+ <goal name="hash_refn" proved="true">
+ <proof prover="3"><result status="valid" time="0.007220" steps="6"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>

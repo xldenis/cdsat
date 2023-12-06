@@ -593,27 +593,32 @@ impl Trail {
         }
     }
 
-    #[trusted] // proof passes modulo annoying details on `to_owned`
     #[requires(self.invariant())]
-    #[requires(forall<i : _> 0 <= i && i < (assignments@).len() ==> self.contains((assignments@)[i]))]
+    #[requires(forall<i : _> 0 <= i && i < assignments@.len() ==> self.contains(assignments[i]))]
     #[ensures(self.ghost.set_level(self.abstract_justification(assignments@)) == result@)]
     pub(crate) fn max_level(&self, assignments: &[TrailIndex]) -> usize {
         let mut max = 0;
-        #[invariant(true)]
+        let mut other = gh! { Seq::EMPTY };
+        #[invariant(*other == produced.to_owned_seq())]
         #[invariant(self.ghost.set_level(self.abstract_justification(produced.to_owned_seq())) == max@)]
         for ix in assignments {
-            proof_assert!(self.abs_just_snoc(produced.to_owned_seq(), *ix); true);
-            proof_assert!(self.abstract_justification(assignments@).insert(self.index_logic(*ix)) == self.abstract_justification((assignments@).push(*ix)));
-            proof_assert!((assignments@).contains(*ix));
-            proof_assert!(self.contains(*ix));
-            proof_assert! { self.ghost.level_of(self.index_logic(*ix)) == ix.0@ };
+            proof_assert!(forall<i : _> 0 <= i && i < produced.len() ==> assignments[i] == *produced[i]);
+            gh! { self.abs_just_snoc(*other, *ix) };
+            let just = gh! { self.abstract_justification(*other) };
+            proof_assert!(self.ghost.set_level(*just) == max@);
             if ix.0 >= max {
-                proof_assert!(self.ghost.set_level_max(self.abstract_justification(produced.to_owned_seq()), self.index_logic(*ix)); true);
-                max = ix.0
+                max = ix.0;
+                proof_assert!(self.ghost.level_of(self[*ix]) == ix.0@);
+                gh! { self.ghost.set_level_max(*just, self[*ix]) };
             } else {
-                proof_assert!(self.ghost.set_level_min(self.abstract_justification(produced.to_owned_seq()), self.index_logic(*ix)); true);
+                proof_assert!(ix.0 < max );
+                gh! { self.ghost.set_level_min(*just, self[*ix]) };
+
             }
+            other = gh! { other.push(*ix)};
+            proof_assert!(other.ext_eq(produced.to_owned_seq()));
         }
+        proof_assert!(other.ext_eq(assignments@));
         max
     }
 
