@@ -462,7 +462,8 @@ impl Trail {
         info!("{s} |- {term} <- {val}");
     }
 
-    // Need some sort of theorem here
+    // This proof is weirdly hard to get to pass, for such a trivial operation..
+    // Additionally the proof still requires manual intervention in the why3 session
     #[maintains((mut self).invariant())]
     #[requires(term@.well_sorted())]
     #[requires((val@).is_bool())]
