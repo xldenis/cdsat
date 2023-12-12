@@ -5,9 +5,8 @@ use ::std::{collections::BTreeSet, fmt::Write};
 
 use crate::term::{Term, Value};
 // use creusot_contracts::*;
-use crate::{bool::*, lra::*, theory, trail::*};
+use crate::{bool::*, log::info, lra::*, theory, trail::*};
 use creusot_contracts::{logic::*, std::*, PartialEq, *};
-use crate::log::info;
 
 use crate::ghost::Ghost;
 
@@ -167,88 +166,81 @@ impl Solver {
     #[ensures((^trail).invariant())]
     #[ensures((*trail).ghost.impls(*(^trail).ghost))]
     fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
-        let mut s = String::from("");
-        for i in &conflict {
-            write!(s, "{} <- {} ", &trail[*i].term, &trail[*i].val).unwrap();
-        }
-        info!("resolving conflict {{{s}}}");
-
         let mut heap: ConflictHeap = ConflictHeap::new();
         let old_conflict: Ghost![Vec<TrailIndex>] = gh! { conflict };
         let old_trail: Ghost![&mut Trail] = gh! { trail };
 
-        #[invariant(forall<a : _> produced.contains(a) ==> (heap@).contains(a))]
-        #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
-        #[invariant(forall<a :_> (heap@).contains(a) ==> produced.contains(a))]
+        #[invariant(forall<a : _> heap@.contains(a) == produced.contains(a))]
         for a in conflict {
             heap.insert(a);
         }
-        proof_assert!(
-            trail.abstract_justification(old_conflict.shallow_model())
-                == ix_to_abs(*trail, heap.shallow_model())
-        );
-        let mut abs_cflct: Ghost![theory::Conflict] =
+
+        let mut abs_cflct =
             gh! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
 
         let max_ix = *heap.last().unwrap();
         let conflict_level = max_ix.level();
-        proof_assert!(exists<ix : _> (heap@).contains(ix) && ix.level_log() > 0);
-        // proof_assert!(ix.level_log());
-        proof_assert!(0 < conflict_level@);
-        #[invariant(old_trail.ghost.impls(*trail.ghost))]
-        #[invariant(abs_cflct.0 == *trail.ghost)]
-        #[invariant(abs_cflct.sound())]
-        #[invariant(abs_cflct.invariant())]
-        #[invariant(abs_cflct.level() == conflict_level@)]
-        // should be free from ix_to_abs
-        #[invariant(forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
-        #[invariant(ix_to_abs(*trail, heap@) == abs_cflct.1)]
-        // should come from ix_to_abs
-        #[invariant(forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
-        // same
-        #[invariant(forall< a : _> abs_cflct.1.contains(a) ==>
-            exists<ix : _> trail.contains(ix) && (heap@).contains(ix) && trail.index_logic(ix) == a
-        )]
+
+        // The level in `abs_cflct` and `heap` agree
+        gh! { ix_to_abs_level(*trail, heap.shallow_model()) };
+
+        #[invariant(forall<ix : _> heap@.contains(ix) ==> trail.contains(ix))]
+        #[invariant(trail.invariant())]
+        // #[invariant(abs_cflct.1 == ix_to_abs(*trail, heap@))]
+        #[invariant(forall<ix : _> heap@.contains(ix) ==> abs_cflct.1.contains(trail[ix]))]
+        #[invariant(forall<a : _> abs_cflct.1.contains(a) ==> exists<ix : _> heap@.contains(ix) && trail[ix] == a)]
+        #[invariant(abs_cflct.invariant() && abs_cflct.sound() && abs_cflct.0 == *trail.ghost && abs_cflct.level() == conflict_level@)]
         while let Some(ix) = heap.pop_last() {
-            proof_assert!(ix.level_log() == abs_cflct.level());
-            proof_assert!(ix_to_abs_remove(*trail, ix, heap@); true);
+            // proof_assert!(ix_to_abs_remove(*trail, ix, heap@); true);
             let rem_level = match heap.last() {
                 Some(ix2) => ix2.level(),
                 None => 0,
             };
 
-            // Some of these might be useless
-            proof_assert!(ix_to_abs(*trail, heap@).ext_eq(abs_cflct.1.remove(trail.index_logic(ix))));
-            proof_assert!(abs_cflct.0.set_level(abs_cflct.1) == ix.level_log());
-            proof_assert!({ix_to_abs_level(*trail, heap@); true});
-            proof_assert!(abs_cflct.0.set_level(abs_cflct.1.remove(trail.index_logic(ix))) == rem_level@);
+            // proof_assert!(ix.level_log() == conflict_level@);
+            proof_assert!(forall<i : _> heap@.contains(i) ==> i <= ix);
+            proof_assert!(forall<i : _> heap@.contains(i) ==> i.level_log() <= ix.level_log());
 
+            proof_assert!(set_max(heap@).level_log() == rem_level@ || rem_level@ == 0);
+            proof_assert!(rem_level@ <= ix.level_log());
+            proof_assert!(forall<i : _> heap@.contains(i) ==> i.level_log() <= rem_level@);
+
+            proof_assert!(trail.contains(ix));
+            // proof_assert!(abs_cflct.1.contains(trail[ix]));
             let a = trail[ix].clone();
             // Backjump
             if a.is_bool() && ix.level() > rem_level {
-                proof_assert!(trail.index_logic(ix) == a.term_value());
-                // Somehow this should provide us the info we need to say that the justification won't change from restriction?
-                let _: Ghost![bool] = gh! { abs_cflct.backjump2(a.term_value()); true };
+                proof_assert!(ix.level_log() == trail.ghost.level_of(trail[ix]));
 
-                let oheap: Ghost![ConflictHeap] = gh! { heap };
+                let _ = gh! { abs_cflct.backjump2(trail[ix]) };
+
+                let oheap = gh! { heap };
                 let just = heap.into_vec();
 
-                let _: Ghost![()] =
-                    gh!(seq_to_set(*trail, just.shallow_model(), oheap.shallow_model()));
+                let old = gh! { trail.abstract_justification(just.shallow_model()) };
+                gh! { set_remove(*old, trail[ix]) };
 
-                let old: Ghost![FSet<(theory::Term, theory::Value)>] =
-                    gh! { trail.abstract_justification(just.shallow_model()) };
+                proof_assert!(forall<a : _> ix_to_abs(*trail, oheap@).contains(a) ==> old.contains(a));
+                proof_assert!(old.ext_eq(abs_cflct.1.remove(trail[ix])));
+
+                let old_trail = gh! { *trail};
+
                 trail.restrict(rem_level);
-                let new: Ghost![FSet<(theory::Term, theory::Value)>] =
-                    gh! { trail.abstract_justification(just.shallow_model()) };
 
-                proof_assert!(new.ext_eq(*old));
+                gh!(trail.abs_just_equiv(*old_trail, just.shallow_model()));
                 info!("backjump");
-                // info!("backjump {} <- {}", a.term, a.val.negate());
+
+                gh! { set_remove(*old, trail[ix]) };
+                gh! { abs_cflct.learn_justified(old_trail[ix]) };
+                // proof_assert!(forall<a : _> old.contains(a) ==>
+                //     abs_cflct.1.remove(trail[ix]).contains(a)
+                // );
                 trail.add_justified(just, a.term, a.val.negate());
 
                 return;
             }
+
+            // proof_assert!(!trail.ghost.is_input(trail[ix]));
 
             // Undo Clear
             if a.is_first_order() && a.is_decision() {
@@ -258,89 +250,77 @@ impl Solver {
                 return;
             }
 
-            proof_assert!(forall<t : theory::Trail, a :_> t.is_decision(a) ==> !t.is_input(a) && !t.is_justified(a));
-            proof_assert!(abs_cflct.0.is_decision(a.term_value()) ==> ix.level_log() > rem_level@);
-
-            // It can't be a boolean deceision
-            proof_assert!(!trail.ghost.is_decision(a.term_value()));
-            // Trivial: Trail has non-zero level so by invariant we can't be input.
-            proof_assert!({
-                trail.ghost.is_input_inv(a.term_value());
-                true
-            });
-            proof_assert!(trail.ghost.is_justified(a.term_value()));
+            // The key fact we need to prove is that `ix` has the level of the conflict.
+            // This would simplify the following assertion.
+            proof_assert!(trail.ghost.level_of(trail[ix]) > 0);
+            gh!(theory::Trail::is_input_inv);
+            proof_assert!(!trail.ghost.is_input(trail[ix]));
+            proof_assert!(!trail.ghost.is_decision(trail[ix]));
+            proof_assert!(trail.ghost.is_justified(trail[ix]));
+            gh! {trail.ghost.justified_is_bool(trail[ix])};
+            // proof_assert!(trail[ix].1.is_bool());
             let just = trail.justification(ix);
+            let just_ghost = gh! { just };
+            // proof_assert!(forall<i : _> 0 <= i && i < just@.len() ==> trail.contains(just[i]));
 
-            proof_assert!(trail.ghost.justified_is_bool(a.term_value()); true);
-
-            #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> !trail.index_logic(*produced[i]).1.is_bool() ==>
-                    abs_cflct.0.is_decision(trail.index_logic(*produced[i])) ==>
-                    abs_cflct.0.level_of(trail.index_logic(*produced[i])) < abs_cflct.0.set_level(abs_cflct.1))]
+            let abs_just = gh! { trail.abstract_justification(just@)};
+            #[invariant(forall<i : _> 0 <= i && i < produced.len() ==>
+                abs_just.contains(trail[*produced[i]])
+            )]
+            #[invariant(forall<i : _> 0 <= i && i < produced.len() ==>
+                ! trail[*produced[i]].1.is_bool() ==>
+                trail.ghost.is_decision(trail[*produced[i]]) ==>
+                trail.ghost.level_of(trail[*produced[i]]) < abs_cflct.level()
+            )]
             for jix in just.iter() {
-                proof_assert!(trail.contains(*jix));
+                proof_assert!(just_ghost@.contains(*jix));
+                assert!(jix.level() <= ix.level());
                 let j = &trail[*jix]; // should pass
                 if j.is_first_order() && j.is_decision() {
                     if jix.level() == ix.level() {
-                        // undo decide
-                        // info!("undo decide {a}");
                         info!("undo decide");
 
                         trail.restrict(ix.level() - 1);
                         trail.add_decision(a.term, a.val.negate());
                         return;
                     } else {
-                        proof_assert!(jix.level_log() < ix.level_log());
+                        assert!(jix.level() < ix.level());
+                        proof_assert!(trail.ghost.level_of(trail[*jix]) < abs_cflct.level());
                     }
                 }
-
-                proof_assert!(!trail.index_logic(*jix).1.is_bool() ==>
-                    abs_cflct.0.is_decision(trail.index_logic(*jix)) ==>
-                    abs_cflct.0.level_of(trail.index_logic(*jix)) < abs_cflct.0.set_level(abs_cflct.1)
-                );
             }
+            // here we need to prove that `produced == just`
 
-            proof_assert!(
-                let j = trail.abstract_justification(just@);
-                forall<t : _> j.contains(t) ==> !t.1.is_bool() ==>
-                    abs_cflct.0.is_decision(t) ==>
-                    abs_cflct.0.level_of(t) < abs_cflct.0.set_level(abs_cflct.1)
-            );
             info!("resolve");
 
-            #[allow(unused)]
             abs_cflct = gh! { abs_cflct.resolvef(a.term_value()) };
 
             let old_heap: Ghost![ConflictHeap] = gh! { heap };
 
-            proof_assert!(
-                forall<i : _ > 0 <= i && i < just@.len() ==> abs_cflct.1.contains(trail.index_logic(just@[i]))
-            );
-            proof_assert!(ix_to_abs(*trail, heap.shallow_model()).union(trail.abstract_justification(just@)) == abs_cflct.1);
-
-            // let mut s = String::from("resolve ");
-            // for i in &just {
-            //     write!(s, "{} <- {} ", &trail[*i].term, &trail[*i].val).unwrap();
-            // }
-            // info!("{s}");
-
             // Resolve
-            #[invariant(forall<ix : _> (heap@).contains(ix) ==> ix.level_log() <= conflict_level@)]
-            #[invariant(forall<a : _> (heap@).contains(a) ==> trail.contains(a) && abs_cflct.1.contains(trail.index_logic(a)))]
-            #[invariant(forall<ix : _> (old_heap@).contains(ix) ==> (heap@).contains(ix))]
-            // #[invariant(forall<i : _> 0 <= i && i < produced.len() ==> (heap@).contains(produced[i]))]
-            #[invariant(ix_to_abs(*trail, heap@) == ix_to_abs(*trail, old_heap@).union(trail.abstract_justification(*produced)))]
-            // Need invariant saying we only add things
+            #[invariant(forall<a : _> heap@.contains(a) == (old_heap@.contains(a) || produced.contains(a)))]
+            #[invariant(forall<a : _> produced.contains(a) ==> just_ghost@.contains(a))]
+            #[invariant(forall<a : _> produced.contains(a) ==> heap@.contains(a))]
             for a in just {
-                let _: Ghost![()] = gh!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
-                proof_assert!(abstract_justification_insert(*trail, a, just@) == ());
-                proof_assert!(a.level_log() <= ix.level_log());
-                proof_assert!(abs_cflct.1.contains(trail.index_logic(a)));
+                // let _ = gh!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
 
                 heap.insert(a);
             }
+
+            // proof_assert!(heap@.ext_eq(old_heap@.union(produced....)))
         }
     }
 }
+
+#[ghost]
+#[open(self)]
+#[ensures(forall<x : _> a != x ==> s.contains(x) ==> s.remove(a).contains(x))]
+fn set_remove<T>(s: FSet<T>, a: T) {}
+
+#[ghost]
+#[open(self)]
+#[ensures(forall<x : _> s.remove(a).contains(x) ==> s.contains(x))]
+fn set_remove2<T>(s: FSet<T>, a: T) {}
 
 #[derive(Debug, PartialEq, Eq, DeepModel)]
 pub enum Answer {
@@ -405,11 +385,11 @@ impl ConflictHeap {
     }
 
     #[trusted]
-    #[ensures(forall<a : _> result == Some(a) ==>
-        (self@).contains(*a) &&
-        forall<other : TrailIndex> (self@).contains(other) ==> other <= *a
-    )]
-    #[ensures(((self@) == FSet::EMPTY) == (result == None))]
+    #[ensures(
+        match result {
+            Some(a) => self@.contains(*a) && set_max(self@) == *a,
+            None => self@ == FSet::EMPTY
+        })]
     fn last(&self) -> Option<&TrailIndex> {
         self.0.last()
     }
@@ -425,8 +405,8 @@ impl ConflictHeap {
     }
 
     #[trusted]
-    #[ensures(forall<e : _> (self@).contains(e) ==> (result@).contains(e))]
-    #[ensures(forall<i : _> 0 <= i && i < (result@).len() ==> (self@).contains((result@)[i]))]
+    #[ensures(forall<e : _> self@.contains(e) == result@.contains(e))]
+    #[ensures(forall<i : _> 0 <= i && i < result@.len() ==> self@.contains(result@[i]))]
     #[ensures(result@.len() == self@.len())]
     #[ensures(seq_unique(result@))]
     fn into_vec(self) -> Vec<TrailIndex> {

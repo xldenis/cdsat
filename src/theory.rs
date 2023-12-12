@@ -1024,7 +1024,11 @@ impl Conflict {
     #[requires(self.sound())]
     #[requires(self.0.is_justified(a))]
     #[requires(self.1.contains(a))]
-    #[requires(forall<j : _> self.0.justification(a).contains(j) ==> !j.1.is_bool() ==> self.0.is_decision(j) ==> self.0.level_of(j) < self.0.set_level(self.1))]
+    #[requires(forall<j : _>
+        self.0.justification(a).contains(j) ==>
+        !j.1.is_bool() ==> self.0.is_decision(j) ==>
+        self.0.level_of(j) < self.0.set_level(self.1)
+    )]
     #[ensures(result.invariant())]
     #[ensures(result.sound())]
     #[ensures(result.level() == self.level())]
@@ -1101,7 +1105,7 @@ impl Conflict {
     #[requires(self.sound())]
     #[requires(self.1.contains(l))]
     #[requires(l.1.is_bool() && l.0.is_bool())]
-    #[requires(self.0.level_of(l) > self.0.set_level(self.1.remove(l)))]
+    #[requires(forall<a : _> self.1.contains(a) ==> self.0.level_of(a) < self.0.level_of(l) || a == l)]
     #[ensures(result.0.invariant())]
     #[ensures(result.sound())]
     #[ensures(self.0.impls(result.0))]

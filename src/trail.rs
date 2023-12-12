@@ -455,7 +455,7 @@ impl Trail {
     #[requires(self.invariant())]
     #[requires(self.contains(a))]
     #[requires(self.ghost.is_justified(self.index_logic(a)))]
-    #[ensures(forall<i : _> 0 <= i && i < (result@).len() ==> self.contains((result@)[i]))]
+    #[ensures(forall<i : _> 0 <= i && i < result@.len() ==> self.contains(result[i]))]
     #[ensures(self.abstract_justification(result@) == self.ghost.justification(self.index_logic(a)))]
     #[ensures(forall<i : _> 0 <= i && i < (result@).len() ==> (result@)[i].level_log() <= a.level_log())]
     pub(crate) fn justification(&self, a: TrailIndex) -> Vec<TrailIndex> {
@@ -537,9 +537,10 @@ impl Trail {
     }
 
     #[ghost]
+    #[open(self)]
     #[requires(forall<j : _> just.contains(j) ==> self.contains(j) && other.contains(j) && self.index_logic(j) == other.index_logic(j))]
     #[ensures(self.abstract_justification(just) == other.abstract_justification(just))]
-    fn abs_just_equiv(self, other: Self, just: Seq<TrailIndex>) {
+    pub fn abs_just_equiv(self, other: Self, just: Seq<TrailIndex>) {
         ()
     }
 
@@ -829,7 +830,7 @@ pub(crate) fn seq_unique<T>(s: Seq<T>) -> bool {
     pearlite! { forall<i : _, j : _> 0 <= i && i <= j && j < s.len() ==> i != j ==> s[i] != s[j] }
 }
 
-#[logic]
+#[ghost]
 #[open(self)]
 #[requires(!s.is_empty())]
 #[variant(s.len())]
@@ -851,7 +852,7 @@ pub(crate) fn set_max(s: FSet<TrailIndex>) -> TrailIndex {
     }
 }
 
-#[logic]
+#[ghost]
 #[open(self)]
 #[requires(t.invariant())]
 #[variant(s.len())]
