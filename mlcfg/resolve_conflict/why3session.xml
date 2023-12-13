@@ -6,11 +6,11 @@
 <prover id="2" name="CVC5" version="1.0.5" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="3" name="Z3" version="4.11.2" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="5" name="Alt-Ergo" version="2.4.2" timelimit="1" steplimit="0" memlimit="1000"/>
-<file format="mlcfg">
+<file format="mlcfg" proved="true">
 <path name=".."/><path name="resolve_conflict.mlcfg"/>
-<theory name="Cdsat_Concrete_Impl0_ResolveConflict">
- <goal name="resolve_conflict&#39;vc" expl="VC for resolve_conflict">
- <transf name="split_vc" >
+<theory name="Cdsat_Concrete_Impl0_ResolveConflict" proved="true">
+ <goal name="resolve_conflict&#39;vc" expl="VC for resolve_conflict" proved="true">
+ <transf name="split_vc" proved="true" >
   <goal name="resolve_conflict&#39;vc.0" expl="precondition" proved="true">
   <proof prover="5" timelimit="5"><result status="valid" time="0.032415" steps="36"/></proof>
   </goal>
@@ -38,46 +38,10 @@
   <goal name="resolve_conflict&#39;vc.8" expl="precondition" proved="true">
   <proof prover="5"><result status="valid" time="0.050766" steps="74"/></proof>
   </goal>
-  <goal name="resolve_conflict&#39;vc.9" expl="precondition">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000" steps="218909"/></proof>
-  <proof prover="2"><result status="timeout" time="1.000000" steps="147250"/></proof>
-  <proof prover="3"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="5"><result status="timeout" time="1.000000" steps="15102"/></proof>
-  <transf name="split_vc" >
-   <goal name="resolve_conflict&#39;vc.9.0" expl="precondition">
-   <proof prover="2" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="433048"/></proof>
-   <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
-   <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="78302"/></proof>
-   <transf name="inline_goal" >
-    <goal name="resolve_conflict&#39;vc.9.0.0" expl="precondition">
-    <transf name="split_all_full" >
-     <goal name="resolve_conflict&#39;vc.9.0.0.0" expl="VC for resolve_conflict">
-     <proof prover="2"><result status="timeout" time="1.000000" steps="155331"/></proof>
-     <proof prover="3"><result status="timeout" time="1.000000"/></proof>
-     <proof prover="5"><result status="timeout" time="1.000000" steps="14975"/></proof>
-     <transf name="split_vc" >
-      <goal name="resolve_conflict&#39;vc.9.0.0.0.0" expl="VC for resolve_conflict">
-      <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="534140"/></proof>
-      <proof prover="3" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000"/></proof>
-      <proof prover="5" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="133272"/></proof>
-      </goal>
-     </transf>
-     </goal>
-     <goal name="resolve_conflict&#39;vc.9.0.0.1" expl="VC for resolve_conflict">
-     <proof prover="2"><result status="timeout" time="1.000000" steps="155408"/></proof>
-     <proof prover="3"><result status="timeout" time="1.000000"/></proof>
-     <proof prover="5"><result status="timeout" time="1.000000" steps="14694"/></proof>
-     <transf name="split_vc" >
-      <goal name="resolve_conflict&#39;vc.9.0.0.1.0" expl="VC for resolve_conflict">
-      <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="756402"/></proof>
-      <proof prover="3" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000"/></proof>
-      <proof prover="5" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="135336"/></proof>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
+  <goal name="resolve_conflict&#39;vc.9" expl="precondition" proved="true">
+  <transf name="use_th" proved="true" arg1="seq.FreeMonoid">
+   <goal name="resolve_conflict&#39;vc.9.0" expl="precondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.104616" steps="1192"/></proof>
    </goal>
   </transf>
   </goal>
