@@ -17,293 +17,167 @@
  </transf>
  </goal>
 </theory>
-<theory name="Cdsat_Heap_Impl4_ShallowModel_Impl" proved="true">
+<theory name="Cdsat_Heap_Impl2_ShallowModel_Impl" proved="true">
  <goal name="shallow_model&#39;vc" expl="VC for shallow_model" proved="true">
- <proof prover="0"><result status="valid" time="0.019168" steps="57"/></proof>
+ <proof prover="0"><result status="valid" time="0.018633" steps="57"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Heap_Impl3_New" proved="true">
+<theory name="Cdsat_Heap_Impl1_New" proved="true">
  <goal name="new&#39;vc" expl="VC for new" proved="true">
- <proof prover="3"><result status="valid" time="0.176241" steps="26304"/></proof>
+ <proof prover="3"><result status="valid" time="0.138492" steps="26304"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Heap_Impl3_Insert" proved="true">
+<theory name="Cdsat_Heap_Impl1_Insert" proved="true">
  <goal name="insert&#39;vc" expl="VC for insert" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="insert&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.012282" steps="12"/></proof>
+  <proof prover="0"><result status="valid" time="0.010268" steps="12"/></proof>
   </goal>
   <goal name="insert&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.014353" steps="14"/></proof>
+  <proof prover="0"><result status="valid" time="0.011339" steps="14"/></proof>
   </goal>
   <goal name="insert&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.012236" steps="14"/></proof>
+  <proof prover="0"><result status="valid" time="0.010408" steps="14"/></proof>
   </goal>
   <goal name="insert&#39;vc.3" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.015078" steps="24"/></proof>
+  <proof prover="0"><result status="valid" time="0.011977" steps="24"/></proof>
   </goal>
   <goal name="insert&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.015674" steps="25"/></proof>
+  <proof prover="0"><result status="valid" time="0.011521" steps="25"/></proof>
   </goal>
   <goal name="insert&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.012613" steps="26"/></proof>
+  <proof prover="0"><result status="valid" time="0.012234" steps="26"/></proof>
   </goal>
   <goal name="insert&#39;vc.6" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.014164" steps="20"/></proof>
+  <proof prover="0"><result status="valid" time="0.010343" steps="20"/></proof>
   </goal>
   <goal name="insert&#39;vc.7" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.012711" steps="22"/></proof>
+  <proof prover="0"><result status="valid" time="0.010574" steps="22"/></proof>
   </goal>
   <goal name="insert&#39;vc.8" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.014343" steps="29"/></proof>
+  <proof prover="0"><result status="valid" time="0.012044" steps="29"/></proof>
   </goal>
   <goal name="insert&#39;vc.9" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.015520" steps="30"/></proof>
+  <proof prover="0"><result status="valid" time="0.012046" steps="30"/></proof>
   </goal>
   <goal name="insert&#39;vc.10" expl="integer overflow" proved="true">
-  <proof prover="0"><result status="valid" time="0.016005" steps="82"/></proof>
+  <proof prover="0"><result status="valid" time="0.013367" steps="82"/></proof>
   </goal>
   <goal name="insert&#39;vc.11" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.019168" steps="112"/></proof>
+  <proof prover="0"><result status="valid" time="0.015984" steps="112"/></proof>
   </goal>
   <goal name="insert&#39;vc.12" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.013138" steps="29"/></proof>
+  <proof prover="0"><result status="valid" time="0.010889" steps="29"/></proof>
   </goal>
   <goal name="insert&#39;vc.13" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.015583" steps="44"/></proof>
+  <proof prover="0"><result status="valid" time="0.012867" steps="44"/></proof>
   </goal>
   <goal name="insert&#39;vc.14" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.014362" steps="46"/></proof>
+  <proof prover="0"><result status="valid" time="0.012864" steps="46"/></proof>
   </goal>
   <goal name="insert&#39;vc.15" expl="type invariant" proved="true">
-  <transf name="assert" proved="true" arg1="(seq_unique (shallow_model6 (naiveheap_0  ( * self))))">
+  <transf name="assert" proved="true" arg1="(seq_unique (shallow_model6 (conflictheap_0 ( * self))))">
    <goal name="insert&#39;vc.15.0" expl="asserted formula" proved="true">
    <transf name="use_th" proved="true" arg1="seq.FreeMonoid">
     <goal name="insert&#39;vc.15.0.0" expl="asserted formula" proved="true">
-    <proof prover="0"><result status="valid" time="0.925635" steps="16648"/></proof>
+    <proof prover="0"><result status="valid" time="0.697459" steps="16641"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="insert&#39;vc.15.1" expl="type invariant" proved="true">
-   <proof prover="0"><result status="valid" time="0.951813" steps="12863"/></proof>
+   <proof prover="0"><result status="valid" time="0.645343" steps="11278"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="insert&#39;vc.16" expl="assertion" proved="true">
-  <proof prover="0"><result status="valid" time="0.086066" steps="1229"/></proof>
+  <proof prover="0"><result status="valid" time="0.067401" steps="1226"/></proof>
   </goal>
   <goal name="insert&#39;vc.17" expl="assertion" proved="true">
-  <proof prover="0"><result status="valid" time="0.298835" steps="3798"/></proof>
+  <proof prover="0"><result status="valid" time="0.241254" steps="3784"/></proof>
   </goal>
   <goal name="insert&#39;vc.18" expl="assertion" proved="true">
-  <proof prover="0"><result status="valid" time="0.124994" steps="2038"/></proof>
+  <proof prover="0"><result status="valid" time="0.100297" steps="2040"/></proof>
   </goal>
   <goal name="insert&#39;vc.19" expl="assertion" proved="true">
-  <proof prover="0"><result status="valid" time="0.021121" steps="144"/></proof>
+  <proof prover="0"><result status="valid" time="0.017680" steps="144"/></proof>
   </goal>
   <goal name="insert&#39;vc.20" expl="assertion" proved="true">
-  <proof prover="0"><result status="valid" time="0.017208" steps="83"/></proof>
+  <proof prover="0"><result status="valid" time="0.013379" steps="83"/></proof>
   </goal>
   <goal name="insert&#39;vc.21" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.015063" steps="42"/></proof>
+  <proof prover="0"><result status="valid" time="0.013103" steps="42"/></proof>
   </goal>
   <goal name="insert&#39;vc.22" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.014331" steps="43"/></proof>
+  <proof prover="0"><result status="valid" time="0.012128" steps="43"/></proof>
   </goal>
   <goal name="insert&#39;vc.23" expl="type invariant" proved="true">
-  <transf name="assert" proved="true" arg1="(seq_unique (shallow_model6 (naiveheap_0 ( * self))))">
-   <goal name="insert&#39;vc.23.0" expl="asserted formula" proved="true">
-   <transf name="use_th" proved="true" arg1="seq.FreeMonoid">
-    <goal name="insert&#39;vc.23.0.0" expl="asserted formula" proved="true">
-    <proof prover="0"><result status="valid" time="0.234045" steps="4746"/></proof>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="insert&#39;vc.23.1" expl="type invariant" proved="true">
-   <proof prover="1"><result status="valid" time="0.309094" steps="1110651"/></proof>
-   </goal>
-  </transf>
+  <proof prover="0"><result status="valid" time="0.082220" steps="1228"/></proof>
   </goal>
   <goal name="insert&#39;vc.24" expl="assertion" proved="true">
   <transf name="use_th" proved="true" arg1="seq.FreeMonoid">
    <goal name="insert&#39;vc.24.0" expl="assertion" proved="true">
-   <proof prover="0"><result status="valid" time="0.065489" steps="1058"/></proof>
+   <proof prover="0"><result status="valid" time="0.052462" steps="1059"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="insert&#39;vc.25" expl="assertion" proved="true">
-  <proof prover="0"><result status="valid" time="0.032937" steps="415"/></proof>
+  <proof prover="0"><result status="valid" time="0.028048" steps="415"/></proof>
   </goal>
   <goal name="insert&#39;vc.26" expl="assertion" proved="true">
-  <proof prover="0"><result status="valid" time="0.064759" steps="827"/></proof>
+  <proof prover="0"><result status="valid" time="0.052358" steps="827"/></proof>
   </goal>
   <goal name="insert&#39;vc.27" expl="assertion" proved="true">
-  <proof prover="0"><result status="valid" time="0.052898" steps="714"/></proof>
+  <proof prover="0"><result status="valid" time="0.045003" steps="714"/></proof>
   </goal>
   <goal name="insert&#39;vc.28" expl="postcondition" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000" steps="17987"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="232803"/></proof>
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="131111"/></proof>
-  <transf name="split_vc" proved="true" >
-   <goal name="insert&#39;vc.28.0" expl="postcondition" proved="true">
-   <proof prover="0" obsolete="true"><result status="timeout" time="1.000000" steps="17975"/></proof>
-   <proof prover="2" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="106660"/></proof>
-   <transf name="split_vc" proved="true" >
-    <goal name="insert&#39;vc.28.0.0" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.162828" steps="25701"/></proof>
-    </goal>
-    <goal name="insert&#39;vc.26.1.1" expl="postcondition">
-    <proof prover="0"><result status="timeout" time="1.000000" steps="20342"/></proof>
-    <proof prover="3"><result status="failure" time="0.000000"/></proof>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="insert&#39;vc.28.1" expl="postcondition" proved="true">
-   <proof prover="0" obsolete="true"><result status="timeout" time="1.000000" steps="15889"/></proof>
-   <proof prover="2" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="117376"/></proof>
-   <transf name="split_vc" proved="true" >
-    <goal name="insert&#39;vc.28.1.0" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.332449" steps="44773"/></proof>
-    </goal>
-    <goal name="insert&#39;vc.28.1.1" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.160705" steps="25974"/></proof>
-    </goal>
-   </transf>
-   </goal>
-  </transf>
+  <proof prover="3"><result status="valid" time="0.305017" steps="52149"/></proof>
   </goal>
  </transf>
  </goal>
 </theory>
-<theory name="Cdsat_Heap_Impl3_Last" proved="true">
+<theory name="Cdsat_Heap_Impl1_Last" proved="true">
  <goal name="last&#39;vc" expl="VC for last" proved="true">
- <proof prover="0" obsolete="true"><result status="timeout" time="1.000000" steps="26017"/></proof>
- <proof prover="1" obsolete="true"><result status="timeout" time="1.000000"/></proof>
- <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="174051"/></proof>
- <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="122387"/></proof>
- <transf name="split_vc" proved="true" >
-  <goal name="last&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.013567" steps="9"/></proof>
-  </goal>
-  <goal name="last&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.013933" steps="19"/></proof>
-  </goal>
-  <goal name="last&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.013793" steps="25"/></proof>
-  </goal>
-  <goal name="last&#39;vc.3" expl="integer overflow" proved="true">
-  <transf name="use_th" proved="true" arg1="seq.FreeMonoid">
-   <goal name="last&#39;vc.3.0" expl="integer overflow" proved="true">
-   <proof prover="0"><result status="valid" time="0.015595" steps="55"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="last&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.012309" steps="20"/></proof>
-  </goal>
-  <goal name="last&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.014149" steps="36"/></proof>
-  </goal>
-  <goal name="last&#39;vc.6" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.953697" steps="3443090"/></proof>
-  <transf name="split_vc" >
-   <goal name="last&#39;vc.6.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.019674" steps="376"/></proof>
-   </goal>
-   <goal name="last&#39;vc.6.1" expl="postcondition">
-   <proof prover="0"><result status="timeout" time="1.000000" steps="18050"/></proof>
-   <proof prover="1"><result status="timeout" time="1.000000"/></proof>
-   <proof prover="2"><result status="timeout" time="1.000000" steps="182319"/></proof>
-   <proof prover="3"><result status="timeout" time="1.000000" steps="117325"/></proof>
-   <transf name="split_vc" >
-    <goal name="last&#39;vc.6.1.0" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.013275" steps="12795"/></proof>
-    </goal>
-    <goal name="last&#39;vc.6.1.1" expl="postcondition">
-    <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="233290"/></proof>
-    <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000"/></proof>
-    <proof prover="3" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="811359"/></proof>
-    </goal>
-   </transf>
-   <transf name="use_th" arg1="seq.FreeMonoid">
-    <goal name="last&#39;vc.6.1.0" expl="postcondition">
-    <proof prover="0"><result status="timeout" time="1.000000" steps="25496"/></proof>
-    <proof prover="1"><result status="timeout" time="1.000000"/></proof>
-    <proof prover="2"><result status="timeout" time="1.000000" steps="118217"/></proof>
-    <proof prover="3"><result status="timeout" time="1.000000" steps="106904"/></proof>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="last&#39;vc.6.2" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.759298" steps="94780"/></proof>
-   </goal>
-  </transf>
-  </goal>
- </transf>
+ <proof prover="1"><result status="valid" time="0.225984" steps="1049022"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Heap_Impl3_PopLast" proved="true">
+<theory name="Cdsat_Heap_Impl1_PopLast" proved="true">
  <goal name="pop_last&#39;vc" expl="VC for pop_last" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="pop_last&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.014769" steps="20"/></proof>
+  <proof prover="0"><result status="valid" time="0.011398" steps="20"/></proof>
   </goal>
   <goal name="pop_last&#39;vc.1" expl="type invariant" proved="true">
-  <proof prover="1"><result status="valid" time="0.441449" steps="1314966"/></proof>
+  <proof prover="1"><result status="valid" time="0.366207" steps="1314966"/></proof>
   </goal>
   <goal name="pop_last&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="3"><result status="valid" time="0.356196" steps="49322"/></proof>
+  <proof prover="3"><result status="valid" time="0.296938" steps="49322"/></proof>
   </goal>
   <goal name="pop_last&#39;vc.3" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="pop_last&#39;vc.3.0" expl="postcondition" proved="true">
    <transf name="assert" proved="true" arg1="(shallow_model1 (^ self1) ==&#39; remove (shallow_model self1) a)">
     <goal name="pop_last&#39;vc.3.0.0" expl="asserted formula" proved="true">
-    <transf name="inline_goal" proved="true" >
-     <goal name="pop_last&#39;vc.3.0.0.0" expl="asserted formula" proved="true">
-     <transf name="split_vc" proved="true" >
-      <goal name="pop_last&#39;vc.3.0.0.0.0" expl="asserted formula" proved="true">
-      <proof prover="0"><result status="valid" time="0.211281" steps="3521"/></proof>
-      </goal>
-      <goal name="pop_last&#39;vc.3.0.0.0.1" expl="asserted formula" proved="true">
-      <proof prover="0"><result status="valid" time="0.105735" steps="1687"/></proof>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
+    <proof prover="0"><result status="valid" time="0.811618" steps="18108"/></proof>
     </goal>
     <goal name="pop_last&#39;vc.3.0.1" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.016377" steps="30"/></proof>
+    <proof prover="0"><result status="valid" time="0.014101" steps="30"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="pop_last&#39;vc.3.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.030443" steps="285"/></proof>
+   <proof prover="0"><result status="valid" time="0.024426" steps="285"/></proof>
    </goal>
    <goal name="pop_last&#39;vc.3.2" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.057843" steps="720"/></proof>
+   <proof prover="0"><result status="valid" time="0.043958" steps="720"/></proof>
    </goal>
   </transf>
   </goal>
  </transf>
  </goal>
 </theory>
-<theory name="Cdsat_Heap_Impl3_IntoVec" proved="true">
+<theory name="Cdsat_Heap_Impl1_IntoVec" proved="true">
  <goal name="into_vec&#39;vc" expl="VC for into_vec" proved="true">
- <transf name="split_vc" proved="true" >
-  <goal name="into_vec&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.016028" steps="41"/></proof>
-  </goal>
-  <goal name="into_vec&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.016770" steps="84"/></proof>
-  </goal>
-  <goal name="into_vec&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.016051" steps="58"/></proof>
-  </goal>
- </transf>
+ <proof prover="0"><result status="valid" time="0.016018" steps="137"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Concrete_Impl1" proved="true">
@@ -416,18 +290,18 @@
  <proof prover="0"><result status="valid" time="0.005266" steps="0"/></proof>
  </goal>
 </theory>
-<theory name="Cdsat_Heap_Impl4">
+<theory name="Cdsat_Heap_Impl2">
  <goal name="shallow_model_refn">
- <proof prover="0"><result status="timeout" time="1.000000" steps="19872"/></proof>
+ <proof prover="0"><result status="timeout" time="1.000000" steps="24545"/></proof>
  <proof prover="1"><result status="timeout" time="1.000000"/></proof>
- <proof prover="2"><result status="timeout" time="1.000000" steps="202522"/></proof>
- <proof prover="3"><result status="timeout" time="1.000000" steps="124383"/></proof>
+ <proof prover="2"><result status="timeout" time="1.000000" steps="208619"/></proof>
+ <proof prover="3"><result status="timeout" time="1.000000" steps="137276"/></proof>
  <transf name="split_vc" >
   <goal name="shallow_model_refn.0">
-  <proof prover="0"><result status="timeout" time="1.000000" steps="18700"/></proof>
+  <proof prover="0"><result status="timeout" time="1.000000" steps="23536"/></proof>
   <proof prover="1"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="2"><result status="timeout" time="1.000000" steps="193475"/></proof>
-  <proof prover="3"><result status="timeout" time="1.000000" steps="121091"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="208596"/></proof>
+  <proof prover="3"><result status="timeout" time="1.000000" steps="136022"/></proof>
   </goal>
  </transf>
  </goal>
