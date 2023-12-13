@@ -231,10 +231,11 @@ mod tests {
 
     use crate::{
         concrete::Solver,
-        trail::{Term, Trail, Value},
+        trail::{Trail},
+        term::{Term, Value}
     };
 
-    use crate::{concrete::Answer, trail::Sort};
+    use crate::{concrete::Answer, term::Sort};
     #[test]
     fn conjuction() {
         let mut trail = Trail::new(vec![(
