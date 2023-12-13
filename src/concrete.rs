@@ -9,6 +9,7 @@ use crate::{bool::*, log::info, lra::*, theory, trail::*};
 use creusot_contracts::{logic::*, std::*, PartialEq, *};
 
 use crate::ghost::Ghost;
+use crate::heap::*;
 
 pub struct Solver {
     bool_th: BoolTheory,
@@ -314,60 +315,4 @@ pub enum ExtendResult {
 // }
 
 // use crate::bag::*;
-impl creusot_contracts::ShallowModel for ConflictHeap {
-    type ShallowModelTy = FSet<TrailIndex>;
 
-    #[ghost]
-    #[open(self)]
-    #[trusted]
-    fn shallow_model(self) -> Self::ShallowModelTy {
-        absurd
-    }
-}
-
-#[trusted]
-struct ConflictHeap(BTreeSet<TrailIndex>);
-
-impl ConflictHeap {
-    #[trusted]
-    #[ensures(result@ == FSet::EMPTY)]
-    fn new() -> Self {
-        ConflictHeap(BTreeSet::new())
-    }
-
-    #[trusted]
-    #[ensures((^self)@ == (self@).insert(e))]
-    fn insert(&mut self, e: TrailIndex) -> bool {
-        self.0.insert(e)
-    }
-
-    #[trusted]
-    #[ensures(
-        match result {
-            Some(a) => self@.contains(*a) && set_max(self@) == *a,
-            None => self@ == FSet::EMPTY
-        })]
-    fn last(&self) -> Option<&TrailIndex> {
-        self.0.last()
-    }
-
-    #[trusted]
-    #[ensures(((self@) == FSet::EMPTY) == (result == None))]
-    #[ensures(forall<a : _> result == Some(a) ==>
-        (^self)@ == (self@).remove(a) && (self@).contains(a) &&
-        (forall<other : TrailIndex> ((^self)@).contains(other) ==> other <= a)
-    )]
-    fn pop_last(&mut self) -> Option<TrailIndex> {
-        self.0.pop_last()
-    }
-
-    #[trusted]
-    #[ensures(forall<e : _> self@.contains(e) == result@.contains(e))]
-    #[ensures(forall<i : _> 0 <= i && i < result@.len() ==> self@.contains(result@[i]))]
-    #[ensures(result@.len() == self@.len())]
-    #[ensures(seq_unique(result@))]
-    fn into_vec(self) -> Vec<TrailIndex> {
-        // self.0.into_vec()
-        self.0.into_iter().collect()
-    }
-}

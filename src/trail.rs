@@ -401,7 +401,6 @@ impl Trail {
     #[ensures((^self).invariant())]
     #[requires(self.ghost.acceptable(term@, val@))]
     #[ensures(self.ghost.impls(*(^self).ghost))]
-    // #[trusted] // for arithmetic
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         info!("? {term} <- {val}");
         let old = gh! { * self };
@@ -576,7 +575,6 @@ impl Trail {
         );
     }
 
-    // #[trusted]
     #[maintains((mut self).invariant())]
     #[requires(level@ <= self.level@)]
     #[ensures(*(^self).ghost == self.ghost.restrict(level@))]
@@ -672,7 +670,7 @@ impl<'a> creusot_contracts::Resolve for IndexIterator<'a> {
 }
 
 impl IndexIterator<'_> {
-    #[trusted]
+    #[trusted] // Used in LRA theory
     pub fn add_justified(&mut self, just: Justification, term: Term, value: Value) {
         if self.trail.index_of(&term).is_none() {
             self.trail.add_justified(just, term, value)

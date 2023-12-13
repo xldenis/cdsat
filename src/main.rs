@@ -7,6 +7,7 @@
 
 pub mod bool;
 pub mod concrete;
+pub(crate) mod heap;
 pub mod log;
 
 #[macro_use]
