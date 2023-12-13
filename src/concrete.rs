@@ -129,6 +129,7 @@ impl Solver {
         let old_trail: Ghost![&mut Trail] = gh! { trail };
 
         #[invariant(forall<a : _> heap@.contains(a) == produced.contains(a))]
+        #[invariant(creusot_contracts::invariant::inv(heap))]
         for a in conflict {
             heap.insert(a);
         }
@@ -144,6 +145,7 @@ impl Solver {
 
         #[invariant(forall<ix : _> heap@.contains(ix) ==> trail.contains(ix))]
         #[invariant(trail.invariant())]
+        #[invariant(creusot_contracts::invariant::inv(heap))]
         // #[invariant(abs_cflct.1 == ix_to_abs(*trail, heap@))]
         #[invariant(forall<ix : _> heap@.contains(ix) ==> abs_cflct.1.contains(trail[ix]))]
         #[invariant(forall<a : _> abs_cflct.1.contains(a) ==> exists<ix : _> heap@.contains(ix) && trail[ix] == a)]
@@ -151,16 +153,23 @@ impl Solver {
         while let Some(ix) = heap.pop_last() {
             // proof_assert!(ix_to_abs_remove(*trail, ix, heap@); true);
             let rem_level = match heap.last() {
-                Some(ix2) => ix2.level(),
+                Some(ix2) => {
+                    let ix2 = *ix2;
+                    proof_assert!(forall<i : _> heap@.contains(i) ==> i <= ix2);
+                    proof_assert!(forall<i : _> heap@.contains(i) ==> i.level_log() <= ix2.level_log());
+                    ix2.level()
+                },
                 None => 0,
             };
 
             // proof_assert!(ix.level_log() == conflict_level@);
             proof_assert!(forall<i : _> heap@.contains(i) ==> i <= ix);
             proof_assert!(forall<i : _> heap@.contains(i) ==> i.level_log() <= ix.level_log());
-
+            proof_assert!(ix.level_log() > 0);
             proof_assert!(set_max(heap@).level_log() == rem_level@ || rem_level@ == 0);
             proof_assert!(rem_level@ <= ix.level_log());
+
+
             proof_assert!(forall<i : _> heap@.contains(i) ==> i.level_log() <= rem_level@);
 
             proof_assert!(trail.contains(ix));
@@ -259,6 +268,7 @@ impl Solver {
             #[invariant(forall<a : _> heap@.contains(a) == (old_heap@.contains(a) || produced.contains(a)))]
             #[invariant(forall<a : _> produced.contains(a) ==> just_ghost@.contains(a))]
             #[invariant(forall<a : _> produced.contains(a) ==> heap@.contains(a))]
+            #[invariant(creusot_contracts::invariant::inv(heap))]
             for a in just {
                 // let _ = gh!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
 
