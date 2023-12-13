@@ -42,20 +42,43 @@ impl Solver {
     #[maintains((mut trail).invariant())]
     #[ensures(trail.ghost.impls(*(^trail).ghost))]
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
+        self.lra_state = TheoryState::Unknown;
+        self.bool_state = TheoryState::Unknown;
+        let old_trail: Ghost![_] = gh! { trail};
         let mut decision = None;
+        #[invariant(old_trail.ghost.impls(*trail.ghost))]
+        #[invariant(trail.invariant())]
+        #[invariant(match decision {
+            Some((t, v)) => trail.ghost.acceptable(t@, v@),
+            None => true,
+        })]
+        #[invariant(self.bool_state != TheoryState::Sat || self.lra_state != TheoryState::Sat)]
+        #[invariant((self.bool_state == TheoryState::Decision || self.lra_state == TheoryState::Decision) ==> (decision != None))]
         loop {
+            let iter_trail = gh! { * trail };
+            let len = trail.len();
+            assert!(!self.sat());
             let (answer, state) = if self.bool_state == TheoryState::Unknown {
                 (self.bool_th.extend(trail), &mut self.bool_state)
             } else if self.lra_state == TheoryState::Unknown {
                 (self.lra_th.extend(trail), &mut self.lra_state)
             } else if let Some((t, v)) = decision.take() {
                 trail.add_decision(t, v);
+                proof_assert!(decision == None);
                 self.bool_state = TheoryState::Unknown;
                 self.lra_state = TheoryState::Unknown;
 
                 continue;
             } else {
                 unreachable!()
+            };
+
+            proof_assert!(trail.invariant());
+            proof_assert!(old_trail.ghost.impls(*trail.ghost));
+            if trail.len() > len {
+                decision = None;
+            } else {
+                proof_assert!(*iter_trail == *trail);
             };
 
             match answer {
@@ -69,9 +92,11 @@ impl Solver {
                     } else {
                         return Answer::Unsat;
                     }
+                    proof_assert!((self.bool_state == TheoryState::Decision || self.lra_state == TheoryState::Decision) ==> (decision != None));
                 }
                 ExtendResult::Decision(t, v) => {
                     *state = TheoryState::Decision;
+                    proof_assert!(trail.ghost.acceptable(t@, v@));
                     decision = Some((t, v));
                 }
                 ExtendResult::Satisfied => {

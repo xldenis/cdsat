@@ -22,10 +22,25 @@ pub mod lra {
     pub struct LRATheory;
 
     use crate::{concrete::ExtendResult, trail::Trail};
-    use creusot_contracts::trusted;
+    use creusot_contracts::*;
+
     impl LRATheory {
         #[trusted]
-        pub fn extend(&mut self, _: &mut Trail) -> ExtendResult {
+        #[maintains((mut tl).invariant())]
+        #[ensures(match result {
+            ExtendResult::Satisfied => true,
+            ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(t@, v@),
+            ExtendResult::Conflict(c) => {
+                let conflict = (^tl).abstract_justification(c@);
+                c@.len() > 0 &&
+                // members of conflict area within the trail
+                (forall<t : _> (c@).contains(t) ==> (^tl).contains(t)) &&
+                // (forall<i : _> 0 <= i && i < (c@).len() ==> @(c@)[i] < (@(^tl).assignments).len()) &&
+                (forall<m : crate::theory::Model> m.satisfy_set(conflict) ==> false)
+            }
+        })]
+        #[ensures(tl.ghost.impls(*(^tl).ghost))]
+        pub fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
             todo!()
         }
     }
