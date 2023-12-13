@@ -4,66 +4,9 @@ use creusot_contracts::{*, invariant::Invariant};
 use creusot_contracts::logic::FSet;
 use crate::trail::{TrailIndex, *};
 
-impl creusot_contracts::ShallowModel for ConflictHeap {
-    type ShallowModelTy = FSet<TrailIndex>;
+pub(crate) struct ConflictHeap(Vec<TrailIndex>);
 
-    #[ghost]
-    #[open(self)]
-    #[trusted]
-    fn shallow_model(self) -> Self::ShallowModelTy {
-        absurd
-    }
-}
-
-#[trusted]
-pub(crate) struct ConflictHeap(BTreeSet<TrailIndex>);
-
-impl ConflictHeap {
-    #[trusted]
-    #[ensures(result@ == FSet::EMPTY)]
-    pub fn new() -> Self {
-        ConflictHeap(BTreeSet::new())
-    }
-
-    #[trusted]
-    #[ensures((^self)@ == (self@).insert(e))]
-    pub fn insert(&mut self, e: TrailIndex) -> bool {
-        self.0.insert(e)
-    }
-
-    #[trusted]
-    #[ensures(match result {
-        Some(a) => self@.contains(*a) && set_max(self@) == *a,
-        None => self@ == FSet::EMPTY
-    })]
-    pub fn last(&self) -> Option<&TrailIndex> {
-        self.0.last()
-    }
-
-    #[trusted]
-    #[ensures(((self@) == FSet::EMPTY) == (result == None))]
-    #[ensures(forall<a : _> result == Some(a) ==>
-        (^self)@ == (self@).remove(a) && (self@).contains(a) &&
-        (forall<other : TrailIndex> ((^self)@).contains(other) ==> other <= a)
-    )]
-    pub fn pop_last(&mut self) -> Option<TrailIndex> {
-        self.0.pop_last()
-    }
-
-    #[trusted]
-    #[ensures(forall<e : _> self@.contains(e) == result@.contains(e))]
-    #[ensures(forall<i : _> 0 <= i && i < result@.len() ==> self@.contains(result@[i]))]
-    #[ensures(result@.len() == self@.len())]
-    #[ensures(seq_unique(result@))]
-    pub fn into_vec(self) -> Vec<TrailIndex> {
-        // self.0.into_vec()
-        self.0.into_iter().collect()
-    }
-}
-
-struct NaiveHeap(Vec<TrailIndex>);
-
-impl Invariant for NaiveHeap {
+impl Invariant for ConflictHeap {
     #[predicate]
     #[open(crate)]
     fn invariant(self) -> bool {
@@ -71,15 +14,15 @@ impl Invariant for NaiveHeap {
     }
 }
 
-impl NaiveHeap {
+impl ConflictHeap {
     #[ensures(result@ == FSet::EMPTY)]
-    fn new() -> Self {
-        NaiveHeap(Vec::new())
+    pub(crate) fn new() -> Self {
+        ConflictHeap(Vec::new())
     }
 
     // #[trusted]
     #[ensures((^self)@ == (self@).insert(e))]
-    fn insert(&mut self, e: TrailIndex) -> bool {
+    pub(crate) fn insert(&mut self, e: TrailIndex) -> bool {
         let old = gh! { * self };
         let mut i = 0;
         #[invariant(forall<j : _> 0 <= j && j < i@ ==>  self.0[j] < e)]
@@ -112,7 +55,10 @@ impl NaiveHeap {
             Some(a) => self@.contains(*a) && set_max(self@) == *a,
             None => self@ == FSet::EMPTY
         })]
-    fn last(&self) -> Option<&TrailIndex> {
+    pub(crate) fn last(&self) -> Option<&TrailIndex> {
+        if self.0.len() == 0 {
+            return None;
+        }
         self.0.get(self.0.len() - 1)
     }
 
@@ -121,20 +67,19 @@ impl NaiveHeap {
         (^self)@ == (self@).remove(a) && (self@).contains(a) &&
         (forall<other : TrailIndex> ((^self)@).contains(other) ==> other <= a)
     )]
-    fn pop_last(&mut self) -> Option<TrailIndex> {
+    pub(crate) fn pop_last(&mut self) -> Option<TrailIndex> {
         self.0.pop()
     }
 
     #[ensures(forall<e : _> self@.contains(e) == result@.contains(e))]
     #[ensures(forall<i : _> 0 <= i && i < result@.len() ==> self@.contains(result@[i]))]
-    #[ensures(result@.len() == self@.len())]
     #[ensures(seq_unique(result@))]
-    fn into_vec(self) -> Vec<TrailIndex> {
+    pub(crate) fn into_vec(self) -> Vec<TrailIndex> {
        self.0
     }
 }
 
-impl creusot_contracts::ShallowModel for NaiveHeap {
+impl creusot_contracts::ShallowModel for ConflictHeap {
     type ShallowModelTy = FSet<TrailIndex>;
 
     #[ghost]

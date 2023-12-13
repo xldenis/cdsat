@@ -11775,7 +11775,6 @@ end
 module Cdsat_Heap_Impl1_IntoVec_Interface
   use prelude.Int
   use seq.Seq
-  use set.Fset
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   use seq.Seq
   clone CreusotContracts_Invariant_Inv_Stub as Inv1 with
@@ -11800,11 +11799,10 @@ module Cdsat_Heap_Impl1_IntoVec_Interface
   clone CreusotContracts_Logic_Fset_Impl0_Contains_Stub as Contains0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone Cdsat_Heap_Impl0_ShallowModel_Stub as ShallowModel0
-  val into_vec [#"/Users/xavier/Code/cdsat/src/heap.rs" 58 4 58 44] (self : Cdsat_Heap_ConflictHeap_Type.t_conflictheap) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
+  val into_vec [#"/Users/xavier/Code/cdsat/src/heap.rs" 57 4 57 44] (self : Cdsat_Heap_ConflictHeap_Type.t_conflictheap) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
     ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 54 4 54 70] forall e : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model self) e = Contains1.contains (ShallowModel1.shallow_model result) e }
     ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 55 4 55 88] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel1.shallow_model result) -> Contains0.contains (ShallowModel0.shallow_model self) (Seq.get (ShallowModel1.shallow_model result) i) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 56 14 56 42] Seq.length (ShallowModel1.shallow_model result) = Fset.cardinal (ShallowModel0.shallow_model self) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 57 14 57 33] SeqUnique0.seq_unique (ShallowModel1.shallow_model result) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 56 14 56 33] SeqUnique0.seq_unique (ShallowModel1.shallow_model result) }
     
 end
 module Cdsat_Theory_Impl6_Deducef_Stub
@@ -12900,14 +12898,14 @@ module CreusotContracts_Logic_Seq_Impl0_Sorted
 end
 module Cdsat_Heap_Impl2_Invariant_Stub
   use Cdsat_Heap_NaiveHeap_Type as Cdsat_Heap_NaiveHeap_Type
-  predicate invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 69 4 69 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap)
+  predicate invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 68 4 68 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap)
     
 end
 module Cdsat_Heap_Impl2_Invariant_Interface
   use Cdsat_Heap_NaiveHeap_Type as Cdsat_Heap_NaiveHeap_Type
-  predicate invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 69 4 69 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap)
+  predicate invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 68 4 68 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap)
     
-  val invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 69 4 69 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : bool
+  val invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 68 4 68 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : bool
     ensures { result = invariant' self }
     
 end
@@ -12934,11 +12932,11 @@ module Cdsat_Heap_Impl2_Invariant
     predicate Inv1.inv = Inv1.inv,
     axiom .
   use Cdsat_Heap_NaiveHeap_Type as Cdsat_Heap_NaiveHeap_Type
-  predicate invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 69 4 69 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap)
+  predicate invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 68 4 68 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap)
     
    =
-    [#"/Users/xavier/Code/cdsat/src/heap.rs" 67 4 67 16] SeqUnique0.seq_unique (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) /\ Sorted0.sorted (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self))
-  val invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 69 4 69 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : bool
+    [#"/Users/xavier/Code/cdsat/src/heap.rs" 66 4 66 16] SeqUnique0.seq_unique (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) /\ Sorted0.sorted (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self))
+  val invariant' [#"/Users/xavier/Code/cdsat/src/heap.rs" 68 4 68 30] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : bool
     ensures { result = invariant' self }
     
 end
@@ -12958,7 +12956,7 @@ module Cdsat_Heap_ToSet_Stub
     type t = t
   clone CreusotContracts_Invariant_Inv_Stub as Inv0 with
     type t = Seq.seq t
-  function to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 35] (s : Seq.seq t) : Fset.fset t
+  function to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 153 0 153 35] (s : Seq.seq t) : Fset.fset t
 end
 module Cdsat_Heap_ToSet_Interface
   type t
@@ -12976,14 +12974,14 @@ module Cdsat_Heap_ToSet_Interface
     type t = t
   clone CreusotContracts_Invariant_Inv_Stub as Inv0 with
     type t = Seq.seq t
-  function to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 35] (s : Seq.seq t) : Fset.fset t
-  val to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 35] (s : Seq.seq t) : Fset.fset t
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 151 13 151 14] Inv0.inv s}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 149 0 149 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains result x }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 28 151 35] Inv2.inv result }
+  function to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 153 0 153 35] (s : Seq.seq t) : Fset.fset t
+  val to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 153 0 153 35] (s : Seq.seq t) : Fset.fset t
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 153 13 153 14] Inv0.inv s}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains result x }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 153 28 153 35] Inv2.inv result }
     ensures { result = to_set s }
     
-  axiom to_set_spec : forall s : Seq.seq t . ([#"/Users/xavier/Code/cdsat/src/heap.rs" 151 13 151 14] Inv0.inv s) -> ([#"/Users/xavier/Code/cdsat/src/heap.rs" 151 28 151 35] Inv2.inv (to_set s)) && ([#"/Users/xavier/Code/cdsat/src/heap.rs" 149 0 149 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains (to_set s) x)
+  axiom to_set_spec : forall s : Seq.seq t . ([#"/Users/xavier/Code/cdsat/src/heap.rs" 153 13 153 14] Inv0.inv s) -> ([#"/Users/xavier/Code/cdsat/src/heap.rs" 153 28 153 35] Inv2.inv (to_set s)) && ([#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains (to_set s) x)
 end
 module Cdsat_Heap_ToSet
   type t
@@ -13004,19 +13002,19 @@ module Cdsat_Heap_ToSet
     type t = t
   clone CreusotContracts_Invariant_Inv_Stub as Inv0 with
     type t = Seq.seq t
-  function to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 35] (s : Seq.seq t) : Fset.fset t
-  val to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 35] (s : Seq.seq t) : Fset.fset t
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 151 13 151 14] Inv0.inv s}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 149 0 149 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains result x }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 28 151 35] Inv2.inv result }
+  function to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 153 0 153 35] (s : Seq.seq t) : Fset.fset t
+  val to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 153 0 153 35] (s : Seq.seq t) : Fset.fset t
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 153 13 153 14] Inv0.inv s}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains result x }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 153 28 153 35] Inv2.inv result }
     ensures { result = to_set s }
     
-  axiom def : forall s : Seq.seq t . to_set s = ([#"/Users/xavier/Code/cdsat/src/heap.rs" 148 0 148 8] if s = Seq.empty  then
+  axiom def : forall s : Seq.seq t . to_set s = ([#"/Users/xavier/Code/cdsat/src/heap.rs" 150 0 150 8] if s = Seq.empty  then
     Fset.empty 
   else
     Insert0.insert (to_set (SeqExt.subsequence s 1 (Seq.length s))) (Seq.get s 0)
   )
-  axiom to_set_spec : forall s : Seq.seq t . ([#"/Users/xavier/Code/cdsat/src/heap.rs" 151 13 151 14] Inv0.inv s) -> ([#"/Users/xavier/Code/cdsat/src/heap.rs" 151 28 151 35] Inv2.inv (to_set s)) && ([#"/Users/xavier/Code/cdsat/src/heap.rs" 149 0 149 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains (to_set s) x)
+  axiom to_set_spec : forall s : Seq.seq t . ([#"/Users/xavier/Code/cdsat/src/heap.rs" 153 13 153 14] Inv0.inv s) -> ([#"/Users/xavier/Code/cdsat/src/heap.rs" 153 28 153 35] Inv2.inv (to_set s)) && ([#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains (to_set s) x)
 end
 module Cdsat_Heap_ToSet_Impl
   type t
@@ -13049,14 +13047,14 @@ module Cdsat_Heap_ToSet_Impl
     type t = t
   clone CreusotContracts_Logic_Seq_Impl0_Contains as Contains0 with
     type t = t
-  let rec ghost function to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 35] (s : Seq.seq t) : Fset.fset t
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 151 13 151 14] Inv0.inv s}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 149 0 149 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains result x }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 28 151 35] Inv2.inv result }
-    variant {[#"/Users/xavier/Code/cdsat/src/heap.rs" 150 10 150 17] Seq.length s}
+  let rec ghost function to_set [#"/Users/xavier/Code/cdsat/src/heap.rs" 153 0 153 35] (s : Seq.seq t) : Fset.fset t
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 153 13 153 14] Inv0.inv s}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 151 0 151 61] forall x : t . Inv1.inv x -> Contains0.contains s x = Contains1.contains result x }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 153 28 153 35] Inv2.inv result }
+    variant {[#"/Users/xavier/Code/cdsat/src/heap.rs" 152 10 152 17] Seq.length s}
     
    = [@vc:do_not_keep_trace] [@vc:sp]
-    [#"/Users/xavier/Code/cdsat/src/heap.rs" 148 0 148 8] if pure {s = Seq.empty } then
+    [#"/Users/xavier/Code/cdsat/src/heap.rs" 150 0 150 8] if pure {s = Seq.empty } then
       Fset.empty 
     else
       let a' = to_set (SeqExt.subsequence s 1 (Seq.length s)) in Insert0.insert a' (Seq.get s 0)
@@ -13095,7 +13093,7 @@ module Cdsat_Heap_Impl4_ShallowModel_Stub
   use Cdsat_Heap_NaiveHeap_Type as Cdsat_Heap_NaiveHeap_Type
   clone CreusotContracts_Invariant_Inv_Stub as Inv0 with
     type t = Cdsat_Heap_NaiveHeap_Type.t_naiveheap
-  function shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 143 4 143 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  function shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 145 4 145 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
     
 end
 module Cdsat_Heap_Impl4_ShallowModel_Interface
@@ -13124,14 +13122,14 @@ module Cdsat_Heap_Impl4_ShallowModel_Interface
   use Cdsat_Heap_NaiveHeap_Type as Cdsat_Heap_NaiveHeap_Type
   clone CreusotContracts_Invariant_Inv_Stub as Inv0 with
     type t = Cdsat_Heap_NaiveHeap_Type.t_naiveheap
-  function shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 143 4 143 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  function shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 145 4 145 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
     
-  val shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 143 4 143 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 143 21 143 25] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 142 4 142 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains result x }
+  val shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 145 4 145 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 145 21 145 25] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 144 4 144 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains result x }
     ensures { result = shallow_model self }
     
-  axiom shallow_model_spec : forall self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap . ([#"/Users/xavier/Code/cdsat/src/heap.rs" 143 21 143 25] Inv0.inv self) -> ([#"/Users/xavier/Code/cdsat/src/heap.rs" 142 4 142 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains (shallow_model self) x)
+  axiom shallow_model_spec : forall self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap . ([#"/Users/xavier/Code/cdsat/src/heap.rs" 145 21 145 25] Inv0.inv self) -> ([#"/Users/xavier/Code/cdsat/src/heap.rs" 144 4 144 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains (shallow_model self) x)
 end
 module Cdsat_Heap_Impl4_ShallowModel
   use set.Fset
@@ -13172,16 +13170,16 @@ module Cdsat_Heap_Impl4_ShallowModel
   use Cdsat_Heap_NaiveHeap_Type as Cdsat_Heap_NaiveHeap_Type
   clone CreusotContracts_Invariant_Inv_Stub as Inv0 with
     type t = Cdsat_Heap_NaiveHeap_Type.t_naiveheap
-  function shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 143 4 143 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+  function shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 145 4 145 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
     
    =
-    [#"/Users/xavier/Code/cdsat/src/heap.rs" 144 8 144 38] ToSet0.to_set (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self))
-  val shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 143 4 143 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 143 21 143 25] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 142 4 142 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains result x }
+    [#"/Users/xavier/Code/cdsat/src/heap.rs" 146 8 146 38] ToSet0.to_set (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self))
+  val shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 145 4 145 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 145 21 145 25] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 144 4 144 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains result x }
     ensures { result = shallow_model self }
     
-  axiom shallow_model_spec : forall self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap . ([#"/Users/xavier/Code/cdsat/src/heap.rs" 143 21 143 25] Inv0.inv self) -> ([#"/Users/xavier/Code/cdsat/src/heap.rs" 142 4 142 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains (shallow_model self) x)
+  axiom shallow_model_spec : forall self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap . ([#"/Users/xavier/Code/cdsat/src/heap.rs" 145 21 145 25] Inv0.inv self) -> ([#"/Users/xavier/Code/cdsat/src/heap.rs" 144 4 144 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains (shallow_model self) x)
 end
 module Cdsat_Heap_Impl4_ShallowModel_Impl
   use set.Fset
@@ -13365,12 +13363,12 @@ module Cdsat_Heap_Impl4_ShallowModel_Impl
     predicate Inv2.inv = Inv4.inv,
     function Insert0.insert = Insert0.insert,
     axiom .
-  let rec ghost function shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 143 4 143 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 143 21 143 25] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 142 4 142 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains result x }
+  let rec ghost function shallow_model [#"/Users/xavier/Code/cdsat/src/heap.rs" 145 4 145 50] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 145 21 145 25] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 144 4 144 71] forall x : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self)) x = Contains1.contains result x }
     
    = [@vc:do_not_keep_trace] [@vc:sp]
-    [#"/Users/xavier/Code/cdsat/src/heap.rs" 144 8 144 38] let a' = ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self) in ToSet0.to_set a'
+    [#"/Users/xavier/Code/cdsat/src/heap.rs" 146 8 146 38] let a' = ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self) in ToSet0.to_set a'
 end
 module Cdsat_Heap_Impl3_New_Interface
   use set.Fset
@@ -13407,9 +13405,9 @@ module Cdsat_Heap_Impl3_New_Interface
     val Max0.mAX' = Max0.mAX',
     predicate Inv2.inv = Inv2.inv,
     axiom .
-  val new [#"/Users/xavier/Code/cdsat/src/heap.rs" 76 4 76 20] (_1 : ()) : Cdsat_Heap_NaiveHeap_Type.t_naiveheap
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 75 14 75 36] ShallowModel0.shallow_model result = Fset.empty  }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 76 16 76 20] Inv0.inv result }
+  val new [#"/Users/xavier/Code/cdsat/src/heap.rs" 75 4 75 20] (_1 : ()) : Cdsat_Heap_NaiveHeap_Type.t_naiveheap
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 74 14 74 36] ShallowModel0.shallow_model result = Fset.empty  }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 75 16 75 20] Inv0.inv result }
     
 end
 module Cdsat_Heap_Impl3_New
@@ -13612,9 +13610,9 @@ module Cdsat_Heap_Impl3_New
     predicate Inv0.inv = Inv1.inv,
     val Max0.mAX' = Max0.mAX',
     predicate Inv1.inv = Inv2.inv
-  let rec cfg new [#"/Users/xavier/Code/cdsat/src/heap.rs" 76 4 76 20] [@cfg:stackify] [@cfg:subregion_analysis] (_1 : ()) : Cdsat_Heap_NaiveHeap_Type.t_naiveheap
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 75 14 75 36] ShallowModel0.shallow_model result = Fset.empty  }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 76 16 76 20] Inv0.inv result }
+  let rec cfg new [#"/Users/xavier/Code/cdsat/src/heap.rs" 75 4 75 20] [@cfg:stackify] [@cfg:subregion_analysis] (_1 : ()) : Cdsat_Heap_NaiveHeap_Type.t_naiveheap
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 74 14 74 36] ShallowModel0.shallow_model result = Fset.empty  }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 75 16 75 20] Inv0.inv result }
     
    = [@vc:do_not_keep_trace] [@vc:sp]
   var _0 : Cdsat_Heap_NaiveHeap_Type.t_naiveheap;
@@ -13623,7 +13621,7 @@ module Cdsat_Heap_Impl3_New
     goto BB0
   }
   BB0 {
-    _2 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 77 18 77 28] New0.new ());
+    _2 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 76 18 76 28] New0.new ());
     goto BB1
   }
   BB1 {
@@ -13775,9 +13773,9 @@ module Cdsat_Heap_Impl3_Insert_Interface
     axiom .
   clone CreusotContracts_Invariant_Inv_Stub as Inv0 with
     type t = borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)
-  val insert [#"/Users/xavier/Code/cdsat/src/heap.rs" 82 4 82 47] (self : borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)) (e : Cdsat_Trail_TrailIndex_Type.t_trailindex) : bool
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 82 19 82 23] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 81 14 81 43] ShallowModel0.shallow_model ( ^ self) = Insert0.insert (ShallowModel1.shallow_model self) e }
+  val insert [#"/Users/xavier/Code/cdsat/src/heap.rs" 81 4 81 47] (self : borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)) (e : Cdsat_Trail_TrailIndex_Type.t_trailindex) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 81 19 81 23] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 80 14 80 43] ShallowModel0.shallow_model ( ^ self) = Insert0.insert (ShallowModel1.shallow_model self) e }
     
 end
 module Cdsat_Heap_Impl3_Insert
@@ -14101,9 +14099,9 @@ module Cdsat_Heap_Impl3_Insert
     type a = Alloc_Alloc_Global_Type.t_global,
     predicate Inv0.inv = Inv3.inv,
     function ShallowModel0.shallow_model = ShallowModel4.shallow_model
-  let rec cfg insert [#"/Users/xavier/Code/cdsat/src/heap.rs" 82 4 82 47] [@cfg:stackify] [@cfg:subregion_analysis] (self : borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)) (e : Cdsat_Trail_TrailIndex_Type.t_trailindex) : bool
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 82 19 82 23] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 81 14 81 43] ShallowModel3.shallow_model ( ^ self) = Insert0.insert (ShallowModel1.shallow_model self) e }
+  let rec cfg insert [#"/Users/xavier/Code/cdsat/src/heap.rs" 81 4 81 47] [@cfg:stackify] [@cfg:subregion_analysis] (self : borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)) (e : Cdsat_Trail_TrailIndex_Type.t_trailindex) : bool
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 81 19 81 23] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 80 14 80 43] ShallowModel3.shallow_model ( ^ self) = Insert0.insert (ShallowModel1.shallow_model self) e }
     
    = [@vc:do_not_keep_trace] [@vc:sp]
   var _0 : bool;
@@ -14124,33 +14122,33 @@ module Cdsat_Heap_Impl3_Insert
     goto BB0
   }
   BB0 {
-    old' <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 83 18 83 32] Ghost.new ( * self));
+    old' <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 82 18 82 32] Ghost.new ( * self));
     goto BB1
   }
   BB1 {
-    i <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 84 20 84 21] (0 : usize));
+    i <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 83 20 83 21] (0 : usize));
     goto BB2
   }
   BB2 {
-    invariant { [#"/Users/xavier/Code/cdsat/src/heap.rs" 85 8 85 71] forall j : int . 0 <= j /\ j < UIntSize.to_int i -> LtLog0.lt_log (IndexLogic0.index_logic (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self)) j) e };
+    invariant { [#"/Users/xavier/Code/cdsat/src/heap.rs" 84 8 84 71] forall j : int . 0 <= j /\ j < UIntSize.to_int i -> LtLog0.lt_log (IndexLogic0.index_logic (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self)) j) e };
     goto BB3
   }
   BB3 {
-    _12 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 86 18 86 30] Len0.len (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self)));
+    _12 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 85 18 85 30] Len0.len (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self)));
     goto BB4
   }
   BB4 {
-    switch ([#"/Users/xavier/Code/cdsat/src/heap.rs" 86 14 86 30] i < _12)
+    switch ([#"/Users/xavier/Code/cdsat/src/heap.rs" 85 14 85 30] i < _12)
       | False -> goto BB15
       | True -> goto BB5
       end
   }
   BB5 {
-    _18 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 87 19 87 28] Index0.index (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self)) i);
+    _18 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 86 19 86 28] Index0.index (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self)) i);
     goto BB6
   }
   BB6 {
-    _15 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 87 15 87 28] Lt0.lt e _18);
+    _15 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 86 15 86 28] Lt0.lt e _18);
     goto BB7
   }
   BB7 {
@@ -14162,25 +14160,25 @@ module Cdsat_Heap_Impl3_Insert
   BB8 {
     _23 <- Borrow.borrow_mut (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self));
     self <- { self with current = (let Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap a =  * self in Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap ( ^ _23)) };
-    _22 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 88 16 88 35] Insert1.insert _23 i e);
+    _22 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 87 16 87 35] Insert1.insert _23 i e);
     _23 <- any borrowed (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global));
     goto BB9
   }
   BB9 {
     assert { [@expl:type invariant] Inv0.inv self };
     assume { Resolve0.resolve self };
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 89 16 89 83] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains (ShallowModel2.shallow_model old') a -> Contains1.contains (ShallowModel1.shallow_model self) a };
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 90 16 90 93] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains (ShallowModel1.shallow_model self) a -> Contains1.contains (ShallowModel2.shallow_model old') a \/ a = e };
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 91 16 91 59] ExtEq0.ext_eq (ShallowModel1.shallow_model self) (Insert0.insert (ShallowModel2.shallow_model old') e) };
-    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 93 23 93 27] true);
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 88 16 88 83] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains (ShallowModel2.shallow_model old') a -> Contains1.contains (ShallowModel1.shallow_model self) a };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 89 16 89 93] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains (ShallowModel1.shallow_model self) a -> Contains1.contains (ShallowModel2.shallow_model old') a \/ a = e };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 90 16 90 59] ExtEq0.ext_eq (ShallowModel1.shallow_model self) (Insert0.insert (ShallowModel2.shallow_model old') e) };
+    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 92 23 92 27] true);
     goto BB17
   }
   BB10 {
-    _35 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 94 27 94 36] Index0.index (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self)) i);
+    _35 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 93 27 93 36] Index0.index (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self)) i);
     goto BB11
   }
   BB11 {
-    _32 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 94 22 94 36] Eq0.eq e _35);
+    _32 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 93 22 93 36] Eq0.eq e _35);
     goto BB12
   }
   BB12 {
@@ -14192,30 +14190,30 @@ module Cdsat_Heap_Impl3_Insert
   BB13 {
     assert { [@expl:type invariant] Inv0.inv self };
     assume { Resolve0.resolve self };
-    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 95 23 95 28] false);
+    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 94 23 94 28] false);
     goto BB17
   }
   BB14 {
-    i <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 98 12 98 18] i + ([#"/Users/xavier/Code/cdsat/src/heap.rs" 98 17 98 18] (1 : usize)));
+    i <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 97 12 97 18] i + ([#"/Users/xavier/Code/cdsat/src/heap.rs" 97 17 97 18] (1 : usize)));
     goto BB2
   }
   BB15 {
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 100 8 100 43] not Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self))) e };
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 101 8 101 41] not Contains1.contains (ShallowModel1.shallow_model self) e };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 99 8 99 43] not Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self))) e };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 100 8 100 41] not Contains1.contains (ShallowModel1.shallow_model self) e };
     _47 <- Borrow.borrow_mut (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self));
     self <- { self with current = (let Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap a =  * self in Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap ( ^ _47)) };
-    _46 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 102 8 102 22] Push0.push _47 e);
+    _46 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 101 8 101 22] Push0.push _47 e);
     _47 <- any borrowed (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global));
     goto BB16
   }
   BB16 {
     assert { [@expl:type invariant] Inv0.inv self };
     assume { Resolve0.resolve self };
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 103 8 103 79] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 (Ghost.inner old'))) a -> Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self))) a };
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 104 8 104 75] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains (ShallowModel2.shallow_model old') a -> Contains1.contains (ShallowModel1.shallow_model self) a };
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 105 8 105 85] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains (ShallowModel1.shallow_model self) a -> Contains1.contains (ShallowModel2.shallow_model old') a \/ a = e };
-    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 106 8 106 51] ExtEq0.ext_eq (ShallowModel1.shallow_model self) (Insert0.insert (ShallowModel2.shallow_model old') e) };
-    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 107 8 107 12] true);
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 102 8 102 79] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 (Ghost.inner old'))) a -> Contains0.contains (ShallowModel0.shallow_model (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self))) a };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 103 8 103 75] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains (ShallowModel2.shallow_model old') a -> Contains1.contains (ShallowModel1.shallow_model self) a };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 104 8 104 85] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains1.contains (ShallowModel1.shallow_model self) a -> Contains1.contains (ShallowModel2.shallow_model old') a \/ a = e };
+    assert { [@expl:assertion] [#"/Users/xavier/Code/cdsat/src/heap.rs" 105 8 105 51] ExtEq0.ext_eq (ShallowModel1.shallow_model self) (Insert0.insert (ShallowModel2.shallow_model old') e) };
+    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 106 8 106 12] true);
     goto BB18
   }
   BB17 {
@@ -14294,9 +14292,9 @@ module Cdsat_Heap_Impl3_Last_Interface
   use Core_Option_Option_Type as Core_Option_Option_Type
   clone CreusotContracts_Invariant_Inv_Stub as Inv0 with
     type t = Cdsat_Heap_NaiveHeap_Type.t_naiveheap
-  val last [#"/Users/xavier/Code/cdsat/src/heap.rs" 115 4 115 41] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 115 13 115 17] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 111 8 114 9] match (result) with
+  val last [#"/Users/xavier/Code/cdsat/src/heap.rs" 114 4 114 41] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 114 13 114 17] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 110 8 113 9] match (result) with
       | Core_Option_Option_Type.C_Some a -> Contains0.contains (ShallowModel0.shallow_model self) a /\ SetMax0.set_max (ShallowModel0.shallow_model self) = a
       | Core_Option_Option_Type.C_None -> ShallowModel0.shallow_model self = Fset.empty 
       end }
@@ -14342,7 +14340,7 @@ module Cdsat_Heap_Impl3_Last
   clone Core_Num_Impl11_Max as Max0
   clone CreusotContracts_Invariant_Inv_Interface as Inv7 with
     type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
-  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel5 with
+  clone CreusotContracts_Std1_Vec_Impl0_ShallowModel_Interface as ShallowModel4 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
     type a = Alloc_Alloc_Global_Type.t_global,
     predicate Inv0.inv = Inv7.inv,
@@ -14351,7 +14349,7 @@ module Cdsat_Heap_Impl3_Last
     axiom .
   use Cdsat_Heap_NaiveHeap_Type as Cdsat_Heap_NaiveHeap_Type
   clone Cdsat_Heap_Impl2_Invariant as Invariant0 with
-    function ShallowModel0.shallow_model = ShallowModel5.shallow_model,
+    function ShallowModel0.shallow_model = ShallowModel4.shallow_model,
     predicate SeqUnique0.seq_unique = SeqUnique0.seq_unique,
     predicate Sorted0.sorted = Sorted0.sorted,
     predicate Inv0.inv = Inv7.inv,
@@ -14519,7 +14517,7 @@ module Cdsat_Heap_Impl3_Last
     type t = slice (Cdsat_Trail_TrailIndex_Type.t_trailindex),
     predicate Inv0.inv = Inv2.inv,
     axiom .
-  clone CreusotContracts_Std1_Slice_Impl0_ShallowModel_Interface as ShallowModel4 with
+  clone CreusotContracts_Std1_Slice_Impl0_ShallowModel_Interface as ShallowModel5 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
     predicate Inv0.inv = Inv11.inv,
     val Max0.mAX' = Max0.mAX',
@@ -14533,7 +14531,7 @@ module Cdsat_Heap_Impl3_Last
     axiom .
   clone Cdsat_Heap_Impl4_ShallowModel as ShallowModel3 with
     predicate Inv0.inv = Inv6.inv,
-    function ShallowModel0.shallow_model = ShallowModel5.shallow_model,
+    function ShallowModel0.shallow_model = ShallowModel4.shallow_model,
     predicate Contains0.contains = Contains1.contains,
     predicate Contains1.contains = Contains0.contains,
     function ToSet0.to_set = ToSet0.to_set,
@@ -14555,11 +14553,11 @@ module Cdsat_Heap_Impl3_Last
   clone CreusotContracts_Std1_Slice_Impl5_InBounds as InBounds0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex
   clone CreusotContracts_Model_Impl5_ShallowModel as ShallowModel2 with
-    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global),
+    type t = slice (Cdsat_Trail_TrailIndex_Type.t_trailindex),
     type ShallowModelTy0.shallowModelTy = Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex),
     function ShallowModel0.shallow_model = ShallowModel5.shallow_model
   clone CreusotContracts_Model_Impl5_ShallowModel as ShallowModel1 with
-    type t = slice (Cdsat_Trail_TrailIndex_Type.t_trailindex),
+    type t = Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global),
     type ShallowModelTy0.shallowModelTy = Seq.seq (Cdsat_Trail_TrailIndex_Type.t_trailindex),
     function ShallowModel0.shallow_model = ShallowModel4.shallow_model
   clone Cdsat_Trail_SetMax_Interface as SetMax0 with
@@ -14576,26 +14574,26 @@ module Cdsat_Heap_Impl3_Last
     type Output0.output = Cdsat_Trail_TrailIndex_Type.t_trailindex,
     predicate Inv0.inv = Inv2.inv,
     predicate Inv1.inv = Inv3.inv,
-    function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
+    function ShallowModel0.shallow_model = ShallowModel2.shallow_model,
     predicate InBounds0.in_bounds = InBounds0.in_bounds,
     predicate Inv2.inv = Inv4.inv,
     predicate HasValue0.has_value = HasValue0.has_value,
     predicate Inv3.inv = Inv5.inv
-  clone Alloc_Vec_Impl1_Len_Interface as Len0 with
-    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
-    type a = Alloc_Alloc_Global_Type.t_global,
-    predicate Inv0.inv = Inv1.inv,
-    function ShallowModel0.shallow_model = ShallowModel2.shallow_model
   clone Alloc_Vec_Impl8_Deref_Interface as Deref0 with
     type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
     type a = Alloc_Alloc_Global_Type.t_global,
     predicate Inv0.inv = Inv1.inv,
-    function ShallowModel0.shallow_model = ShallowModel1.shallow_model,
-    function ShallowModel1.shallow_model = ShallowModel2.shallow_model,
+    function ShallowModel0.shallow_model = ShallowModel2.shallow_model,
+    function ShallowModel1.shallow_model = ShallowModel1.shallow_model,
     predicate Inv1.inv = Inv2.inv
-  let rec cfg last [#"/Users/xavier/Code/cdsat/src/heap.rs" 115 4 115 41] [@cfg:stackify] [@cfg:subregion_analysis] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 115 13 115 17] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 111 8 114 9] match (result) with
+  clone Alloc_Vec_Impl1_Len_Interface as Len0 with
+    type t = Cdsat_Trail_TrailIndex_Type.t_trailindex,
+    type a = Alloc_Alloc_Global_Type.t_global,
+    predicate Inv0.inv = Inv1.inv,
+    function ShallowModel0.shallow_model = ShallowModel1.shallow_model
+  let rec cfg last [#"/Users/xavier/Code/cdsat/src/heap.rs" 114 4 114 41] [@cfg:stackify] [@cfg:subregion_analysis] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 114 13 114 17] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 110 8 113 9] match (result) with
       | Core_Option_Option_Type.C_Some a -> Contains0.contains (ShallowModel0.shallow_model self) a /\ SetMax0.set_max (ShallowModel0.shallow_model self) = a
       | Core_Option_Option_Type.C_None -> ShallowModel0.shallow_model self = Fset.empty 
       end }
@@ -14603,25 +14601,43 @@ module Cdsat_Heap_Impl3_Last
    = [@vc:do_not_keep_trace] [@vc:sp]
   var _0 : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex);
   var self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap = self;
-  var _4 : slice (Cdsat_Trail_TrailIndex_Type.t_trailindex);
-  var _7 : usize;
+  var _5 : usize;
+  var _9 : slice (Cdsat_Trail_TrailIndex_Type.t_trailindex);
+  var _12 : usize;
   {
     goto BB0
   }
   BB0 {
-    _4 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 116 8 116 36] Deref0.deref (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self));
+    _5 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 115 11 115 23] Len0.len (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self));
     goto BB1
   }
   BB1 {
-    _7 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 116 19 116 31] Len0.len (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self));
-    goto BB2
+    switch ([#"/Users/xavier/Code/cdsat/src/heap.rs" 115 11 115 28] _5 = ([#"/Users/xavier/Code/cdsat/src/heap.rs" 115 27 115 28] (0 : usize)))
+      | False -> goto BB3
+      | True -> goto BB2
+      end
   }
   BB2 {
-    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 116 8 116 36] Get0.get _4 ([#"/Users/xavier/Code/cdsat/src/heap.rs" 116 19 116 35] _7 - ([#"/Users/xavier/Code/cdsat/src/heap.rs" 116 34 116 35] (1 : usize))));
-    _7 <- any usize;
-    goto BB3
+    _0 <- Core_Option_Option_Type.C_None;
+    goto BB7
   }
   BB3 {
+    _9 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 119 8 119 36] Deref0.deref (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self));
+    goto BB4
+  }
+  BB4 {
+    _12 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 119 19 119 31] Len0.len (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self));
+    goto BB5
+  }
+  BB5 {
+    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 119 8 119 36] Get0.get _9 ([#"/Users/xavier/Code/cdsat/src/heap.rs" 119 19 119 35] _12 - ([#"/Users/xavier/Code/cdsat/src/heap.rs" 119 34 119 35] (1 : usize))));
+    _12 <- any usize;
+    goto BB6
+  }
+  BB6 {
+    goto BB7
+  }
+  BB7 {
     return _0
   }
   
@@ -14673,10 +14689,10 @@ module Cdsat_Heap_Impl3_PopLast_Interface
     type ShallowModelTy0.shallowModelTy = Fset.fset (Cdsat_Trail_TrailIndex_Type.t_trailindex)
   clone CreusotContracts_Invariant_Inv_Stub as Inv0 with
     type t = borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)
-  val pop_last [#"/Users/xavier/Code/cdsat/src/heap.rs" 124 4 124 48] (self : borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 124 21 124 25] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 119 14 119 58] (ShallowModel0.shallow_model self = Fset.empty ) = (result = Core_Option_Option_Type.C_None) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 120 4 123 6] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . result = Core_Option_Option_Type.C_Some a -> ShallowModel1.shallow_model ( ^ self) = Remove0.remove (ShallowModel0.shallow_model self) a /\ Contains0.contains (ShallowModel0.shallow_model self) a /\ (forall other : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel1.shallow_model ( ^ self)) other -> LeLog0.le_log other a) }
+  val pop_last [#"/Users/xavier/Code/cdsat/src/heap.rs" 127 4 127 48] (self : borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 127 21 127 25] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 122 14 122 58] (ShallowModel0.shallow_model self = Fset.empty ) = (result = Core_Option_Option_Type.C_None) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 123 4 126 6] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . result = Core_Option_Option_Type.C_Some a -> ShallowModel1.shallow_model ( ^ self) = Remove0.remove (ShallowModel0.shallow_model self) a /\ Contains0.contains (ShallowModel0.shallow_model self) a /\ (forall other : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel1.shallow_model ( ^ self)) other -> LeLog0.le_log other a) }
     
 end
 module Cdsat_Heap_Impl3_PopLast
@@ -14916,10 +14932,10 @@ module Cdsat_Heap_Impl3_PopLast
     predicate Inv2.inv = Inv3.inv,
     val Max0.mAX' = Max0.mAX',
     predicate Inv3.inv = Inv4.inv
-  let rec cfg pop_last [#"/Users/xavier/Code/cdsat/src/heap.rs" 124 4 124 48] [@cfg:stackify] [@cfg:subregion_analysis] (self : borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 124 21 124 25] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 119 14 119 58] (ShallowModel0.shallow_model self = Fset.empty ) = (result = Core_Option_Option_Type.C_None) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 120 4 123 6] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . result = Core_Option_Option_Type.C_Some a -> ShallowModel1.shallow_model ( ^ self) = Remove0.remove (ShallowModel0.shallow_model self) a /\ Contains0.contains (ShallowModel0.shallow_model self) a /\ (forall other : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel1.shallow_model ( ^ self)) other -> LeLog0.le_log other a) }
+  let rec cfg pop_last [#"/Users/xavier/Code/cdsat/src/heap.rs" 127 4 127 48] [@cfg:stackify] [@cfg:subregion_analysis] (self : borrowed (Cdsat_Heap_NaiveHeap_Type.t_naiveheap)) : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex)
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 127 21 127 25] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 122 14 122 58] (ShallowModel0.shallow_model self = Fset.empty ) = (result = Core_Option_Option_Type.C_None) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 123 4 126 6] forall a : Cdsat_Trail_TrailIndex_Type.t_trailindex . result = Core_Option_Option_Type.C_Some a -> ShallowModel1.shallow_model ( ^ self) = Remove0.remove (ShallowModel0.shallow_model self) a /\ Contains0.contains (ShallowModel0.shallow_model self) a /\ (forall other : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel1.shallow_model ( ^ self)) other -> LeLog0.le_log other a) }
     
    = [@vc:do_not_keep_trace] [@vc:sp]
   var _0 : Core_Option_Option_Type.t_option (Cdsat_Trail_TrailIndex_Type.t_trailindex);
@@ -14931,7 +14947,7 @@ module Cdsat_Heap_Impl3_PopLast
   BB0 {
     _4 <- Borrow.borrow_mut (Cdsat_Heap_NaiveHeap_Type.naiveheap_0 ( * self));
     self <- { self with current = (let Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap a =  * self in Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap ( ^ _4)) };
-    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 125 8 125 20] Pop0.pop _4);
+    _0 <- ([#"/Users/xavier/Code/cdsat/src/heap.rs" 128 8 128 20] Pop0.pop _4);
     _4 <- any borrowed (Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global));
     goto BB1
   }
@@ -14945,7 +14961,6 @@ end
 module Cdsat_Heap_Impl3_IntoVec_Interface
   use prelude.Int
   use seq.Seq
-  use set.Fset
   use Cdsat_Trail_TrailIndex_Type as Cdsat_Trail_TrailIndex_Type
   use seq.Seq
   clone CreusotContracts_Invariant_Inv_Stub as Inv2 with
@@ -14980,12 +14995,11 @@ module Cdsat_Heap_Impl3_IntoVec_Interface
     val Max0.mAX' = Max0.mAX',
     predicate Inv2.inv = Inv2.inv,
     axiom .
-  val into_vec [#"/Users/xavier/Code/cdsat/src/heap.rs" 132 4 132 40] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 132 16 132 20] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 128 4 128 70] forall e : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model self) e = Contains1.contains (ShallowModel1.shallow_model result) e }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 129 4 129 88] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel1.shallow_model result) -> Contains0.contains (ShallowModel0.shallow_model self) (Seq.get (ShallowModel1.shallow_model result) i) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 130 14 130 42] Seq.length (ShallowModel1.shallow_model result) = Fset.cardinal (ShallowModel0.shallow_model self) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 131 14 131 33] SeqUnique0.seq_unique (ShallowModel1.shallow_model result) }
+  val into_vec [#"/Users/xavier/Code/cdsat/src/heap.rs" 134 4 134 40] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 134 16 134 20] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 131 4 131 70] forall e : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model self) e = Contains1.contains (ShallowModel1.shallow_model result) e }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 132 4 132 88] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel1.shallow_model result) -> Contains0.contains (ShallowModel0.shallow_model self) (Seq.get (ShallowModel1.shallow_model result) i) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 133 14 133 33] SeqUnique0.seq_unique (ShallowModel1.shallow_model result) }
     
 end
 module Cdsat_Heap_Impl3_IntoVec
@@ -15183,12 +15197,11 @@ module Cdsat_Heap_Impl3_IntoVec
     predicate Inv3.inv = Inv3.inv,
     predicate Inv4.inv = Inv4.inv,
     axiom .
-  let rec cfg into_vec [#"/Users/xavier/Code/cdsat/src/heap.rs" 132 4 132 40] [@cfg:stackify] [@cfg:subregion_analysis] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
-    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 132 16 132 20] Inv0.inv self}
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 128 4 128 70] forall e : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model self) e = Contains1.contains (ShallowModel1.shallow_model result) e }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 129 4 129 88] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel1.shallow_model result) -> Contains0.contains (ShallowModel0.shallow_model self) (Seq.get (ShallowModel1.shallow_model result) i) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 130 14 130 42] Seq.length (ShallowModel1.shallow_model result) = Fset.cardinal (ShallowModel0.shallow_model self) }
-    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 131 14 131 33] SeqUnique0.seq_unique (ShallowModel1.shallow_model result) }
+  let rec cfg into_vec [#"/Users/xavier/Code/cdsat/src/heap.rs" 134 4 134 40] [@cfg:stackify] [@cfg:subregion_analysis] (self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap) : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)
+    requires {[#"/Users/xavier/Code/cdsat/src/heap.rs" 134 16 134 20] Inv0.inv self}
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 131 4 131 70] forall e : Cdsat_Trail_TrailIndex_Type.t_trailindex . Contains0.contains (ShallowModel0.shallow_model self) e = Contains1.contains (ShallowModel1.shallow_model result) e }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 132 4 132 88] forall i : int . 0 <= i /\ i < Seq.length (ShallowModel1.shallow_model result) -> Contains0.contains (ShallowModel0.shallow_model self) (Seq.get (ShallowModel1.shallow_model result) i) }
+    ensures { [#"/Users/xavier/Code/cdsat/src/heap.rs" 133 14 133 33] SeqUnique0.seq_unique (ShallowModel1.shallow_model result) }
     
    = [@vc:do_not_keep_trace] [@vc:sp]
   var _0 : Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global);
@@ -15203,14 +15216,11 @@ module Cdsat_Heap_Impl3_IntoVec
     goto BB2
   }
   BB2 {
+    _0 <- Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self;
+    self <- (let Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap a = self in Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap (any Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)));
     goto BB3
   }
   BB3 {
-    _0 <- Cdsat_Heap_NaiveHeap_Type.naiveheap_0 self;
-    self <- (let Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap a = self in Cdsat_Heap_NaiveHeap_Type.C_NaiveHeap (any Alloc_Vec_Vec_Type.t_vec (Cdsat_Trail_TrailIndex_Type.t_trailindex) (Alloc_Alloc_Global_Type.t_global)));
-    goto BB4
-  }
-  BB4 {
     return _0
   }
   
@@ -19312,7 +19322,7 @@ module Cdsat_Heap_Impl4
     predicate Inv0.inv = Inv0.inv,
     predicate Invariant0.invariant' = Invariant0.invariant',
     axiom .
-  goal shallow_model_refn : [#"/Users/xavier/Code/cdsat/src/heap.rs" 143 4 143 50] forall self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap . Inv0.inv self
+  goal shallow_model_refn : [#"/Users/xavier/Code/cdsat/src/heap.rs" 145 4 145 50] forall self : Cdsat_Heap_NaiveHeap_Type.t_naiveheap . Inv0.inv self
 end
 module Cdsat_Trail_Impl1
   
