@@ -45,23 +45,23 @@ impl Solver {
         self.lra_state = TheoryState::Unknown;
         self.bool_state = TheoryState::Unknown;
         let old_trail: Ghost![_] = gh! { trail};
-        let mut decision = None;
+        let mut decision : Option<(Term, _)> = None;
         #[invariant(old_trail.ghost.impls(*trail.ghost))]
         #[invariant(trail.invariant())]
         #[invariant(match decision {
-            Some((t, v)) => trail.ghost.acceptable(t@, v@),
+            Some((t, v)) => trail.ghost.acceptable(t@, v@) && t@.well_sorted(),
             None => true,
         })]
         #[invariant(self.bool_state != TheoryState::Sat || self.lra_state != TheoryState::Sat)]
-        #[invariant((self.bool_state == TheoryState::Decision || self.lra_state == TheoryState::Decision) ==> (decision != None))]
+        #[invariant(self.bool_state == TheoryState::Decision || self.lra_state == TheoryState::Decision ==> decision != None)]
         loop {
             let iter_trail = gh! { * trail };
             let len = trail.len();
             assert!(!self.sat());
-            let (answer, state) = if self.bool_state == TheoryState::Unknown {
-                (self.bool_th.extend(trail), &mut self.bool_state)
+            let (answer, state, other) = if self.bool_state == TheoryState::Unknown {
+                (self.bool_th.extend(trail), &mut self.bool_state, &mut self.lra_state)
             } else if self.lra_state == TheoryState::Unknown {
-                (self.lra_th.extend(trail), &mut self.lra_state)
+                (self.lra_th.extend(trail), &mut self.lra_state, &mut self.bool_state)
             } else if let Some((t, v)) = decision.take() {
                 trail.add_decision(t, v);
                 proof_assert!(decision == None);
@@ -75,11 +75,6 @@ impl Solver {
 
             proof_assert!(trail.invariant());
             proof_assert!(old_trail.ghost.impls(*trail.ghost));
-            if trail.len() > len {
-                decision = None;
-            } else {
-                proof_assert!(*iter_trail == *trail);
-            };
 
             match answer {
                 ExtendResult::Conflict(c) => {
@@ -92,7 +87,6 @@ impl Solver {
                     } else {
                         return Answer::Unsat;
                     }
-                    proof_assert!((self.bool_state == TheoryState::Decision || self.lra_state == TheoryState::Decision) ==> (decision != None));
                 }
                 ExtendResult::Decision(t, v) => {
                     *state = TheoryState::Decision;
@@ -101,6 +95,12 @@ impl Solver {
                 }
                 ExtendResult::Satisfied => {
                     *state = TheoryState::Sat;
+
+                    // Replace with a 'changed' check
+                    decision = None;
+                    if *other == TheoryState::Decision {
+                        *other = TheoryState::Unknown;
+                    }
                 }
             }
 
@@ -122,7 +122,7 @@ impl Solver {
     #[requires(forall<ix : TrailIndex> trail.contains(ix) ==> (ix.1@ == 0) == trail.ghost.is_decision(trail.index_logic(ix)))]
     #[ensures((^trail).invariant())]
     #[ensures((*trail).ghost.impls(*(^trail).ghost))]
-    fn resolve_conflict(&mut self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
+    fn resolve_conflict(&self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
         let mut heap: ConflictHeap = ConflictHeap::new();
         let old_conflict: Ghost![Vec<TrailIndex>] = gh! { conflict };
         let old_trail: Ghost![&mut Trail] = gh! { trail };

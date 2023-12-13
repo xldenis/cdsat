@@ -29,7 +29,7 @@ pub mod lra {
         #[maintains((mut tl).invariant())]
         #[ensures(match result {
             ExtendResult::Satisfied => true,
-            ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(t@, v@),
+            ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(t@, v@) && t@.well_sorted(),
             ExtendResult::Conflict(c) => {
                 let conflict = (^tl).abstract_justification(c@);
                 c@.len() > 0 &&
