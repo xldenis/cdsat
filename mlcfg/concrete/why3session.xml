@@ -74,12 +74,21 @@
  <proof prover="3"><result status="valid" time="0.046561" steps="1111"/></proof>
  </goal>
 </theory>
+<theory name="Cdsat_Concrete_SetRemove_Impl" proved="true">
+ <goal name="set_remove&#39;vc" expl="VC for set_remove" proved="true">
+ <proof prover="3"><result status="valid" time="0.010141" steps="12"/></proof>
+ </goal>
+</theory>
 <theory name="Cdsat_Concrete_Impl0_ResolveConflict">
  <goal name="resolve_conflict&#39;vc" expl="VC for resolve_conflict">
  </goal>
 </theory>
 <theory name="Cdsat_Concrete_Impl0_Solver">
  <goal name="solver&#39;vc" expl="VC for solver">
+ <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+ <proof prover="1"><result status="timeout" time="1.000000" steps="199591"/></proof>
+ <proof prover="3"><result status="timeout" time="1.000000" steps="8455"/></proof>
+ <proof prover="5"><result status="timeout" time="1.000000" steps="177665"/></proof>
  <transf name="split_vc" >
   <goal name="solver&#39;vc.0" expl="loop invariant init" proved="true">
   <proof prover="3"><result status="valid" time="0.032232" steps="75"/></proof>
@@ -94,10 +103,182 @@
   <proof prover="3"><result status="valid" time="0.023732" steps="42"/></proof>
   </goal>
   <goal name="solver&#39;vc.4" expl="loop invariant init">
-  <proof prover="0"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1"><result status="timeout" time="1.000000" steps="348729"/></proof>
-  <proof prover="3"><result status="timeout" time="1.000000" steps="9028"/></proof>
-  <proof prover="5"><result status="timeout" time="1.000000" steps="178519"/></proof>
+  <proof prover="0" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="347959"/></proof>
+  <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="35822"/></proof>
+  <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="374325"/></proof>
+  <transf name="inline_goal" >
+   <goal name="solver&#39;vc.4.0" expl="loop invariant init">
+   <transf name="split_all_full" >
+    <goal name="solver&#39;vc.4.0.0" expl="loop invariant init">
+    <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+    <proof prover="3"><result status="timeout" time="1.000000" steps="6710"/></proof>
+    <proof prover="5"><result status="timeout" time="1.000000" steps="136779"/></proof>
+    <transf name="split_vc" >
+     <goal name="solver&#39;vc.4.0.0.0" expl="loop invariant init">
+     <proof prover="0" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
+     <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="34391"/></proof>
+     <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="218562"/></proof>
+     <transf name="inline_goal" >
+      <goal name="solver&#39;vc.4.0.0.0.0" expl="loop invariant init">
+      <transf name="split_all_full" >
+       <goal name="solver&#39;vc.4.0.0.0.0.0" expl="VC for solver">
+       <proof prover="0" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
+       <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="33723"/></proof>
+       <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="240377"/></proof>
+       <transf name="inline_goal" >
+        <goal name="solver&#39;vc.4.0.0.0.0.0.0" expl="VC for solver">
+        <transf name="split_all_full" >
+         <goal name="solver&#39;vc.4.0.0.0.0.0.0.0" expl="VC for solver">
+         <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+         <proof prover="3"><result status="timeout" time="1.000000" steps="5518"/></proof>
+         <proof prover="5"><result status="timeout" time="1.000000" steps="141225"/></proof>
+         <transf name="split_vc" >
+          <goal name="solver&#39;vc.4.0.0.0.0.0.0.0.0" expl="VC for solver">
+          <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+          <proof prover="3" timelimit="5" memlimit="2000"><undone/></proof>
+          <proof prover="5"><result status="timeout" time="1.000000" steps="141132"/></proof>
+          </goal>
+         </transf>
+         </goal>
+        </transf>
+        </goal>
+       </transf>
+       </goal>
+       <goal name="solver&#39;vc.4.0.0.0.0.1" expl="VC for solver">
+       <proof prover="0" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
+       <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="31204"/></proof>
+       <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="203864"/></proof>
+       <transf name="inline_goal" >
+        <goal name="solver&#39;vc.4.0.0.0.0.1.0" expl="VC for solver">
+        <proof prover="0" timelimit="10" memlimit="4000"><undone/></proof>
+        <proof prover="3" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="56341"/></proof>
+        <proof prover="5" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="315357"/></proof>
+        </goal>
+       </transf>
+       </goal>
+       <goal name="solver&#39;vc.4.0.0.0.0.2" expl="VC for solver">
+       <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+       <proof prover="3"><result status="timeout" time="1.000000" steps="7346"/></proof>
+       <proof prover="5"><result status="timeout" time="1.000000" steps="137082"/></proof>
+       <transf name="split_vc" >
+        <goal name="solver&#39;vc.4.0.0.0.0.2.0" expl="VC for solver">
+        <proof prover="0" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
+        <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="42403"/></proof>
+        <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="240086"/></proof>
+        <transf name="inline_goal" >
+         <goal name="solver&#39;vc.4.0.0.0.0.2.0.0" expl="VC for solver">
+         <transf name="split_all_full" >
+          <goal name="solver&#39;vc.4.0.0.0.0.2.0.0.0" expl="VC for solver">
+          <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+          <proof prover="3"><result status="timeout" time="1.000000" steps="7435"/></proof>
+          <proof prover="5"><result status="timeout" time="1.000000" steps="140513"/></proof>
+          <transf name="split_vc" >
+           <goal name="solver&#39;vc.4.0.0.0.0.2.0.0.0.0" expl="VC for solver">
+           <proof prover="0"><undone/></proof>
+           <proof prover="3"><undone/></proof>
+           <proof prover="5"><undone/></proof>
+           </goal>
+          </transf>
+          </goal>
+         </transf>
+         </goal>
+        </transf>
+        </goal>
+       </transf>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="solver&#39;vc.4.0.1" expl="loop invariant init">
+    <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+    <proof prover="3"><result status="timeout" time="1.000000" steps="6651"/></proof>
+    <proof prover="5"><result status="timeout" time="1.000000" steps="136992"/></proof>
+    <transf name="split_vc" >
+     <goal name="solver&#39;vc.4.0.1.0" expl="loop invariant init">
+     <proof prover="0" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
+     <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="34398"/></proof>
+     <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="218562"/></proof>
+     <transf name="inline_goal" >
+      <goal name="solver&#39;vc.4.0.1.0.0" expl="loop invariant init">
+      <transf name="split_all_full" >
+       <goal name="solver&#39;vc.4.0.1.0.0.0" expl="VC for solver">
+       <proof prover="0" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
+       <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="33751"/></proof>
+       <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="239086"/></proof>
+       <transf name="inline_goal" >
+        <goal name="solver&#39;vc.4.0.1.0.0.0.0" expl="VC for solver">
+        <transf name="split_all_full" >
+         <goal name="solver&#39;vc.4.0.1.0.0.0.0.0" expl="VC for solver">
+         <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+         <proof prover="3"><result status="timeout" time="1.000000" steps="5521"/></proof>
+         <proof prover="5"><result status="timeout" time="1.000000" steps="137706"/></proof>
+         <transf name="split_vc" >
+          <goal name="solver&#39;vc.4.0.1.0.0.0.0.0.0" expl="VC for solver">
+          <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+          <proof prover="3" timelimit="5" memlimit="2000"><undone/></proof>
+          <proof prover="5"><result status="timeout" time="1.000000" steps="133156"/></proof>
+          </goal>
+         </transf>
+         </goal>
+        </transf>
+        </goal>
+       </transf>
+       </goal>
+       <goal name="solver&#39;vc.4.0.1.0.0.1" expl="VC for solver">
+       <proof prover="0" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
+       <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="31315"/></proof>
+       <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="203208"/></proof>
+       <transf name="inline_goal" >
+        <goal name="solver&#39;vc.4.0.1.0.0.1.0" expl="VC for solver">
+        <proof prover="0" timelimit="10" memlimit="4000"><undone/></proof>
+        <proof prover="3" timelimit="10" memlimit="4000"><undone/></proof>
+        <proof prover="5" timelimit="10" memlimit="4000"><undone/></proof>
+        </goal>
+       </transf>
+       </goal>
+       <goal name="solver&#39;vc.4.0.1.0.0.2" expl="VC for solver">
+       <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+       <proof prover="3"><result status="timeout" time="1.000000" steps="7597"/></proof>
+       <proof prover="5"><result status="timeout" time="1.000000" steps="138520"/></proof>
+       <transf name="split_vc" >
+        <goal name="solver&#39;vc.4.0.1.0.0.2.0" expl="VC for solver">
+        <proof prover="0" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000"/></proof>
+        <proof prover="3" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="41737"/></proof>
+        <proof prover="5" timelimit="5" memlimit="2000"><result status="timeout" time="5.000000" steps="236760"/></proof>
+        <transf name="inline_goal" >
+         <goal name="solver&#39;vc.4.0.1.0.0.2.0.0" expl="VC for solver">
+         <transf name="split_all_full" >
+          <goal name="solver&#39;vc.4.0.1.0.0.2.0.0.0" expl="VC for solver">
+          <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+          <proof prover="3"><result status="timeout" time="1.000000" steps="7573"/></proof>
+          <proof prover="5"><result status="timeout" time="1.000000" steps="131965"/></proof>
+          <transf name="split_vc" >
+           <goal name="solver&#39;vc.4.0.1.0.0.2.0.0.0.0" expl="VC for solver">
+           <proof prover="0"><undone/></proof>
+           <proof prover="3"><undone/></proof>
+           <proof prover="5"><undone/></proof>
+           </goal>
+          </transf>
+          </goal>
+         </transf>
+         </goal>
+        </transf>
+        </goal>
+       </transf>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
   </goal>
   <goal name="solver&#39;vc.5" expl="assertion" proved="true">
   <proof prover="3"><result status="valid" time="0.032084" steps="56"/></proof>
@@ -147,9 +328,9 @@
   </goal>
   <goal name="solver&#39;vc.10" expl="precondition">
   <proof prover="0"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1"><result status="timeout" time="1.000000" steps="503412"/></proof>
-  <proof prover="3"><result status="timeout" time="1.000000" steps="14717"/></proof>
-  <proof prover="5"><result status="timeout" time="1.000000" steps="186389"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="233778"/></proof>
+  <proof prover="3"><result status="timeout" time="1.000000" steps="11515"/></proof>
+  <proof prover="5"><result status="timeout" time="1.000000" steps="173223"/></proof>
   </goal>
   <goal name="solver&#39;vc.11" expl="precondition" proved="true">
   <proof prover="3"><result status="valid" time="0.034544" steps="76"/></proof>
@@ -170,8 +351,8 @@
   <goal name="solver&#39;vc.16" expl="precondition">
   <proof prover="0"><result status="timeout" time="1.000000"/></proof>
   <proof prover="1"><result status="timeout" time="1.000000" steps="370658"/></proof>
-  <proof prover="3"><result status="timeout" time="1.000000" steps="11317"/></proof>
-  <proof prover="5"><result status="timeout" time="1.000000" steps="147212"/></proof>
+  <proof prover="3"><result status="timeout" time="1.000000" steps="8657"/></proof>
+  <proof prover="5"><result status="timeout" time="1.000000" steps="131218"/></proof>
   </goal>
   <goal name="solver&#39;vc.17" expl="precondition" proved="true">
   <proof prover="3"><result status="valid" time="0.030537" steps="90"/></proof>
@@ -236,6 +417,11 @@
   <proof prover="5"><result status="valid" time="0.381980" steps="66632"/></proof>
   </goal>
  </transf>
+ </goal>
+</theory>
+<theory name="Cdsat_Concrete_SetRemove2_Impl" proved="true">
+ <goal name="set_remove2&#39;vc" expl="VC for set_remove2" proved="true">
+ <proof prover="3"><result status="valid" time="0.007620" steps="10"/></proof>
  </goal>
 </theory>
 <theory name="Cdsat_Concrete_Impl8_Eq" proved="true">
