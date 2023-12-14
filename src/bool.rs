@@ -110,7 +110,7 @@ impl BoolTheory {
             (forall<m : theory::Model>
                 m.satisfy_set(tl.abstract_justification(result.0@)) ==> m.satisfies((tm@, v@)))
         }
-        Err(t) => { tl.ghost.acceptable(t@, Value::Bool(true)@) }
+        Err(t) => { tl.ghost.acceptable(t@, Value::Bool(true)@)  && t@.well_sorted() }
     })]
     fn eval(&mut self, tl: &Trail, tm: &Term) -> (Vec<TrailIndex>, Result<Value, Term>) {
         let mut v = Vec::new();
@@ -133,7 +133,7 @@ impl BoolTheory {
                 m.satisfy_set(tl.abstract_justification((^used)@)) ==> m.satisfies((tm@, v@)))
 
         }
-        Err(t) => {  tl.ghost.acceptable(t@, Value::Bool(true)@) }
+        Err(t) => {  tl.ghost.acceptable(t@, Value::Bool(true)@) && t@.well_sorted() }
     })]
     #[ensures(forall<ix : _> used@.contains(ix) ==> (^used)@.contains(ix))]
     #[ensures(forall<ix : _> (^used)@.contains(ix) ==> tl.contains(ix))]
@@ -143,6 +143,7 @@ impl BoolTheory {
         tm: &Term,
         used: &mut Vec<TrailIndex>,
     ) -> Result<Value, Term> {
+        let old = gh! { *used };
         // if let Some(x) = tl.index_of(tm) {
         //     used.push(x);
         //     proof_assert!(tl.index_logic(x).0 == tm@);
@@ -151,7 +152,7 @@ impl BoolTheory {
         // }
 
         let _: Ghost![_] = gh! {Trail::abs_just_extend};
-        let _: Ghost![_] = gh! { theory::Model::subset};
+        // let _: Ghost![_] = gh! { theory::Model::subset};
 
         match tm {
             Term::Value(v @ Value::Bool(_)) => return Ok(v.clone()),
@@ -217,6 +218,7 @@ impl BoolTheory {
                     used.push(x);
                     proof_assert!(tl.index_logic(x).0 == tm@);
                     proof_assert!(tl.index_logic(x).1.is_bool());
+                    proof_assert!(forall<ix : _> old@.contains(ix) ==> used@.contains(ix));
                     return Ok(tl[x].val.clone());
                 } else {
                     Err(tm.clone())

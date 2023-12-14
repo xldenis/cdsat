@@ -241,12 +241,12 @@ impl Model {
     #[ensures(false)]
     pub fn consistent(self, t: Term, v: Value, w: Value) {}
 
-    #[ghost]
-    #[open(self)]
-    #[requires(forall<ix : _> set1.contains(ix) ==> set2.contains(ix))]
-    #[requires(self.satisfy_set(set1))]
-    #[ensures(self.satisfy_set(set2))]
-    pub fn subset(self, other: Self, set1: FSet<(Term, Value)>, set2: FSet<(Term, Value)>) {}
+    // #[ghost]
+    // #[open(self)]
+    // #[requires(forall<ix : _> set1.contains(ix) ==> set2.contains(ix))]
+    // #[requires(self.satisfy_set(set1))]
+    // #[ensures(self.satisfy_set(set2))]
+    // pub fn subset(self, other: Self, set1: FSet<(Term, Value)>, set2: FSet<(Term, Value)>) {}
 }
 
 pub enum Trail {
