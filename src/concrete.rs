@@ -45,7 +45,7 @@ impl Solver {
     pub fn solver(&mut self, trail: &mut Trail) -> Answer {
         self.lra_state = TheoryState::Unknown;
         self.bool_state = TheoryState::Unknown;
-        let old_trail: Ghost![_] = gh! { trail};
+        let old_trail: Ghost![_] = snapshot! { trail};
         let mut decision : Option<(Term, _)> = None;
         #[invariant(old_trail.ghost.impls(*trail.ghost))]
         #[invariant(trail.invariant())]
@@ -56,7 +56,7 @@ impl Solver {
         #[invariant(self.bool_state != TheoryState::Sat || self.lra_state != TheoryState::Sat)]
         #[invariant(self.bool_state == TheoryState::Decision || self.lra_state == TheoryState::Decision ==> decision != None)]
         loop {
-            let iter_trail = gh! { * trail };
+            let iter_trail = snapshot! { * trail };
             let len = trail.len();
             assert!(!self.sat());
             let (answer, state, other) = if self.bool_state == TheoryState::Unknown {
@@ -125,8 +125,8 @@ impl Solver {
     #[ensures((*trail).ghost.impls(*(^trail).ghost))]
     fn resolve_conflict(&self, trail: &mut Trail, conflict: Vec<TrailIndex>) {
         let mut heap: ConflictHeap = ConflictHeap::new();
-        let old_conflict: Ghost![Vec<TrailIndex>] = gh! { conflict };
-        let old_trail: Ghost![&mut Trail] = gh! { trail };
+        let old_conflict: Ghost![Vec<TrailIndex>] = snapshot! { conflict };
+        let old_trail: Ghost![&mut Trail] = snapshot! { trail };
 
         #[invariant(forall<a : _> heap@.contains(a) == produced.contains(a))]
         #[invariant(creusot_contracts::invariant::inv(heap))]
@@ -135,13 +135,13 @@ impl Solver {
         }
 
         let mut abs_cflct =
-            gh! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
+            snapshot! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
 
         let max_ix = *heap.last().unwrap();
         let conflict_level = max_ix.level();
 
         // The level in `abs_cflct` and `heap` agree
-        gh! { ix_to_abs_level(*trail, heap.shallow_model()) };
+        snapshot! { ix_to_abs_level(*trail, heap.shallow_model()) };
 
         #[invariant(forall<ix : _> heap@.contains(ix) ==> trail.contains(ix))]
         #[invariant(trail.invariant())]
@@ -179,26 +179,26 @@ impl Solver {
             if a.is_bool() && ix.level() > rem_level {
                 proof_assert!(ix.level_log() == trail.ghost.level_of(trail[ix]));
 
-                let _ = gh! { abs_cflct.backjump2(trail[ix]) };
+                let _ = snapshot! { abs_cflct.backjump2(trail[ix]) };
 
-                let oheap = gh! { heap };
+                let oheap = snapshot! { heap };
                 let just = heap.into_vec();
 
-                let old = gh! { trail.abstract_justification(just.shallow_model()) };
-                gh! { set_remove(*old, trail[ix]) };
+                let old = snapshot! { trail.abstract_justification(just.shallow_model()) };
+                snapshot! { set_remove(*old, trail[ix]) };
 
                 proof_assert!(forall<a : _> ix_to_abs(*trail, oheap@).contains(a) ==> old.contains(a));
                 proof_assert!(old.ext_eq(abs_cflct.1.remove(trail[ix])));
 
-                let old_trail = gh! { *trail};
+                let old_trail = snapshot! { *trail};
 
                 trail.restrict(rem_level);
 
-                gh!(trail.abs_just_equiv(*old_trail, just.shallow_model()));
+                snapshot!(trail.abs_just_equiv(*old_trail, just.shallow_model()));
                 info!("backjump");
 
-                gh! { set_remove(*old, trail[ix]) };
-                gh! { abs_cflct.learn_justified(old_trail[ix]) };
+                snapshot! { set_remove(*old, trail[ix]) };
+                snapshot! { abs_cflct.learn_justified(old_trail[ix]) };
                 // proof_assert!(forall<a : _> old.contains(a) ==>
                 //     abs_cflct.1.remove(trail[ix]).contains(a)
                 // );
@@ -220,17 +220,17 @@ impl Solver {
             // The key fact we need to prove is that `ix` has the level of the conflict.
             // This would simplify the following assertion.
             proof_assert!(trail.ghost.level_of(trail[ix]) > 0);
-            gh!(theory::Trail::is_input_inv);
+            snapshot!(theory::Trail::is_input_inv);
             proof_assert!(!trail.ghost.is_input(trail[ix]));
             proof_assert!(!trail.ghost.is_decision(trail[ix]));
             proof_assert!(trail.ghost.is_justified(trail[ix]));
-            gh! {trail.ghost.justified_is_bool(trail[ix])};
+            snapshot! {trail.ghost.justified_is_bool(trail[ix])};
             // proof_assert!(trail[ix].1.is_bool());
             let just = trail.justification(ix);
-            let just_ghost = gh! { just };
+            let just_ghost = snapshot! { just };
             // proof_assert!(forall<i : _> 0 <= i && i < just@.len() ==> trail.contains(just[i]));
 
-            let abs_just = gh! { trail.abstract_justification(just@)};
+            let abs_just = snapshot! { trail.abstract_justification(just@)};
             #[invariant(forall<i : _> 0 <= i && i < produced.len() ==>
                 abs_just.contains(trail[*produced[i]])
             )]
@@ -260,9 +260,9 @@ impl Solver {
 
             info!("resolve");
 
-            abs_cflct = gh! { abs_cflct.resolvef(a.term_value()) };
+            abs_cflct = snapshot! { abs_cflct.resolvef(a.term_value()) };
 
-            let old_heap: Ghost![ConflictHeap] = gh! { heap };
+            let old_heap: Ghost![ConflictHeap] = snapshot! { heap };
 
             // Resolve
             #[invariant(forall<a : _> heap@.contains(a) == (old_heap@.contains(a) || produced.contains(a)))]
@@ -270,7 +270,7 @@ impl Solver {
             #[invariant(forall<a : _> produced.contains(a) ==> heap@.contains(a))]
             #[invariant(creusot_contracts::invariant::inv(heap))]
             for a in just {
-                // let _ = gh!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
+                // let _ = snapshot!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
 
                 heap.insert(a);
             }
@@ -280,12 +280,12 @@ impl Solver {
     }
 }
 
-#[ghost]
+#[logic]
 #[open(self)]
 #[ensures(forall<x : _> a != x ==> s.contains(x) ==> s.remove(a).contains(x))]
 fn set_remove<T>(s: FSet<T>, a: T) {}
 
-#[ghost]
+#[logic]
 #[open(self)]
 #[ensures(forall<x : _> s.remove(a).contains(x) ==> s.contains(x))]
 fn set_remove2<T>(s: FSet<T>, a: T) {}
@@ -320,7 +320,7 @@ pub enum ExtendResult {
 //     fn coherent(self, tl: Trail, ix: usize);
 
 //     // The last index that we have seen and can be held accountable for
-//     #[ghost]
+//     #[logic]
 //     fn last_index(self) -> usize;
 // }
 

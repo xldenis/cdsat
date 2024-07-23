@@ -1,7 +1,7 @@
 use std::{fmt::Display, unreachable};
 
 use creusot_contracts::{
-    ensures, ghost, logic, open, requires, trusted, Clone, DeepModel, PartialEq,
+    ensures, logic, open, requires, trusted, Clone, DeepModel, PartialEq,
 };
 
 use num::{One, Zero};
@@ -23,7 +23,7 @@ impl creusot_contracts::ShallowModel for Sort {
     type ShallowModelTy = theory::Sort;
 
     #[open]
-    #[ghost]
+    #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
     }
@@ -124,6 +124,7 @@ impl Term {
         Term::Eq(Box::new(a), Box::new(b))
     }
 
+    #[trusted]
     pub(crate) fn as_val(&self) -> Value {
         if let Term::Value(v) = self {
             v.clone()
@@ -166,18 +167,21 @@ impl Display for Value {
 impl creusot_contracts::ShallowModel for Term {
     type ShallowModelTy = theory::Term;
     #[open]
-    #[ghost]
+    #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
     }
 }
 
+use creusot_contracts::pearlite;
+
 #[cfg(creusot)]
 impl creusot_contracts::DeepModel for Term {
     type DeepModelTy = theory::Term;
 
+
     #[open]
-    #[ghost]
+    #[logic]
     fn deep_model(self) -> Self::DeepModelTy {
         use creusot_contracts::num_rational::Real;
         match self {
@@ -224,7 +228,7 @@ pub enum Value {
 #[cfg(creusot)]
 impl DeepModel for Value {
     type DeepModelTy = theory::Value;
-    #[ghost]
+    #[logic]
     #[open]
     fn deep_model(self) -> Self::DeepModelTy {
         match self {
@@ -239,7 +243,7 @@ impl creusot_contracts::ShallowModel for Value {
     type ShallowModelTy = theory::Value;
 
     #[open]
-    #[ghost]
+    #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
     }

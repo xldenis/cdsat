@@ -31,9 +31,9 @@ impl BoolTheory {
     })]
     #[ensures(tl.ghost.impls(*(^tl).ghost))]
     pub fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
-        let old_tl: Ghost![_] = gh! { tl };
+        let old_tl: Ghost![_] = snapshot! { tl };
         let mut iter = tl.indices();
-        let old_iter: Ghost![_] = gh! { iter };
+        let old_iter: Ghost![_] = snapshot! { iter };
         // info!("Bool is performing deductions");
         #[invariant(forall<i : _> old_tl.contains(i) ==> iter.trail.contains(i))]
         #[invariant(old_tl.ghost.impls(*iter.trail.ghost))]
@@ -64,8 +64,8 @@ impl BoolTheory {
                 Result::Ok(res) => {
                     if res != assign.val {
                         just.push(ix);
-                        let _: Ghost![_] = gh! {crate::trail::abstract_justification_insert};
-                        let _: Ghost![_] = gh! { theory::Model::consistent };
+                        let _: Ghost![_] = snapshot! {crate::trail::abstract_justification_insert};
+                        let _: Ghost![_] = snapshot! { theory::Model::consistent };
 
                         proof_assert!(^iter.trail == ^*old_tl);
 
@@ -143,7 +143,7 @@ impl BoolTheory {
         tm: &Term,
         used: &mut Vec<TrailIndex>,
     ) -> Result<Value, Term> {
-        let old = gh! { *used };
+        let old = snapshot! { *used };
         // if let Some(x) = tl.index_of(tm) {
         //     used.push(x);
         //     proof_assert!(tl.index_logic(x).0 == tm@);
@@ -151,8 +151,8 @@ impl BoolTheory {
         //     return Ok(tl[x].val.clone());
         // }
 
-        let _: Ghost![_] = gh! {Trail::abs_just_extend};
-        // let _: Ghost![_] = gh! { theory::Model::subset};
+        let _: Ghost![_] = snapshot! {Trail::abs_just_extend};
+        // let _: Ghost![_] = snapshot! { theory::Model::subset};
 
         match tm {
             Term::Value(v @ Value::Bool(_)) => return Ok(v.clone()),

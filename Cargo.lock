@@ -201,7 +201,7 @@ checksum = "245097e9a4535ee1e3e3931fcfcd55a796a44c643e8596ff6566d68f09b87bbc"
 
 [[package]]
 name = "creusot-contracts"
-version = "0.2.0"
+version = "0.1.0"
 dependencies = [
  "creusot-contracts-dummy",
  "creusot-contracts-proc",
@@ -210,14 +210,14 @@ dependencies = [
 
 [[package]]
 name = "creusot-contracts-dummy"
-version = "0.2.0"
+version = "0.1.0"
 dependencies = [
  "quote",
 ]
 
 [[package]]
 name = "creusot-contracts-proc"
-version = "0.2.0"
+version = "0.1.0"
 dependencies = [
  "pearlite-syn",
  "proc-macro2",
@@ -439,7 +439,7 @@ dependencies = [
 
 [[package]]
 name = "pearlite-syn"
-version = "0.2.0"
+version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -518,18 +518,18 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.66"
+version = "1.0.86"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "18fb31db3f9bddb2ea821cde30a9f70117e3f119938b5ee630b7403aa6e2ead9"
+checksum = "5e719e8df665df0d1c8fbfd238015744736151d4445ec0836b8e628aae103b77"
 dependencies = [
  "unicode-ident",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.33"
+version = "1.0.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5267fca4496028628a95160fc423a33e8b2e6af8a5302579e322e4b520293cae"
+checksum = "0fa76aaf39101c457836aec0ce2316dbdc3ab723cdda1c6bd4e6ad4208acaca7"
 dependencies = [
  "proc-macro2",
 ]
@@ -815,9 +815,9 @@ checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
 
 [[package]]
 name = "uuid"
-version = "1.1.1"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6d5d669b51467dcf7b2f1a796ce0f955f05f01cafda6c19d6e95f730df29238"
+checksum = "81dfa00651efa65069b0b6b651f4aaa31ba9e3c3ce0137aaad053604ee7e0314"
 dependencies = [
  "getrandom 0.2.6",
 ]

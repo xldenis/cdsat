@@ -1,13 +1,13 @@
 #! /bin/bash
 
 focus=""
-output="mlcfg/cdsat.mlcfg"
+output="mlcfg/cdsat.coma"
 if [ -z ${1+x} ]
 then
   focus=""
 else
   focus="--focus-on=$1"
-  output="mlcfg/$1.mlcfg"
+  output="mlcfg/$1.coma"
 fi
 
 cargo clean -p cdsat &&

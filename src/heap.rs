@@ -23,7 +23,7 @@ impl ConflictHeap {
     // #[trusted]
     #[ensures((^self)@ == (self@).insert(e))]
     pub(crate) fn insert(&mut self, e: TrailIndex) -> bool {
-        let old = gh! { * self };
+        let old = snapshot! { * self };
         let mut i = 0;
         #[invariant(forall<j : _> 0 <= j && j < i@ ==>  self.0[j] < e)]
         while i < self.0.len() {
@@ -82,7 +82,7 @@ impl ConflictHeap {
 impl creusot_contracts::ShallowModel for ConflictHeap {
     type ShallowModelTy = FSet<TrailIndex>;
 
-    #[ghost]
+    #[logic]
     #[open(self)]
     #[ensures(forall<x : _> self.0@.contains(x) == result.contains(x))]
     fn shallow_model(self) -> Self::ShallowModelTy {
@@ -90,7 +90,7 @@ impl creusot_contracts::ShallowModel for ConflictHeap {
     }
 }
 
-#[ghost]
+#[logic]
 #[ensures(forall<x : _> s.contains(x) == result.contains(x))]
 #[variant(s.len())]
 fn to_set<T>(s : Seq<T>) -> FSet<T> {

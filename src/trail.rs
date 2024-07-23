@@ -37,7 +37,7 @@ impl creusot_contracts::ShallowModel for Assignment {
     type ShallowModelTy = <Self as DeepModel>::DeepModelTy;
 
     #[open]
-    #[ghost]
+    #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
     }
@@ -57,7 +57,7 @@ impl creusot_contracts::ShallowModel for Reason {
     type ShallowModelTy = <Self as DeepModel>::DeepModelTy;
 
     #[open]
-    #[ghost]
+    #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self.deep_model()
     }
@@ -88,7 +88,7 @@ use ::std::cmp::Ordering;
 use creusot_contracts::OrdLogic;
 impl OrdLogic for TrailIndex {
     #[open]
-    #[ghost]
+    #[logic]
     fn cmp_log(self, rhs: Self) -> Ordering {
         match self.0.cmp_log(rhs.0) {
             Ordering::Less => Ordering::Less,
@@ -152,7 +152,7 @@ impl creusot_contracts::ShallowModel for TrailIndex {
     type ShallowModelTy = Self;
 
     #[open]
-    #[ghost]
+    #[logic]
     fn shallow_model(self) -> Self::ShallowModelTy {
         self
     }
@@ -163,7 +163,7 @@ impl creusot_contracts::DeepModel for TrailIndex {
     type DeepModelTy = Self;
 
     #[open]
-    #[ghost]
+    #[logic]
     fn deep_model(self) -> Self::DeepModelTy {
         self
     }
@@ -176,7 +176,7 @@ impl TrailIndex {
     }
 
     #[open]
-    #[ghost]
+    #[logic]
     pub fn level_log(self) -> Int {
         self.0.shallow_model()
     }
@@ -212,7 +212,7 @@ impl Trail {
         let mut assignments = Vec::new();
         assignments.insert(0, input);
 
-        Trail { assignments, level: 0, ghost: gh! { theory::Trail::Empty }, num_assign: 0 }
+        Trail { assignments, level: 0, ghost: snapshot! { theory::Trail::Empty }, num_assign: 0 }
     }
 
     #[ensures(result@ == (self.assignments@).len())]
@@ -292,7 +292,7 @@ impl Trail {
         }
     }
 
-    #[ghost]
+    #[logic]
     fn abstract_assign(&self, a: Assignment) -> theory::Assign {
         match a.reason {
             Reason::Input => theory::Assign::Input(a.term.shallow_model(), a.val.shallow_model()),
@@ -307,7 +307,7 @@ impl Trail {
         }
     }
 
-    #[ghost]
+    #[logic]
     #[open(self)]
     #[variant(just.len())]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
@@ -344,7 +344,7 @@ impl Trail {
         }
     }
 
-    #[ghost]
+    #[logic]
     #[variant(just.len())]
     #[requires(self.trail_extension(o))]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]) && o.contains(just[i]))]
@@ -357,7 +357,7 @@ impl Trail {
         }
     }
 
-    #[ghost]
+    #[logic]
     #[open(self)]
     #[variant(just.len())]
     #[requires(forall<i : _> 0 <= i && i < just2.len() ==> self.contains(just2[i]))]
@@ -368,7 +368,7 @@ impl Trail {
         proof_assert!(forall<i : _> 0 <= i && i < just2.len() ==> self.contains(just2[i]));
     }
 
-    #[ghost]
+    #[logic]
     #[variant(just.len())]
     #[requires(self.contains(elem))]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
@@ -377,7 +377,7 @@ impl Trail {
         ()
     }
 
-    #[ghost]
+    #[logic]
     #[variant(just.len())]
     #[requires(self.contains(elem))]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
@@ -403,19 +403,19 @@ impl Trail {
     #[ensures(self.ghost.impls(*(^self).ghost))]
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         info!("? {term} <- {val}");
-        let old = gh! { * self };
+        let old = snapshot! { * self };
         self.assignments.len();
         self.level += 1;
-        let kv = gh! { (term.shallow_model(), val.shallow_model())};
-        self.ghost = gh! { theory::Normal(*self.ghost).decidef(term@, val@).0};
+        let kv = snapshot! { (term.shallow_model(), val.shallow_model())};
+        self.ghost = snapshot! { theory::Normal(*self.ghost).decidef(term@, val@).0};
         let assign = Assignment { term, val, reason: Reason::Decision, level: self.level };
         self.assignments.push(vec![assign]);
         proof_assert!(forall<ix : _> old.contains(ix) ==> self.reason(ix) == old.reason(ix));
         proof_assert!(forall<ix : _> old.contains(ix) ==> old.index_logic(ix) == self.index_logic(ix));
-        gh! { Self::abs_just_equiv };
+        snapshot! { Self::abs_just_equiv };
         let new_ix = TrailIndex(self.level, 0);
         proof_assert!(self[new_ix] == *kv);
-        let _: Ghost![_] = gh! { theory::Trail::just_stable };
+        let _: Ghost![_] = snapshot! { theory::Trail::just_stable };
         proof_assert!(self.abstract_relation());
         proof_assert!(self.justified_is_justified());
         // self.num_assign += 1;
@@ -495,21 +495,21 @@ impl Trail {
         let level = self.max_level(&into_vec);
 
         // proof_assert!(level <= self.level);
-        let g_vec: Ghost![_] = gh! { into_vec };
+        let g_vec: Ghost![_] = snapshot! { into_vec };
         let just: Ghost![FSet<(theory::Term, theory::Value)>] =
-            gh! { self.abstract_justification(into_vec.shallow_model()) };
+            snapshot! { self.abstract_justification(into_vec.shallow_model()) };
 
         proof_assert!(level@ == self.ghost.set_level(*just));
 
-        let _: Ghost![_] = gh! { theory::Normal(*self.ghost).deducef(*just, term.shallow_model(), val.shallow_model()) };
+        let _: Ghost![_] = snapshot! { theory::Normal(*self.ghost).deducef(*just, term.shallow_model(), val.shallow_model()) };
 
-        let old: Ghost![_] = gh! { self };
+        let old: Ghost![_] = snapshot! { self };
 
         self.ghost =
-            gh! { self.ghost.add_justified(*just, term.shallow_model(), val.shallow_model())};
+            snapshot! { self.ghost.add_justified(*just, term.shallow_model(), val.shallow_model())};
 
 
-        let v: Ghost![_] = gh! { (term.shallow_model(), val.shallow_model())};
+        let v: Ghost![_] = snapshot! { (term.shallow_model(), val.shallow_model())};
 
         proof_assert!(self.ghost.level_of(*v) == level@);
         let a = Assignment { term, val, reason: Reason::Justified(into_vec), level };
@@ -524,8 +524,8 @@ impl Trail {
         self.assignments[level].push(a);
         // self.num_assign += 1;
 
-        let _: Ghost![()] = gh! { self.abs_just_equiv(**old, g_vec@)};
-        let _: Ghost![_] = gh! { theory::Trail::just_stable };
+        let _: Ghost![()] = snapshot! { self.abs_just_equiv(**old, g_vec@)};
+        let _: Ghost![_] = snapshot! { theory::Trail::just_stable };
         proof_assert!(forall<ix : _> old.contains(ix) ==> self.reason(ix) == old.reason(ix));
         proof_assert!(forall<ix : _> old.contains(ix) ==> old.index_logic(ix) == self.index_logic(ix));
 
@@ -535,7 +535,7 @@ impl Trail {
         proof_assert!(self.abstract_relation());
     }
 
-    #[ghost]
+    #[logic]
     #[open(self)]
     #[requires(forall<j : _> just.contains(j) ==> self.contains(j) && other.contains(j) && self.index_logic(j) == other.index_logic(j))]
     #[ensures(self.abstract_justification(just) == other.abstract_justification(just))]
@@ -549,7 +549,7 @@ impl Trail {
         self.assignments[ix.0][ix.1].reason
     }
 
-    #[ghost]
+    #[logic]
     #[requires(self.invariant())]
     #[requires(other.abstract_relation() && other.ghost.invariant())]
     #[requires(self.ghost.restrict(other.level@) == *other.ghost)]
@@ -582,7 +582,7 @@ impl Trail {
     #[ensures(forall<ix : TrailIndex> ix.level_log() <= level@ ==> self.contains(ix) ==> (^self).contains(ix))]
     #[ensures(forall<ix : TrailIndex> (^self).contains(ix) ==> self.index_logic(ix) == (^self).index_logic(ix))]
     pub(crate) fn restrict(&mut self, level: usize) {
-        let old: Ghost![&mut Trail] = gh! { self };
+        let old: Ghost![&mut Trail] = snapshot! { self };
 
         // Restate as a subsequence?
         // #[invariant(forall<i : _> 0 <= i && i <= self.level@ ==> (self.assignments@)[i] == (old.assignments)@[i])]
@@ -593,9 +593,9 @@ impl Trail {
         // #[invariant(forall<ix : _> old.contains(ix) ==> ix.level_log() <= self.level@ ==> self.contains(ix))]
         #[invariant(self.invariant())]
         while level < self.level {
-            let _: Ghost![_] = gh!(theory::Trail::restrict_idempotent);
-            let _: Ghost![_] = gh!(theory::Trail::restrict_kind_unchanged);
-            let _: Ghost![_] = gh!(theory::Trail::restrict_sound);
+            let _: Ghost![_] = snapshot!(theory::Trail::restrict_idempotent);
+            let _: Ghost![_] = snapshot!(theory::Trail::restrict_kind_unchanged);
+            let _: Ghost![_] = snapshot!(theory::Trail::restrict_sound);
 
             // This is a load bearing `unwrap`. It allows the provers to properly see that `pop` returned `Some` here
             // and use the appropriate specification. They don't want to break the `match` in the postcondition of `pop` otherwise.
@@ -603,10 +603,10 @@ impl Trail {
             proof_assert!(forall<ix : _> self.contains(ix) ==> old.contains(ix));
 
             self.level -= 1;
-            self.ghost = gh! { self.ghost.restrict(self.level.shallow_model()) };
+            self.ghost = snapshot! { self.ghost.restrict(self.level.shallow_model()) };
 
             proof_assert!(self.abstract_relation());
-            gh!(old.reasons_dont_change(*self));
+            snapshot!(old.reasons_dont_change(*self));
         }
     }
 
@@ -615,24 +615,24 @@ impl Trail {
     #[ensures(self.ghost.set_level(self.abstract_justification(assignments@)) == result@)]
     pub(crate) fn max_level(&self, assignments: &[TrailIndex]) -> usize {
         let mut max = 0;
-        let mut other = gh! { Seq::EMPTY };
+        let mut other = snapshot! { Seq::EMPTY };
         #[invariant(*other == produced.to_owned_seq())]
         #[invariant(self.ghost.set_level(self.abstract_justification(produced.to_owned_seq())) == max@)]
         for ix in assignments {
             proof_assert!(forall<i : _> 0 <= i && i < produced.len() ==> assignments[i] == *produced[i]);
-            gh! { self.abs_just_snoc(*other, *ix) };
-            let just = gh! { self.abstract_justification(*other) };
+            snapshot! { self.abs_just_snoc(*other, *ix) };
+            let just = snapshot! { self.abstract_justification(*other) };
             proof_assert!(self.ghost.set_level(*just) == max@);
             if ix.0 >= max {
                 max = ix.0;
                 proof_assert!(self.ghost.level_of(self[*ix]) == ix.0@);
-                gh! { self.ghost.set_level_max(*just, self[*ix]) };
+                snapshot! { self.ghost.set_level_max(*just, self[*ix]) };
             } else {
                 proof_assert!(ix.0 < max );
-                gh! { self.ghost.set_level_min(*just, self[*ix]) };
+                snapshot! { self.ghost.set_level_min(*just, self[*ix]) };
 
             }
-            other = gh! { other.push(*ix)};
+            other = snapshot! { other.push(*ix)};
             proof_assert!(other.ext_eq(produced.to_owned_seq()));
         }
         proof_assert!(other.ext_eq(assignments@));
@@ -640,7 +640,7 @@ impl Trail {
     }
 
     #[open]
-    #[ghost]
+    #[logic]
     pub fn index_logic(self, ix: TrailIndex) -> (theory::Term, theory::Value) {
         pearlite! {
             ((self.assignments)@[ix.0@])@[ix.1@].term_value()
@@ -663,7 +663,7 @@ pub struct IndexIterator<'a> {
 #[trusted]
 impl<'a> creusot_contracts::Resolve for IndexIterator<'a> {
     #[open]
-    #[predicate]
+    #[predicate(prophetic)]
     fn resolve(self) -> bool {
         self.trail.resolve()
     }
@@ -720,7 +720,7 @@ impl Index<TrailIndex> for Trail {
 
 impl Assignment {
     #[open]
-    #[ghost]
+    #[logic]
     pub fn term_value(&self) -> (theory::Term, theory::Value) {
         (self.term.shallow_model(), self.val.shallow_model())
     }
@@ -773,7 +773,7 @@ impl Assignment {
 }
 
 // This is the same as `abstract_justification`...
-#[ghost]
+#[logic]
 #[open(self)]
 #[variant(s.len())]
 #[ensures(forall<ix :_> s.contains(ix) ==> result.contains(t.index_logic(ix)))]
@@ -787,7 +787,7 @@ pub(crate) fn ix_to_abs(t: Trail, s: FSet<TrailIndex>) -> FSet<(theory::Term, th
     }
 }
 
-#[ghost]
+#[logic]
 #[open(self)]
 #[variant(s.len())]
 // #[requires(seq_unique(s))]
@@ -803,7 +803,7 @@ pub(crate) fn seq_to_set(trail: Trail, s: Seq<TrailIndex>, t: FSet<TrailIndex>) 
     }
 }
 
-#[ghost]
+#[logic]
 #[variant(s.len())]
 #[ensures(forall<t : _> s.contains(t) ==> e != t ==> result.contains(t))]
 #[ensures(forall<t : _> result.contains(t) ==>  s.contains(t))]
@@ -828,7 +828,7 @@ pub(crate) fn seq_unique<T>(s: Seq<T>) -> bool {
     pearlite! { forall<i : _, j : _> 0 <= i && i <= j && j < s.len() ==> i != j ==> s[i] != s[j] }
 }
 
-#[ghost]
+#[logic]
 #[open(self)]
 #[requires(!s.is_empty())]
 #[variant(s.len())]
@@ -850,7 +850,7 @@ pub(crate) fn set_max(s: FSet<TrailIndex>) -> TrailIndex {
     }
 }
 
-#[ghost]
+#[logic]
 #[open(self)]
 #[requires(t.invariant())]
 #[variant(s.len())]
@@ -869,7 +869,7 @@ pub(crate) fn ix_to_abs_level(t: Trail, s: FSet<TrailIndex>) {
     }
 }
 
-#[ghost]
+#[logic]
 #[open(self)]
 #[variant(s.len())]
 #[requires(t.invariant())]
@@ -882,7 +882,7 @@ pub(crate) fn ix_to_abs_remove(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
     )
 }
 
-#[ghost]
+#[logic]
 #[open(self)]
 #[variant(s.len())]
 #[requires(t.invariant())]
@@ -893,7 +893,7 @@ pub(crate) fn ix_to_abs_insert(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
     proof_assert!(ix_to_abs(t, s.insert(x)).ext_eq(ix_to_abs(t, s).insert(t.index_logic(x))));
 }
 
-#[ghost]
+#[logic]
 #[open(self)]
 #[variant(s.len())]
 #[requires(t.invariant())]
