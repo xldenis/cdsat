@@ -80,6 +80,13 @@ use trail::Trail;
 
 struct TermBuilder;
 
+#[cfg(creusot)]
+macro_rules! unimplemented {
+    ($($x:tt)*) => {
+        std::process::abort()
+    }
+}
+
 #[creusot_contracts::trusted]
 fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) -> Term {
     use smt2parser::concrete::{QualIdentifier, Term as PT};
@@ -103,7 +110,7 @@ fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) ->
                 "<" => Term::lt(arguments.remove(0), arguments.remove(0)),
                 "=" => Term::eq_(arguments.remove(0), arguments.remove(0)),
                 "*" => {
-                    let Term::Value(Value::Rat(k)) = arguments.remove(0) else {panic!()};
+                    let Term::Value(Value::Rat(k)) = arguments.remove(0) else {unimplemented!()};
 
                     Term::times(k.to_integer().try_into().unwrap(), arguments.remove(0))
                 }

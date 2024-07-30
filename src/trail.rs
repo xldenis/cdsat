@@ -540,6 +540,7 @@ impl Trail {
     #[requires(forall<j : _> just.contains(j) ==> self.contains(j) && other.contains(j) && self.index_logic(j) == other.index_logic(j))]
     #[ensures(self.abstract_justification(just) == other.abstract_justification(just))]
     pub fn abs_just_equiv(self, other: Self, just: Seq<TrailIndex>) {
+        proof_assert!(self.abstract_justification(just).ext_eq(other.abstract_justification(just)));
         ()
     }
 

@@ -183,7 +183,7 @@ impl Model {
             Term::Eq(l, r) => Value::Bool(self.interp(*l) == self.interp(*r)),
             Term::Neg(t) => match self.interp(*t) {
                 Value::Bool(b) => Value::Bool(!b),
-                _ => Value::Rat(Real::from_int(-1)),
+                _ => Value::Bool(false),
             },
         }
     }
@@ -444,18 +444,16 @@ impl Trail {
 
     #[logic]
     #[open]
-    // #[requires(self.invariant())]
-    // #[requires(forall<a : _> just.contains(a) ==> self.contains(a))]
-    // #[requires(self.acceptable(t, v))]
-    // #[requires(v.sort() == Sort::Boolean)]
-    // #[requires(forall<m : Model> m.satisfy_set(just) ==> m.satisfies((t, v)))]
-    // #[ensures(forall<a : _> self.contains(a) ==> self.find(a) == result.find(a))]
-    // #[ensures(result.contains((t,v)))]
-    // #[ensures(result.justification((t,v)) == just)]
-    // #[ensures(result.invariant())]
-    // #[ensures(result.is_justified((t,v)))]
-    // #[ensures(result.level_of((t, v)) == result.set_level(just))]
-    // #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) || a == (t, v))]
+    #[requires(self.invariant())]
+    #[requires(forall<a : _> just.contains(a) ==> self.contains(a))]
+    #[requires(self.acceptable(t, v))]
+    #[requires(v.sort() == Sort::Boolean)]
+    #[requires(forall<m : Model> m.satisfy_set(just) ==> m.satisfies((t, v)))]
+    #[ensures(forall<a : _> self.contains(a) ==> self.find(a) == result.find(a))]
+    #[ensures(result.invariant() && result.contains((t,v)))]
+    #[ensures(result.is_justified((t,v)) && (result.justification((t,v)) == just))]
+    #[ensures(result.level_of((t, v)) == result.set_level(just))]
+    #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) || a == (t, v))]
     pub fn add_justified(self, just: FSet<(Term, Value)>, t: Term, v: Value) -> Self {
         Trail::Assign(Assign::Justified(just, t, v), self.set_level(just), Box::new(self))
     }
@@ -547,17 +545,16 @@ impl Trail {
 
     #[logic]
     #[open(self)]
-    // #[requires(self.invariant())]
-    // #[ensures(result.invariant())]
-    // #[requires(level >= 0)]
-    // #[ensures(forall<a : _> self.contains(a) ==> self.level_of(a) <= level ==> result.contains(a) && result.level_of(a) == self.level_of(a))]
-    // #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) && result.level_of(a) <= level && result.level_of(a) == self.level_of(a))]
-    // #[ensures(level >= self.level() ==> result == self)]
-    // #[ensures(forall<a : _> !self.contains(a) ==> !result.contains(a))]
-    // #[ensures(forall<m : _> self.satisfied_by(m) ==> result.satisfied_by(m))]
-    // #[ensures(self.level() >= level ==> result.level() == level)]
-    // #[ensures(self.level() < level ==> result.level() == self.level())]
-    // #[ensures(result.len() <= self.len())]
+    #[requires(self.invariant())]
+    #[ensures(result.invariant())]
+    #[requires(level >= 0)]
+    #[ensures(forall<a : _> self.contains(a) ==> self.level_of(a) <= level ==> result.contains(a) && result.level_of(a) == self.level_of(a))]
+    #[ensures(forall<a : _> result.contains(a) ==> self.contains(a) && result.level_of(a) <= level && result.level_of(a) == self.level_of(a))]
+    #[ensures(level >= self.level() ==> result == self)]
+    #[ensures(forall<a : _> !self.contains(a) ==> !result.contains(a))]
+    #[ensures(forall<m : _> self.satisfied_by(m) ==> result.satisfied_by(m))]
+    #[ensures((self.level() >= level ==> result.level() == level) && (self.level() < level ==> result.level() == self.level()))]
+    #[ensures(result.len() <= self.len())]
     pub fn restrict(self, level: Int) -> Self {
         match self {
             Trail::Empty => Trail::Empty,

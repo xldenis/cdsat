@@ -11,7 +11,7 @@ use num_rational::BigRational;
 use crate::theory;
 
 // #[cfg_attr(not(creusot), derive(Hash))]
-#[derive(Clone, Debug, PartialEq, Eq, DeepModel, Copy, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, DeepModel, Copy)]
 #[DeepModelTy = "theory::Sort"]
 pub enum Sort {
     Boolean,
@@ -30,7 +30,7 @@ impl creusot_contracts::ShallowModel for Sort {
 }
 
 // #[cfg_attr(not(creusot), derive(Hash))]
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Term {
     Variable(usize, Sort),
     Value(Value),
@@ -87,6 +87,7 @@ impl Term {
         Term::Plus(Box::new(a), Box::new(b))
     }
 
+    #[trusted]
     pub fn times(k: BigRational, b: Self) -> Self {
         if k.is_zero() {
             Term::val(Value::zero())
@@ -129,8 +130,15 @@ impl Term {
         if let Term::Value(v) = self {
             v.clone()
         } else {
-            panic!()
+            unreachable!()
         }
+    }
+}
+
+#[cfg(creusot)]
+macro_rules! unimplemented {
+    ($($x:tt)*) => {
+        std::process::abort()
     }
 }
 
@@ -219,7 +227,7 @@ impl creusot_contracts::DeepModel for Term {
 }
 
 #[cfg_attr(not(creusot), derive(Ord, PartialOrd))]
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Value {
     Bool(bool),
     Rat(BigRational),
@@ -322,12 +330,13 @@ impl Value {
 }
 
 impl Value {
-    pub fn scale(self, k: isize) -> Self {
-        match self {
-            Value::Rat(r) => Value::Rat(r * BigRational::new(k.into(), 1.into())),
-            Value::Bool(_) => unreachable!(),
-        }
-    }
+    // pub fn scale(self, k: isize) -> Self {
+    //     match self {
+    //         Value::Rat(r) => Value::Rat(r * BigRational::new(k.into(), 1.into())),
+    //         Value::Bool(_) => unreachable!(),
+    //     }
+    // }
+    #[trusted]
     pub fn rat(a: i64, b: i64) -> Self {
         Value::Rat(BigRational::new(a.into(), b.into()))
     }
