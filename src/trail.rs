@@ -33,12 +33,12 @@ impl Display for Assignment {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::ShallowModel for Assignment {
-    type ShallowModelTy = <Self as DeepModel>::DeepModelTy;
+impl creusot_contracts::View for Assignment {
+    type ViewTy = <Self as DeepModel>::DeepModelTy;
 
     #[open]
     #[logic]
-    fn shallow_model(self) -> Self::ShallowModelTy {
+    fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
 }
@@ -53,12 +53,12 @@ pub enum Reason {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::ShallowModel for Reason {
-    type ShallowModelTy = <Self as DeepModel>::DeepModelTy;
+impl creusot_contracts::View for Reason {
+    type ViewTy = <Self as DeepModel>::DeepModelTy;
 
     #[open]
     #[logic]
-    fn shallow_model(self) -> Self::ShallowModelTy {
+    fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
 }
@@ -148,12 +148,12 @@ impl OrdLogic for TrailIndex {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::ShallowModel for TrailIndex {
-    type ShallowModelTy = Self;
+impl creusot_contracts::View for TrailIndex {
+    type ViewTy = Self;
 
     #[open]
     #[logic]
-    fn shallow_model(self) -> Self::ShallowModelTy {
+    fn view(self) -> Self::ViewTy {
         self
     }
 }
@@ -178,7 +178,7 @@ impl TrailIndex {
     #[open]
     #[logic]
     pub fn level_log(self) -> Int {
-        self.0.shallow_model()
+        self.0.view()
     }
 }
 
@@ -233,7 +233,7 @@ impl Trail {
     }
 
     #[open]
-    #[predicate]
+    #[predicate(prophetic)]
     pub fn invariant(self) -> bool {
         pearlite! {
             self.abstract_relation() && self.ghost.sound() && self.ghost.invariant()
@@ -295,14 +295,14 @@ impl Trail {
     #[logic]
     fn abstract_assign(&self, a: Assignment) -> theory::Assign {
         match a.reason {
-            Reason::Input => theory::Assign::Input(a.term.shallow_model(), a.val.shallow_model()),
+            Reason::Input => theory::Assign::Input(a.term.view(), a.val.view()),
             Reason::Decision => {
-                theory::Assign::Decision(a.term.shallow_model(), a.val.shallow_model())
+                theory::Assign::Decision(a.term.view(), a.val.view())
             }
             Reason::Justified(just) => theory::Assign::Justified(
-                self.abstract_justification(just.shallow_model()),
-                a.term.shallow_model(),
-                a.val.shallow_model(),
+                self.abstract_justification(just.view()),
+                a.term.view(),
+                a.val.view(),
             ),
         }
     }
@@ -381,12 +381,12 @@ impl Trail {
     #[variant(just.len())]
     #[requires(self.contains(elem))]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
-    #[ensures(self.abstract_justification(just.push(elem)) == self.abstract_justification(just).insert(self.index_logic(elem)))]
+    #[ensures(self.abstract_justification(just.push_back(elem)) == self.abstract_justification(just).insert(self.index_logic(elem)))]
     fn abs_just_snoc(self, just: Seq<TrailIndex>, elem: TrailIndex) {
         if just == Seq::EMPTY {
             ()
         } else {
-            let j = just.push(elem);
+            let j = just.push_back(elem);
             let _ = self.abs_just_cons(j.subsequence(1, j.len()), j[0]);
             self.abs_just_snoc(just.subsequence(1, just.len()), elem)
         }
@@ -406,7 +406,7 @@ impl Trail {
         let old = snapshot! { * self };
         self.assignments.len();
         self.level += 1;
-        let kv = snapshot! { (term.shallow_model(), val.shallow_model())};
+        let kv = snapshot! { (term.view(), val.view())};
         self.ghost = snapshot! { theory::Normal(*self.ghost).decidef(term@, val@).0};
         let assign = Assignment { term, val, reason: Reason::Decision, level: self.level };
         self.assignments.push(vec![assign]);
@@ -497,19 +497,19 @@ impl Trail {
         // proof_assert!(level <= self.level);
         let g_vec: Ghost![_] = snapshot! { into_vec };
         let just: Ghost![FSet<(theory::Term, theory::Value)>] =
-            snapshot! { self.abstract_justification(into_vec.shallow_model()) };
+            snapshot! { self.abstract_justification(into_vec.view()) };
 
         proof_assert!(level@ == self.ghost.set_level(*just));
 
-        let _: Ghost![_] = snapshot! { theory::Normal(*self.ghost).deducef(*just, term.shallow_model(), val.shallow_model()) };
+        let _: Ghost![_] = snapshot! { theory::Normal(*self.ghost).deducef(*just, term.view(), val.view()) };
 
         let old: Ghost![_] = snapshot! { self };
 
         self.ghost =
-            snapshot! { self.ghost.add_justified(*just, term.shallow_model(), val.shallow_model())};
+            snapshot! { self.ghost.add_justified(*just, term.view(), val.view())};
 
 
-        let v: Ghost![_] = snapshot! { (term.shallow_model(), val.shallow_model())};
+        let v: Ghost![_] = snapshot! { (term.view(), val.view())};
 
         proof_assert!(self.ghost.level_of(*v) == level@);
         let a = Assignment { term, val, reason: Reason::Justified(into_vec), level };
@@ -604,7 +604,7 @@ impl Trail {
             proof_assert!(forall<ix : _> self.contains(ix) ==> old.contains(ix));
 
             self.level -= 1;
-            self.ghost = snapshot! { self.ghost.restrict(self.level.shallow_model()) };
+            self.ghost = snapshot! { self.ghost.restrict(self.level.view()) };
 
             proof_assert!(self.abstract_relation());
             snapshot!(old.reasons_dont_change(*self));
@@ -633,7 +633,7 @@ impl Trail {
                 snapshot! { self.ghost.set_level_min(*just, self[*ix]) };
 
             }
-            other = snapshot! { other.push(*ix)};
+            other = snapshot! { other.push_back(*ix)};
             proof_assert!(other.ext_eq(produced.to_owned_seq()));
         }
         proof_assert!(other.ext_eq(assignments@));
@@ -661,13 +661,16 @@ pub struct IndexIterator<'a> {
     cur_ix: TrailIndex,
 }
 
-#[trusted]
 impl<'a> creusot_contracts::Resolve for IndexIterator<'a> {
     #[open]
     #[predicate(prophetic)]
     fn resolve(self) -> bool {
         self.trail.resolve()
     }
+    
+    #[open]
+    #[logic]
+    fn resolve_coherence(&self) {}
 }
 
 impl IndexIterator<'_> {
@@ -723,7 +726,7 @@ impl Assignment {
     #[open]
     #[logic]
     pub fn term_value(&self) -> (theory::Term, theory::Value) {
-        (self.term.shallow_model(), self.val.shallow_model())
+        (self.term.view(), self.val.view())
     }
 
     #[ensures(result == self.level)]
@@ -818,7 +821,7 @@ fn remove<T>(s: Seq<T>, e: T) -> Seq<T> {
         if s[s.len() - 1] == e {
             remove(s.subsequence(0, s.len() - 1), e)
         } else {
-            remove(s.subsequence(0, s.len() - 1), e).push(s[s.len() - 1])
+            remove(s.subsequence(0, s.len() - 1), e).push_back(s[s.len() - 1])
         }
     }
 }
@@ -900,7 +903,7 @@ pub(crate) fn ix_to_abs_insert(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
 #[requires(t.invariant())]
 #[requires(t.contains(x))]
 #[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
-#[ensures(t.abstract_justification(s.push(x)) == t.abstract_justification(s).insert(t.index_logic(x)) )]
+#[ensures(t.abstract_justification(s.push_back(x)) == t.abstract_justification(s).insert(t.index_logic(x)) )]
 pub(crate) fn abstract_justification_insert(t: Trail, x: TrailIndex, s: Seq<TrailIndex>) {
     t.abs_just_snoc(s, x)
 }

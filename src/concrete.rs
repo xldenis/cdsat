@@ -135,13 +135,13 @@ impl Solver {
         }
 
         let mut abs_cflct =
-            snapshot! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.shallow_model()))};
+            snapshot! { theory::Conflict(trail.ghost.inner(), ix_to_abs(*trail, heap.view()))};
 
         let max_ix = *heap.last().unwrap();
         let conflict_level = max_ix.level();
 
         // The level in `abs_cflct` and `heap` agree
-        snapshot! { ix_to_abs_level(*trail, heap.shallow_model()) };
+        snapshot! { ix_to_abs_level(*trail, heap.view()) };
 
         #[invariant(forall<ix : _> heap@.contains(ix) ==> trail.contains(ix))]
         #[invariant(trail.invariant())]
@@ -184,7 +184,7 @@ impl Solver {
                 let oheap = snapshot! { heap };
                 let just = heap.into_vec();
 
-                let old = snapshot! { trail.abstract_justification(just.shallow_model()) };
+                let old = snapshot! { trail.abstract_justification(just.view()) };
                 snapshot! { set_remove(*old, trail[ix]) };
 
                 proof_assert!(forall<a : _> ix_to_abs(*trail, oheap@).contains(a) ==> old.contains(a));
@@ -194,7 +194,7 @@ impl Solver {
 
                 trail.restrict(rem_level);
 
-                snapshot!(trail.abs_just_equiv(*old_trail, just.shallow_model()));
+                snapshot!(trail.abs_just_equiv(*old_trail, just.view()));
                 info!("backjump");
 
                 snapshot! { set_remove(*old, trail[ix]) };
@@ -270,7 +270,7 @@ impl Solver {
             #[invariant(forall<a : _> produced.contains(a) ==> heap@.contains(a))]
             #[invariant(creusot_contracts::invariant::inv(heap))]
             for a in just {
-                // let _ = snapshot!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
+                // let _ = snapshot!(ix_to_abs_insert(*trail, a, heap.view()));
 
                 heap.insert(a);
             }
@@ -290,13 +290,13 @@ fn set_remove<T>(s: FSet<T>, a: T) {}
 #[ensures(forall<x : _> s.remove(a).contains(x) ==> s.contains(x))]
 fn set_remove2<T>(s: FSet<T>, a: T) {}
 
-#[derive(Debug, PartialEq, Eq, DeepModel)]
+#[derive( PartialEq, Eq, DeepModel)]
 pub enum Answer {
     Sat,
     Unsat,
 }
 
-#[derive(Debug)]
+// #[derive(Debug)]
 pub enum ExtendResult {
     Conflict(Vec<TrailIndex>),
     Decision(Term, Value),

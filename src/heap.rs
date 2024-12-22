@@ -10,7 +10,7 @@ impl Invariant for ConflictHeap {
     #[predicate]
     #[open(crate)]
     fn invariant(self) -> bool {
-        seq_unique(self.0.shallow_model()) && self.0.shallow_model().sorted()
+        seq_unique(self.0.view()) && self.0.view().sorted()
     }
 }
 
@@ -79,14 +79,14 @@ impl ConflictHeap {
     }
 }
 
-impl creusot_contracts::ShallowModel for ConflictHeap {
-    type ShallowModelTy = FSet<TrailIndex>;
+impl creusot_contracts::View for ConflictHeap {
+    type ViewTy = FSet<TrailIndex>;
 
     #[logic]
     #[open(self)]
     #[ensures(forall<x : _> self.0@.contains(x) == result.contains(x))]
-    fn shallow_model(self) -> Self::ShallowModelTy {
-        to_set(self.0.shallow_model())
+    fn view(self) -> Self::ViewTy {
+        to_set(self.0.view())
     }
 }
 

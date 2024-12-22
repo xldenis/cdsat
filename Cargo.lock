@@ -201,7 +201,7 @@ checksum = "245097e9a4535ee1e3e3931fcfcd55a796a44c643e8596ff6566d68f09b87bbc"
 
 [[package]]
 name = "creusot-contracts"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "creusot-contracts-dummy",
  "creusot-contracts-proc",
@@ -210,14 +210,15 @@ dependencies = [
 
 [[package]]
 name = "creusot-contracts-dummy"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
+ "proc-macro2",
  "quote",
 ]
 
 [[package]]
 name = "creusot-contracts-proc"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "pearlite-syn",
  "proc-macro2",
@@ -439,7 +440,7 @@ dependencies = [
 
 [[package]]
 name = "pearlite-syn"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "proc-macro2",
  "quote",

@@ -244,7 +244,7 @@ fn main() -> std::io::Result<()> {
     let mut trail = Trail::new(assignments);
     let res = solver.solver(&mut trail);
 
-    println!("Answer = {res:?}");
+    // println!("Answer = {res:?}");
     Ok(())
 }
 

@@ -19,12 +19,12 @@ pub enum Sort {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::ShallowModel for Sort {
-    type ShallowModelTy = theory::Sort;
+impl creusot_contracts::View for Sort {
+    type ViewTy = theory::Sort;
 
     #[open]
     #[logic]
-    fn shallow_model(self) -> Self::ShallowModelTy {
+    fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
 }
@@ -172,11 +172,11 @@ impl Display for Value {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::ShallowModel for Term {
-    type ShallowModelTy = theory::Term;
+impl creusot_contracts::View for Term {
+    type ViewTy = theory::Term;
     #[open]
     #[logic]
-    fn shallow_model(self) -> Self::ShallowModelTy {
+    fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
 }
@@ -247,12 +247,12 @@ impl DeepModel for Value {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::ShallowModel for Value {
-    type ShallowModelTy = theory::Value;
+impl creusot_contracts::View for Value {
+    type ViewTy = theory::Value;
 
     #[open]
     #[logic]
-    fn shallow_model(self) -> Self::ShallowModelTy {
+    fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
 }
