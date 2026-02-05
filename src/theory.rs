@@ -1,4 +1,5 @@
 use creusot_contracts::{invariant::Invariant, logic::*, num_rational::Real, *};
+
 pub enum Term {
     Variable(Var),
     Value(Value),
@@ -11,8 +12,8 @@ pub enum Term {
 }
 
 impl Term {
-    #[open]
-    #[ghost]
+    #[logic(open)]
+    #[check(ghost)]
     pub fn sort(self) -> Sort {
         match self {
             Term::Variable(v) => v.1,
@@ -25,8 +26,8 @@ impl Term {
         }
     }
 
-    #[open]
-    #[ghost]
+    #[logic(open)]
+    #[check(ghost)]
     pub fn well_sorted(self) -> bool {
         match self {
             Term::Variable(v) => true,
@@ -54,8 +55,7 @@ impl Term {
         }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn is_bool(self) -> bool {
         self.sort() == Sort::Boolean
     }
@@ -76,14 +76,13 @@ pub enum Value {
 }
 
 impl Value {
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn is_bool(self) -> bool {
         self.sort() == Sort::Boolean
     }
 
-    #[open]
-    #[ghost]
+    #[logic(open)]
+    #[check(ghost)]
     pub fn sort(self) -> Sort {
         match self {
             Value::Bool(_) => Sort::Boolean,
@@ -91,8 +90,8 @@ impl Value {
         }
     }
 
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.is_bool())]
     #[ensures(result.is_bool())]
     pub fn negate(self) -> Self {
@@ -102,8 +101,8 @@ impl Value {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.is_bool())]
     #[ensures(self.negate().negate() == self)]
     pub fn negate_involutive(self) {}
@@ -116,8 +115,7 @@ pub enum Assign {
 }
 
 impl Assign {
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn invariant(self) -> bool {
         match self {
             Assign::Decision(t, v) => t.sort() == v.sort(),
@@ -126,8 +124,8 @@ impl Assign {
         }
     }
 
-    #[open]
-    #[ghost]
+    #[logic(open)]
+    #[check(ghost)]
     pub fn to_pair(self) -> (Term, Value) {
         match self {
             Assign::Decision(t, val) => (t, val),
@@ -136,8 +134,7 @@ impl Assign {
         }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn justified_sound(self) -> bool {
         match self {
             Assign::Justified(just, t, val) => pearlite! {
@@ -151,8 +148,7 @@ impl Assign {
 pub struct Model(Mapping<Var, Value>);
 
 impl Invariant for Model {
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     fn invariant(self) -> bool {
         pearlite! {
             forall<k : _, v : _> self.0.get(k) == v ==> k.1 == v.sort()
@@ -161,8 +157,8 @@ impl Invariant for Model {
 }
 
 impl Model {
-    #[open]
-    #[ghost]
+    #[logic(open)]
+    #[check(ghost)]
     #[ensures(self.invariant() ==> result.sort() == t.sort())]
     pub fn interp(self, t: Term) -> Value {
         match t {
@@ -188,26 +184,23 @@ impl Model {
         }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn satisfies(self, v: (Term, Value)) -> bool {
         self.interp(v.0) == v.1
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn satisfy_set(self, v: FSet<(Term, Value)>) -> bool {
         pearlite! { forall<a : _> v.contains(a) ==> self.satisfies(a) }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn entails(self, j: FSet<(Term, Value)>, c: (Term, Value)) -> bool {
         pearlite! { self.invariant() ==> self.satisfy_set(j) ==> self.satisfies(c) }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.satisfy_set(just) ==> self.satisfies(a))]
     #[requires(!self.satisfy_set(cflct))]
     #[requires(cflct.contains(a))]
@@ -220,8 +213,8 @@ impl Model {
     ) {
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(v.sort() == Sort::Boolean)]
     #[requires(t.sort() == Sort::Boolean)]
     #[requires(self.invariant())]
@@ -233,16 +226,16 @@ impl Model {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.satisfies((t, v)))]
     #[requires(self.satisfies((t, w)))]
     #[requires(v != w)]
     #[ensures(false)]
     pub fn consistent(self, t: Term, v: Value, w: Value) {}
 
-    // #[ghost]
-    // #[open(self)]
+    // #[check(ghost)]
+    // #[logic(open)]
     // #[requires(forall<ix : _> set1.contains(ix) ==> set2.contains(ix))]
     // #[requires(self.satisfy_set(set1))]
     // #[ensures(self.satisfy_set(set2))]
@@ -255,9 +248,7 @@ pub enum Trail {
 }
 
 impl Trail {
-    #[open]
-    #[predicate]
-    #[why3::attr = "inline:trivial"]
+    #[logic(open, predicate, inline)]
     pub fn sound(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -265,8 +256,7 @@ impl Trail {
         }
     }
 
-    #[predicate]
-    #[open]
+    #[logic(open, predicate)]
     pub fn is_set_level(self, s: FSet<(Term, Value)>, m: Int) -> bool {
         pearlite! {
             (s == FSet::EMPTY && m == 0) ||
@@ -275,8 +265,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[variant(s.len())]
     #[requires(self.invariant_nonneg())]
     #[ensures(forall<i : _> s.contains(i) ==> self.level_of(i) <= result)]
@@ -300,22 +290,22 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant_nonneg())]
     #[requires(self.set_level(set) <= self.level_of(elem))]
     // #[requires(forall<j : _> set.contains(j) ==> self.level_of(j) <= self.level_of(elem))]
     #[ensures(self.set_level(set.insert(elem)) == self.level_of(elem))]
     pub fn set_level_max(self, set: FSet<(Term, Value)>, elem: (Term, Value)) {}
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant_nonneg())]
     #[requires(self.level_of(elem) < self.set_level(set))]
     #[ensures(self.set_level(set.insert(elem)) == self.set_level(set))]
     pub fn set_level_min(self, set: FSet<(Term, Value)>, elem: (Term, Value)) {}
 
-    #[open]
+    #[logic(open)]
     #[predicate]
     pub fn invariant_level(self) -> bool {
         match self {
@@ -331,8 +321,7 @@ impl Trail {
         }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn invariant_nonneg(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -340,8 +329,7 @@ impl Trail {
         }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn invariant_assign(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -349,8 +337,7 @@ impl Trail {
         }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn invariant_contains(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -368,8 +355,7 @@ impl Trail {
         }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn trail_unique(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -382,8 +368,7 @@ impl Trail {
         }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn invariant(self) -> bool {
         self.invariant_level()
             && self.invariant_contains()
@@ -392,8 +377,7 @@ impl Trail {
             && self.invariant_assign()
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn acceptable(self, t: Term, val: Value) -> bool {
         !self.contains((t, val))
             && t.sort() == val.sort()
@@ -401,8 +385,8 @@ impl Trail {
     }
 
     // TODO: While loops to ghost code
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant_nonneg())]
     #[ensures(result >= 0 && result <= self.level())]
     pub fn level_of(self, d: (Term, Value)) -> Int {
@@ -412,8 +396,7 @@ impl Trail {
         }
     }
 
-    #[predicate]
-    #[open]
+    #[logic(open, predicate)]
     #[ensures(self.invariant_assign() ==> result == true ==> d.0.sort() == d.1.sort())]
     pub fn contains(self, d: (Term, Value)) -> bool {
         match self.find(d) {
@@ -422,8 +405,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.trail_unique())]
     #[requires(self.contains(d))]
     #[requires(d.1.is_bool())]
@@ -442,8 +425,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(forall<a : _> just.contains(a) ==> self.contains(a))]
     #[requires(self.acceptable(t, v))]
@@ -460,8 +443,8 @@ impl Trail {
         Trail::Assign(Assign::Justified(just, t, v), self.set_level(just), Box::new(self))
     }
 
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[ensures(match result {
       Some((a, l)) => a.to_pair() == d,
       _ => true,
@@ -481,8 +464,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)] // maybe not?
+    #[check(ghost)]
+    #[logic(open)] // maybe not?
     #[requires(self.invariant())]
     #[requires(self.is_justified(d))]
     #[requires(self.sound())]
@@ -497,9 +480,7 @@ impl Trail {
         }
     }
 
-    #[predicate]
-    #[open]
-    #[why3::attr = "inline:trivial"]
+    #[logic(open, predicate, inline)]
     pub fn is_justified(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Justified(_, _, _), _)) => true,
@@ -507,9 +488,7 @@ impl Trail {
         }
     }
 
-    #[predicate]
-    #[open]
-    #[why3::attr = "inline:trivial"]
+    #[logic(open, predicate, inline)]
     pub fn is_decision(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Decision(_, _), _)) => true,
@@ -517,9 +496,7 @@ impl Trail {
         }
     }
 
-    #[predicate]
-    #[open]
-    #[why3::attr = "inline:trivial"]
+    #[logic(open, predicate, inline)]
     pub fn is_input(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Input(_, _), _)) => true,
@@ -527,8 +504,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.is_input(d))]
     #[ensures(self.level_of(d) == 0)]
@@ -545,8 +522,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[ensures(result.invariant())]
     #[requires(level >= 0)]
@@ -573,8 +550,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(level >= 0)]
     #[requires(self.restrict(level).contains(d))]
@@ -592,8 +569,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[ensures(result >= 0)]
     #[ensures(result <= self.len())]
     // #[ensures(self == Trail::Empty || result <= self.len())]
@@ -605,8 +582,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[ensures(result >= 0)]
     pub fn len(self) -> Int {
         match self {
@@ -615,7 +592,7 @@ impl Trail {
         }
     }
 
-    #[ghost]
+    #[check(ghost)]
     #[requires(self.sound())]
     #[requires(self.contains(kv))]
     #[ensures(forall<a : _, l : _> self.find(kv) == Some((a, l)) ==> a.justified_sound())]
@@ -632,8 +609,7 @@ impl Trail {
         }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn ext(self, o: Self) -> bool {
         pearlite! {
             if self.level() <= o.level() {
@@ -644,8 +620,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.ext(o))]
     #[requires(self.contains(kv))]
     #[requires(o.contains(kv))]
@@ -653,8 +629,8 @@ impl Trail {
     #[ensures(self.justification(kv) == o.justification(kv))]
     pub fn just_stable(self, o: Self, kv: (Term, Value)) {}
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.is_justified(kv))]
     #[ensures(forall<e : _> self.justification(kv).contains(e) ==> self.contains(e) && self.level_of(e) <= self.level_of(kv))]
@@ -672,27 +648,23 @@ impl Trail {
         }
     }
 
-    #[predicate]
-    #[open]
+    #[logic(open, predicate)]
     pub fn satisfied_by(self, m: Model) -> bool {
         pearlite! { forall<a : _> self.contains(a) ==> m.satisfies(a) }
     }
 
-    #[predicate]
-    #[open]
+    #[logic(open, predicate)]
     // #[ensures(self.restrict(0).unsat() ==> result)]
     pub fn unsat(self) -> bool {
         pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> false }
     }
 
-    #[open]
-    #[predicate]
+    #[logic(open, predicate)]
     pub fn sat(self) -> bool {
         pearlite! { exists<m : _> self.satisfied_by(m) }
     }
 
-    #[predicate]
-    #[open]
+    #[logic(open, predicate)]
     #[ensures(result ==> rhs.unsat() ==> self.unsat())]
     pub fn impls(self, rhs: Self) -> bool {
         pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }
@@ -700,8 +672,8 @@ impl Trail {
 
     // Lemmas
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.sound())]
     #[ensures(self.restrict(level).sound())]
     pub fn restrict_sound(self, level: Int) {
@@ -713,8 +685,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(level >= 0)]
     #[requires(self.restrict(level).contains(d))]
@@ -736,8 +708,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[ensures(forall< a: _> self.contains(a) ==> self.level_of(a) <= self.level())]
     pub fn count_bounds(self) -> () {
@@ -749,8 +721,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(level >= 0)]
     #[requires(self.invariant())]
     #[requires(self.contains(d))]
@@ -769,8 +741,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(l1 >= 0 && l2 >= 0)]
     #[requires(l1 <= l2)]
@@ -782,8 +754,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.contains(d))]
     #[requires(d.1.is_bool())]
@@ -801,8 +773,8 @@ impl Trail {
         }
     }
 
-    #[ghost]
-    #[open(self)]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant_assign())]
     #[requires(self.is_justified(d))]
     #[ensures(d.1.is_bool())]
@@ -823,16 +795,13 @@ impl Trail {
 pub struct Normal(pub Trail);
 
 impl Normal {
-    #[predicate]
-    #[open]
-    #[why3::attr = "inline:trivial"]
+    #[logic(open, inline)]
     pub fn sound(self) -> bool {
         self.0.sound()
     }
 
     // Γ ⟶ Γ,?A if A is an acceptable 𝒯ₖ-assignment for ℐₖ in Γ_𝒯ₖ for 1 ≤ k ≤ n
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> (tgt.0).invariant())]
@@ -845,8 +814,8 @@ impl Normal {
     }
 
     // Γ ⟶ Γ,?A if A is an acceptable 𝒯ₖ-assignment for ℐₖ in Γ_𝒯ₖ for 1 ≤ k ≤ n
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[requires(self.0.acceptable(t, val))]
@@ -863,8 +832,7 @@ impl Normal {
 
 
     // Γ ⟶ Γ, J⊢L, if ¬L ∉ Γ and L is l ← 𝔟 for some l ∈ ℬ
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> (tgt.0).invariant())]
@@ -885,8 +853,8 @@ impl Normal {
     }
 
     // Γ ⟶ Γ, J⊢L, if ¬L ∉ Γ and L is l ← 𝔟 for some l ∈ ℬ
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[requires(v.is_bool())]
@@ -906,8 +874,7 @@ impl Normal {
     }
 
     // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[requires(just.2.is_bool())]
@@ -925,8 +892,7 @@ impl Normal {
     }
 
     // Γ ⟶ unsat, if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L}) = 0
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> self.0.unsat())]
@@ -942,8 +908,7 @@ impl Normal {
 
     // just : J |- L
     // Γ ⟶ ⟨ Γ; J ∪ {¬ L} ⟩ if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[requires(just.2.is_bool())]
@@ -966,8 +931,7 @@ impl Normal {
 
     // just : J |- L
     // Γ ⟶ ⟨ Γ; J ∪ {¬ L} ⟩ if ¬ L ∈ Γ and level_Γ(J ∪ {¬ L }) > 0
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires((self.0).invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> (tgt.0).invariant())]
@@ -986,27 +950,24 @@ impl Normal {
 pub struct Conflict(pub Trail, pub FSet<(Term, Value)>);
 
 impl Conflict {
-    #[predicate]
-    #[open]
+    #[logic(open)]
     pub fn invariant(self) -> bool {
         pearlite! { self.0.set_level(self.1) > 0 && self.0.invariant() && forall<a : _> self.1.contains(a) ==> self.0.contains(a) }
     }
 
-    #[predicate]
-    #[open]
-    #[why3::attr = "inline:trivial"]
+    #[logic(open, inline)]
     pub fn sound(self) -> bool {
         pearlite! { self.0.sound() && (forall<m : Model> m.satisfy_set(self.1) ==> false) }
     }
 
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     pub fn level(self) -> Int {
         self.0.set_level(self.1)
     }
 
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.sound())]
     #[requires(self.1.contains(ass))]
@@ -1018,8 +979,8 @@ impl Conflict {
     }
 
     // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.sound())]
     #[requires(self.0.is_justified(a))]
@@ -1041,8 +1002,7 @@ impl Conflict {
     }
 
     // ⟨ Γ; { A } ⊔ E ⟩  ⇒ ⟨ Γ; E ∪ H ⟩ if H ⊢ A in Γ and H does not contain first-order decision A' with level_Γ(E ⊔ {A})
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.sound())]
     #[requires(self.0.is_justified(a))]
@@ -1060,8 +1020,7 @@ impl Conflict {
     }
 
     // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m, E⊢¬L, if level_Γ(L) > m, where m = level_Γ(E)
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> tgt.0.invariant())]
@@ -1087,8 +1046,7 @@ impl Conflict {
                 )
     }
 
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[ensures(result == true ==> self.0.set_level(self.1.remove(l)) <= self.0.level_of(l))]
     pub fn backjump2_pre(self, l: (Term, Value)) -> bool {
         self.invariant()
@@ -1099,8 +1057,8 @@ impl Conflict {
     }
 
     // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m, E⊢¬L, if level_Γ(L) > m, where m = level_Γ(E)
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.sound())]
     #[requires(self.1.contains(l))]
@@ -1126,7 +1084,7 @@ impl Conflict {
         ))
     }
 
-    // #[ghost]
+    // #[check(ghost)]
     // #[requires(self.invariant())]
     // #[requires(self.sound())]
     // #[requires(self.1.contains(l) && l.1.is_bool())]
@@ -1149,8 +1107,7 @@ impl Conflict {
     // }
 
     // ⟨ Γ; { A } ⊔ E ⟩  ⇒ Γ≤m-1, if A is a first-order decision of level m > level_Γ(E)
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.sound())]
     #[ensures(result ==> tgt.0.invariant())]
@@ -1167,8 +1124,7 @@ impl Conflict {
     }
 
     // ⟨ Γ; { L } ⊔ E ⟩  ⇒ Γ≤m-1,?¬L, if H ⊢L is in Γ, m = level_Γ(E) = level_Γ(L) and H contains first-order decision A' of level m
-    #[predicate]
-    #[open]
+    #[logic(open)]
     #[requires(self.invariant())]
     #[requires(self.sound())]
     #[requires(self.0.is_justified(l))]

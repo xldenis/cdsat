@@ -1,11 +1,11 @@
 use std::{fmt::Display, unreachable};
 
-use creusot_contracts::{
-    ensures, ghost, logic, open, requires, trusted, Clone, DeepModel, PartialEq,
+use creusot_contracts::prelude::{
+    ensures, ghost, logic, requires, trusted, Clone, DeepModel, PartialEq, View,
 };
 
 use num::{One, Zero};
-use num_rational::BigRational;
+use num::rational::BigRational;
 
 #[cfg(creusot)]
 use crate::theory;
@@ -19,12 +19,15 @@ pub enum Sort {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::ShallowModel for Sort {
-    type ShallowModelTy = theory::Sort;
+impl View for Sort {
+    type ViewTy = theory::Sort;
+}
 
-    #[open]
-    #[ghost]
-    fn shallow_model(self) -> Self::ShallowModelTy {
+#[cfg(creusot)]
+impl Sort {
+    #[logic(open)]
+    #[check(ghost)]
+    fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
 }
@@ -163,21 +166,28 @@ impl Display for Value {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::ShallowModel for Term {
-    type ShallowModelTy = theory::Term;
-    #[open]
-    #[ghost]
-    fn shallow_model(self) -> Self::ShallowModelTy {
+impl View for Term {
+    type ViewTy = theory::Term;
+}
+
+#[cfg(creusot)]
+impl Term {
+    #[logic(open)]
+    #[check(ghost)]
+    fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::DeepModel for Term {
+impl DeepModel for Term {
     type DeepModelTy = theory::Term;
+}
 
-    #[open]
-    #[ghost]
+#[cfg(creusot)]
+impl Term {
+    #[logic(open)]
+    #[check(ghost)]
     fn deep_model(self) -> Self::DeepModelTy {
         use creusot_contracts::num_rational::Real;
         match self {
@@ -224,8 +234,8 @@ pub enum Value {
 #[cfg(creusot)]
 impl DeepModel for Value {
     type DeepModelTy = theory::Value;
-    #[ghost]
-    #[open]
+    #[check(ghost)]
+    #[logic(open)]
     fn deep_model(self) -> Self::DeepModelTy {
         match self {
             crate::Value::Bool(b) => theory::Value::Bool(b),
@@ -235,12 +245,15 @@ impl DeepModel for Value {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::ShallowModel for Value {
-    type ShallowModelTy = theory::Value;
+impl View for Value {
+    type ViewTy = theory::Value;
+}
 
-    #[open]
-    #[ghost]
-    fn shallow_model(self) -> Self::ShallowModelTy {
+#[cfg(creusot)]
+impl Value {
+    #[logic(open)]
+    #[check(ghost)]
+    fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
 }

@@ -1,14 +1,14 @@
-use ::std::collections::BTreeSet;
+use std::collections::BTreeSet;
+use std::ops::Index;
 
-use creusot_contracts::{*, invariant::Invariant};
+use creusot_contracts::{prelude::*, invariant::Invariant};
 use creusot_contracts::logic::FSet;
 use crate::trail::{TrailIndex, *};
 
 pub(crate) struct ConflictHeap(Vec<TrailIndex>);
 
 impl Invariant for ConflictHeap {
-    #[predicate]
-    #[open(crate)]
+    #[logic(open, predicate)]
     fn invariant(self) -> bool {
         seq_unique(self.0.shallow_model()) && self.0.shallow_model().sorted()
     }
@@ -23,7 +23,7 @@ impl ConflictHeap {
     // #[trusted]
     #[ensures((^self)@ == (self@).insert(e))]
     pub(crate) fn insert(&mut self, e: TrailIndex) -> bool {
-        let old = gh! { * self };
+        let old = snapshot! { * self };
         let mut i = 0;
         #[invariant(forall<j : _> 0 <= j && j < i@ ==>  self.0[j] < e)]
         while i < self.0.len() {
@@ -79,24 +79,29 @@ impl ConflictHeap {
     }
 }
 
-impl creusot_contracts::ShallowModel for ConflictHeap {
-    type ShallowModelTy = FSet<TrailIndex>;
+impl View for ConflictHeap {
+    type ViewTy = FSet<TrailIndex>;
+}
 
-    #[ghost]
-    #[open(self)]
+impl ConflictHeap {
+    #[check(ghost)]
+    #[logic(open)]
     #[ensures(forall<x : _> self.0@.contains(x) == result.contains(x))]
-    fn shallow_model(self) -> Self::ShallowModelTy {
-        to_set(self.0.shallow_model())
+    fn view(self) -> Self::ViewTy {
+        to_set(self.0.view())
     }
 }
 
-#[ghost]
+#[check(snapshot)]
 #[ensures(forall<x : _> s.contains(x) == result.contains(x))]
 #[variant(s.len())]
-fn to_set<T>(s : Seq<T>) -> FSet<T> {
-    if s == Seq::EMPTY {
-        FSet::EMPTY
+fn to_set<T: creusot_contracts::ghost::Plain>(s : Seq<T>) -> FSet<T> {
+    if s.is_empty_ghost() {
+        FSet::new().into_inner()
     } else {
-        to_set(s.subsequence(1, s.len())).insert(s[0])
+        let seq: Snapshot<Seq<T>> = snapshot! { s.subsequence(1, s.len_ghost())};
+        let mut out = to_set(seq.into_ghost().into_inner());
+        out.insert_ghost(s[Int::new(0).into_inner()]);
+        out
     }
 }
