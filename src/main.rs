@@ -5,11 +5,15 @@
 #![feature(never_type, let_chains, btree_cursors)]
 #![allow(unused_imports)]
 
+use num::bigint::ToBigInt;
+
 pub mod bool;
 pub mod concrete;
 pub(crate) mod heap;
 pub mod log;
 
+#[macro_use]
+pub mod snapshot;
 #[macro_use]
 pub mod ghost;
 
@@ -63,13 +67,17 @@ pub mod theory {
     pub struct Conflict;
     pub struct Term;
     pub struct Value;
+    pub struct Normal;
+    pub struct Model;
 }
 
 use std::{env::args, fs::File, io::BufReader, unimplemented};
 
+use creusot_contracts_proc::trusted;
+
 use concrete::Solver;
 use indexmap::IndexMap;
-use num_rational::BigRational;
+use num::rational::BigRational;
 use smt2parser::{
     concrete::{Command, Symbol, SyntaxBuilder},
     visitors::*,
@@ -80,7 +88,7 @@ use trail::Trail;
 
 struct TermBuilder;
 
-#[creusot_contracts::trusted]
+#[trusted]
 fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) -> Term {
     use smt2parser::concrete::{QualIdentifier, Term as PT};
     match t {
@@ -130,7 +138,7 @@ fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) ->
         PT::Constant(c) => match c {
             smt2parser::concrete::Constant::Decimal(br) => Term::Value(Value::Rat(br)),
             smt2parser::concrete::Constant::Numeral(num) => {
-                Term::Value(Value::Rat(BigRational::new(num.into(), 1.into())))
+                Term::Value(Value::Rat(BigRational::new(num.to_bigint().unwrap(), 1.into())))
             }
             _ => unimplemented!(),
         },
@@ -161,7 +169,7 @@ fn term_to_term(vars: &IndexMap<Symbol, Sort>, t: smt2parser::concrete::Term) ->
     }
 }
 
-#[creusot_contracts::trusted]
+#[trusted]
 fn to_assign(vars: &mut IndexMap<Symbol, Sort>, c: Command) -> Option<(Term, Value)> {
     match c {
         Command::Assert { term } => Some((term_to_term(vars, term), Value::true_())),
@@ -220,7 +228,7 @@ fn to_assign(vars: &mut IndexMap<Symbol, Sort>, c: Command) -> Option<(Term, Val
     }
 }
 
-#[creusot_contracts::trusted]
+#[trusted]
 fn main() -> std::io::Result<()> {
     env_logger::init();
     let mut input = BufReader::new(File::open(args().nth(1).expect("provide an input file"))?);
@@ -243,7 +251,7 @@ fn main() -> std::io::Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use num_rational::Rational64;
+    use num::rational::Rational64;
 
     use crate::{
         concrete::Solver,

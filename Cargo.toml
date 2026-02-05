@@ -6,9 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-creusot-contracts = { path = "../creusot/creusot-contracts", version = "*" }
-num-rational = "0.3.2"
-num = "*"
+creusot-contracts = "0.8"
+creusot-contracts-proc = "0.8"
+num = "0.3.*"
 priority-queue = "1.2.2"
 smt2parser="0.6"
 indexmap = "*"

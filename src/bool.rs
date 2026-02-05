@@ -1,9 +1,9 @@
 use crate::ghost::Ghost;
-use creusot_contracts::{vec, *};
+use crate::snapshot::Snapshot;
+use creusot_contracts::{vec, prelude::*};
 use crate::log::{info, trace};
 
-#[cfg(creusot)]
-use crate::theory;
+use crate::theory::{self, Model};
 use crate::{
     concrete::ExtendResult,
     term::{Sort, Term, Value},
@@ -26,14 +26,14 @@ impl BoolTheory {
             // members of conflict area within the trail
             (forall<t : _> (c@).contains(t) ==> (^tl).contains(t)) &&
             // (forall<i : _> 0 <= i && i < (c@).len() ==> @(c@)[i] < (@(^tl).assignments).len()) &&
-            (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
+            (forall<m : Model> m.satisfy_set(conflict) ==> false)
         }
     })]
     #[ensures(tl.ghost.impls(*(^tl).ghost))]
     pub fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
-        let old_tl: Ghost![_] = gh! { tl };
+        let old_tl: Snapshot![_] = snapshot! { tl };
         let mut iter = tl.indices();
-        let old_iter: Ghost![_] = gh! { iter };
+        let old_iter: Snapshot![_] = snapshot! { iter };
         // info!("Bool is performing deductions");
         #[invariant(forall<i : _> old_tl.contains(i) ==> iter.trail.contains(i))]
         #[invariant(old_tl.ghost.impls(*iter.trail.ghost))]
@@ -64,13 +64,13 @@ impl BoolTheory {
                 Result::Ok(res) => {
                     if res != assign.val {
                         just.push(ix);
-                        let _: Ghost![_] = gh! {crate::trail::abstract_justification_insert};
-                        let _: Ghost![_] = gh! { theory::Model::consistent };
+                        let _: Snapshot![_] = snapshot! {crate::trail::abstract_justification_insert};
+                        let _: Snapshot![_] = snapshot! { Model::consistent };
 
                         proof_assert!(^iter.trail == ^*old_tl);
 
                         proof_assert!(
-                            forall<m : theory::Model> m.satisfy_set(tl.abstract_justification(just@)) ==> false
+                            forall<m : Model> m.satisfy_set(tl.abstract_justification(just@)) ==> false
                         );
                         return ExtendResult::Conflict(just);
                     }
@@ -107,7 +107,7 @@ impl BoolTheory {
     #[ensures(forall<ix : _> result.0@.contains(ix) ==> tl.contains(ix))]
     #[ensures(match result.1 {
         Ok(v) => { v@.is_bool()  &&
-            (forall<m : theory::Model>
+            (forall<m : Model>
                 m.satisfy_set(tl.abstract_justification(result.0@)) ==> m.satisfies((tm@, v@)))
         }
         Err(t) => { tl.ghost.acceptable(t@, Value::Bool(true)@)  && t@.well_sorted() }
@@ -143,7 +143,7 @@ impl BoolTheory {
         tm: &Term,
         used: &mut Vec<TrailIndex>,
     ) -> Result<Value, Term> {
-        let old = gh! { *used };
+        let old = snapshot! { *used };
         // if let Some(x) = tl.index_of(tm) {
         //     used.push(x);
         //     proof_assert!(tl.index_logic(x).0 == tm@);
@@ -151,8 +151,8 @@ impl BoolTheory {
         //     return Ok(tl[x].val.clone());
         // }
 
-        let _: Ghost![_] = gh! {Trail::abs_just_extend};
-        // let _: Ghost![_] = gh! { theory::Model::subset};
+        let _: Snapshot![_] = snapshot! {Trail::abs_just_extend};
+        // let _: Ghost![_] = ghost! { Model::subset};
 
         match tm {
             Term::Value(v @ Value::Bool(_)) => return Ok(v.clone()),
@@ -165,7 +165,7 @@ impl BoolTheory {
                     Ok(x) => x,
                     Err(e) => return Err(e),
                 };
-                proof_assert!(forall<m : theory::Model> m.satisfy_set(tl.abstract_justification((^used)@))
+                proof_assert!(forall<m : Model> m.satisfy_set(tl.abstract_justification((^used)@))
                     ==> m.satisfies((l@, v1@)) && m.satisfies((r@, v2@)));
                 return Ok(Value::Bool(v1 == v2));
             }
@@ -179,7 +179,7 @@ impl BoolTheory {
                     Ok(x) => x,
                     Err(e) => return Err(e),
                 };
-                proof_assert!(forall<m : theory::Model> m.satisfy_set(tl.abstract_justification((^used)@))
+                proof_assert!(forall<m : Model> m.satisfy_set(tl.abstract_justification((^used)@))
                     ==> m.satisfies((l@, v1@)) && m.satisfies((r@, v2@)));
                 return Ok(Value::Bool(v1.bool() && v2.bool()));
             }
@@ -196,7 +196,7 @@ impl BoolTheory {
                     Ok(x) => x,
                     Err(e) => return Err(e),
                 };
-                proof_assert!(forall<m : theory::Model> m.satisfy_set(tl.abstract_justification((^used)@))
+                proof_assert!(forall<m : Model> m.satisfy_set(tl.abstract_justification((^used)@))
                     ==> m.satisfies((l@, v1@)) && m.satisfies((r@, v2@)));
                 return Ok(Value::Bool(v1.bool() || v2.bool()));
             }
@@ -209,7 +209,7 @@ impl BoolTheory {
                     Ok(x) => x,
                     Err(e) => return Err(e),
                 };
-                proof_assert!(forall<m : theory::Model> m.satisfy_set(tl.abstract_justification((^used)@))
+                proof_assert!(forall<m : Model> m.satisfy_set(tl.abstract_justification((^used)@))
                     ==> m.satisfies((l@, v1@)) && m.satisfies((r@, v2@)));
                 return Ok(Value::Bool(!v1.bool() || v2.bool()));
             }

@@ -6,7 +6,7 @@ use indexmap::IndexMap;
 
 use log::{info, trace};
 use num::{BigInt, One, Signed, Zero};
-use num_rational::BigRational;
+use num::rational::BigRational;
 
 use crate::{
     concrete::ExtendResult,
@@ -15,7 +15,7 @@ use crate::{
 };
 pub struct LRATheory;
 
-use creusot_contracts::{ensures, ghost, maintains, open, trusted, DeepModel};
+use creusot_contracts::prelude::{ensures, ghost, maintains, trusted, DeepModel};
 
 #[derive(Debug, Default, Ord, Eq, Clone, PartialEq, PartialOrd, DeepModel)]
 enum Bound {
@@ -235,7 +235,7 @@ impl Bounds {
         // Attempt to see if there is any other value we could choose:
 
         let right_ub = if let Some((k, v)) =
-            self.excluded.lower_bound(std::ops::Bound::Excluded(&v)).key_value()
+            self.excluded.lower_bound(std::ops::Bound::Excluded(&v)).next()
         {
             Bound::Exclusive { value: k.clone(), just: *v }
         } else {
@@ -248,7 +248,7 @@ impl Bounds {
         }
 
         let left_lb = if let Some((k, v)) =
-            self.excluded.upper_bound(std::ops::Bound::Excluded(&v)).key_value()
+            self.excluded.upper_bound(std::ops::Bound::Excluded(&v)).next()
         {
             Bound::Exclusive { value: k.clone(), just: *v }
         } else {
