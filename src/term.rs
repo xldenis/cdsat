@@ -1,6 +1,6 @@
 use std::{fmt::Display, unreachable};
 
-use creusot_contracts::prelude::{
+use creusot_std::prelude::{
     ensures, ghost, logic, requires, trusted, Clone, DeepModel, PartialEq, View,
 };
 
@@ -21,12 +21,8 @@ pub enum Sort {
 #[cfg(creusot)]
 impl View for Sort {
     type ViewTy = theory::Sort;
-}
 
-#[cfg(creusot)]
-impl Sort {
     #[logic(open)]
-    #[check(ghost)]
     fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
@@ -168,12 +164,8 @@ impl Display for Value {
 #[cfg(creusot)]
 impl View for Term {
     type ViewTy = theory::Term;
-}
 
-#[cfg(creusot)]
-impl Term {
     #[logic(open)]
-    #[check(ghost)]
     fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
@@ -182,14 +174,10 @@ impl Term {
 #[cfg(creusot)]
 impl DeepModel for Term {
     type DeepModelTy = theory::Term;
-}
 
-#[cfg(creusot)]
-impl Term {
     #[logic(open)]
-    #[check(ghost)]
     fn deep_model(self) -> Self::DeepModelTy {
-        use creusot_contracts::num_rational::Real;
+        use creusot_std::num_rational::Real;
         match self {
             Term::Variable(v, s) => {
                 theory::Term::Variable(theory::Var(v.deep_model(), s.deep_model()))
@@ -234,7 +222,6 @@ pub enum Value {
 #[cfg(creusot)]
 impl DeepModel for Value {
     type DeepModelTy = theory::Value;
-    #[check(ghost)]
     #[logic(open)]
     fn deep_model(self) -> Self::DeepModelTy {
         match self {
@@ -247,12 +234,8 @@ impl DeepModel for Value {
 #[cfg(creusot)]
 impl View for Value {
     type ViewTy = theory::Value;
-}
 
-#[cfg(creusot)]
-impl Value {
     #[logic(open)]
-    #[check(ghost)]
     fn view(self) -> Self::ViewTy {
         self.deep_model()
     }

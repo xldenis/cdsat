@@ -5,9 +5,10 @@ use crate::{
     theory,
 };
 use ::std::{fmt::Display, ops::Index, unreachable};
-use creusot_contracts::{ghost::Plain, logic::*, vec, prelude::*};
-use creusot_contracts_proc::ghost;
-//
+use creusot_std::{ghost::Plain, logic::*, vec, prelude::*};
+use creusot_std_proc::ghost;
+use creusot_std::prelude::*;
+
 #[cfg(not(creusot))]
 struct FSet<T>(T);
 
@@ -34,14 +35,10 @@ impl Display for Assignment {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::View for Assignment {
+impl View for Assignment {
     type ViewTy = <Self as DeepModel>::DeepModelTy;
-}
 
-#[cfg(creusot)]
-impl Assignment {
     #[logic(open)]
-    #[check(ghost)]
     fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
@@ -57,14 +54,10 @@ pub enum Reason {
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::View for Reason {
+impl View for Reason {
     type ViewTy = <Self as DeepModel>::DeepModelTy;
-}
 
-#[cfg(creusot)]
-impl Reason {
     #[logic(open)]
-    #[check(ghost)]
     fn view(self) -> Self::ViewTy {
         self.deep_model()
     }
@@ -92,7 +85,7 @@ impl Ord for TrailIndex {
 }
 
 use ::std::cmp::Ordering;
-use creusot_contracts::prelude::OrdLogic;
+use creusot_std::prelude::OrdLogic;
 impl OrdLogic for TrailIndex {
     #[logic(open)]
     #[check(ghost)]
@@ -148,25 +141,20 @@ impl OrdLogic for TrailIndex {
 impl Plain for TrailIndex {}
 
 #[cfg(creusot)]
-impl creusot_contracts::View for TrailIndex {
+impl View for TrailIndex {
     type ViewTy = Self;
-}
 
-#[cfg(creusot)]
-impl TrailIndex {
     #[logic(open)]
-    #[check(ghost)]
     fn view(self) -> Self::ViewTy {
         self
     }
 }
 
 #[cfg(creusot)]
-impl creusot_contracts::DeepModel for TrailIndex {
+impl DeepModel for TrailIndex {
     type DeepModelTy = Self;
 
     #[logic(open)]
-    #[check(ghost)]
     fn deep_model(self) -> Self::DeepModelTy {
         self
     }
@@ -223,17 +211,17 @@ impl Trail {
         self.assignments.len()
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn unsat(self) -> bool {
         self.snapshot.unsat()
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn sat(self) -> bool {
         self.snapshot.sat()
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn invariant(self) -> bool {
         pearlite! {
             self.abstract_relation() && self.snapshot.sound() && self.snapshot.invariant()
@@ -248,7 +236,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn justified_is_justified(self) -> bool {
         pearlite! {
             forall<ix : _> self.contains(ix) ==>
@@ -261,7 +249,7 @@ impl Trail {
 
         }
     }
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn justified_correct(self, ix: TrailIndex, j: Vec<TrailIndex>) -> bool {
         pearlite!{
             (forall<i : _> j@.contains(i) ==> i < ix && self.contains(i)) &&
@@ -270,7 +258,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn abstract_relation(self) -> bool {
         pearlite! {
             (forall<ix : _> self.contains(ix) ==> self.snapshot.contains(self.index_logic(ix))) &&
@@ -281,7 +269,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn contains(self, ix: TrailIndex) -> bool {
         pearlite! {
             ix.0@ < (self.assignments@).len() && ix.1@ < ((self.assignments)@[ix.0@]@).len()
@@ -325,7 +313,7 @@ impl Trail {
         }
     }
 
-    #[logic(predicate)]
+    #[logic]
     fn trail_extension(self, o: Self) -> bool {
         if self.level <= o.level {
             pearlite! {
@@ -657,7 +645,7 @@ pub struct IndexIterator<'a> {
 
 #[trusted]
 impl<'a> Resolve for IndexIterator<'a> {
-    #[logic(open, predicate)]
+    #[logic(open)]
     fn resolve(self) -> bool {
         self.trail.resolve()
     }
@@ -821,7 +809,7 @@ fn remove<T: PartialEq + Plain>(s: Seq<T>, e: T) -> Seq<T> {
     }
 }
 
-#[logic(open, predicate)]
+#[logic(open)]
 pub(crate) fn seq_unique<T>(s: Seq<T>) -> bool {
     pearlite! { forall<i : _, j : _> 0 <= i && i <= j && j < s.len() ==> i != j ==> s[i] != s[j] }
 }

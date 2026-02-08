@@ -27,7 +27,7 @@ pub mod lra {
     pub struct LRATheory;
 
     use crate::{concrete::ExtendResult, trail::Trail};
-    use creusot_contracts::*;
+    use creusot_std::*;
 
     impl LRATheory {
         #[trusted]
@@ -73,7 +73,7 @@ pub mod theory {
 
 use std::{env::args, fs::File, io::BufReader, unimplemented};
 
-use creusot_contracts_proc::trusted;
+use creusot_std_proc::trusted;
 
 use concrete::Solver;
 use indexmap::IndexMap;

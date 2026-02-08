@@ -15,7 +15,7 @@ use crate::{
 };
 pub struct LRATheory;
 
-use creusot_contracts::prelude::{ensures, ghost, maintains, trusted, DeepModel};
+use creusot_std::prelude::{ensures, ghost, maintains, trusted, DeepModel};
 
 #[derive(Debug, Default, Ord, Eq, Clone, PartialEq, PartialOrd, DeepModel)]
 enum Bound {

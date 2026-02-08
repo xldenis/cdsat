@@ -1,4 +1,4 @@
-// use creusot_contracts::*;
+// use creusot_std::*;
 
 // #[creusot::builtins = "bag.Bag.bag"]
 // pub struct Bag<T: ?Sized>(::std::marker::PhantomData<T>);

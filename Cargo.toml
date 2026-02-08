@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-creusot-std = "0.9"
-creusot-std-proc = "0.9"
+creusot-std = { version = "0.9", path = "../creusot/creusot-std" }
+creusot-std-proc =  { version = "0.9", path = "../creusot/creusot-std-proc" }
 num = "0.3.*"
 priority-queue = "1.2.2"
 smt2parser="0.6"
@@ -17,6 +17,8 @@ clap ={ version= "4.4", features = ["derive"]}
 log = "*"
 env_logger = "*"
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(creusot)'] }
 # [build-dependencies]
 # syn = {version = "2.0", features = ["visit"] }
 # walkdir="*"

@@ -1,14 +1,14 @@
 use std::collections::BTreeSet;
 use std::ops::Index;
 
-use creusot_contracts::{prelude::*, invariant::Invariant};
-use creusot_contracts::logic::FSet;
+use creusot_std::{prelude::*, invariant::Invariant};
+use creusot_std::logic::FSet;
 use crate::trail::{TrailIndex, *};
 
 pub(crate) struct ConflictHeap(Vec<TrailIndex>);
 
 impl Invariant for ConflictHeap {
-    #[logic(open, predicate)]
+    #[logic(open)]
     fn invariant(self) -> bool {
         seq_unique(self.0.shallow_model()) && self.0.shallow_model().sorted()
     }
@@ -81,10 +81,7 @@ impl ConflictHeap {
 
 impl View for ConflictHeap {
     type ViewTy = FSet<TrailIndex>;
-}
 
-impl ConflictHeap {
-    #[check(ghost)]
     #[logic(open)]
     #[ensures(forall<x : _> self.0@.contains(x) == result.contains(x))]
     fn view(self) -> Self::ViewTy {
@@ -92,15 +89,15 @@ impl ConflictHeap {
     }
 }
 
-#[check(snapshot)]
+#[logic]
 #[ensures(forall<x : _> s.contains(x) == result.contains(x))]
 #[variant(s.len())]
-fn to_set<T: creusot_contracts::ghost::Plain>(s : Seq<T>) -> FSet<T> {
+fn to_set<T: creusot_std::ghost::Plain>(s : Seq<T>) -> FSet<T> {
     if s.is_empty_ghost() {
         FSet::new().into_inner()
     } else {
-        let seq: Snapshot<Seq<T>> = snapshot! { s.subsequence(1, s.len_ghost())};
-        let mut out = to_set(seq.into_ghost().into_inner());
+        let seq  = s.subsequence(1, s.len_ghost());
+        let mut out = to_set(seq);
         out.insert_ghost(s[Int::new(0).into_inner()]);
         out
     }

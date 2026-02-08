@@ -1,4 +1,5 @@
-use creusot_contracts::{invariant::Invariant, logic::*, num_rational::Real, *};
+use creusot_std::{invariant::Invariant, logic::*, num_rational::Real, *};
+use creusot_std::prelude::*;
 
 pub enum Term {
     Variable(Var),
@@ -55,7 +56,7 @@ impl Term {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn is_bool(self) -> bool {
         self.sort() == Sort::Boolean
     }
@@ -76,7 +77,7 @@ pub enum Value {
 }
 
 impl Value {
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn is_bool(self) -> bool {
         self.sort() == Sort::Boolean
     }
@@ -115,7 +116,7 @@ pub enum Assign {
 }
 
 impl Assign {
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn invariant(self) -> bool {
         match self {
             Assign::Decision(t, v) => t.sort() == v.sort(),
@@ -134,7 +135,7 @@ impl Assign {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn justified_sound(self) -> bool {
         match self {
             Assign::Justified(just, t, val) => pearlite! {
@@ -148,7 +149,7 @@ impl Assign {
 pub struct Model(Mapping<Var, Value>);
 
 impl Invariant for Model {
-    #[logic(open, predicate)]
+    #[logic(open)]
     fn invariant(self) -> bool {
         pearlite! {
             forall<k : _, v : _> self.0.get(k) == v ==> k.1 == v.sort()
@@ -184,17 +185,17 @@ impl Model {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn satisfies(self, v: (Term, Value)) -> bool {
         self.interp(v.0) == v.1
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn satisfy_set(self, v: FSet<(Term, Value)>) -> bool {
         pearlite! { forall<a : _> v.contains(a) ==> self.satisfies(a) }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn entails(self, j: FSet<(Term, Value)>, c: (Term, Value)) -> bool {
         pearlite! { self.invariant() ==> self.satisfy_set(j) ==> self.satisfies(c) }
     }
@@ -248,7 +249,7 @@ pub enum Trail {
 }
 
 impl Trail {
-    #[logic(open, predicate, inline)]
+    #[logic(open, inline)]
     pub fn sound(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -256,7 +257,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn is_set_level(self, s: FSet<(Term, Value)>, m: Int) -> bool {
         pearlite! {
             (s == FSet::EMPTY && m == 0) ||
@@ -306,7 +307,6 @@ impl Trail {
     pub fn set_level_min(self, set: FSet<(Term, Value)>, elem: (Term, Value)) {}
 
     #[logic(open)]
-    #[predicate]
     pub fn invariant_level(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -321,7 +321,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn invariant_nonneg(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -329,7 +329,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn invariant_assign(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -337,7 +337,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn invariant_contains(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -355,7 +355,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn trail_unique(self) -> bool {
         match self {
             Trail::Empty => true,
@@ -368,7 +368,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn invariant(self) -> bool {
         self.invariant_level()
             && self.invariant_contains()
@@ -377,7 +377,7 @@ impl Trail {
             && self.invariant_assign()
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn acceptable(self, t: Term, val: Value) -> bool {
         !self.contains((t, val))
             && t.sort() == val.sort()
@@ -396,7 +396,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     #[ensures(self.invariant_assign() ==> result == true ==> d.0.sort() == d.1.sort())]
     pub fn contains(self, d: (Term, Value)) -> bool {
         match self.find(d) {
@@ -405,7 +405,6 @@ impl Trail {
         }
     }
 
-    #[check(ghost)]
     #[logic(open)]
     #[requires(self.trail_unique())]
     #[requires(self.contains(d))]
@@ -425,7 +424,6 @@ impl Trail {
         }
     }
 
-    #[check(ghost)]
     #[logic(open)]
     #[requires(self.invariant())]
     #[requires(forall<a : _> just.contains(a) ==> self.contains(a))]
@@ -480,7 +478,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate, inline)]
+    #[logic(open, inline)]
     pub fn is_justified(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Justified(_, _, _), _)) => true,
@@ -488,7 +486,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate, inline)]
+    #[logic(open, inline)]
     pub fn is_decision(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Decision(_, _), _)) => true,
@@ -496,7 +494,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate, inline)]
+    #[logic(open, inline)]
     pub fn is_input(self, d: (Term, Value)) -> bool {
         match self.find(d) {
             Some((Assign::Input(_, _), _)) => true,
@@ -522,7 +520,6 @@ impl Trail {
         }
     }
 
-    #[check(ghost)]
     #[logic(open)]
     #[requires(self.invariant())]
     #[ensures(result.invariant())]
@@ -609,7 +606,7 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn ext(self, o: Self) -> bool {
         pearlite! {
             if self.level() <= o.level() {
@@ -648,23 +645,23 @@ impl Trail {
         }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn satisfied_by(self, m: Model) -> bool {
         pearlite! { forall<a : _> self.contains(a) ==> m.satisfies(a) }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     // #[ensures(self.restrict(0).unsat() ==> result)]
     pub fn unsat(self) -> bool {
         pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> false }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     pub fn sat(self) -> bool {
         pearlite! { exists<m : _> self.satisfied_by(m) }
     }
 
-    #[logic(open, predicate)]
+    #[logic(open)]
     #[ensures(result ==> rhs.unsat() ==> self.unsat())]
     pub fn impls(self, rhs: Self) -> bool {
         pearlite! { forall<m : Model> self.restrict(0).satisfied_by(m) ==> rhs.restrict(0).satisfied_by(m) }

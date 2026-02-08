@@ -1,12 +1,12 @@
 // use ::std::collections::{BinaryHeap, HashSet};
-// // use creusot_contracts::derive::{PartialEq};
+// // use creusot_std::derive::{PartialEq};
 
 use ::std::{collections::BTreeSet, fmt::Write};
 
 use crate::term::{Term, Value};
-// use creusot_contracts::*;
+// use creusot_std::*;
 use crate::{bool::*, log::info, lra::*, theory, trail::*};
-use creusot_contracts::{logic::*, std::*, prelude::*};
+use creusot_std::{logic::*, std::*, prelude::*};
 
 use crate::snapshot::Snapshot;
 use crate::heap::*;
@@ -129,7 +129,7 @@ impl Solver {
         let old_trail: Snapshot![&mut Trail] = snapshot! { trail };
 
         #[invariant(forall<a : _> heap@.contains(a) == produced.contains(a))]
-        #[invariant(creusot_contracts::invariant::inv(heap))]
+        #[invariant(creusot_std::invariant::inv(heap))]
         for a in conflict {
             heap.insert(a);
         }
@@ -144,7 +144,7 @@ impl Solver {
 
         #[invariant(forall<ix : _> heap@.contains(ix) ==> trail.contains(ix))]
         #[invariant(trail.invariant())]
-        #[invariant(creusot_contracts::invariant::inv(heap))]
+        #[invariant(creusot_std::invariant::inv(heap))]
         // #[invariant(abs_cflct.1 == ix_to_abs(*trail, heap@))]
         #[invariant(forall<ix : _> heap@.contains(ix) ==> abs_cflct.1.contains(trail[ix]))]
         #[invariant(forall<a : _> abs_cflct.1.contains(a) ==> exists<ix : _> heap@.contains(ix) && trail[ix] == a)]
@@ -267,7 +267,7 @@ impl Solver {
             #[invariant(forall<a : _> heap@.contains(a) == (old_heap@.contains(a) || produced.contains(a)))]
             #[invariant(forall<a : _> produced.contains(a) ==> just_ghost@.contains(a))]
             #[invariant(forall<a : _> produced.contains(a) ==> heap@.contains(a))]
-            #[invariant(creusot_contracts::invariant::inv(heap))]
+            #[invariant(creusot_std::invariant::inv(heap))]
             for a in just {
                 // let _ = snapshot!(ix_to_abs_insert(*trail, a, heap.shallow_model()));
 

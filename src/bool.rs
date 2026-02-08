@@ -1,6 +1,6 @@
 use crate::ghost::Ghost;
 use crate::snapshot::Snapshot;
-use creusot_contracts::{vec, prelude::*};
+use creusot_std::{vec, prelude::*};
 use crate::log::{info, trace};
 
 use crate::theory::{self, Model};
