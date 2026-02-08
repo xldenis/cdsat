@@ -13,13 +13,13 @@ use crate::heap::*;
 
 pub struct Solver {
     bool_th: BoolTheory,
-    bool_state: TheoryState,
+    pub bool_state: TheoryState,
     lra_th: LRATheory,
-    lra_state: TheoryState,
+    pub lra_state: TheoryState,
 }
 
 #[derive(PartialEq, Eq, DeepModel)]
-enum TheoryState {
+pub enum TheoryState {
     Sat,
     Decision,
     Unknown,
@@ -35,6 +35,7 @@ impl Solver {
         }
     }
 
+    // todo: this forces us to expose `bool_state` and `lra_state` which sucks
     #[ensures(result == (self.bool_state == TheoryState::Sat && self.lra_state == TheoryState::Sat))]
     pub fn sat(&self) -> bool {
         self.bool_state == TheoryState::Sat && self.lra_state == TheoryState::Sat
@@ -279,12 +280,10 @@ impl Solver {
     }
 }
 
-#[check(ghost)]
 #[logic(open)]
 #[ensures(forall<x : _> a != x ==> s.contains(x) ==> s.remove(a).contains(x))]
 fn set_remove<T>(s: FSet<T>, a: T) {}
 
-#[check(ghost)]
 #[logic(open)]
 #[ensures(forall<x : _> s.remove(a).contains(x) ==> s.contains(x))]
 fn set_remove2<T>(s: FSet<T>, a: T) {}

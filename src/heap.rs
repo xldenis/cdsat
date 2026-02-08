@@ -94,11 +94,11 @@ impl View for ConflictHeap {
 #[variant(s.len())]
 fn to_set<T: creusot_std::ghost::Plain>(s : Seq<T>) -> FSet<T> {
     if s.is_empty_ghost() {
-        FSet::new().into_inner()
+        FSet::empty()
     } else {
         let seq  = s.subsequence(1, s.len_ghost());
-        let mut out = to_set(seq);
-        out.insert_ghost(s[0]);
+        let out = to_set(seq);
+        let out = out.insert(s[0]);
         out
     }
 }
