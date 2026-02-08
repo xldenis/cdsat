@@ -117,8 +117,8 @@ name = "cdsat"
 version = "0.1.0"
 dependencies = [
  "clap 4.5.57",
- "creusot-contracts",
- "creusot-contracts-proc",
+ "creusot-std",
+ "creusot-std-proc",
  "env_logger",
  "indexmap 2.13.0",
  "log",
@@ -202,20 +202,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "245097e9a4535ee1e3e3931fcfcd55a796a44c643e8596ff6566d68f09b87bbc"
 
 [[package]]
-name = "creusot-contracts"
-version = "0.8.0"
+name = "creusot-std"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11db9331abd9b2aee1c42e5739a669f9cce791e1704f24c9decc7f563fb3f4b4"
+checksum = "2b6989d2fc081ac6e3f08fe18e4461b29b3e72fbcba78058131892d000f06bab"
 dependencies = [
- "creusot-contracts-proc",
+ "creusot-std-proc",
  "num-rational 0.4.2",
 ]
 
 [[package]]
-name = "creusot-contracts-proc"
-version = "0.8.0"
+name = "creusot-std-proc"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d547dbd8c3f26857d966cd487462afae75c890e46072a255268411191e107a9b"
+checksum = "3f41572ae8e96468a0eb0411dbdf1defc4896287672041ca3c3c161c4e09c57d"
 dependencies = [
  "proc-macro2",
  "quote",
