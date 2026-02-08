@@ -5,7 +5,7 @@ use crate::{
     theory,
 };
 use ::std::{fmt::Display, ops::Index, unreachable};
-use creusot_std::{ghost::Plain, logic::*, vec, prelude::*};
+use creusot_std::{ghost::Plain, logic::*, vec, prelude::{*, Clone, PartialEq}, logic::ops::IndexLogic};
 use creusot_std_proc::ghost;
 use creusot_std::prelude::*;
 
@@ -67,14 +67,14 @@ impl View for Reason {
 pub struct TrailIndex(usize, pub usize);
 
 impl PartialOrd for TrailIndex {
-    #[ensures(result == Some(self.cmp_log(*other)))]
+    #[ensures(result == Some(self.cmp_log(other)))]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
 impl Ord for TrailIndex {
-    #[ensures(result == self.cmp_log(*other))]
+    #[ensures(result == self.cmp_log(other))]
     fn cmp(&self, other: &Self) -> Ordering {
         match self.0.cmp(&other.0) {
             Ordering::Less => Ordering::Less,
@@ -309,7 +309,7 @@ impl Trail {
             let a = self.index_logic(just[0]);
             set.insert(a)
         } else {
-            FSet::EMPTY
+            FSet::empty()
         }
     }
 
@@ -318,13 +318,13 @@ impl Trail {
         if self.level <= o.level {
             pearlite! {
                 (forall<ix : _> self.contains(ix) ==> self.index_logic(ix) == o.index_logic(ix)) &&
-                (forall<kv : _> self.snapshot.contains(kv) ==> self.snapshot.find(kv) == o.ghost.find(kv))
+                (forall<kv : _> self.snapshot.contains(kv) ==> self.snapshot.find(kv) == o.snapshot.find(kv))
 
             }
         } else {
             pearlite! {
                 (forall<ix : _> o.contains(ix) ==> self.index_logic(ix) == o.index_logic(ix)) &&
-                (forall<kv : _> o.ghost.contains(kv) ==> o.ghost.find(kv) == self.snapshot.find(kv))
+                (forall<kv : _> o.snapshot.contains(kv) ==> o.snapshot.find(kv) == self.snapshot.find(kv))
             }
         }
     }
@@ -364,11 +364,11 @@ impl Trail {
     #[variant(just.len())]
     #[requires(self.contains(elem))]
     #[requires(forall<i : _> 0 <= i && i < just.len() ==> self.contains(just[i]))]
-    #[ensures(self.abstract_justification(just.push(elem)) == self.abstract_justification(just).insert(self.index_logic(elem)))]
+    #[ensures(self.abstract_justification(just.push_back(elem)) == self.abstract_justification(just).insert(self.index_logic(elem)))]
     fn abs_just_snoc(self, just: Seq<TrailIndex>, elem: TrailIndex) {
         if !just.is_empty_ghost() {
             snapshot! {
-                let j = just.push(elem);
+                let j = just.push_back(elem);
                 let _ = self.abs_just_cons(j.subsequence(1, j.len()), j[0]);
                 self.abs_just_snoc(just.subsequence(1, just.len()), elem)
             };
@@ -383,7 +383,7 @@ impl Trail {
     #[requires(self.invariant())]
     #[ensures((^self).invariant())]
     #[requires(self.snapshot.acceptable(term@, val@))]
-    #[ensures(self.snapshot.impls(*(^self).ghost))]
+    #[ensures(self.snapshot.impls(*(^self).snapshot))]
     pub(crate) fn add_decision(&mut self, term: Term, val: Value) {
         info!("? {term} <- {val}");
         let old = snapshot! { * self };
@@ -598,7 +598,7 @@ impl Trail {
     #[ensures(self.snapshot.set_level(self.abstract_justification(assignments@)) == result@)]
     pub(crate) fn max_level(&self, assignments: &[TrailIndex]) -> usize {
         let mut max = 0;
-        let mut other = snapshot! { Seq::EMPTY };
+        let mut other = snapshot! { Seq::empty() };
         #[invariant(*other == produced.to_owned_seq())]
         #[invariant(self.snapshot.set_level(self.abstract_justification(produced.to_owned_seq())) == max@)]
         for ix in assignments {
@@ -615,25 +615,30 @@ impl Trail {
                 snapshot! { self.snapshot.set_level_min(*just, self[*ix]) };
 
             }
-            other = snapshot! { other.push(*ix)};
+            other = snapshot! { other.push_back(*ix)};
             proof_assert!(other.ext_eq(produced.to_owned_seq()));
         }
         proof_assert!(other.ext_eq(assignments@));
         max
     }
 
+    #[ensures(result.trail == self)]
+    pub(crate) fn indices(&mut self) -> IndexIterator<'_> {
+        IndexIterator { trail: self, cur_ix: TrailIndex(0, 0) }
+    }
+}
+
+impl IndexLogic<TrailIndex> for Trail {
+    type Item = (theory::Term, theory::Value);
+
     #[logic(open)]
     #[check(ghost)]
-    pub fn index_logic(self, ix: TrailIndex) -> (theory::Term, theory::Value) {
+    fn index_logic(self, ix: TrailIndex) -> (theory::Term, theory::Value) {
         pearlite! {
             ((self.assignments)@[ix.0@])@[ix.1@].term_value()
         }
     }
 
-    #[ensures(result.trail == self)]
-    pub(crate) fn indices(&mut self) -> IndexIterator<'_> {
-        IndexIterator { trail: self, cur_ix: TrailIndex(0, 0) }
-    }
 }
 
 /// Offers an iterator over all indices in the trail, while allowing new justified decisions to be added
@@ -649,6 +654,11 @@ impl<'a> Resolve for IndexIterator<'a> {
     fn resolve(self) -> bool {
         self.trail.resolve()
     }
+
+    #[logic(prophetic)]
+    #[requires(creusot_std::resolve::structural_resolve(self))]
+    #[ensures(self.resolve())]
+    fn resolve_coherence(self) {}
 }
 
 impl IndexIterator<'_> {
@@ -761,8 +771,8 @@ impl Assignment {
 #[ensures(forall<ix :_> s.contains(ix) ==> result.contains(t.index_logic(ix)))]
 #[ensures(forall<a :_> result.contains(a) ==> exists<ix :_> a == t.index_logic(ix) && s.contains(ix))]
 pub fn ix_to_abs(t: Trail, s: FSet<TrailIndex>) -> FSet<(theory::Term, theory::Value)> {
-    if s == FSet::EMPTY {
-        FSet::EMPTY
+    if s == FSet::empty() {
+        FSet::empty()
     } else {
         let a = s.peek();
         ix_to_abs(t, s.remove(a)).insert(t.index_logic(a))
@@ -777,7 +787,7 @@ pub fn ix_to_abs(t: Trail, s: FSet<TrailIndex>) -> FSet<(theory::Term, theory::V
 #[requires(forall<i : _> t.contains(i) ==> s.contains(i))]
 #[ensures(trail.abstract_justification(s) == ix_to_abs(trail, t))]
 pub(crate) fn seq_to_set(trail: Trail, s: Seq<TrailIndex>, t: FSet<TrailIndex>) {
-    if s == Seq::EMPTY {
+    if s == Seq::empty() {
         ()
     } else {
         let a = s[0];
@@ -821,10 +831,10 @@ pub(crate) fn seq_unique<T>(s: Seq<T>) -> bool {
 #[ensures(s.contains(result))]
 #[ensures(forall<o : _> s.contains(o) ==> o <= result )]
 pub(crate) fn set_max(s: FSet<TrailIndex>) -> TrailIndex {
-    let x = s.peek_ghost();
-    let s = s.remove_ghost(x);
+    let x = s.peek();
+    let s = s.remove(x);
 
-    if s.is_empty_ghost() {
+    if s.is_empty() {
         x
     } else {
         let rec = set_max(s);
@@ -851,7 +861,7 @@ pub(crate) fn ix_to_abs_level(t: Trail, s: FSet<TrailIndex>) {
         let max_asgn = t.index_logic(max_elem);
         let ghost_set = ix_to_abs(t, s);
         proof_assert!(forall<i : _> s.contains(i) ==> i.level_log() <= max_elem.level_log());
-        proof_assert!(forall<a : _> ghost_set.contains(a) ==> t.ghost.level_of(a) <= t.ghost.level_of(max_asgn));
+        proof_assert!(forall<a : _> ghost_set.contains(a) ==> t.snapshot.level_of(a) <= t.snapshot.level_of(max_asgn));
     }
 }
 
@@ -885,7 +895,7 @@ pub(crate) fn ix_to_abs_insert(t: Trail, x: TrailIndex, s: FSet<TrailIndex>) {
 #[requires(t.invariant())]
 #[requires(t.contains(x))]
 #[requires(forall<i : _> s.contains(i) ==> t.contains(i))]
-#[ensures(t.abstract_justification(s.push(x)) == t.abstract_justification(s).insert(t.index_logic(x)) )]
+#[ensures(t.abstract_justification(s.push_back(x)) == t.abstract_justification(s).insert(t.index_logic(x)) )]
 pub(crate) fn abstract_justification_insert(t: Trail, x: TrailIndex, s: Seq<TrailIndex>) {
     t.abs_just_snoc(s, x)
 }

@@ -336,7 +336,7 @@ impl LRATheory {
     #[maintains((mut tl).invariant())]
     #[ensures(match result {
         ExtendResult::Satisfied => true,
-        ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(t@, v@) && t@.well_sorted(),
+        ExtendResult::Decision(t, v) => (^tl).snapshot.acceptable(t@, v@) && t@.well_sorted(),
         ExtendResult::Conflict(c) => {
             let conflict = (^tl).abstract_justification(c@);
             c@.len() > 0 &&
@@ -346,7 +346,7 @@ impl LRATheory {
             (forall<m : theory::Model> m.satisfy_set(conflict) ==> false)
         }
     })]
-    #[ensures(tl.ghost.impls(*(^tl).ghost))]
+    #[ensures(tl.snapshot.impls(*(^tl).ghost))]
     pub fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let mut iter = tl.indices();
 

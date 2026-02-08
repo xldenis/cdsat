@@ -10,12 +10,12 @@ pub(crate) struct ConflictHeap(Vec<TrailIndex>);
 impl Invariant for ConflictHeap {
     #[logic(open)]
     fn invariant(self) -> bool {
-        seq_unique(self.0.shallow_model()) && self.0.shallow_model().sorted()
+        seq_unique(self.0.view()) && self.0.view().sorted()
     }
 }
 
 impl ConflictHeap {
-    #[ensures(result@ == FSet::EMPTY)]
+    #[ensures(result@ == FSet::empty())]
     pub(crate) fn new() -> Self {
         ConflictHeap(Vec::new())
     }
@@ -53,7 +53,7 @@ impl ConflictHeap {
     #[ensures(
         match result {
             Some(a) => self@.contains(*a) && set_max(self@) == *a,
-            None => self@ == FSet::EMPTY
+            None => self@ == FSet::empty()
         })]
     pub(crate) fn last(&self) -> Option<&TrailIndex> {
         if self.0.len() == 0 {
@@ -62,7 +62,7 @@ impl ConflictHeap {
         self.0.get(self.0.len() - 1)
     }
 
-    #[ensures(((self@) == FSet::EMPTY) == (result == None))]
+    #[ensures(((self@) == FSet::empty()) == (result == None))]
     #[ensures(forall<a : _> result == Some(a) ==>
         (^self)@ == (self@).remove(a) && (self@).contains(a) &&
         (forall<other : TrailIndex> ((^self)@).contains(other) ==> other <= a)
@@ -98,7 +98,7 @@ fn to_set<T: creusot_std::ghost::Plain>(s : Seq<T>) -> FSet<T> {
     } else {
         let seq  = s.subsequence(1, s.len_ghost());
         let mut out = to_set(seq);
-        out.insert_ghost(s[Int::new(0).into_inner()]);
+        out.insert_ghost(s[0]);
         out
     }
 }

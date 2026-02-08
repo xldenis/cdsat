@@ -1,4 +1,3 @@
-use crate::ghost::Ghost;
 use crate::snapshot::Snapshot;
 use creusot_std::{vec, prelude::*};
 use crate::log::{info, trace};
@@ -19,7 +18,7 @@ impl BoolTheory {
     #[maintains((mut tl).invariant())]
     #[ensures(match result {
         ExtendResult::Satisfied => true,
-        ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(t@, v@) && t@.well_sorted(),
+        ExtendResult::Decision(t, v) => (^tl).snapshot.acceptable(t@, v@) && t@.well_sorted(),
         ExtendResult::Conflict(c) => {
             let conflict = (^tl).abstract_justification(c@);
             c@.len() > 0 &&
@@ -29,14 +28,14 @@ impl BoolTheory {
             (forall<m : Model> m.satisfy_set(conflict) ==> false)
         }
     })]
-    #[ensures(tl.ghost.impls(*(^tl).ghost))]
+    #[ensures(tl.snapshot.impls(*(^tl).snapshot))]
     pub fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
         let old_tl: Snapshot![_] = snapshot! { tl };
         let mut iter = tl.indices();
         let old_iter: Snapshot![_] = snapshot! { iter };
         // info!("Bool is performing deductions");
         #[invariant(forall<i : _> old_tl.contains(i) ==> iter.trail.contains(i))]
-        #[invariant(old_tl.ghost.impls(*iter.trail.ghost))]
+        #[invariant(old_tl.snapshot.impls(*iter.trail.snapshot))]
         #[invariant(iter.trail.invariant())]
         #[invariant(^iter.trail == ^old_iter.trail)]
         while let Some(ix) = iter.next() {
@@ -55,7 +54,7 @@ impl BoolTheory {
             trace!("Bool eval of {} resulted in {:?}", assign, res);
             match res {
                 Result::Err(dec) => {
-                    proof_assert!(tl.ghost.acceptable(dec@, Value::Bool(true)@));
+                    proof_assert!(tl.snapshot.acceptable(dec@, Value::Bool(true)@));
                     if dec.sort() == Sort::Boolean {
                         // info!("Bool proposes {dec}");
                         return ExtendResult::Decision(dec, Value::Bool(true));
@@ -110,7 +109,7 @@ impl BoolTheory {
             (forall<m : Model>
                 m.satisfy_set(tl.abstract_justification(result.0@)) ==> m.satisfies((tm@, v@)))
         }
-        Err(t) => { tl.ghost.acceptable(t@, Value::Bool(true)@)  && t@.well_sorted() }
+        Err(t) => { tl.snapshot.acceptable(t@, Value::Bool(true)@)  && t@.well_sorted() }
     })]
     fn eval(&mut self, tl: &Trail, tm: &Term) -> (Vec<TrailIndex>, Result<Value, Term>) {
         let mut v = Vec::new();
@@ -133,7 +132,7 @@ impl BoolTheory {
                 m.satisfy_set(tl.abstract_justification((^used)@)) ==> m.satisfies((tm@, v@)))
 
         }
-        Err(t) => {  tl.ghost.acceptable(t@, Value::Bool(true)@) && t@.well_sorted() }
+        Err(t) => {  tl.snapshot.acceptable(t@, Value::Bool(true)@) && t@.well_sorted() }
     })]
     #[ensures(forall<ix : _> used@.contains(ix) ==> (^used)@.contains(ix))]
     #[ensures(forall<ix : _> (^used)@.contains(ix) ==> tl.contains(ix))]

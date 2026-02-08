@@ -3,9 +3,10 @@ use std::{fmt::Display, unreachable};
 use creusot_std::prelude::{
     ensures, ghost, logic, requires, trusted, Clone, DeepModel, PartialEq, View,
 };
+use creusot_std::std::ops::FnExt;
 
 use num::{One, Zero};
-use num::rational::BigRational;
+use num_rational::BigRational;
 
 #[cfg(creusot)]
 use crate::theory;
@@ -177,7 +178,7 @@ impl DeepModel for Term {
 
     #[logic(open)]
     fn deep_model(self) -> Self::DeepModelTy {
-        use creusot_std::num_rational::Real;
+        use creusot_std::logic::real::Real;
         match self {
             Term::Variable(v, s) => {
                 theory::Term::Variable(theory::Var(v.deep_model(), s.deep_model()))

@@ -1,4 +1,4 @@
-use creusot_std::{invariant::Invariant, logic::*, num_rational::Real, *};
+use creusot_std::{invariant::Invariant, logic::*, logic::real::Real, *};
 use creusot_std::prelude::*;
 
 pub enum Term {
@@ -260,7 +260,7 @@ impl Trail {
     #[logic(open)]
     pub fn is_set_level(self, s: FSet<(Term, Value)>, m: Int) -> bool {
         pearlite! {
-            (s == FSet::EMPTY && m == 0) ||
+            (s == FSet::empty() && m == 0) ||
             (exists<i : _> s.contains(i) && self.level_of(i) == m) &&
             (forall<i : _> s.contains(i) ==> self.level_of(i) <= m)
         }
@@ -271,8 +271,8 @@ impl Trail {
     #[variant(s.len())]
     #[requires(self.invariant_nonneg())]
     #[ensures(forall<i : _> s.contains(i) ==> self.level_of(i) <= result)]
-    #[ensures(s != FSet::EMPTY ==> exists<i : _> s.contains(i) && self.level_of(i) == result)]
-    #[ensures(s == FSet::EMPTY ==> result == 0)]
+    #[ensures(s != FSet::empty() ==> exists<i : _> s.contains(i) && self.level_of(i) == result)]
+    #[ensures(s == FSet::empty() ==> result == 0)]
     #[ensures(result >= 0)]
     #[ensures(result <= self.level())]
     pub fn set_level(self, s: FSet<(Term, Value)>) -> Int {
@@ -468,13 +468,13 @@ impl Trail {
     #[requires(self.is_justified(d))]
     #[requires(self.sound())]
     #[ensures(forall<m : Model> m.entails(result, d))]
-    #[ensures(self.is_input(d) ==> result == FSet::EMPTY)]
-    #[ensures(self.is_decision(d) ==> result == FSet::EMPTY)]
+    #[ensures(self.is_input(d) ==> result == FSet::empty())]
+    #[ensures(self.is_decision(d) ==> result == FSet::empty())]
     pub fn justification(self, d: (Term, Value)) -> FSet<(Term, Value)> {
         self.find_justified(d);
         match self.find(d) {
             Some((Assign::Justified(j, _, _), _)) => j,
-            _ => FSet::EMPTY,
+            _ => FSet::empty(),
         }
     }
 
@@ -589,7 +589,7 @@ impl Trail {
         }
     }
 
-    #[check(ghost)]
+    #[logic]
     #[requires(self.sound())]
     #[requires(self.contains(kv))]
     #[ensures(forall<a : _, l : _> self.find(kv) == Some((a, l)) ==> a.justified_sound())]
@@ -1012,7 +1012,7 @@ impl Conflict {
         self.0.justification_contains(a);
         let _ = Model::resolve_sound;
         self.1.contains(a)
-            && pearlite! { (forall<a : _> just.contains(a) && !a.1.is_bool() && self.0.is_decision(a) ==> self.0.level_of(a) < self.0.set_level(self.1)) }
+            && pearlite! { forall<a : _> just.contains(a) && !a.1.is_bool() && self.0.is_decision(a) ==> self.0.level_of(a) < self.0.set_level(self.1) }
             && tgt == Conflict(self.0, self.1.remove(a).union(just))
     }
 

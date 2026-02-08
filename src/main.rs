@@ -2,7 +2,7 @@
 #![cfg_attr(not(creusot), feature(stmt_expr_attributes, proc_macro_hygiene))]
 #![feature(min_specialization)]
 #![allow(dead_code, unused_variables)]
-#![feature(never_type, let_chains, btree_cursors)]
+#![feature(never_type, btree_cursors)]
 #![allow(unused_imports)]
 
 use num::bigint::ToBigInt;
@@ -27,14 +27,14 @@ pub mod lra {
     pub struct LRATheory;
 
     use crate::{concrete::ExtendResult, trail::Trail};
-    use creusot_std::*;
+    use creusot_std::{*, prelude::*};
 
     impl LRATheory {
         #[trusted]
         #[maintains((mut tl).invariant())]
         #[ensures(match result {
             ExtendResult::Satisfied => true,
-            ExtendResult::Decision(t, v) => (^tl).ghost.acceptable(t@, v@) && t@.well_sorted(),
+            ExtendResult::Decision(t, v) => (^tl).snapshot.acceptable(t@, v@) && t@.well_sorted(),
             ExtendResult::Conflict(c) => {
                 let conflict = (^tl).abstract_justification(c@);
                 c@.len() > 0 &&
@@ -44,7 +44,7 @@ pub mod lra {
                 (forall<m : crate::theory::Model> m.satisfy_set(conflict) ==> false)
             }
         })]
-        #[ensures(tl.ghost.impls(*(^tl).ghost))]
+        #[ensures(tl.snapshot.impls(*(^tl).snapshot))]
         pub fn extend(&mut self, tl: &mut Trail) -> ExtendResult {
             todo!()
         }
